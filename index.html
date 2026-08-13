@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PT Distriversa Buanamas — ERP Mockup</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="left">
+    <span class="hamburger" id="hamburgerBtn"></span>
+    <div class="brand">
+      <div class="logo-badge">DBM</div>
+      <div class="full-name">Distriversa Buanamas<small>ERP SYSTEM — MOCKUP</small></div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span class="icon-wrap" title="Notifikasi"><span class="badge">5</span></span>
+    <span class="icon-wrap" title="Keamanan"></span>
+    <div class="user-greet">
+      <span>Halo, <span class="uname">Sidik</span></span>
+      <span class="udemo">(MOCKUP DBM-2026)</span>
+    </div>
+  </div>
+</div>
+
+<div class="layout" id="layout">
+  <aside class="sidebar">
+    <div class="sidebar-scroll" id="sidebarScroll"></div>
+    <div class="sidebar-footer">
+      (ver. mockup.1.0) &copy; Distriversa Buanamas<br>
+      Licensed to: PT Distriversa Buanamas
+    </div>
+  </aside>
+  <main class="content" id="content"></main>
+</div>
+
+<!-- Vendor library (Chart.js, dibundel lokal supaya tidak butuh koneksi internet) -->
+<script src="js/vendor/chart.umd.js"></script>
+<!-- App scripts: urutan load penting (data/menu dipakai oleh app.js) -->
+<script src="js/icons.js"></script>
+<script src="js/data.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/core.js"></script>
+</body>
+</html>

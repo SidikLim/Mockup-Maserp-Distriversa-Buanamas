@@ -1,0 +1,352 @@
+:root{
+  --navy:#2b3358;
+  --navy-2:#232a49;
+  --blue:#4472c4;
+  --blue-light:#29b6f6;
+  --bg:#eef1f7;
+  --card-bg:#ffffff;
+  --text:#33384a;
+  --text-light:#8a90a3;
+  --border:#e3e6ee;
+  --red:#ef4b62;
+  --teal:#17c3c3;
+  --yellow:#f0b429;
+  --green:#27ae60;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+a{color:inherit;text-decoration:none;}
+
+/* ===== Topbar ===== */
+.topbar{height:56px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:50;}
+.topbar .left{display:flex;align-items:center;gap:14px;}
+.hamburger{cursor:pointer;opacity:.85;display:flex;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;}
+.brand .logo-badge{width:30px;height:30px;border-radius:7px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+.brand .full-name{font-size:14px;font-weight:600;}
+.brand .full-name small{display:block;font-size:10.5px;font-weight:400;color:#b9c0d6;letter-spacing:.03em;}
+.topbar-right{display:flex;align-items:center;gap:22px;font-size:13px;}
+.icon-wrap{position:relative;cursor:pointer;opacity:.9;display:flex;}
+.badge{position:absolute;top:-7px;right:-9px;background:var(--red);color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;line-height:1.3;}
+.user-greet{display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.user-greet .uname{font-weight:600;}
+.user-greet .udemo{color:#a9b0c8;font-size:11.5px;}
+
+/* ===== Layout ===== */
+.layout{display:flex;min-height:calc(100vh - 56px);}
+.sidebar{width:275px;background:#fff;border-right:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;transition:width .15s,opacity .1s;}
+.sidebar-scroll{overflow-y:auto;flex:1;padding-bottom:6px;}
+.layout.collapsed .sidebar{width:0;opacity:0;overflow:hidden;border:none;}
+
+.menu-top{display:flex;align-items:center;gap:11px;padding:11px 18px;cursor:pointer;color:#4a5170;font-size:13.5px;border-left:3px solid transparent;user-select:none;}
+.menu-top svg{flex-shrink:0;opacity:.85;}
+.menu-top:hover{background:#f4f6fb;}
+.menu-top.active-parent{background:var(--navy);color:#fff;border-left-color:var(--blue-light);}
+.menu-top.active-parent svg{opacity:1;}
+.menu-top .chev{margin-left:auto;font-size:10px;transition:transform .15s;opacity:.7;}
+.menu-top.open .chev{transform:rotate(90deg);}
+.menu-top.leaf.current{background:#eef3fb;color:var(--blue);border-left-color:var(--blue);}
+
+.submenu{display:none;padding:2px 0 10px 0;background:#fafbfd;}
+.submenu.open{display:block;}
+.submenu-header{font-size:10.5px;font-weight:700;color:#a7adbd;text-transform:uppercase;padding:12px 18px 5px 45px;letter-spacing:.04em;}
+.submenu-item{display:flex;align-items:center;gap:9px;padding:6.5px 18px 6.5px 45px;font-size:12.8px;color:#5b6178;cursor:pointer;}
+.submenu-item:hover{background:#eef1f9;color:var(--blue);}
+.submenu-item.current{color:var(--blue);font-weight:600;background:#e9f0fb;}
+.submenu-item .dot{width:6px;height:6px;border-radius:50%;border:1.6px solid #b7bccb;flex-shrink:0;}
+.submenu-item.current .dot{border-color:var(--blue);background:var(--blue);}
+
+.sidebar-footer{padding:12px 18px;border-top:1px solid var(--border);font-size:10.5px;color:#a7adbd;line-height:1.5;}
+
+/* ===== Content ===== */
+.content{flex:1;padding:20px;overflow-x:hidden;min-width:0;}
+.breadcrumb{font-size:12px;color:var(--text-light);margin-bottom:12px;}
+.breadcrumb b{color:var(--text);font-weight:600;}
+
+.kpi-row{display:flex;gap:16px;margin-bottom:18px;flex-wrap:wrap;}
+.kpi-card{flex:1;min-width:225px;border-radius:9px;padding:18px 20px;color:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:3px;min-height:74px;}
+.kpi-card .kpi-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:20px;opacity:.28;}
+.kpi-card .kpi-icon svg{width:34px;height:34px;}
+.kpi-card .kpi-value{font-size:25px;font-weight:700;text-align:right;}
+.kpi-card .kpi-label{font-size:12.5px;text-align:right;opacity:.95;}
+.kpi-red{background:var(--red);} .kpi-teal{background:var(--teal);} .kpi-yellow{background:var(--yellow);} .kpi-green{background:var(--green);}
+
+.card{background:var(--card-bg);border-radius:9px;box-shadow:0 1px 3px rgba(20,20,50,.07);margin-bottom:18px;overflow:hidden;}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap;}
+.card-header h3{font-size:14.5px;font-weight:700;}
+.card-header .sub{font-size:11px;color:var(--text-light);font-weight:400;margin-left:6px;}
+.card-body{padding:18px;}
+.dark-header{background:var(--navy);color:#fff;}
+.dark-header h3{color:#fff;display:flex;align-items:center;gap:8px;}
+.chip{background:var(--blue-light);color:#0b3a4d;font-size:11.5px;padding:4px 12px;border-radius:14px;font-weight:600;white-space:nowrap;}
+.refresh-ic{opacity:.6;cursor:pointer;}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.grid-2>.card{min-width:0;}
+@media (max-width:1150px){.grid-2{grid-template-columns:1fr;}}
+
+.flow-row{display:flex;gap:24px;align-items:center;flex-wrap:wrap;}
+.flow-step{display:flex;flex-direction:column;align-items:center;gap:9px;}
+.flow-box{width:86px;height:86px;background:var(--navy-2);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;}
+.flow-box svg{width:28px;height:28px;}
+.flow-label{font-size:11.8px;font-weight:600;text-align:center;max-width:100px;line-height:1.25;}
+.flow-arrow{color:#c1c6d6;font-size:20px;}
+.flow-extra{margin-left:110px;margin-top:14px;}
+.quick-links{display:flex;gap:16px;margin-top:22px;flex-wrap:wrap;}
+.quick-link{flex:1;min-width:150px;background:var(--blue);color:#fff;border-radius:9px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12.5px;font-weight:600;text-align:center;cursor:pointer;transition:background .15s;}
+.quick-link svg{width:22px;height:22px;}
+.quick-link:hover{background:#3a63ac;}
+
+/* Branching flow diagram (grid-based, e.g. Purchase Transaction Flow) */
+.flow-grid{display:grid;grid-template-columns:96px 40px 96px 40px 96px 40px 96px;row-gap:24px;align-items:start;overflow-x:auto;padding-bottom:4px;}
+.flow-grid .flow-arrow{display:flex;align-items:center;justify-content:center;height:86px;}
+.flow-box.quick{background:var(--blue);cursor:pointer;transition:background .15s;}
+.flow-box.quick:hover{background:#3a63ac;}
+
+/* Average cycle timeline */
+.cycle-row{display:flex;align-items:flex-start;justify-content:space-between;position:relative;padding:10px 6px 4px;gap:6px;}
+.cycle-row::before{content:'';position:absolute;left:34px;right:34px;top:29px;height:2px;background:var(--border);z-index:0;}
+.cycle-node{display:flex;flex-direction:column;align-items:center;gap:9px;font-size:12px;color:var(--blue);position:relative;z-index:1;max-width:110px;text-align:center;}
+.cycle-node .dot{width:12px;height:12px;border-radius:50%;background:#27ae60;border:3px solid #fff;box-shadow:0 0 0 1.5px #27ae60;margin-top:23px;}
+.cycle-mid{width:58px;height:58px;border-radius:50%;background:#eef1f7;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13.5px;color:var(--text);position:relative;z-index:1;flex-shrink:0;}
+
+/* Scrollable table body for dashboard widgets */
+.scroll-table{max-height:320px;overflow-y:auto;}
+
+table{width:100%;border-collapse:collapse;font-size:12.8px;}
+thead th{background:var(--navy);color:#fff;text-align:left;padding:9px 12px;font-weight:600;white-space:nowrap;}
+tbody td{padding:8px 12px;border-bottom:1px solid var(--border);color:#454b5f;white-space:nowrap;}
+tbody tr:hover{background:#f7f9fd;}
+.text-right{text-align:right;}
+.table-wrap{overflow-x:auto;}
+.table-toolbar{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;gap:10px;flex-wrap:wrap;}
+.table-toolbar select,.table-toolbar input{border:1px solid var(--border);border-radius:5px;padding:6px 10px;font-size:12.8px;}
+.table-toolbar input{min-width:230px;}
+.table-footer{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;font-size:12px;color:var(--text-light);flex-wrap:wrap;gap:8px;}
+.pager button{border:1px solid var(--border);background:#fff;padding:5px 10px;margin-right:4px;border-radius:4px;font-size:12px;cursor:pointer;color:var(--text);}
+.pager button.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+.status-pill{padding:2.5px 10px;border-radius:12px;font-size:11px;font-weight:600;display:inline-block;}
+.status-paid{background:#e3f8ec;color:#1a9c53;}
+.status-open{background:#eef1f7;color:#7b8194;}
+.status-overdue{background:#fdeaec;color:#e0405b;}
+.status-aktif{background:#e3f8ec;color:#1a9c53;}
+.status-nonaktif{background:#fdeaec;color:#e0405b;}
+
+.placeholder-box{border:1.6px dashed var(--border);border-radius:9px;padding:60px 20px;text-align:center;color:var(--text-light);}
+.placeholder-box .pico{margin-bottom:14px;display:flex;justify-content:center;opacity:.5;}
+.placeholder-box .pico svg{width:46px;height:46px;}
+.placeholder-box p{max-width:420px;margin:6px auto 0;font-size:13px;line-height:1.6;}
+
+.btn-primary{background:var(--blue);color:#fff;border:none;padding:9px 16px;border-radius:6px;font-size:12.8px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.btn-primary:hover{background:#3a63ac;}
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
+.page-head h2{font-size:18.5px;}
+canvas{max-width:100%;}
+.footer-note{text-align:center;font-size:11px;color:var(--text-light);padding:18px 0 6px;}
+
+.profile-grid{display:grid;grid-template-columns:180px 1fr;row-gap:14px;column-gap:16px;max-width:640px;}
+.profile-grid dt{color:var(--text-light);font-size:12.8px;}
+.profile-grid dd{font-weight:600;font-size:13.5px;}
+.report-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
+.report-item{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;cursor:pointer;}
+.report-item:hover{border-color:var(--blue);}
+.report-item .ric{width:38px;height:38px;border-radius:8px;background:#eaf1fb;color:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.report-item .ric svg{width:19px;height:19px;}
+.report-item .rtitle{font-size:12.8px;font-weight:600;}
+
+/* ===== Icon buttons (tabel Ubah/Hapus) ===== */
+.icon-btn{width:30px;height:30px;border-radius:5px;border:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;}
+.icon-btn svg{width:15px;height:15px;}
+.icon-btn.edit{background:var(--blue);}
+.icon-btn.edit:hover{background:#3a63ac;}
+.icon-btn.del{background:var(--red);}
+.icon-btn.del:hover{background:#d63c52;}
+.gl-account-header td{background:#eaf1fb;font-weight:700;color:var(--navy);}
+.btn-secondary{background:#eef1f7;color:var(--text);border:none;padding:9px 16px;border-radius:6px;font-size:12.8px;font-weight:600;cursor:pointer;}
+.btn-secondary:hover{background:#e3e6ee;}
+.btn-danger{background:var(--red);color:#fff;border:none;padding:9px 16px;border-radius:6px;font-size:12.8px;font-weight:600;cursor:pointer;}
+.btn-danger:hover{background:#d63c52;}
+.btn-teal{background:var(--blue-light);color:#fff;border:none;padding:9px 16px;border-radius:6px;font-size:12.8px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+.btn-teal:hover{background:#1ba0c9;}
+.btn-warning{background:var(--yellow);color:#fff;border:none;padding:9px 16px;border-radius:6px;font-size:12.8px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.btn-warning:hover{background:#d99a1f;}
+
+/* ===== Toggle switch (dipakai di list Jurnal Pembelian: Konsinyasi?/Non Aktif?) ===== */
+.toggle-switch{position:relative;display:inline-block;width:40px;height:22px;vertical-align:middle;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:#ccced8;border-radius:22px;cursor:pointer;transition:.15s;}
+.toggle-slider:before{content:'';position:absolute;height:16px;width:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.25);}
+.toggle-switch input:checked + .toggle-slider{background:var(--blue);}
+.toggle-switch input:checked + .toggle-slider:before{transform:translateX(18px);}
+
+/* ===== Alert banner (Jurnal Pembelian: peringatan jurnal sudah dipakai) ===== */
+.alert-warning{background:#fdf1cf;color:#6b5215;border:1px solid #f3ddA0;border-radius:7px;padding:12px 16px;font-size:12.8px;font-weight:600;margin-bottom:16px;}
+
+/* ===== Field table (Jurnal Pembelian: Nama Jurnal/Mata Uang/Cabang) ===== */
+.field-table{width:100%;border-collapse:collapse;margin-bottom:16px;border:1px solid var(--border);}
+.field-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:12.8px;}
+.field-table tr:last-child td{border-bottom:none;}
+.field-table td.flabel{background:#f7f8fb;font-weight:600;color:var(--text);width:160px;white-space:nowrap;}
+.field-table td input,.field-table td select{width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;font-family:inherit;}
+.field-table td input:disabled,.field-table td input[readonly]{background:#f4f6fb;color:var(--text-light);}
+/* Checkbox di dalam .field-table (dipakai Gudang: Default/Gudang Transit/
+   Near ED/Reject/Gudang Cadangan/Konsinyasi) TIDAK boleh ikut width:100%
+   seperti input teks/select di atas — kalau ikut, layout-nya (bukan
+   tampilan visualnya) jadi selebar kolom, mendorong elemen sebaris
+   sesudahnya (misal label+input "Hari Peringatan") keluar dari batas
+   card. Override width:auto khusus untuk type=checkbox. */
+.field-table td input[type=checkbox]{width:auto;vertical-align:middle;}
+
+/* ===== Akun table (Jurnal Pembelian: baris akun label + input+cari+hapus + nama akun) ===== */
+.jp-akun-table{width:100%;border-collapse:collapse;border:1px solid var(--border);margin-bottom:18px;}
+.jp-akun-table td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:12.8px;}
+.jp-akun-table tr:last-child td{border-bottom:none;}
+.jp-akun-table td.jp-label{font-weight:600;color:var(--text);width:230px;}
+.jp-akun-table td.jp-input{width:220px;}
+.jp-akun-table td.jp-input .input-with-btn input{width:90px;}
+.jp-akun-table td.jp-nama{color:var(--blue);}
+.jp-section-title{font-weight:700;font-size:13.5px;color:var(--text);margin:6px 0 10px;}
+
+/* ===== Modal (Tambah/Ubah/Hapus) ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(20,20,40,.45);display:flex;align-items:center;justify-content:center;z-index:200;}
+.modal-box{background:#fff;border-radius:9px;width:100%;max-width:420px;margin:0 16px;box-shadow:0 10px 40px rgba(0,0,0,.25);overflow:hidden;}
+.modal-header{background:var(--navy);color:#fff;padding:14px 18px;font-size:14.5px;font-weight:700;display:flex;justify-content:space-between;align-items:center;}
+.modal-header .close{cursor:pointer;opacity:.8;font-size:20px;line-height:1;}
+.modal-header .close:hover{opacity:1;}
+.modal-body{padding:20px 18px;}
+.modal-body p{font-size:13px;line-height:1.6;color:var(--text);}
+.modal-footer{padding:14px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:12.5px;color:var(--text-light);margin-bottom:6px;font-weight:600;}
+.form-group input{width:100%;border:1px solid var(--border);border-radius:6px;padding:9px 12px;font-size:13px;font-family:inherit;}
+.form-group input:focus{outline:none;border-color:var(--blue);}
+.form-error{display:none;color:var(--red);font-size:11.5px;margin-top:5px;}
+.form-group input:disabled,.form-group input[readonly]{background:#f4f6fb;color:var(--text-light);}
+.link-add{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--blue);font-weight:600;margin-top:8px;text-decoration:none;}
+.link-add:hover{text-decoration:underline;}
+.btn-pick{padding:4px 12px;font-size:12px;}
+/* Teks biru klik-untuk-pilih di dalam tabel picker (dipakai popup
+   "Daftar Persediaan" bersama — Kode Barang/Nama Barang, lihat
+   openPersediaanPicker() di core.js, sejak 2026-08-12 lanjutan lagi) */
+.link-pick{background:none;border:none;padding:0;font:inherit;color:var(--blue);font-weight:600;cursor:pointer;text-align:left;}
+.link-pick:hover{text-decoration:underline;}
+.modal-body .table-wrap{margin-top:4px;}
+.modal-body .table-wrap table th,.modal-body .table-wrap table td{padding:8px 10px;font-size:12.5px;}
+.page-loading{padding:60px 0;text-align:center;color:var(--text-light);font-size:13px;}
+
+/* ===== Form tambahan (select/textarea, grid 2 kolom, radio, checkbox) ===== */
+.form-group select,.form-group textarea{width:100%;border:1px solid var(--border);border-radius:6px;padding:9px 12px;font-size:13px;font-family:inherit;background:#fff;}
+.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--blue);}
+.form-group textarea{resize:vertical;min-height:64px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:24px;}
+@media (max-width:900px){.form-grid{grid-template-columns:1fr;}}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;column-gap:14px;}
+@media (max-width:900px){.form-grid-3{grid-template-columns:1fr 1fr;}}
+.form-section{margin:22px 0 14px;padding-top:16px;border-top:1px solid var(--border);font-size:13.5px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:8px;}
+.field-pair{display:flex;gap:10px;}
+.field-pair>div{flex:1;}
+.field-pair select{width:auto;min-width:90px;}
+.input-with-btn{display:flex;gap:8px;}
+.input-with-btn input{flex:1;}
+.radio-inline{display:flex;gap:20px;align-items:center;padding-top:6px;}
+.radio-inline label{display:flex;align-items:center;gap:6px;font-weight:400;font-size:13px;color:var(--text);cursor:pointer;}
+.radio-inline input{width:auto;}
+.checkbox-row{display:flex;align-items:center;gap:8px;margin:12px 0;}
+.checkbox-row label{font-weight:400;font-size:13px;color:var(--text);cursor:pointer;}
+.checkbox-row input{width:auto;}
+.form-page-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;padding-top:16px;border-top:1px solid var(--border);}
+.btn-outline{background:#fff;color:var(--blue);border:1px solid var(--blue);padding:8px 14px;border-radius:6px;font-size:12.3px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.btn-outline:hover{background:#eaf1fb;}
+.toolbar-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.form-group input.readonly-cell,.form-group select.readonly-cell{background:#f4f6fb;color:var(--text-light);}
+
+/* ===== Icon buttons tambahan (Stock Request: Lihat/Cetak) ===== */
+.icon-btn.view{background:var(--navy-2);}
+.icon-btn.view:hover{background:#171c33;}
+.icon-btn.print{background:var(--teal);}
+.icon-btn.print:hover{background:#12a3a3;}
+
+/* ===== Status text (Stock Request: OPEN/CLOSED) ===== */
+.st-open{color:var(--green);font-weight:700;}
+.st-closed{color:var(--red);font-weight:700;}
+
+/* ===== Group collapsible (Stock Request: Rincian per kategori) ===== */
+.sr-group-block{border:1px solid var(--border);border-radius:7px;margin-bottom:16px;overflow:hidden;}
+.sr-group-bar{display:flex;justify-content:space-between;align-items:center;background:#fbebea;color:#c0392b;font-weight:700;font-size:13px;padding:10px 14px;cursor:pointer;user-select:none;}
+.sr-group-bar .chev{transition:transform .15s;display:flex;}
+.sr-group-bar.open .chev{transform:rotate(180deg);}
+.sr-group-body{display:none;}
+.sr-group-body.open{display:block;}
+.sr-detail-table{width:100%;border-collapse:collapse;}
+.sr-detail-table th{background:#f7f8fb;color:var(--text);font-weight:700;text-align:left;padding:8px 12px;font-size:12px;border-bottom:1px solid var(--border);}
+.sr-detail-table td{padding:8px 12px;border-bottom:1px solid var(--border);font-size:12.8px;}
+.sr-detail-table tr:last-child td{border-bottom:none;}
+.sr-detail-table input[type="number"]{width:90px;border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-size:12.8px;}
+.sr-detail-table input[type="number"]:disabled{background:#f4f6fb;color:var(--text-light);}
+.sr-detail-table input[type="checkbox"]{width:16px;height:16px;cursor:pointer;}
+
+/* ===== Chip button (Stock Request: filter periode di list) ===== */
+.chip-btn{background:var(--blue-light);color:#fff;border:none;font-size:12px;padding:7px 14px;border-radius:6px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+.chip-btn:hover{background:#1ba0c9;}
+
+/* ===== Purchase Order: grid 3 kolom, tombol cetak kecil di list,
+   tabel rincian barang (banyak kolom kalkulasi), radio vertikal,
+   kotak upload dekoratif ===== */
+.po-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;column-gap:20px;}
+@media (max-width:900px){.po-grid-3{grid-template-columns:1fr;}}
+.po-grid-3 .form-group{margin-bottom:14px;}
+
+.cetak-btn{background:var(--blue-light);color:#fff;border:none;padding:4px 10px;border-radius:5px;font-size:10.8px;font-weight:600;cursor:pointer;margin-top:4px;}
+.cetak-btn:hover{background:#1ba0c9;}
+
+.radio-group{display:flex;flex-direction:column;gap:10px;}
+.radio-group label{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);cursor:pointer;font-weight:400;}
+.radio-group input{width:auto;}
+
+.upload-box{border:1px solid var(--border);border-radius:6px;min-height:64px;overflow-y:auto;padding:6px 10px;font-size:12px;color:var(--text-light);background:#f9fafc;}
+
+.po-textarea{width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;font-family:inherit;resize:vertical;}
+
+.po-item-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.po-item-table th{background:#f7f8fb;color:var(--text);font-weight:700;text-align:left;padding:8px 10px;font-size:11.2px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.po-item-table td{padding:6px 8px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.po-item-table input,.po-item-table select{width:100%;border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-size:12px;font-family:inherit;}
+.po-item-table input[type="number"]{text-align:right;}
+.po-item-table input:disabled,.po-item-table textarea:disabled{background:#f4f6fb;color:var(--text-light);}
+.po-item-table textarea{width:100%;border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-size:12px;resize:vertical;min-height:34px;font-family:inherit;}
+.po-item-table input[type="checkbox"]{width:16px;height:16px;}
+.po-rincian-table td:nth-child(2),.po-rincian-table td:nth-child(4){min-width:120px;}
+
+/* ===== Picking List: tag input multi-value (field "Picker"), satu-satunya
+   komponen CSS BENAR-BENAR baru untuk modul ini — semua yang lain reuse
+   .field-table/.field-pair/.input-with-btn/.link-add/.btn-pick/.chip-btn/
+   .po-item-table/.icon-btn/.form-page-actions yang sudah ada. Warna chip
+   pakai var(--blue-light) (bukan warna baru) supaya konsisten dengan
+   .chip-btn yang sudah ada di list Stock Request/Purchase Order/Sales
+   Order. ===== */
+.tag-box{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:38px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:#fff;}
+.tag-chip{display:inline-flex;align-items:center;gap:6px;background:var(--blue-light);color:#fff;font-size:12px;font-weight:600;padding:4px 8px;border-radius:14px;}
+.tag-chip .rm{cursor:pointer;font-weight:700;}
+
+/* ===== Picking List: kolom aksi "Checked" — teal, class TERPISAH dari
+   .icon-btn.print (walau warnanya sama, var(--teal)) supaya semantiknya
+   jelas beda aksi (Checked vs Cetak) di markup/kode, bukan reuse literal
+   class yang sama. ===== */
+.icon-btn.check{background:var(--teal);}
+.icon-btn.check:hover{background:#12a3a3;}
+
+/* ===== Invoice: tombol Ubah/Hapus/Posting yang di-disable permanen
+   setelah Invoice di-posting (transisi satu arah, lihat komentar
+   openInvPostingConfirm() di js/pages/invoice.js) — gap CSS genuinely
+   baru, belum ada treatment "disabled" utk .icon-btn di modul manapun
+   sebelumnya (Picking List/Sales Order pakai disabled HANYA di
+   input/select, bukan tombol icon). ===== */
+.icon-btn.disabled,.icon-btn[disabled]{opacity:.4;pointer-events:none;cursor:not-allowed;}
+
+/* ===== Invoice: tab switcher "Detail Transaksi" / "Rincian Jurnal Akun"
+   — komponen UI baru, belum ada modul lain di mockup ini yang butuh
+   tab. Dibuat minimal (2 tombol toggle underline biru), tanpa animasi. ===== */
+.inv-tabs{display:flex;gap:4px;margin:18px 0 14px;border-bottom:1px solid var(--border);}
+.inv-tab-btn{background:none;border:none;padding:10px 16px;font-size:13px;font-weight:600;color:var(--text-light);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}
+.inv-tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
