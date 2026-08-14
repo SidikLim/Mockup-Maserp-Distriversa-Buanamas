@@ -149,10 +149,16 @@ function openSoForm(mode, idx){
 
   document.getElementById('soCustomerSearch').onclick = () => openSoCustomerPicker(row);
   document.getElementById('soPrincipalSearch').onclick = () => openSoPrincipalPicker(row);
-  document.getElementById('soSqSearch').onclick = () => openSoDecorativePicker('Pilih Sales Quotation', SO_SQ_DUMMY_LIST, 'pick-sq', (v) => {
-    row.noSQ = v;
-    document.getElementById('fSoNoSQ').value = v;
-  });
+  document.getElementById('soSqSearch').onclick = () => {
+    // Sejak 2026-08-13: sumbernya DATA.salesQuotation sungguhan (modul
+    // Sales Quotation), bukan lagi SO_SQ_DUMMY_LIST statis — lihat
+    // catatan di sales-order.template.js.
+    const sqList = DATA.salesQuotation.map(sq => ({ no: sq.no, tgl: sq.tglSQ, ket: `${sq.customer} — ${sq.keterangan}` }));
+    openSoDecorativePicker('Pilih Sales Quotation', sqList, 'pick-sq', (v) => {
+      row.noSQ = v;
+      document.getElementById('fSoNoSQ').value = v;
+    });
+  };
   document.getElementById('soSpSearch').onclick = () => openSoDecorativePicker('Pilih Surat Pesanan', SO_SP_DUMMY_LIST, 'pick-sp', (v) => {
     row.noSP = v;
     document.getElementById('fSoNoSP').value = v;

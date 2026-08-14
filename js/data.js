@@ -1711,4 +1711,281 @@ const DATA = {
       keterangan:'Faktur Penjualan Via S.J. sesuai S.J. 26/SJ/HO/08/00002.', tipeTransaksi:'Penjualan Kredit',
       tglInput:'13/08/2026 10:00', userInput:'sidik', tglEdit:'', userEdit:''},
   ],
+  /* Sales Quotation — menu Customer & Penjualan > Daftar Transaksi >
+     Sales Quotation (lihat js/pages/sales-quotation.*). Tahap PALING
+     AWAL dari rantai transaksi Customer & Penjualan (Sales Quotation →
+     Sales Order → Picking List → Invoice → Penjualan Via S.J.) — belum
+     di-chain otomatis ke DATA.salesOrders (Sales Quotation dibuat manual
+     oleh sales, baru SEBAGIAN yang berlanjut jadi Sales Order sungguhan,
+     ditandai lewat `ts:'Jadi SO'`). No. SQ format GLOBAL 10-digit
+     (`26/SQ-0000000001`, TIDAK per-cabang) — persis format di screenshot
+     MASERP yang dikirim user (beda dari No. SO/No. PKL/No.IVC yang
+     menyisipkan kode cabang). Semua total (HNA1xQty/Potongan/DPP/PPN/
+     Jumlah Akhir) diverifikasi lewat script Node terpisah sebelum
+     dimasukkan ke sini (formula: Disc/Barang = HNA1 x Discount% / 100
+     per-unit, Jumlah = (HNA1-Disc/Barang) x Qty, Potongan dokumen =
+     total Disc/Barang x Qty semua baris, PPN 11% hanya utk Type PPN
+     'Eksklusif'). `sOffice`/`gudang` dipetakan lewat SQ_GUDANG_BY_CABANG
+     (copy verbatim dari PKL_GUDANG_BY_CABANG). Rayon/GROUP/ID/Credit
+     Limit/Dominasi Limit semua diturunkan dari DATA.customers via
+     sqApplyCustomer() (lihat komentar di sales-quotation.template.js). */
+  salesQuotation:[
+    {no:'26/SQ-0000000001', noSP:'', noDSC:'', customer:'Toko Sumber Rejeki', area:'Jakarta', ts:'Baru', status:'Pending',
+      sOffice:'Head Office', layanan:'Reguler', gudang:'(00-GUU) Gudang Utama-HO', orderVia:'Sales Rep',
+      alamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat', rayonKode:'RY-JKT01', rayonNama:'Rayon Jakarta Pusat', rayonDistrict:'Jakarta Pusat',
+      groupKode:'GRSR', idKode:'CUST-001', top:'N30', cppr1:0, cppr2:0,
+      principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara',
+      pendingDsc:false, pendingDom:false, pendingGit:false,
+      tglSP:'', tglSQ:'07/08/2026', tglKirim:'09/08/2026', catatanSp:'',
+      cito:false, spAsli:false, skEd:false,
+      creditLimit:50000000, sisaCreditLimit:31750000, belumJatuhTempo:12775000, jatuhTempo:5475000, dominasiLimit:10000000, sisaDominasiLimit:10000000,
+      keterangan:'Rencana order rutin bulanan Sembako', pecahFakturAt:0, dimensiM3:0,
+      typePpn:'Eksklusif', biayaKirim:40000,
+      items:[{kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', um:'Dus', qty:40, hna:25000, hna1:25000, discPercent:2, discBarang:500, hnaXqty:1000000, jumlah:980000}],
+      totalHnaXqty:1000000, totalPotongan:20000, totalDpp:980000, totalPpn:107800, jumlahAkhir:1127800,
+      tglInput:'07/08/2026 09:12:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/SQ-0000000002', noSP:'SP/SBY/08/00007', noDSC:'DSC/SBY/08/00001', customer:'UD Makmur Jaya', area:'Surabaya', ts:'Diproses', status:'Approved',
+      sOffice:'Surabaya', layanan:'Reguler', gudang:'(01-GUU) Gudang Utama-SBY', orderVia:'WhatsApp',
+      alamat:'Jl. Raya Darmo No. 45, Surabaya', rayonKode:'RY-SBY01', rayonNama:'Rayon Surabaya Kota', rayonDistrict:'Surabaya',
+      groupKode:'RTMD', idKode:'CUST-002', top:'N45', cppr1:0, cppr2:0,
+      principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia',
+      pendingDsc:true, pendingDom:false, pendingGit:false,
+      tglSP:'08/08/2026', tglSQ:'07/08/2026', tglKirim:'10/08/2026', catatanSp:'Menunggu approval DSC',
+      cito:false, spAsli:true, skEd:false,
+      creditLimit:35000000, sisaCreditLimit:25880000, belumJatuhTempo:6384000, jatuhTempo:2736000, dominasiLimit:7000000, sisaDominasiLimit:7000000,
+      keterangan:'Restock Sembako gudang Surabaya', pecahFakturAt:0, dimensiM3:0,
+      typePpn:'Eksklusif', biayaKirim:30000,
+      items:[{kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', um:'Karung', qty:100, hna:15000, hna1:15000, discPercent:0, discBarang:0, hnaXqty:1500000, jumlah:1500000}],
+      totalHnaXqty:1500000, totalPotongan:0, totalDpp:1500000, totalPpn:165000, jumlahAkhir:1695000,
+      tglInput:'07/08/2026 10:30:00', userInput:'sidik', tglEdit:'08/08/2026 08:10:00', userEdit:'sidik'},
+    {no:'26/SQ-0000000003', noSP:'SP/BDG/08/00005', noDSC:'', customer:'CV Berkah Abadi', area:'Bandung', ts:'Jadi SO', status:'Approved',
+      sOffice:'Bandung', layanan:'Ekspedisi Pihak Ketiga', gudang:'(02-GUU) Gudang Utama-BDG', orderVia:'Telepon',
+      alamat:'Jl. Soekarno Hatta No. 88, Bandung', rayonKode:'RY-BDG01', rayonNama:'Rayon Bandung Kota', rayonDistrict:'Bandung',
+      groupKode:'RTTR', idKode:'CUST-003', top:'N14', cppr1:0, cppr2:0,
+      principalKode:'', principalNama:'',
+      pendingDsc:false, pendingDom:false, pendingGit:false,
+      tglSP:'09/08/2026', tglSQ:'08/08/2026', tglKirim:'11/08/2026', catatanSp:'Sudah jadi Sales Order 26/SO/BDG/08/00005',
+      cito:false, spAsli:false, skEd:true,
+      creditLimit:20000000, sisaCreditLimit:15700000, belumJatuhTempo:3010000, jatuhTempo:1290000, dominasiLimit:4000000, sisaDominasiLimit:4000000,
+      keterangan:'Order beras premium', pecahFakturAt:0, dimensiM3:0,
+      typePpn:'Non PKP', biayaKirim:20000,
+      items:[{kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', um:'Karung', qty:20, hna:60000, hna1:60000, discPercent:1.5, discBarang:900, hnaXqty:1200000, jumlah:1182000}],
+      totalHnaXqty:1200000, totalPotongan:18000, totalDpp:1182000, totalPpn:0, jumlahAkhir:1202000,
+      tglInput:'08/08/2026 09:00:00', userInput:'sidik', tglEdit:'09/08/2026 09:00:00', userEdit:'sidik'},
+    {no:'26/SQ-0000000004', noSP:'', noDSC:'', customer:'Toko Anugrah', area:'Medan', ts:'Baru', status:'Pending',
+      sOffice:'Medan', layanan:'Reguler', gudang:'(04-GUU) Gudang Utama-MDN', orderVia:'Sales Rep',
+      alamat:'Jl. Gatot Subroto No. 21, Medan', rayonKode:'RY-MDN01', rayonNama:'Rayon Medan Kota', rayonDistrict:'Medan',
+      groupKode:'SBDS', idKode:'CUST-004', top:'N45', cppr1:0, cppr2:0,
+      principalKode:'5020', principalNama:'PT Indofood Distribusi',
+      pendingDsc:false, pendingDom:true, pendingGit:false,
+      tglSP:'', tglSQ:'06/08/2026', tglKirim:'08/08/2026', catatanSp:'',
+      cito:false, spAsli:false, skEd:false,
+      creditLimit:15000000, sisaCreditLimit:8400000, belumJatuhTempo:4620000, jatuhTempo:1980000, dominasiLimit:3000000, sisaDominasiLimit:3000000,
+      keterangan:'Rencana order Tepung Terigu bulanan', pecahFakturAt:0, dimensiM3:0,
+      typePpn:'Eksklusif', biayaKirim:35000,
+      items:[{kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', um:'Karung', qty:150, hna:12000, hna1:12000, discPercent:0, discBarang:0, hnaXqty:1800000, jumlah:1800000}],
+      totalHnaXqty:1800000, totalPotongan:0, totalDpp:1800000, totalPpn:198000, jumlahAkhir:2033000,
+      tglInput:'06/08/2026 08:20:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/SQ-0000000005', noSP:'', noDSC:'', customer:'UD Sinar Harapan', area:'Makassar', ts:'Batal', status:'Rejected',
+      sOffice:'Makassar', layanan:'Reguler', gudang:'(05-GUU) Gudang Utama-MKS', orderVia:'Email',
+      alamat:'Jl. Perintis Kemerdekaan No. 5, Makassar', rayonKode:'RY-MKS01', rayonNama:'Rayon Makassar Kota', rayonDistrict:'Makassar',
+      groupKode:'HORK', idKode:'CUST-005', top:'N7', cppr1:0, cppr2:0,
+      principalKode:'', principalNama:'',
+      pendingDsc:false, pendingDom:false, pendingGit:true,
+      tglSP:'', tglSQ:'07/08/2026', tglKirim:'', catatanSp:'Batal - customer status Non Aktif',
+      cito:false, spAsli:false, skEd:false,
+      creditLimit:12000000, sisaCreditLimit:9850000, belumJatuhTempo:1505000, jatuhTempo:645000, dominasiLimit:2400000, sisaDominasiLimit:2400000,
+      keterangan:'Ditolak - cek ulang legalitas customer', pecahFakturAt:0, dimensiM3:0,
+      typePpn:'Eksklusif', biayaKirim:15000,
+      items:[{kode:'BRG-005', nama:'Mie Instan Indomie Goreng', um:'Dus', qty:300, hna:2500, hna1:2500, discPercent:0, discBarang:0, hnaXqty:750000, jumlah:750000}],
+      totalHnaXqty:750000, totalPotongan:0, totalDpp:750000, totalPpn:82500, jumlahAkhir:847500,
+      tglInput:'07/08/2026 11:00:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/SQ-0000000006', noSP:'SP/HO/08/00012', noDSC:'', customer:'Toko Family Mart Jaya', area:'Jakarta', ts:'Diproses', status:'Pending',
+      sOffice:'Head Office', layanan:'Express', gudang:'(00-GUU) Gudang Utama-HO', orderVia:'Online',
+      alamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara', rayonKode:'RY-JKT01', rayonNama:'Rayon Jakarta Pusat', rayonDistrict:'Jakarta Pusat',
+      groupKode:'INST', idKode:'CUST-006', top:'N30', cppr1:0, cppr2:0,
+      principalKode:'5023', principalNama:'PT Sasa Inti',
+      pendingDsc:false, pendingDom:false, pendingGit:false,
+      tglSP:'10/08/2026', tglSQ:'10/08/2026', tglKirim:'12/08/2026', catatanSp:'CITO - kebutuhan stock display',
+      cito:true, spAsli:true, skEd:false,
+      creditLimit:28000000, sisaCreditLimit:18130000, belumJatuhTempo:6909000, jatuhTempo:2961000, dominasiLimit:5600000, sisaDominasiLimit:5600000,
+      keterangan:'CITO - kebutuhan stock display minggu ini', pecahFakturAt:0, dimensiM3:0,
+      typePpn:'Eksklusif', biayaKirim:45000,
+      items:[{kode:'BRG-006', nama:'Kecap Manis ABC 600ml', um:'Dus', qty:200, hna:14000, hna1:14000, discPercent:3, discBarang:420, hnaXqty:2800000, jumlah:2716000}],
+      totalHnaXqty:2800000, totalPotongan:84000, totalDpp:2716000, totalPpn:298760, jumlahAkhir:3059760,
+      tglInput:'10/08/2026 08:00:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/SQ-0000000007', noSP:'SP/SMG/08/00004', noDSC:'', customer:'CV Maju Terus', area:'Semarang', ts:'Jadi SO', status:'Approved',
+      sOffice:'Semarang', layanan:'Reguler', gudang:'(06-GUU) Gudang Utama-SMG', orderVia:'Telepon',
+      alamat:'Jl. Pandanaran No. 33, Semarang', rayonKode:'RY-SMG01', rayonNama:'Rayon Semarang Kota', rayonDistrict:'Semarang',
+      groupKode:'KOPR', idKode:'CUST-007', top:'N14', cppr1:0, cppr2:0,
+      principalKode:'', principalNama:'',
+      pendingDsc:false, pendingDom:false, pendingGit:false,
+      tglSP:'05/08/2026', tglSQ:'04/08/2026', tglKirim:'06/08/2026', catatanSp:'Sudah jadi Sales Order 26/SO/SMG/08/00004',
+      cito:false, spAsli:true, skEd:false,
+      creditLimit:9000000, sisaCreditLimit:7800000, belumJatuhTempo:840000, jatuhTempo:360000, dominasiLimit:1800000, sisaDominasiLimit:1800000,
+      keterangan:'Order Susu Kental Manis', pecahFakturAt:0, dimensiM3:0,
+      typePpn:'Non PKP', biayaKirim:20000,
+      items:[{kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', um:'Dus', qty:100, hna:16000, hna1:16000, discPercent:0, discBarang:0, hnaXqty:1600000, jumlah:1600000}],
+      totalHnaXqty:1600000, totalPotongan:0, totalDpp:1600000, totalPpn:0, jumlahAkhir:1620000,
+      tglInput:'04/08/2026 13:00:00', userInput:'sidik', tglEdit:'05/08/2026 09:00:00', userEdit:'sidik'},
+    {no:'26/SQ-0000000008', noSP:'', noDSC:'', customer:'Toko Sejahtera', area:'Surabaya', ts:'Baru', status:'Pending',
+      sOffice:'Surabaya', layanan:'Reguler', gudang:'(01-GUU) Gudang Utama-SBY', orderVia:'Sales Rep',
+      alamat:'Jl. Kertajaya No. 67, Surabaya', rayonKode:'RY-SBY01', rayonNama:'Rayon Surabaya Kota', rayonDistrict:'Surabaya',
+      groupKode:'EXPR', idKode:'CUST-008', top:'N30', cppr1:0, cppr2:0,
+      principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia',
+      pendingDsc:false, pendingDom:false, pendingGit:false,
+      tglSP:'', tglSQ:'09/08/2026', tglKirim:'11/08/2026', catatanSp:'',
+      cito:false, spAsli:false, skEd:false,
+      creditLimit:17500000, sisaCreditLimit:14380000, belumJatuhTempo:2184000, jatuhTempo:936000, dominasiLimit:3500000, sisaDominasiLimit:3500000,
+      keterangan:'Rencana order Teh Celup mingguan', pecahFakturAt:0, dimensiM3:0,
+      typePpn:'Eksklusif', biayaKirim:25000,
+      items:[{kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', um:'Dus', qty:250, hna:10000, hna1:10000, discPercent:2, discBarang:200, hnaXqty:2500000, jumlah:2450000}],
+      totalHnaXqty:2500000, totalPotongan:50000, totalDpp:2450000, totalPpn:269500, jumlahAkhir:2744500,
+      tglInput:'09/08/2026 10:15:00', userInput:'sidik', tglEdit:'', userEdit:''},
+  ],
+
+  /* Bukti Terima Barang / BPB (Supplier & Pembelian > Daftar
+     Transaksi > Terima Barang, page 'terimaBarang'), sesuai 2
+     screenshot MASERP "Daftar Bukti Penerimaan Barang" (list) &
+     "Bukti Terima Barang" (form) yang dikirim user 2026-08-13.
+     TAHAP KE-2 rantai transaksi Supplier & Pembelian (Purchase
+     Order → **Terima Barang** → Faktur Pembelian → Pelunasan
+     Utang) — setiap baris di sini dirantaikan ke 1 baris
+     DATA.purchaseOrder nyata (field noPO, cabang, fob, tglPO,
+     supplier, alamatPengiriman, & item barang semuanya konsisten
+     dengan PO sumbernya, lihat komentar besar di header
+     js/pages/terima-barang.template.js untuk detail interpretasi
+     tiap field). Status semua baris "Approved" (tidak ada alur
+     approval bertingkat di mockup ini, sama simplifikasi seperti
+     modul lain). Item dgn `fromPO:false` = "Additional Item" (baris
+     ke-6 di bawah mendemokan ini dengan 1 barang bonus BRG-008 yang
+     tidak ada di PO 26/PO/HO/08/00003). Baris ke-4 mendemokan Multi
+     Batch Number (1 barang datang dalam 2 lot berbeda dari
+     supplier). DATA.purchaseOrder TIDAK diubah statusnya (tetap
+     "Pending Receive") saat dipakai di sini — konsisten dengan
+     konvensi "downstream tidak memutasi status upstream" yang
+     sudah dipakai Picking List (nge-refer Sales Order) & Faktur
+     Penjualan Via S.J. (nge-refer S.J.). */
+  terimaBarang:[
+    {no:'26/BPB/HO/08/00001', noPO:'26/PO/HO/08/00011', tglPO:'06/08/2026', supplier:'PT Sumber Pangan Nusantara',
+      noSJSupplier:'SJ/SPN/08/0231', keterangan:'26/SR/HO/08/00003 - Sembako Gudang Utama', status:'Approved',
+      cabang:'Head Office', cabangTarget:'Head Office', fob:'', noOtomatis:'BPB001',
+      tglSJK:'07/08/2026', tglKedatangan:'08/08/2026', alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur', kurs:1,
+      items:[{kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', satuan:'Dus', barcode:'8990011000110', qtyPesan:200, qtyTerima:200, batasQtyTerima:200, fromPO:true,
+        batches:[{batch:'LOT-SPN-0806', qty:200, exp:'06/02/2027'}]}],
+      tglInput:'08/08/2026 09:10:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/BPB/HO/08/00002', noPO:'26/PO/HO/08/00010', tglPO:'06/08/2026', supplier:'PT Wilmar Nabati Indonesia',
+      noSJSupplier:'SJ/WNI/08/0088', keterangan:'26/SR/BDG/08/00001 - Stok Jabar', status:'Approved',
+      cabang:'Head Office', cabangTarget:'Head Office', fob:'', noOtomatis:'BPB001',
+      tglSJK:'08/08/2026', tglKedatangan:'09/08/2026', alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung', kurs:1,
+      items:[{kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', satuan:'Karung', barcode:'8990021000210', qtyPesan:500, qtyTerima:500, batasQtyTerima:500, fromPO:true,
+        batches:[{batch:'LOT-WNI-0807', qty:500, exp:'08/02/2027'}]}],
+      tglInput:'09/08/2026 10:05:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/BPB/HO/08/00003', noPO:'26/PO/HO/08/00009', tglPO:'06/08/2026', supplier:'CV Distribusi Sentosa',
+      noSJSupplier:'SJ/CDS/08/0045', keterangan:'PO Administrasi Kasbon II/SDL/VII/2026', status:'Approved',
+      cabang:'Head Office', cabangTarget:'Head Office', fob:'', noOtomatis:'BPB001',
+      tglSJK:'07/08/2026', tglKedatangan:'08/08/2026', alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung', kurs:1,
+      items:[{kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', satuan:'Karung', barcode:'8990041000410', qtyPesan:100, qtyTerima:100, batasQtyTerima:100, fromPO:true,
+        batches:[{batch:'LOT-CDS-0807', qty:100, exp:'07/02/2027'}]}],
+      tglInput:'08/08/2026 11:20:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/BPB/HO/08/00004', noPO:'26/PO/HO/08/00007_RI', tglPO:'06/08/2026', supplier:'PT Sasa Inti',
+      noSJSupplier:'SJ/SASA/08/0512', keterangan:'26/SR/HO/08/00002 - Pemenuhan Toko Anugrah', status:'Approved',
+      cabang:'Head Office', cabangTarget:'Head Office', fob:'', noOtomatis:'BPB001',
+      tglSJK:'08/08/2026', tglKedatangan:'09/08/2026', alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur', kurs:1,
+      items:[{kode:'BRG-006', nama:'Kecap Manis ABC 600ml', satuan:'Dus', barcode:'8990061000610', qtyPesan:300, qtyTerima:300, batasQtyTerima:300, fromPO:true,
+        batches:[{batch:'LOT-SASA-A', qty:200, exp:'09/02/2027'}, {batch:'LOT-SASA-B', qty:100, exp:'09/02/2027'}]}],
+      tglInput:'09/08/2026 13:40:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/BPB/HO/08/00005', noPO:'26/PO/HO/08/00006', tglPO:'06/08/2026', supplier:'PT Sasa Inti',
+      noSJSupplier:'SJ/SASA/08/0513', keterangan:'26/SR/HO/08/00001 - Pemenuhan Toko Sejahtera', status:'Approved',
+      cabang:'Head Office', cabangTarget:'Head Office', fob:'', noOtomatis:'BPB001',
+      tglSJK:'08/08/2026', tglKedatangan:'09/08/2026', alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur', kurs:1,
+      items:[{kode:'BRG-006', nama:'Kecap Manis ABC 600ml', satuan:'Dus', barcode:'8990061000610', qtyPesan:150, qtyTerima:150, batasQtyTerima:150, fromPO:true,
+        batches:[{batch:'LOT-SASA-C', qty:150, exp:'09/02/2027'}]}],
+      tglInput:'09/08/2026 14:05:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/BPB/HO/08/00006', noPO:'26/PO/HO/08/00003', tglPO:'05/08/2026', supplier:'PT Sumber Pangan Nusantara',
+      noSJSupplier:'SJ/SPN/08/0198', keterangan:'26/SR/SMG/08/00001 - Penambahan Stok Semarang', status:'Approved',
+      cabang:'Head Office', cabangTarget:'Head Office', fob:'', noOtomatis:'BPB001',
+      tglSJK:'06/08/2026', tglKedatangan:'07/08/2026', alamatPengiriman:'Jl. Pemuda No. 45, Semarang', kurs:1,
+      items:[
+        {kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', satuan:'Dus', barcode:'8990071000710', qtyPesan:100, qtyTerima:100, batasQtyTerima:100, fromPO:true,
+          batches:[{batch:'LOT-SPN-0806B', qty:100, exp:'06/08/2027'}]},
+        {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', satuan:'Dus', barcode:'8990081000810', qtyPesan:0, qtyTerima:10, batasQtyTerima:0, fromPO:false,
+          batches:[{batch:'BONUS-SPN-0806', qty:10, exp:'06/08/2027'}]},
+      ],
+      tglInput:'07/08/2026 09:30:00', userInput:'sidik', tglEdit:'', userEdit:''},
+  ],
+
+  /* Pembelian Melalui BPB (Supplier & Pembelian > Daftar Transaksi
+     > Pembelian Melalui BPB, page 'pembelianBPB'), sesuai 2
+     screenshot MASERP "Daftar Pembelian Melalui BPB" (list) &
+     "Pembelian Melalui BPB" (form) yang dikirim user 2026-08-13.
+     TAHAP KE-3 rantai transaksi Supplier & Pembelian (Purchase
+     Order → Terima Barang → **Pembelian Melalui BPB** → Pelunasan
+     Utang) — setiap baris di sini dirantaikan ke 1 baris
+     DATA.terimaBarang nyata (field noBPB/noPO/supplier/
+     alamatPengiriman semua konsisten dengan BPB sumbernya, Harga
+     Beli tiap item diambil dari DATA.items, Fee Distribusi/Budget
+     Diskon/PPh SENGAJA disamakan dengan PO asalnya supaya seluruh
+     angka Jumlah/DPP/PPN/PPh/Jumlah Total identik dengan baris
+     DATA.purchaseOrder terkait — realistis karena syarat harga/
+     diskon/pajak yang dinegosiasikan saat PO seharusnya konsisten
+     sampai ke Faktur Pembelian, sudah diverifikasi ulang lewat
+     Node terpisah sebelum ditulis). Hanya 4 dari 6 baris
+     DATA.terimaBarang yang sudah difakturkan di sini (BPB
+     26/BPB/HO/08/00005 & 26/BPB/HO/08/00006 SENGAJA belum, supaya
+     popup "Pilih Purchase Order / BPB" di mode Tambah masih py
+     pilihan tersisa untuk didemokan). Field Uang Muka (Sisa
+     U.Muka/Pakai) semua 0 (tidak ada Uang Muka Supplier tercatat di
+     mockup ini), Pembayaran semua 0 (belum ada modul Pelunasan
+     Utang, tahap berikutnya di rantai ini yang belum dibangun).
+     DATA.terimaBarang TIDAK diubah/ditandai statusnya saat dipakai
+     di sini — konsisten dengan konvensi "downstream tidak memutasi
+     status upstream" yang sudah dipakai Picking List/Faktur
+     Penjualan Via S.J./Terima Barang sendiri. */
+  pembelianBPB:[
+    {no:'26/PU/HO/08/00001', noBPB:'26/BPB/HO/08/00001', noPO:'26/PO/HO/08/00011', noReturPB:'', supplier:'PT Sumber Pangan Nusantara',
+      keterangan:'PJK/SPN/08/0231 ; SJK SJ/SPN/08/0231 ; 26/BPB/HO/08/00001',
+      cabang:'Head Office', noOtomatis:'PU001',
+      tglFaktur:'09/08/2026', syaratBayar:'Kredit 60 Hari', tglJatuhTempo:'08/10/2026',
+      supplierNoFaktur:'INV/SPN/08/0231-A', jurnal:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur',
+      items:[{kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', qty:200, um:'Dus', hargaBeli:25000, feeDistribusi:5, budgetDiskon:0, totalDisc:5, discBarang:250000, jumlah:4750000, pph:true, ppn:true}],
+      ppnMode:'eksklusif', mataUang:'IDR', tglFakturPajak:'09/08/2026', noFakturPajak:'PJK/SPN/08/0231',
+      kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:4750000, pajak11:'PPN11', ppnAmount:522500,
+      pphAktif:true, pphKode:'PPH 22 (0.3)', pphPersen:0.3, pphAmount:14250, ongkosAngkut:0, jumlahTotal:5258250,
+      uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, sisaJumlah:5258250,
+      pembayaran:0, tglInput:'09/08/2026 15:10:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/PU/HO/08/00002', noBPB:'26/BPB/HO/08/00002', noPO:'26/PO/HO/08/00010', noReturPB:'', supplier:'PT Wilmar Nabati Indonesia',
+      keterangan:'PJK/WNI/08/0088 ; SJK SJ/WNI/08/0088 ; 26/BPB/HO/08/00002',
+      cabang:'Head Office', noOtomatis:'PU001',
+      tglFaktur:'10/08/2026', syaratBayar:'Kredit 45 Hari', tglJatuhTempo:'24/09/2026',
+      supplierNoFaktur:'INV/WNI/08/0088-A', jurnal:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung',
+      items:[{kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', qty:500, um:'Karung', hargaBeli:15000, feeDistribusi:2, budgetDiskon:0, totalDisc:2, discBarang:150000, jumlah:7350000, pph:false, ppn:true}],
+      ppnMode:'eksklusif', mataUang:'IDR', tglFakturPajak:'10/08/2026', noFakturPajak:'PJK/WNI/08/0088',
+      kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:7350000, pajak11:'PPN11', ppnAmount:808500,
+      pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:8158500,
+      uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, sisaJumlah:8158500,
+      pembayaran:0, tglInput:'10/08/2026 10:45:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/PU/HO/08/00003', noBPB:'26/BPB/HO/08/00003', noPO:'26/PO/HO/08/00009', noReturPB:'', supplier:'CV Distribusi Sentosa',
+      keterangan:'PJK/CDS/08/0045 ; SJK SJ/CDS/08/0045 ; 26/BPB/HO/08/00003',
+      cabang:'Head Office', noOtomatis:'PU001',
+      tglFaktur:'09/08/2026', syaratBayar:'Kredit 14 Hari', tglJatuhTempo:'23/08/2026',
+      supplierNoFaktur:'INV/CDS/08/0045-A', jurnal:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung',
+      items:[{kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', qty:100, um:'Karung', hargaBeli:12000, feeDistribusi:0, budgetDiskon:0, totalDisc:0, discBarang:0, jumlah:1200000, pph:false, ppn:true}],
+      ppnMode:'eksklusif', mataUang:'IDR', tglFakturPajak:'09/08/2026', noFakturPajak:'PJK/CDS/08/0045',
+      kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:1200000, pajak11:'PPN11', ppnAmount:132000,
+      pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:1332000,
+      uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, sisaJumlah:1332000,
+      pembayaran:0, tglInput:'09/08/2026 11:50:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/PU/HO/08/00004', noBPB:'26/BPB/HO/08/00004', noPO:'26/PO/HO/08/00007_RI', noReturPB:'', supplier:'PT Sasa Inti',
+      keterangan:'PJK/SASA/08/0512 ; SJK SJ/SASA/08/0512 ; 26/BPB/HO/08/00004',
+      cabang:'Head Office', noOtomatis:'PU001',
+      tglFaktur:'10/08/2026', syaratBayar:'Kredit 30 Hari', tglJatuhTempo:'09/09/2026',
+      supplierNoFaktur:'INV/SASA/08/0512-A', jurnal:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur',
+      items:[{kode:'BRG-006', nama:'Kecap Manis ABC 600ml', qty:300, um:'Dus', hargaBeli:14000, feeDistribusi:3, budgetDiskon:0, totalDisc:3, discBarang:126000, jumlah:4074000, pph:true, ppn:true}],
+      ppnMode:'eksklusif', mataUang:'IDR', tglFakturPajak:'10/08/2026', noFakturPajak:'PJK/SASA/08/0512',
+      kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:4074000, pajak11:'PPN11', ppnAmount:448140,
+      pphAktif:true, pphKode:'PPH 22 (0.3)', pphPersen:0.3, pphAmount:12222, ongkosAngkut:0, jumlahTotal:4509918,
+      uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, sisaJumlah:4509918,
+      pembayaran:0, tglInput:'10/08/2026 14:20:00', userInput:'sidik', tglEdit:'', userEdit:''},
+  ],
 };

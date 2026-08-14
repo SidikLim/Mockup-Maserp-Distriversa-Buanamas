@@ -11,24 +11,26 @@
    dibuat FULL PAGE (bukan modal), sama seperti kedua modul tersebut.
 
    Beberapa field pada form ini tidak punya modul master tersendiri
-   di mockup (No. SQ/Sales Quotation, No. SP/Surat Pesanan, No. DSC),
-   jadi picker-nya bersifat DEKORATIF (daftar dummy kecil, bukan
-   nge-refer ke modul nyata) — pola yang sama seperti field "No. S.O.
-   Indent" di Purchase Order.
+   di mockup (No. SP/Surat Pesanan, No. DSC), jadi picker-nya bersifat
+   DEKORATIF (daftar dummy kecil, bukan nge-refer ke modul nyata) —
+   pola yang sama seperti field "No. S.O. Indent" di Purchase Order.
+
+   Picker "No. SQ" SEJAK 2026-08-13 sudah nge-refer ke modul Sales
+   Quotation yang nyata (DATA.salesQuotation, lihat js/pages/
+   sales-quotation.*) — melanjutkan rantai "master data yang saling
+   nyambung" mundur satu langkah (Sales Quotation → Sales Order),
+   menggantikan SO_SQ_DUMMY_LIST lama yang sudah DIHAPUS. Daftarnya
+   dibangun on-the-fly di openSoDecorativePicker() call-site (lihat
+   sales-order.js), BUKAN konstanta statis di sini lagi.
 ========================================================= */
 
 const SO_TS_LIST = ['Baru','Diproses','Dikirim','Selesai'];
 const SO_APPROVAL_LIST = ['Pending','Approved','Rejected'];
 const SO_CABANG_CODE = {'Head Office':'HO','Surabaya':'SBY','Bandung':'BDG','Medan':'MDN','Makassar':'MKS','Semarang':'SMG','Tangerang':'TGR','Sidoarjo':'SDA'};
 
-/* Daftar dummy dekoratif untuk picker No. SQ / No. SP / No. DSC — tidak
-   ada modul Sales Quotation/Surat Pesanan/DSC yang nyata di mockup ini
-   (masih 'placeholder' di sidebar), jadi datanya sekadar contoh. */
-const SO_SQ_DUMMY_LIST = [
-  {no:'SQ/HO/08/00013', tgl:'07/08/2026', ket:'Quotation Sembako Toko Sumber Rejeki'},
-  {no:'SQ/SBY/08/00007', tgl:'07/08/2026', ket:'Quotation Sembako UD Makmur Jaya'},
-  {no:'SQ/MDN/08/00003', tgl:'05/08/2026', ket:'Quotation Tepung Terigu Toko Anugrah'},
-];
+/* Daftar dummy dekoratif untuk picker No. SP / No. DSC — tidak ada
+   modul Surat Pesanan/DSC yang nyata di mockup ini (masih 'placeholder'
+   di sidebar), jadi datanya sekadar contoh. */
 const SO_SP_DUMMY_LIST = [
   {no:'SP/HO/08/00013', tgl:'08/08/2026', ket:'Surat Pesanan Toko Sumber Rejeki'},
   {no:'SP/SBY/08/00007', tgl:'08/08/2026', ket:'Surat Pesanan UD Makmur Jaya'},
