@@ -76,18 +76,139 @@ const DATA = {
      field `alamat` (alamat pengiriman customer, dipakai auto-fill field
      Alamat di form Sales Order) & `piutang` (saldo piutang outstanding
      customer saat ini, dipakai hitung field "Sisa CL" = limit − piutang)
-     ditambahkan ke tiap baris di bawah — tidak mengubah kolom yang sudah
-     dipakai renderer generik "Customer" di js/core.js (cols kode/nama/
-     kota/salesman/limit/status tetap sama). */
+     ditambahkan ke tiap baris di bawah.
+
+     NB LAGI (2026-08-18, modul Master Customer — js/pages/master-customer.*,
+     page 'customers'): field kode/nama/kota/salesman/limit/status/alamat/
+     piutang di atas TIDAK DIUBAH SAMA SEKALI (dipertahankan persis, termasuk
+     format kode 'CUST-00X' lama) karena sudah dipakai luas & di-hardcode
+     sebagai string literal oleh banyak modul transaksi lain sejak 2026-08-11
+     (Sales Order/Sales Quotation/Invoice/Picking List/Faktur Penjualan Via
+     S.J.) — mengubahnya akan memutus rantai referensi itu. Field BARU untuk
+     form "Customer" yang jauh lebih lengkap (sesuai 4 screenshot MASERP yang
+     dikirim user) HANYA ditambahkan ke tiap baris: noRef/tglRegistrasi/
+     mataUang/kodeFarma-Alkes, customerIndukKode/Nama/Alamat, data kontak
+     (namaPemilik/kontakPerson/gender/email/tglLahir/fax/agama/jabatan/
+     telepon), tipeIdentitas/noIdentitas/profesi/cabang/gudangJualSFA/
+     kodeNegara/idTKU/consignment, alamat detail (area/rayonKode/rayonNama/
+     rayonDistrict/provinsi/kabupaten/kecamatan/kelurahan/kodePos/latitude/
+     longitude), groupCustomer/badanUsaha/statusARCustomer (BEDA dari
+     `status` Aktif/Non-Aktif — ini status kelancaran AR: Lancar/Macet),
+     data pajak (npwp/namaNpwp/alamatPajak/pkpStatus/kodeTransaksiPajak/
+     typePpn), bank (masterBank/noVA/noRek), kredit (top/dominasiLimit/
+     wajibDominasi — `limit` yang sudah ada dipakai langsung sebagai CL),
+     akun GL (glAkunPiutang/glAkunUangMuka), uangMuka (baru, terpisah dari
+     `piutang` yang sudah ada), serta 2 sub-grid Legalitas TETAP/fixed
+     (legalitasOutlet 4 baris, legalitasPemilik 2 baris, masing-masing
+     {syarat,keterangan,tglExpired,tglProses,uploaded}). Kode Customer
+     format "C000001" pada screenshot HANYA dipakai untuk auto-generate
+     customer BARU lewat mockup ini (lihat cstNextKode() di
+     master-customer.js), tidak dipaksakan ke 8 baris existing di bawah. */
   customers:[
-    {kode:'CUST-001', nama:'Toko Sumber Rejeki', kota:'Jakarta', salesman:'Budi Santoso', limit:50000000, status:'Aktif', alamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat', piutang:18250000},
-    {kode:'CUST-002', nama:'UD Makmur Jaya', kota:'Surabaya', salesman:'Andi Wijaya', limit:35000000, status:'Aktif', alamat:'Jl. Raya Darmo No. 45, Surabaya', piutang:9120000},
-    {kode:'CUST-003', nama:'CV Berkah Abadi', kota:'Bandung', salesman:'Citra Lestari', limit:20000000, status:'Aktif', alamat:'Jl. Soekarno Hatta No. 88, Bandung', piutang:4300000},
-    {kode:'CUST-004', nama:'Toko Anugrah', kota:'Medan', salesman:'Dedi Kurniawan', limit:15000000, status:'Aktif', alamat:'Jl. Gatot Subroto No. 21, Medan', piutang:6600000},
-    {kode:'CUST-005', nama:'UD Sinar Harapan', kota:'Makassar', salesman:'Eka Putri', limit:12000000, status:'Non Aktif', alamat:'Jl. Perintis Kemerdekaan No. 5, Makassar', piutang:2150000},
-    {kode:'CUST-006', nama:'Toko Family Mart Jaya', kota:'Jakarta', salesman:'Budi Santoso', limit:28000000, status:'Aktif', alamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara', piutang:9870000},
-    {kode:'CUST-007', nama:'CV Maju Terus', kota:'Semarang', salesman:'Fajar Nugroho', limit:9000000, status:'Aktif', alamat:'Jl. Pandanaran No. 33, Semarang', piutang:1200000},
-    {kode:'CUST-008', nama:'Toko Sejahtera', kota:'Surabaya', salesman:'Andi Wijaya', limit:17500000, status:'Aktif', alamat:'Jl. Kertajaya No. 67, Surabaya', piutang:3120000},
+    {kode:'CUST-001', nama:'Toko Sumber Rejeki', kota:'Jakarta', salesman:'Budi Santoso', limit:50000000, status:'Aktif', alamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat', piutang:18250000,
+    noRef:'HO.0001', tglRegistrasi:'12/01/2020', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
+    customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
+    namaPemilik:'Hj. Siti Rejeki', kontakPerson:'Hj. Siti Rejeki', gender:'Wanita', email:'sitirejeki@tokosumberrejeki.co.id', tglLahir:'14/05/1978', fax:'', agama:'Islam', jabatan:'Pemilik', telepon:'021-6541278',
+    tipeIdentitas:'TIN', noIdentitas:'3171054405780002', profesi:'Wiraswasta', cabang:'Head Office', gudangJualSFA:'(00-GUU) Gudang Utama-HO', kodeNegara:'IDN', idTKU:'000000', consignment:false,
+    area:'DKI001', rayonKode:'RY-JKT01', rayonNama:'Rayon Jakarta Pusat', rayonDistrict:'Jakarta Pusat', provinsi:'DKI Jakarta', kabupaten:'Jakarta Pusat', kecamatan:'Sawah Besar', kelurahan:'Mangga Dua Selatan', kodePos:'10730', latitude:-6.1352, longitude:106.8133,
+    groupCustomer:'RTTR', badanUsaha:'PRO', statusARCustomer:'Lancar',
+    npwp:'01.111.222.3-456.001', namaNpwp:'TOKO SUMBER REJEKI', alamatPajak:'', pkpStatus:'Non-PKP', kodeTransaksiPajak:'04', typePpn:'Eksklusif',
+    masterBank:'', noVA:'', noRek:'',
+    top:'N30', dominasiLimit:10000000, wajibDominasi:false,
+    glAkunPiutang:'1120001', glAkunUangMuka:'', uangMuka:0,
+    legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'NPWP', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'SKPKP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
+    legalitasPemilik:[{syarat:'KTP', keterangan:'Sesuai dokumen terlampir', tglExpired:'', tglProses:'10/01/2024', uploaded:true}, {syarat:'Nama Penanggung Jawab', keterangan:'Hj. Siti Rejeki', tglExpired:'', tglProses:'10/01/2024', uploaded:true}]},
+    {kode:'CUST-002', nama:'UD Makmur Jaya', kota:'Surabaya', salesman:'Andi Wijaya', limit:35000000, status:'Aktif', alamat:'Jl. Raya Darmo No. 45, Surabaya', piutang:9120000,
+    noRef:'SBY.0001', tglRegistrasi:'03/06/2019', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
+    customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
+    namaPemilik:'Bpk. Makmur Wijaya', kontakPerson:'Bpk. Makmur Wijaya', gender:'Pria', email:'makmur@udmakmurjaya.co.id', tglLahir:'02/09/1975', fax:'', agama:'Islam', jabatan:'Pemilik', telepon:'031-7712345',
+    tipeIdentitas:'TIN', noIdentitas:'3578020975750001', profesi:'Wiraswasta', cabang:'Surabaya', gudangJualSFA:'(01-GUU) Gudang Utama-SBY', kodeNegara:'IDN', idTKU:'000000', consignment:false,
+    area:'JATIM001', rayonKode:'RY-SBY01', rayonNama:'Rayon Surabaya Kota', rayonDistrict:'Surabaya', provinsi:'Jawa Timur', kabupaten:'Surabaya', kecamatan:'Wonokromo', kelurahan:'Darmo', kodePos:'60241', latitude:-7.2575, longitude:112.7521,
+    groupCustomer:'SBDS', badanUsaha:'UD', statusARCustomer:'Lancar',
+    npwp:'01.222.333.4-567.002', namaNpwp:'UD MAKMUR JAYA', alamatPajak:'', pkpStatus:'PKP', kodeTransaksiPajak:'04', typePpn:'Eksklusif',
+    masterBank:'', noVA:'', noRek:'',
+    top:'N45', dominasiLimit:7000000, wajibDominasi:false,
+    glAkunPiutang:'1120001', glAkunUangMuka:'2140001', uangMuka:0,
+    legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'NPWP', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'SKPKP', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
+    legalitasPemilik:[{syarat:'KTP', keterangan:'Sesuai dokumen terlampir', tglExpired:'', tglProses:'10/01/2024', uploaded:true}, {syarat:'Nama Penanggung Jawab', keterangan:'Bpk. Makmur Wijaya', tglExpired:'', tglProses:'10/01/2024', uploaded:true}]},
+    {kode:'CUST-003', nama:'CV Berkah Abadi', kota:'Bandung', salesman:'Citra Lestari', limit:20000000, status:'Aktif', alamat:'Jl. Soekarno Hatta No. 88, Bandung', piutang:4300000,
+    noRef:'BDG.0001', tglRegistrasi:'18/03/2021', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
+    customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
+    namaPemilik:'Ibu Wulan Sari', kontakPerson:'Ibu Wulan Sari', gender:'Wanita', email:'wulan@cvberkahabadi.co.id', tglLahir:'21/11/1982', fax:'', agama:'Kristen', jabatan:'Direktur', telepon:'022-6654321',
+    tipeIdentitas:'TIN', noIdentitas:'3273612111820004', profesi:'Wiraswasta', cabang:'Bandung', gudangJualSFA:'(02-GUU) Gudang Utama-BDG', kodeNegara:'IDN', idTKU:'000000', consignment:false,
+    area:'JABAR001', rayonKode:'RY-BDG01', rayonNama:'Rayon Bandung Kota', rayonDistrict:'Bandung', provinsi:'Jawa Barat', kabupaten:'Bandung', kecamatan:'Cibeunying Kaler', kelurahan:'Cihapit', kodePos:'40114', latitude:-6.9175, longitude:107.6191,
+    groupCustomer:'SBDS', badanUsaha:'CV', statusARCustomer:'Lancar',
+    npwp:'01.333.444.5-678.003', namaNpwp:'CV BERKAH ABADI', alamatPajak:'', pkpStatus:'PKP', kodeTransaksiPajak:'04', typePpn:'Eksklusif',
+    masterBank:'', noVA:'', noRek:'',
+    top:'N30', dominasiLimit:4000000, wajibDominasi:false,
+    glAkunPiutang:'1120001', glAkunUangMuka:'', uangMuka:0,
+    legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'NPWP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'SKPKP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
+    legalitasPemilik:[{syarat:'KTP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Nama Penanggung Jawab', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}]},
+    {kode:'CUST-004', nama:'Toko Anugrah', kota:'Medan', salesman:'Dedi Kurniawan', limit:15000000, status:'Aktif', alamat:'Jl. Gatot Subroto No. 21, Medan', piutang:6600000,
+    noRef:'MDN.0001', tglRegistrasi:'25/07/2022', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
+    customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
+    namaPemilik:'Bpk. Anugrah Simatupang', kontakPerson:'Bpk. Anugrah Simatupang', gender:'Pria', email:'', tglLahir:'09/02/1980', fax:'', agama:'Kristen', jabatan:'Pemilik', telepon:'061-4532290',
+    tipeIdentitas:'TIN', noIdentitas:'1271090902800005', profesi:'Wiraswasta', cabang:'Medan', gudangJualSFA:'(04-GUU) Gudang Utama-MDN', kodeNegara:'IDN', idTKU:'000000', consignment:false,
+    area:'SUMUT001', rayonKode:'RY-MDN01', rayonNama:'Rayon Medan Kota', rayonDistrict:'Medan', provinsi:'Sumatera Utara', kabupaten:'Medan', kecamatan:'Medan Baru', kelurahan:'Babura', kodePos:'20153', latitude:3.5952, longitude:98.6722,
+    groupCustomer:'RTTR', badanUsaha:'PRO', statusARCustomer:'Lancar',
+    npwp:'-', namaNpwp:'TOKO ANUGRAH', alamatPajak:'', pkpStatus:'Non-PKP', kodeTransaksiPajak:'04', typePpn:'Eksklusif',
+    masterBank:'', noVA:'', noRek:'',
+    top:'N14', dominasiLimit:3000000, wajibDominasi:false,
+    glAkunPiutang:'1120001', glAkunUangMuka:'', uangMuka:0,
+    legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'NPWP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'SKPKP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
+    legalitasPemilik:[{syarat:'KTP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Nama Penanggung Jawab', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}]},
+    {kode:'CUST-005', nama:'UD Sinar Harapan', kota:'Makassar', salesman:'Eka Putri', limit:12000000, status:'Non Aktif', alamat:'Jl. Perintis Kemerdekaan No. 5, Makassar', piutang:2150000,
+    noRef:'MKS.0001', tglRegistrasi:'11/11/2018', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
+    customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
+    namaPemilik:'Bpk. Harapan Daeng', kontakPerson:'Bpk. Harapan Daeng', gender:'Pria', email:'sinarharapan@gmail.com', tglLahir:'30/12/1971', fax:'', agama:'Islam', jabatan:'Pemilik', telepon:'0411-556789',
+    tipeIdentitas:'TIN', noIdentitas:'7371301271710006', profesi:'Wiraswasta', cabang:'Makassar', gudangJualSFA:'(05-GUU) Gudang Utama-MKS', kodeNegara:'IDN', idTKU:'000000', consignment:false,
+    area:'SULSEL001', rayonKode:'RY-MKS01', rayonNama:'Rayon Makassar Kota', rayonDistrict:'Makassar', provinsi:'Sulawesi Selatan', kabupaten:'Makassar', kecamatan:'Panakkukang', kelurahan:'Karampuang', kodePos:'90231', latitude:-5.1477, longitude:119.4327,
+    groupCustomer:'RTTR', badanUsaha:'UD', statusARCustomer:'Macet',
+    npwp:'01.444.555.6-789.004', namaNpwp:'UD SINAR HARAPAN', alamatPajak:'', pkpStatus:'Non-PKP', kodeTransaksiPajak:'04', typePpn:'Eksklusif',
+    masterBank:'', noVA:'', noRek:'',
+    top:'CBD.', dominasiLimit:2400000, wajibDominasi:false,
+    glAkunPiutang:'1120001', glAkunUangMuka:'', uangMuka:0,
+    legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'NPWP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'SKPKP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
+    legalitasPemilik:[{syarat:'KTP', keterangan:'Sesuai dokumen terlampir', tglExpired:'', tglProses:'10/01/2024', uploaded:true}, {syarat:'Nama Penanggung Jawab', keterangan:'Bpk. Harapan Daeng', tglExpired:'', tglProses:'10/01/2024', uploaded:true}]},
+    {kode:'CUST-006', nama:'Toko Family Mart Jaya', kota:'Jakarta', salesman:'Budi Santoso', limit:28000000, status:'Aktif', alamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara', piutang:9870000,
+    noRef:'HO.0002', tglRegistrasi:'08/09/2017', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
+    customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
+    namaPemilik:'Bpk. Jaya Kusuma', kontakPerson:'Bpk. Jaya Kusuma', gender:'Pria', email:'jaya.kusuma@familymartjaya.co.id', tglLahir:'05/04/1985', fax:'', agama:'Buddha', jabatan:'Direktur', telepon:'021-4587213',
+    tipeIdentitas:'TIN', noIdentitas:'3172050485850007', profesi:'Wiraswasta', cabang:'Head Office', gudangJualSFA:'(00-GUU) Gudang Utama-HO', kodeNegara:'IDN', idTKU:'000000', consignment:true,
+    area:'DKI001', rayonKode:'RY-JKT01', rayonNama:'Rayon Jakarta Pusat', rayonDistrict:'Jakarta Pusat', provinsi:'DKI Jakarta', kabupaten:'Jakarta Utara', kecamatan:'Kelapa Gading', kelurahan:'Kelapa Gading Barat', kodePos:'14240', latitude:-6.1352, longitude:106.8133,
+    groupCustomer:'RTMD', badanUsaha:'PT', statusARCustomer:'Macet',
+    npwp:'01.555.666.7-890.005', namaNpwp:'TOKO FAMILY MART JAYA', alamatPajak:'', pkpStatus:'PKP', kodeTransaksiPajak:'04', typePpn:'Eksklusif',
+    masterBank:'', noVA:'', noRek:'',
+    top:'N30', dominasiLimit:5600000, wajibDominasi:false,
+    glAkunPiutang:'1120001', glAkunUangMuka:'2140001', uangMuka:500000,
+    legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'NPWP', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'SKPKP', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}],
+    legalitasPemilik:[{syarat:'KTP', keterangan:'Sesuai dokumen terlampir', tglExpired:'', tglProses:'10/01/2024', uploaded:true}, {syarat:'Nama Penanggung Jawab', keterangan:'Bpk. Jaya Kusuma', tglExpired:'', tglProses:'10/01/2024', uploaded:true}]},
+    {kode:'CUST-007', nama:'CV Maju Terus', kota:'Semarang', salesman:'Fajar Nugroho', limit:9000000, status:'Aktif', alamat:'Jl. Pandanaran No. 33, Semarang', piutang:1200000,
+    noRef:'SMG.0001', tglRegistrasi:'02/02/2020', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
+    customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
+    namaPemilik:'Ibu Rina Kartika', kontakPerson:'Ibu Rina Kartika', gender:'Wanita', email:'rina@cvmajuterus.co.id', tglLahir:'17/07/1979', fax:'', agama:'Islam', jabatan:'Direktur', telepon:'024-8541223',
+    tipeIdentitas:'TIN', noIdentitas:'3374170779790008', profesi:'Wiraswasta', cabang:'Semarang', gudangJualSFA:'(06-GUU) Gudang Utama-SMG', kodeNegara:'IDN', idTKU:'000000', consignment:false,
+    area:'JATENG001', rayonKode:'RY-SMG01', rayonNama:'Rayon Semarang Kota', rayonDistrict:'Semarang', provinsi:'Jawa Tengah', kabupaten:'Semarang', kecamatan:'Semarang Selatan', kelurahan:'Pandanaran', kodePos:'50134', latitude:-6.9932, longitude:110.4203,
+    groupCustomer:'SBDS', badanUsaha:'CV', statusARCustomer:'Lancar',
+    npwp:'01.666.777.8-901.006', namaNpwp:'CV MAJU TERUS', alamatPajak:'', pkpStatus:'PKP', kodeTransaksiPajak:'04', typePpn:'Eksklusif',
+    masterBank:'', noVA:'', noRek:'',
+    top:'N45', dominasiLimit:1800000, wajibDominasi:false,
+    glAkunPiutang:'1120001', glAkunUangMuka:'', uangMuka:0,
+    legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'NPWP', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'SKPKP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
+    legalitasPemilik:[{syarat:'KTP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Nama Penanggung Jawab', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}]},
+    {kode:'CUST-008', nama:'Toko Sejahtera', kota:'Surabaya', salesman:'Andi Wijaya', limit:17500000, status:'Aktif', alamat:'Jl. Kertajaya No. 67, Surabaya', piutang:3120000,
+    noRef:'SBY.0002', tglRegistrasi:'14/05/2023', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
+    customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
+    namaPemilik:'Bpk. Sejahtera Wibowo', kontakPerson:'Bpk. Sejahtera Wibowo', gender:'Pria', email:'', tglLahir:'23/10/1983', fax:'', agama:'Islam', jabatan:'Pemilik', telepon:'031-5541278',
+    tipeIdentitas:'TIN', noIdentitas:'3578231083830009', profesi:'Wiraswasta', cabang:'Surabaya', gudangJualSFA:'(01-GUU) Gudang Utama-SBY', kodeNegara:'IDN', idTKU:'000000', consignment:false,
+    area:'JATIM001', rayonKode:'RY-SBY01', rayonNama:'Rayon Surabaya Kota', rayonDistrict:'Surabaya', provinsi:'Jawa Timur', kabupaten:'Surabaya', kecamatan:'Rungkut', kelurahan:'Kalirungkut', kodePos:'60293', latitude:-7.2575, longitude:112.7521,
+    groupCustomer:'RTTR', badanUsaha:'PRO', statusARCustomer:'Lancar',
+    npwp:'-', namaNpwp:'TOKO SEJAHTERA', alamatPajak:'', pkpStatus:'Non-PKP', kodeTransaksiPajak:'04', typePpn:'Eksklusif',
+    masterBank:'', noVA:'', noRek:'',
+    top:'N14', dominasiLimit:3500000, wajibDominasi:false,
+    glAkunPiutang:'1120001', glAkunUangMuka:'', uangMuka:0,
+    legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'NPWP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'SKPKP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
+    legalitasPemilik:[{syarat:'KTP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Nama Penanggung Jawab', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}]},
   ],
   supplierGroup:[
     {kode:'VND000', nama:'NONE', diskon1:0, diskon2:0},
@@ -725,12 +846,147 @@ const DATA = {
     {kode:'AT-003', nama:'Rak Gudang Besi (Set)', tahun:2024, nilai:45000000, akumulasi:4500000, buku:40500000},
     {kode:'AT-004', nama:'Komputer Kantor (5 unit)', tahun:2024, nilai:35000000, akumulasi:7000000, buku:28000000},
   ],
+  /* Master User — menu User Security > Master User (page:'users', sebelumnya
+     renderer generik lewat objek `pages` di js/core.js dgn field lama nama/
+     username/role/status; kini renderer generik itu DIHAPUS, diganti modul
+     CRUD PENUH js/pages/master-user.template.js+master-user.js). Sesuai 2
+     screenshot MASERP yang dikirim user 2026-08-18: "Daftar User Profile"
+     (list Total Record: 93, kolom Username/Name/User Role/Cabang/Edit/
+     Delete, page-size 10 default + Global Search, pager standar 7 halaman)
+     dan "User Form" (Tambah: User Name, Nama, Email [+teks validasi merah
+     permanen "Email diperlukan..." — quirk direproduksi APA ADANYA dari
+     screenshot, sama seperti quirk GROUP/ID kosong di Sales Quotation],
+     Level Pemakai dropdown, Password Terdahulu, New Password, "Pilih Akses
+     Ke Perusahaan" [dekoratif, single-company], Cabang/Salesman/Rayon/Area/
+     Sales Office picker, Signature upload 200x100 [dekoratif], sub-grid
+     "Perusahaan | Bank | Hapus" + "+Tambah Item Baru").
+
+     10 baris PERTAMA (adit_sls s.d. anton_sls) PERSIS username/nama/role/
+     cabang dari screenshot list (halaman pertama, termasuk baris apa adanya
+     'amalia_csh'/'amalia_csh' & 'andri_sls'/'ANDRI MUHAMMAD' ALL CAPS persis
+     data asli, bukan salah ketik). Kode Role screenshot (SLS/ADM/IKS-HO)
+     TIDAK match kode DATA.groupUser (ACC/ADG/ADM/.../SALES dst, dibangun di
+     modul Group User sebelumnya dari screenshot BERBEDA) — field "role" di
+     modul ini SENGAJA dibuat daftar LOKAL independen `USR_ROLE_LIST` (pola
+     sama seperti RY_SALESMAN_LIST/WL_SUPERVISOR_LIST yang juga independen
+     dari master lain), BUKAN reference ke DATA.groupUser, supaya kode asli
+     screenshot ini tidak perlu dipaksakan cocok dengan kode yang sudah
+     dikarang di modul lain. 'IKS-HO' tidak ada penjelasan di screenshot;
+     diasumsikan singkatan "Instalasi Kesehatan HO" (masuk akal utk
+     distributor alkes/farma seperti DBM, lihat APJA/APJF di Group User),
+     didokumentasikan sbg asumsi.
+
+     83 baris SISANYA (dedi_csh s.d. eka_adg) adalah baris TAMBAHAN yang
+     disusun sendiri (screenshot cuma menunjukkan halaman pertama, 10 dari 93
+     baris) supaya "Total Record: 93" tetap PERSIS sesuai screenshot & pager
+     standar bisa didemokan pindah beberapa halaman sungguhan (page-size 10 x
+     ~10 hal.). Nama & username dibuat dari kombinasi pool nama Indonesia,
+     role di-cycle rata ke SEMUA 9 kode USR_ROLE_LIST, cabang di-cycle rata
+     ke 8 kode cabang (00-07, MAPPING SAMA PERSIS dgn GDG_CABANG_CODE di
+     gudang.template.js: 00=Head Office s.d. 07=Sidoarjo) supaya konsisten
+     lintas modul. Baris berrole 'SLS' SENGAJA ditautkan ke data REAL yang
+     sudah ada (referential integrity, bukan field kosong semua): `salesman`
+     merujuk nama di `DATA.salesman`, `rayonKode` merujuk kode di `DATA.rayon`
+     (Master Rayon), `areaKode` merujuk kode di `DATA.area` (Master Wilayah),
+     `salesOffice` diturunkan dari cabang. Role selain SLS sengaja dibiarkan
+     kosong utk field2 itu (screenshot tidak pernah menunjukkan kombinasi
+     tsb utk role non-SLS). Sub-grid `perusahaanBank[]` semua baris sample
+     kosong (array baru dibuat live saat form dibuka/disimpan, sama seperti
+     `kecamatan[]` di Master Rayon). */
   users:[
-    {nama:'Sidik', username:'sidik', role:'Administrator', status:'Aktif'},
-    {nama:'Budi Santoso', username:'budi.s', role:'Salesman', status:'Aktif'},
-    {nama:'Rina Kusuma', username:'rina.k', role:'Finance', status:'Aktif'},
-    {nama:'Wawan Setiadi', username:'wawan.s', role:'Gudang', status:'Aktif'},
-    {nama:'Lia Amelia', username:'lia.a', role:'Purchasing', status:'Non Aktif'},
+    {username:'adit_sls', nama:'Aditya Yuli Syaputra', email:'', role:'SLS', cabangKode:'00', salesman:'Budi Santoso', rayonKode:'BANTEN 1', areaKode:'BANTEN01', salesOffice:'', perusahaanBank:[]},
+    {username:'admin', nama:'admin', email:'admin@gmail.com', role:'ADM', cabangKode:'', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'admin2', nama:'Admin 2', email:'', role:'ADM', cabangKode:'', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'admin3', nama:'Admin 3', email:'', role:'ADM', cabangKode:'', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'afikri_sls', nama:'Ahmad Fikri', email:'', role:'SLS', cabangKode:'03', salesman:'Andi Wijaya', rayonKode:'BOGOR1', areaKode:'BANTEN01', salesOffice:'TANGERANG', perusahaanBank:[]},
+    {username:'agus_sls', nama:'Agus Purnomo', email:'', role:'SLS', cabangKode:'00', salesman:'Citra Lestari', rayonKode:'JAKARTA1', areaKode:'BANTEN01', salesOffice:'', perusahaanBank:[]},
+    {username:'alan_sls', nama:'Achmad Jaelani Mubaroq', email:'', role:'SLS', cabangKode:'00', salesman:'Dedi Kurniawan', rayonKode:'JAKARTA2', areaKode:'BANTEN01', salesOffice:'', perusahaanBank:[]},
+    {username:'amalia_csh', nama:'amalia_csh', email:'', role:'IKS-HO', cabangKode:'00', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'andri_sls', nama:'ANDRI MUHAMMAD', email:'', role:'SLS', cabangKode:'03', salesman:'Eka Putri', rayonKode:'BANDUNG 01', areaKode:'JABAR001', salesOffice:'TANGERANG', perusahaanBank:[]},
+    {username:'anton_sls', nama:'Anton Tri Wahyuni', email:'', role:'SLS', cabangKode:'02', salesman:'Fajar Nugroho', rayonKode:'CIREBON', areaKode:'JABAR001', salesOffice:'BANDUNG', perusahaanBank:[]},
+    {username:'dedi_csh', nama:'Dedi Firmansyah', email:'', role:'CSH', cabangKode:'06', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'indra_gdg', nama:'Indra Prasetyo', email:'', role:'GDG', cabangKode:'03', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'putri_fin', nama:'Putri Hidayat', email:'', role:'FIN', cabangKode:'00', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'yanto_pjk', nama:'Yanto Setiadi', email:'', role:'PJK', cabangKode:'05', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'ika_pur', nama:'Ika Syaputra', email:'', role:'PUR', cabangKode:'02', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'sigit_mgr', nama:'Sigit Susanto', email:'', role:'MGR', cabangKode:'07', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'aditya_drv', nama:'Aditya Wibowo', email:'', role:'DRV', cabangKode:'04', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'bayu_adg', nama:'Bayu Jaelani Mubaroq', email:'', role:'ADG', cabangKode:'01', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'fitri_sls', nama:'Fitri Handayani', email:'', role:'SLS', cabangKode:'06', salesman:'Budi Santoso', rayonKode:'BANTEN 1', areaKode:'BANTEN01', salesOffice:'SEMARANG', perusahaanBank:[]},
+    {username:'maya_csh', nama:'Maya Yulianto', email:'', role:'CSH', cabangKode:'03', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'umar_gdg', nama:'Umar Wahyuni', email:'', role:'GDG', cabangKode:'00', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'yulia_fin', nama:'Yulia Anggraini', email:'', role:'FIN', cabangKode:'05', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'diana_pjk', nama:'Diana Maulana', email:'', role:'PJK', cabangKode:'02', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'yudi_pur', nama:'Yudi Saputri', email:'', role:'PUR', cabangKode:'07', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'amalia_mgr', nama:'Amalia Rahmawati', email:'', role:'MGR', cabangKode:'04', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'dewi_drv', nama:'Dewi Fikri', email:'', role:'DRV', cabangKode:'01', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'joko_adg', nama:'Joko Utami', email:'', role:'ADG', cabangKode:'06', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'rendra_sls', nama:'Rendra Permana', email:'', role:'SLS', cabangKode:'03', salesman:'Andi Wijaya', rayonKode:'BOGOR1', areaKode:'JABAR001', salesOffice:'TANGERANG', perusahaanBank:[]},
+    {username:'zainal_csh', nama:'Zainal Wijaya', email:'', role:'CSH', cabangKode:'00', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'nurul_gdg', nama:'Nurul Gunawan', email:'', role:'GDG', cabangKode:'05', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'tono_fin', nama:'Tono Kusuma', email:'', role:'FIN', cabangKode:'02', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'ahmad_pjk', nama:'Ahmad Santoso', email:'', role:'PJK', cabangKode:'07', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'budi_pur', nama:'Budi Nugroho', email:'', role:'PUR', cabangKode:'04', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'gita_mgr', nama:'Gita Puspitasari', email:'', role:'MGR', cabangKode:'01', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'nanda_drv', nama:'Nanda Ramadhan', email:'', role:'DRV', cabangKode:'06', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'vina_adg', nama:'Vina Setiawan', email:'', role:'ADG', cabangKode:'03', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'rini_sls', nama:'Rini Purnomo', email:'', role:'SLS', cabangKode:'00', salesman:'Citra Lestari', rayonKode:'JAKARTA1', areaKode:'JATENG001', salesOffice:'', perusahaanBank:[]},
+    {username:'iwan_csh', nama:'Iwan Pratama', email:'', role:'CSH', cabangKode:'05', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'bagus_gdg', nama:'Bagus Rahayu', email:'', role:'GDG', cabangKode:'02', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'andri_fin', nama:'Andri Kurniawan', email:'', role:'FIN', cabangKode:'07', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'eka_pjk', nama:'Eka Firmansyah', email:'', role:'PJK', cabangKode:'04', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'kartika_pur', nama:'Kartika Prasetyo', email:'', role:'PUR', cabangKode:'01', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'sari_mgr', nama:'Sari Hidayat', email:'', role:'MGR', cabangKode:'06', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'rizky_drv', nama:'Rizky Setiadi', email:'', role:'DRV', cabangKode:'03', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'wawan_adg', nama:'Wawan Syaputra', email:'', role:'ADG', cabangKode:'00', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'umi_sls', nama:'Umi Susanto', email:'', role:'SLS', cabangKode:'05', salesman:'Dedi Kurniawan', rayonKode:'JAKARTA2', areaKode:'JATIM001', salesOffice:'MAKASSAR', perusahaanBank:[]},
+    {username:'agus_csh', nama:'Agus Wibowo', email:'', role:'CSH', cabangKode:'02', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'citra_gdg', nama:'Citra Jaelani Mubaroq', email:'', role:'GDG', cabangKode:'07', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'hendra_fin', nama:'Hendra Handayani', email:'', role:'FIN', cabangKode:'04', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'oki_pjk', nama:'Oki Yulianto', email:'', role:'PJK', cabangKode:'01', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'wahyu_pur', nama:'Wahyu Wahyuni', email:'', role:'PUR', cabangKode:'06', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'hadi_mgr', nama:'Hadi Anggraini', email:'', role:'MGR', cabangKode:'03', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'ratna_drv', nama:'Ratna Maulana', email:'', role:'DRV', cabangKode:'00', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'cahyo_adg', nama:'Cahyo Saputri', email:'', role:'ADG', cabangKode:'05', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'anton2_sls', nama:'Anton Rahmawati', email:'', role:'SLS', cabangKode:'02', salesman:'Eka Putri', rayonKode:'BANDUNG 01', areaKode:'JATIM002', salesOffice:'BANDUNG', perusahaanBank:[]},
+    {username:'fajar_csh', nama:'Fajar Fikri', email:'', role:'CSH', cabangKode:'07', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'lestari_gdg', nama:'Lestari Utami', email:'', role:'GDG', cabangKode:'04', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'taufik_fin', nama:'Taufik Permana', email:'', role:'FIN', cabangKode:'01', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'fauzan_pjk', nama:'Fauzan Wijaya', email:'', role:'PJK', cabangKode:'06', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'setiawan_pur', nama:'Setiawan Gunawan', email:'', role:'PUR', cabangKode:'03', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'vera_mgr', nama:'Vera Kusuma', email:'', role:'MGR', cabangKode:'00', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'achmad_drv', nama:'Achmad Santoso', email:'', role:'DRV', cabangKode:'05', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'dedi_adg', nama:'Dedi Nugroho', email:'', role:'ADG', cabangKode:'02', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'indra_sls', nama:'Indra Puspitasari', email:'', role:'SLS', cabangKode:'07', salesman:'Fajar Nugroho', rayonKode:'CIREBON', areaKode:'BANTEN01', salesOffice:'SIDOARJO', perusahaanBank:[]},
+    {username:'putri_csh', nama:'Putri Ramadhan', email:'', role:'CSH', cabangKode:'04', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'yanto_gdg', nama:'Yanto Setiawan', email:'', role:'GDG', cabangKode:'01', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'ika_fin', nama:'Ika Purnomo', email:'', role:'FIN', cabangKode:'06', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'sigit_pjk', nama:'Sigit Pratama', email:'', role:'PJK', cabangKode:'03', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'aditya_pur', nama:'Aditya Rahayu', email:'', role:'PUR', cabangKode:'00', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'bayu_mgr', nama:'Bayu Kurniawan', email:'', role:'MGR', cabangKode:'05', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'fitri_drv', nama:'Fitri Firmansyah', email:'', role:'DRV', cabangKode:'02', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'maya_adg', nama:'Maya Prasetyo', email:'', role:'ADG', cabangKode:'07', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'umar_sls', nama:'Umar Hidayat', email:'', role:'SLS', cabangKode:'04', salesman:'M. Reza Wijaya', rayonKode:'JEMBER', areaKode:'JABAR001', salesOffice:'MEDAN', perusahaanBank:[]},
+    {username:'yulia_csh', nama:'Yulia Setiadi', email:'', role:'CSH', cabangKode:'01', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'diana_gdg', nama:'Diana Syaputra', email:'', role:'GDG', cabangKode:'06', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'yudi_fin', nama:'Yudi Susanto', email:'', role:'FIN', cabangKode:'03', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'amalia_pjk', nama:'Amalia Wibowo', email:'', role:'PJK', cabangKode:'00', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'dewi_pur', nama:'Dewi Jaelani Mubaroq', email:'', role:'PUR', cabangKode:'05', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'joko_mgr', nama:'Joko Handayani', email:'', role:'MGR', cabangKode:'02', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'rendra_drv', nama:'Rendra Yulianto', email:'', role:'DRV', cabangKode:'07', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'zainal_adg', nama:'Zainal Wahyuni', email:'', role:'ADG', cabangKode:'04', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'nurul_sls', nama:'Nurul Anggraini', email:'', role:'SLS', cabangKode:'01', salesman:'Budi Santoso', rayonKode:'SIDOARJO', areaKode:'JATENG001', salesOffice:'SURABAYA', perusahaanBank:[]},
+    {username:'tono_csh', nama:'Tono Maulana', email:'', role:'CSH', cabangKode:'06', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'ahmad_gdg', nama:'Ahmad Saputri', email:'', role:'GDG', cabangKode:'03', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'budi_fin', nama:'Budi Rahmawati', email:'', role:'FIN', cabangKode:'00', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'gita_pjk', nama:'Gita Fikri', email:'', role:'PJK', cabangKode:'05', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'nanda_pur', nama:'Nanda Utami', email:'', role:'PUR', cabangKode:'02', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'vina_mgr', nama:'Vina Permana', email:'', role:'MGR', cabangKode:'07', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'rini_drv', nama:'Rini Wijaya', email:'', role:'DRV', cabangKode:'04', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'iwan_adg', nama:'Iwan Gunawan', email:'', role:'ADG', cabangKode:'01', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'bagus_sls', nama:'Bagus Kusuma', email:'', role:'SLS', cabangKode:'06', salesman:'Andi Wijaya', rayonKode:'SOLO', areaKode:'JATIM001', salesOffice:'SEMARANG', perusahaanBank:[]},
+    {username:'andri_csh', nama:'Andri Santoso', email:'', role:'CSH', cabangKode:'03', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'eka_gdg', nama:'Eka Nugroho', email:'', role:'GDG', cabangKode:'00', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
   ],
   reports:['Laporan Penjualan','Laporan Pembelian','Laporan Persediaan / Stok','Laporan Piutang','Laporan Hutang','Laporan Laba Rugi','Laporan Kas / Bank','Laporan Aktiva Tetap','Laporan Komisi Salesman','Laporan Aging Piutang'],
   glKategori:[
@@ -1987,5 +2243,292 @@ const DATA = {
       pphAktif:true, pphKode:'PPH 22 (0.3)', pphPersen:0.3, pphAmount:12222, ongkosAngkut:0, jumlahTotal:4509918,
       uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, sisaJumlah:4509918,
       pembayaran:0, tglInput:'10/08/2026 14:20:00', userInput:'sidik', tglEdit:'', userEdit:''},
+  ],
+  /* Master Rayon — menu Lain-lain > Rayon (page:'masterRayon', ganti dari
+     placeholder lama, lihat js/menu.js). Sesuai 3 screenshot MASERP yang
+     dikirim user 2026-08-18: "Daftar Rayon" (list, Total Record: 35) dan
+     "Rayon" (form: Kode Rayon readonly, Nama Rayon, Salesman dropdown,
+     checkbox Default) + sub-grid nested "Kecamatan" per rayon (kolom
+     Kecamatan/"Luar Kota?"/Hapus, tombol "+ Tambah Kecamatan", DAN gaya
+     pager BARU yang belum pernah dipakai modul lain: "First < [halaman]
+     to Y Of Total > Last" — lihat tplRyKecPager()/openRyKecPage() di
+     master-rayon.js).
+     35 baris: 10 nama PERSIS dari screenshot (BANTEN 1, BEKASI 1, BOGOR1,
+     BOGOR2, JAKARTA1, JAKARTA2, JEMBER, JOGJA, KEDIRI, MADIUN) + 25 nama
+     kota/kabupaten lain yang DIKARANG supaya genap 35 (Total Record: 35
+     persis sesuai screenshot). Kode Rayon = nama tanpa spasi (mis. "BANTEN
+     1"->"BANTEN1"), format ini terlihat langsung dari screenshot (kolom
+     Kode Rayon menampilkan string yang sama dengan Nama Rayon tanpa
+     spasi), BUKAN kode independen seperti "RY-xxx" yang dipakai
+     CST_AREA_LIST di master-customer.template.js — 2 modul ini SENGAJA
+     tidak disatukan (tidak ada instruksi untuk itu, dan constant
+     CST_AREA_LIST cuma dipakai lokal oleh form Customer, tidak
+     mereferensi DATA.rayon), jadi tidak ada risiko pecah referensi.
+     Salesman pakai daftar lokal RY_SALESMAN_LIST (10 nama PERSIS dari
+     screenshot: BABAY SUHAEMI dst.) di master-rayon.template.js, BUKAN
+     DATA.salesman (7 baris) yang sudah dipakai Dashboard Sales — supaya
+     tidak mengubah data yang sudah dipakai chart di modul lain.
+     isDefault: true hanya utk 2 baris (JAKARTA1 & KARAWANG) sekadar
+     contoh kedua state checkbox Default; sisanya false (unchecked)
+     sesuai screenshot form yang menunjukkan Default tidak dicentang +
+     label "Tidak".
+     kecamatan[]: screenshot BANTEN 1 menunjukkan total 117 kecamatan
+     dengan pager "1 to 12 Of 117" — mockup ini SENGAJA menurunkan skala
+     jumlah datanya (BANTEN1 dibuat 24 baris, rayon lain 3-11 baris) demi
+     kepraktisan, TAPI struktur pager barunya (tplRyKecPager) dibuat
+     BENAR-BENAR FUNGSIONAL (bukan dekoratif) supaya perilaku navigasi
+     multi-halamannya tetap teruji nyata. 10 nama kecamatan pertama utk
+     BANTEN1 (Angsana, Anyar, Balaraja, Bandung, Banjar, Banjarsari,
+     Baros, Bayah, Binuang, Bojonegara) PERSIS sesuai screenshot; sisanya
+     + seluruh rayon lain memakai daur ulang pool nama kecamatan gaya
+     Banten (KEC_POOL di master-rayon.template.js, ~60 nama) dengan
+     offset berbeda per rayon. Field luarKota:true diberi sesekali (tiap
+     baris ke-6 dalam tiap rayon) sekadar contoh kedua state checkbox
+     "Luar Kota?".
+
+     UPDATE 2026-08-18 (revisi sama hari): user mengirim ulang screenshot
+     "Daftar Rayon"/"Rayon" ASLI MASERP dgn kualitas lebih jelas, ternyata
+     Nama Rayon utk 10 baris PERSIS itu bukan cuma nama kota polos, tapi
+     ada rincian wilayah dalam kurung, mis. "BANTEN 01 (LEBAK, PANDEGLANG,
+     KAB & KOTA SERANG, KOTA CILEGON)", "BOGOR 2 (CILEUNGSI - CIBUBUR -
+     JONGGOL - CIBARUSAH - DEPOK)", dst — kode Rayon "BANTEN 1"/"BEKASI 1"
+     juga PAKAI SPASI (bukan "BANTEN1"/"BEKASI1" seperti revisi pertama).
+     10 baris ini sudah disesuaikan PERSIS dgn screenshot (kode+nama),
+     salesman/isDefault/kecamatan TIDAK berubah. 25 baris rayon "dikarang"
+     lainnya SENGAJA dibiarkan nama kota polos tanpa rincian kurung (mis.
+     JOGJA/KEDIRI di 10 baris asli pun memang tidak ada rincian kurung —
+     jadi ini konsisten, bukan berarti kurang lengkap). */
+  rayon:[
+    {kode:'BANTEN 1', nama:'BANTEN 01 (LEBAK, PANDEGLANG, KAB & KOTA SERANG, KOTA CILEGON)', salesman:'BABAY SUHAEMI', isDefault:false, kecamatan:[{nama:'Angsana', luarKota:false}, {nama:'Anyar', luarKota:false}, {nama:'Balaraja', luarKota:false}, {nama:'Bandung', luarKota:false}, {nama:'Banjar', luarKota:false}, {nama:'Banjarsari', luarKota:true}, {nama:'Baros', luarKota:false}, {nama:'Bayah', luarKota:false}, {nama:'Binuang', luarKota:false}, {nama:'Bojonegara', luarKota:false}, {nama:'Cikande', luarKota:false}, {nama:'Cikeusal', luarKota:true}, {nama:'Cikupa', luarKota:false}, {nama:'Cileles', luarKota:false}, {nama:'Cimanggu', luarKota:false}, {nama:'Cinangka', luarKota:false}, {nama:'Cipanas', luarKota:false}, {nama:'Cipeundeuy', luarKota:true}, {nama:'Cipocok Jaya', luarKota:false}, {nama:'Ciruas', luarKota:false}, {nama:'Curug', luarKota:false}, {nama:'Gunung Kaler', luarKota:false}, {nama:'Jawilan', luarKota:false}, {nama:'Jayanti', luarKota:true}]},
+    {kode:'BEKASI 1', nama:'BEKASI 1 (KAB. BEKASI - CIBITUNG)', salesman:'ARI ARIH GINTING SUKA', isDefault:false, kecamatan:[{nama:'Bayah', luarKota:false}, {nama:'Binuang', luarKota:false}, {nama:'Bojonegara', luarKota:false}, {nama:'Cikande', luarKota:false}, {nama:'Cikeusal', luarKota:false}, {nama:'Cikupa', luarKota:true}, {nama:'Cileles', luarKota:false}, {nama:'Cimanggu', luarKota:false}]},
+    {kode:'BOGOR1', nama:'BOGOR 1 (KAB. BOGOR - KOTA BOGOR)', salesman:'SYAEFUL ANWAR', isDefault:false, kecamatan:[{nama:'Cimanggu', luarKota:false}, {nama:'Cinangka', luarKota:false}, {nama:'Cipanas', luarKota:false}, {nama:'Cipeundeuy', luarKota:false}]},
+    {kode:'BOGOR2', nama:'BOGOR 2 (CILEUNGSI - CIBUBUR - JONGGOL - CIBARUSAH - DEPOK)', salesman:'ANDRI MUHAMMAD', isDefault:false, kecamatan:[{nama:'Gunung Kaler', luarKota:false}, {nama:'Jawilan', luarKota:false}, {nama:'Jayanti', luarKota:false}, {nama:'Kaduhejo', luarKota:false}, {nama:'Kibin', luarKota:false}, {nama:'Kopo', luarKota:true}, {nama:'Kragilan', luarKota:false}, {nama:'Kresek', luarKota:false}, {nama:'Kronjo', luarKota:false}]},
+    {kode:'JAKARTA1', nama:'JAKARTA 1 (JAKBAR - JAKPUS - JAKSEL)', salesman:'ISDI DWI JATMIKO', isDefault:true, kecamatan:[{nama:'Kresek', luarKota:false}, {nama:'Kronjo', luarKota:false}, {nama:'Kutamekar', luarKota:false}, {nama:'Labuan', luarKota:false}, {nama:'Legok', luarKota:false}]},
+    {kode:'JAKARTA2', nama:'JAKARTA 2 (JAKTIM - JAKUT - KOTA BEKASI - KAB. BEKASI)', salesman:'SYARIFUDIN', isDefault:false, kecamatan:[{nama:'Menes', luarKota:false}, {nama:'Munjul', luarKota:false}, {nama:'Padarincang', luarKota:false}, {nama:'Pagedangan', luarKota:false}, {nama:'Pamarayan', luarKota:false}, {nama:'Panggarangan', luarKota:true}, {nama:'Panimbang', luarKota:false}, {nama:'Petir', luarKota:false}, {nama:'Pontang', luarKota:false}, {nama:'Pulomerak', luarKota:false}]},
+    {kode:'JEMBER', nama:'JEMBER (JEMBER, BONDOWOSO, BANYUWANGI, SITUBONDO)', salesman:'ONI BAHTIAR', isDefault:false, kecamatan:[{nama:'Petir', luarKota:false}, {nama:'Pontang', luarKota:false}, {nama:'Pulomerak', luarKota:false}, {nama:'Rangkasbitung', luarKota:false}, {nama:'Sajira', luarKota:false}, {nama:'Saketi', luarKota:true}]},
+    {kode:'JOGJA', nama:'JOGJA', salesman:'ALBERTUS SUBANDONO', isDefault:false, kecamatan:[{nama:'Serang', luarKota:false}, {nama:'Sindangresmi', luarKota:false}, {nama:'Sobang', luarKota:false}, {nama:'Solear', luarKota:false}, {nama:'Sukamulya', luarKota:false}, {nama:'Tanara', luarKota:true}, {nama:'Tenjo', luarKota:false}, {nama:'Tigaraksa', luarKota:false}, {nama:'Tirtayasa', luarKota:false}, {nama:'Tunjung Teja', luarKota:false}, {nama:'Waringinkurung', luarKota:false}]},
+    {kode:'KEDIRI', nama:'KEDIRI', salesman:'ONY GALIH PURWO SAPUTRO', isDefault:false, kecamatan:[{nama:'Tigaraksa', luarKota:false}, {nama:'Tirtayasa', luarKota:false}, {nama:'Tunjung Teja', luarKota:false}, {nama:'Waringinkurung', luarKota:false}, {nama:'Warunggunung', luarKota:false}, {nama:'Cadasari', luarKota:true}, {nama:'Angsana', luarKota:false}]},
+    {kode:'MADIUN', nama:'MADIUN (MADIUN, PACITAN, PONOROGO, MAGETAN, NGAWI)', salesman:'AGUS PURNOMO', isDefault:false, kecamatan:[{nama:'Anyar', luarKota:false}, {nama:'Balaraja', luarKota:false}, {nama:'Bandung', luarKota:false}]},
+    {kode:'BEKASI2', nama:'BEKASI2', salesman:'BABAY SUHAEMI', isDefault:false, kecamatan:[{nama:'Binuang', luarKota:false}, {nama:'Bojonegara', luarKota:false}, {nama:'Cikande', luarKota:false}, {nama:'Cikeusal', luarKota:false}, {nama:'Cikupa', luarKota:false}, {nama:'Cileles', luarKota:true}, {nama:'Cimanggu', luarKota:false}, {nama:'Cinangka', luarKota:false}]},
+    {kode:'BOGOR3', nama:'BOGOR3', salesman:'ARI ARIH GINTING SUKA', isDefault:false, kecamatan:[{nama:'Cinangka', luarKota:false}, {nama:'Cipanas', luarKota:false}, {nama:'Cipeundeuy', luarKota:false}, {nama:'Cipocok Jaya', luarKota:false}]},
+    {kode:'BANDUNG 01', nama:'BANDUNG 01 (CILEUNYI, MAJALAYA, SUMEDANG, CICALENGKA, BANDUNG KOTA)', salesman:'SYAEFUL ANWAR', isDefault:false, kecamatan:[{nama:'Jawilan', luarKota:false}, {nama:'Jayanti', luarKota:false}, {nama:'Kaduhejo', luarKota:false}, {nama:'Kibin', luarKota:false}, {nama:'Kopo', luarKota:false}, {nama:'Kragilan', luarKota:true}, {nama:'Kresek', luarKota:false}, {nama:'Kronjo', luarKota:false}, {nama:'Kutamekar', luarKota:false}]},
+    {kode:'BANDUNG 02 BRT', nama:'BANDUNG 02 BRT (CIMAHI, CILILIN, SOREANG, CIWIDEY, PADALARANG, KOPO, BALEENDAH)', salesman:'ANDRI MUHAMMAD', isDefault:false, kecamatan:[{nama:'Kronjo', luarKota:false}, {nama:'Kutamekar', luarKota:false}, {nama:'Labuan', luarKota:false}, {nama:'Legok', luarKota:false}, {nama:'Mancak', luarKota:false}]},
+    {kode:'BANDUNG 03', nama:'BANDUNG 03 (PURWAKARTA, SUBANG)', salesman:'ISDI DWI JATMIKO', isDefault:false, kecamatan:[{nama:'Munjul', luarKota:false}, {nama:'Padarincang', luarKota:false}, {nama:'Pagedangan', luarKota:false}, {nama:'Pamarayan', luarKota:false}, {nama:'Panggarangan', luarKota:false}, {nama:'Panimbang', luarKota:true}, {nama:'Petir', luarKota:false}, {nama:'Pontang', luarKota:false}, {nama:'Pulomerak', luarKota:false}, {nama:'Rangkasbitung', luarKota:false}]},
+    {kode:'CIREBON', nama:'CIREBON, KUNINGAN , INDRAMYU, MAJALENGKA', salesman:'SYARIFUDIN', isDefault:false, kecamatan:[{nama:'Pontang', luarKota:false}, {nama:'Pulomerak', luarKota:false}, {nama:'Rangkasbitung', luarKota:false}, {nama:'Sajira', luarKota:false}, {nama:'Saketi', luarKota:false}, {nama:'Sepatan', luarKota:true}]},
+    {kode:'PRIANGAN TIMUR', nama:'PRIANGAN TIMUR (KAB. CIAMIS, KAB. GARUT, PANGANDARAN, TASIKMALAYA, KOTA BANJAR)', salesman:'ONI BAHTIAR', isDefault:false, kecamatan:[{nama:'Sindangresmi', luarKota:false}, {nama:'Sobang', luarKota:false}, {nama:'Solear', luarKota:false}, {nama:'Sukamulya', luarKota:false}, {nama:'Tanara', luarKota:false}, {nama:'Tenjo', luarKota:true}, {nama:'Tigaraksa', luarKota:false}, {nama:'Tirtayasa', luarKota:false}, {nama:'Tunjung Teja', luarKota:false}, {nama:'Waringinkurung', luarKota:false}, {nama:'Warunggunung', luarKota:false}]},
+    {kode:'BANDUNG 06', nama:'BANDUNG 06 (SUKABUMI & CIANJUR)', salesman:'ALBERTUS SUBANDONO', isDefault:false, kecamatan:[{nama:'Tirtayasa', luarKota:false}, {nama:'Tunjung Teja', luarKota:false}, {nama:'Waringinkurung', luarKota:false}, {nama:'Warunggunung', luarKota:false}, {nama:'Cadasari', luarKota:false}, {nama:'Angsana', luarKota:true}, {nama:'Anyar', luarKota:false}]},
+    {kode:'GARUT', nama:'GARUT', salesman:'ONY GALIH PURWO SAPUTRO', isDefault:false, kecamatan:[{nama:'Balaraja', luarKota:false}, {nama:'Bandung', luarKota:false}, {nama:'Banjar', luarKota:false}]},
+    {kode:'PURWAKARTA', nama:'PURWAKARTA', salesman:'AGUS PURNOMO', isDefault:false, kecamatan:[{nama:'Bojonegara', luarKota:false}, {nama:'Cikande', luarKota:false}, {nama:'Cikeusal', luarKota:false}, {nama:'Cikupa', luarKota:false}, {nama:'Cileles', luarKota:false}, {nama:'Cimanggu', luarKota:true}, {nama:'Cinangka', luarKota:false}, {nama:'Cipanas', luarKota:false}]},
+    {kode:'KARAWANG', nama:'KARAWANG', salesman:'BABAY SUHAEMI', isDefault:true, kecamatan:[{nama:'Cipanas', luarKota:false}, {nama:'Cipeundeuy', luarKota:false}, {nama:'Cipocok Jaya', luarKota:false}, {nama:'Ciruas', luarKota:false}]},
+    {kode:'SERANG', nama:'SERANG', salesman:'ARI ARIH GINTING SUKA', isDefault:false, kecamatan:[{nama:'Jayanti', luarKota:false}, {nama:'Kaduhejo', luarKota:false}, {nama:'Kibin', luarKota:false}, {nama:'Kopo', luarKota:false}, {nama:'Kragilan', luarKota:false}, {nama:'Kresek', luarKota:true}, {nama:'Kronjo', luarKota:false}, {nama:'Kutamekar', luarKota:false}, {nama:'Labuan', luarKota:false}]},
+    {kode:'CILEGON', nama:'CILEGON', salesman:'SYAEFUL ANWAR', isDefault:false, kecamatan:[{nama:'Kutamekar', luarKota:false}, {nama:'Labuan', luarKota:false}, {nama:'Legok', luarKota:false}, {nama:'Mancak', luarKota:false}, {nama:'Mekarbaru', luarKota:false}]},
+    {kode:'SUMEDANG', nama:'SUMEDANG', salesman:'ANDRI MUHAMMAD', isDefault:false, kecamatan:[{nama:'Padarincang', luarKota:false}, {nama:'Pagedangan', luarKota:false}, {nama:'Pamarayan', luarKota:false}, {nama:'Panggarangan', luarKota:false}, {nama:'Panimbang', luarKota:false}, {nama:'Petir', luarKota:true}, {nama:'Pontang', luarKota:false}, {nama:'Pulomerak', luarKota:false}, {nama:'Rangkasbitung', luarKota:false}, {nama:'Sajira', luarKota:false}]},
+    {kode:'MALANG', nama:'MALANG', salesman:'ISDI DWI JATMIKO', isDefault:false, kecamatan:[{nama:'Pulomerak', luarKota:false}, {nama:'Rangkasbitung', luarKota:false}, {nama:'Sajira', luarKota:false}, {nama:'Saketi', luarKota:false}, {nama:'Sepatan', luarKota:false}, {nama:'Serang', luarKota:true}]},
+    {kode:'SIDOARJO', nama:'SIDOARJO', salesman:'SYARIFUDIN', isDefault:false, kecamatan:[{nama:'Sobang', luarKota:false}, {nama:'Solear', luarKota:false}, {nama:'Sukamulya', luarKota:false}, {nama:'Tanara', luarKota:false}, {nama:'Tenjo', luarKota:false}, {nama:'Tigaraksa', luarKota:true}, {nama:'Tirtayasa', luarKota:false}, {nama:'Tunjung Teja', luarKota:false}, {nama:'Waringinkurung', luarKota:false}, {nama:'Warunggunung', luarKota:false}, {nama:'Cadasari', luarKota:false}]},
+    {kode:'GRESIK', nama:'GRESIK', salesman:'ONI BAHTIAR', isDefault:false, kecamatan:[{nama:'Tunjung Teja', luarKota:false}, {nama:'Waringinkurung', luarKota:false}, {nama:'Warunggunung', luarKota:false}, {nama:'Cadasari', luarKota:false}, {nama:'Angsana', luarKota:false}, {nama:'Anyar', luarKota:true}, {nama:'Balaraja', luarKota:false}]},
+    {kode:'MOJOKERTO', nama:'MOJOKERTO', salesman:'ALBERTUS SUBANDONO', isDefault:false, kecamatan:[{nama:'Bandung', luarKota:false}, {nama:'Banjar', luarKota:false}, {nama:'Banjarsari', luarKota:false}]},
+    {kode:'PASURUAN', nama:'PASURUAN', salesman:'ONY GALIH PURWO SAPUTRO', isDefault:false, kecamatan:[{nama:'Cikande', luarKota:false}, {nama:'Cikeusal', luarKota:false}, {nama:'Cikupa', luarKota:false}, {nama:'Cileles', luarKota:false}, {nama:'Cimanggu', luarKota:false}, {nama:'Cinangka', luarKota:true}, {nama:'Cipanas', luarKota:false}, {nama:'Cipeundeuy', luarKota:false}]},
+    {kode:'PROBOLINGGO', nama:'PROBOLINGGO', salesman:'AGUS PURNOMO', isDefault:false, kecamatan:[{nama:'Cipeundeuy', luarKota:false}, {nama:'Cipocok Jaya', luarKota:false}, {nama:'Ciruas', luarKota:false}, {nama:'Curug', luarKota:false}]},
+    {kode:'BANYUWANGI', nama:'BANYUWANGI', salesman:'BABAY SUHAEMI', isDefault:false, kecamatan:[{nama:'Kaduhejo', luarKota:false}, {nama:'Kibin', luarKota:false}, {nama:'Kopo', luarKota:false}, {nama:'Kragilan', luarKota:false}, {nama:'Kresek', luarKota:false}, {nama:'Kronjo', luarKota:true}, {nama:'Kutamekar', luarKota:false}, {nama:'Labuan', luarKota:false}, {nama:'Legok', luarKota:false}]},
+    {kode:'SOLO', nama:'SOLO', salesman:'ARI ARIH GINTING SUKA', isDefault:false, kecamatan:[{nama:'Labuan', luarKota:false}, {nama:'Legok', luarKota:false}, {nama:'Mancak', luarKota:false}, {nama:'Mekarbaru', luarKota:false}, {nama:'Menes', luarKota:false}]},
+    {kode:'PURWOKERTO', nama:'PURWOKERTO', salesman:'SYAEFUL ANWAR', isDefault:false, kecamatan:[{nama:'Pagedangan', luarKota:false}, {nama:'Pamarayan', luarKota:false}, {nama:'Panggarangan', luarKota:false}, {nama:'Panimbang', luarKota:false}, {nama:'Petir', luarKota:false}, {nama:'Pontang', luarKota:true}, {nama:'Pulomerak', luarKota:false}, {nama:'Rangkasbitung', luarKota:false}, {nama:'Sajira', luarKota:false}, {nama:'Saketi', luarKota:false}]},
+    {kode:'TEGAL', nama:'TEGAL', salesman:'ANDRI MUHAMMAD', isDefault:false, kecamatan:[{nama:'Rangkasbitung', luarKota:false}, {nama:'Sajira', luarKota:false}, {nama:'Saketi', luarKota:false}, {nama:'Sepatan', luarKota:false}, {nama:'Serang', luarKota:false}, {nama:'Sindangresmi', luarKota:true}]},
+    {kode:'PEKALONGAN', nama:'PEKALONGAN', salesman:'ISDI DWI JATMIKO', isDefault:false, kecamatan:[{nama:'Solear', luarKota:false}, {nama:'Sukamulya', luarKota:false}, {nama:'Tanara', luarKota:false}, {nama:'Tenjo', luarKota:false}, {nama:'Tigaraksa', luarKota:false}, {nama:'Tirtayasa', luarKota:true}, {nama:'Tunjung Teja', luarKota:false}, {nama:'Waringinkurung', luarKota:false}, {nama:'Warunggunung', luarKota:false}, {nama:'Cadasari', luarKota:false}, {nama:'Angsana', luarKota:false}]},
+  ],
+  /* Master Area/Wilayah — menu Lain-lain > Wilayah (page:'masterWilayah',
+     ganti dari placeholder lama, lihat js/menu.js). Sesuai screenshot
+     MASERP yang dikirim user 2026-08-18: "Area" (list, Total Record: 9)
+     dan "Wilayah" (form Ubah: Kode Wilayah readonly, Nama Wilayah,
+     Default checkbox+"Tidak", Supervisor dropdown, Gudang/Invoicing
+     dropdown, Sales Office input+search icon, Status radio Aktif/
+     Non-Aktif) + sub-card nested "Rayon" (daftar dropdown Rayon yang
+     SUDAH ADA di DATA.rayon — beda dari sub-grid Kecamatan di modul
+     Rayon yang bikin ENTITAS BARU, di sini cuma MEMILIH/menautkan
+     rayon yang sudah terdaftar, makanya field-nya rayonKode[] berisi
+     `kode` yang merujuk ke DATA.rayon, BUKAN objek baru — lihat
+     wlRayonNama()/tplWilayahForm() di master-wilayah.template.js).
+     9 baris PERSIS Total Record: 9 dari screenshot list. Baris
+     'JABAR001'/'JAWA BARAT' adalah contoh yang discreenshot detail form-
+     nya — 6 rayon yang ditautkan (CIREBON/BANDUNG 06/BANDUNG 02 BRT/
+     PRIANGAN TIMUR/BANDUNG 01/BANDUNG 03) PERSIS sesuai screenshot form
+     Wilayah, dan karena itu 6 baris DATA.rayon terkait (BANDUNG1/
+     BANDUNG2/BANDUNG3/CIREBON/TASIKMALAYA/SUKABUMI) di atas SENGAJA
+     di-enrich nama+kode-nya (lihat "UPDATE 2026-08-18" di komentar
+     DATA.rayon) supaya kedua modul (Rayon & Wilayah) konsisten memakai
+     satu sumber data yang sama, bukan 2 versi rayon yang beda. Baris
+     Wilayah lain (Supervisor/Gudang/Sales Office/rayonKode) TIDAK ada di
+     screenshot, jadi disusun masuk akal sendiri: BANTEN01 menaungi
+     rayon Jabodetabek+Banten yang belum dipakai JABAR001, JATENG001/
+     JATIM001/JATIM002 menaungi rayon kota Jateng/Jatim yang sudah ada,
+     sisanya (83117/AREAOFFICE/DUMMY/LN01) sengaja rayonKode:[] kosong
+     (area administratif/minor, bukan area penjualan aktif). */
+  area:[
+    {kode:'83117', nama:'Mataram , nusa tenggara barat', supervisor:'ILHAM YUSDIANSYAH', isDefault:false, gudang:'Head Office', invoicing:'Head Office', salesOffice:'SF01', status:'Aktif', rayonKode:[]},
+    {kode:'AREAOFFICE', nama:'AREAOFFICE', supervisor:'ILHAM YUSDIANSYAH', isDefault:false, gudang:'Head Office', invoicing:'Head Office', salesOffice:'SF01', status:'Aktif', rayonKode:[]},
+    {kode:'BANTEN01', nama:'JABODETABEK BANTEN', supervisor:'BABAY SUHAEMI', isDefault:false, gudang:'Tangerang', invoicing:'Tangerang', salesOffice:'SF03', status:'Aktif', rayonKode:['BANTEN 1','BEKASI 1','BEKASI2','BOGOR1','BOGOR2','BOGOR3','JAKARTA1','JAKARTA2','KARAWANG','SERANG','CILEGON']},
+    {kode:'DUMMY', nama:'dummy', supervisor:'ILHAM YUSDIANSYAH', isDefault:false, gudang:'Head Office', invoicing:'Head Office', salesOffice:'SF00', status:'Non-Aktif', rayonKode:[]},
+    {kode:'JABAR001', nama:'JAWA BARAT', supervisor:'ANTONIOUS SURYO WINARNO', isDefault:false, gudang:'Bandung', invoicing:'Bandung', salesOffice:'SF04', status:'Aktif', rayonKode:['CIREBON','BANDUNG 06','BANDUNG 02 BRT','PRIANGAN TIMUR','BANDUNG 01','BANDUNG 03']},
+    {kode:'JATENG001', nama:'JATENG001', supervisor:'PERA LESMANA', isDefault:false, gudang:'Semarang', invoicing:'Semarang', salesOffice:'SF02', status:'Aktif', rayonKode:['SOLO','PURWOKERTO','TEGAL','PEKALONGAN']},
+    {kode:'JATIM001', nama:'JATIM001', supervisor:'ILHAM YUSDIANSYAH', isDefault:false, gudang:'Surabaya', invoicing:'Surabaya', salesOffice:'SF01', status:'Aktif', rayonKode:['JEMBER','KEDIRI','MADIUN','MALANG']},
+    {kode:'JATIM002', nama:'JATIM002', supervisor:'ILHAM YUSDIANSYAH', isDefault:false, gudang:'Surabaya', invoicing:'Surabaya', salesOffice:'SF01', status:'Aktif', rayonKode:['SIDOARJO','GRESIK','MOJOKERTO','PASURUAN','PROBOLINGGO','BANYUWANGI']},
+    {kode:'LN01', nama:'LN01', supervisor:'ILHAM YUSDIANSYAH', isDefault:false, gudang:'Head Office', invoicing:'Head Office', salesOffice:'SF00', status:'Aktif', rayonKode:[]},
+  ],
+  /* UPDATE 2026-08-18 (lanjutan): field `salesOffice` di atas SEMULA berisi
+     nama cabang bebas (MATARAM/HEAD OFFICE/TANGERANG/BANDUNG/SEMARANG/
+     SURABAYA/'', dipilih dari WL_CABANG_LIST dekoratif di form Wilayah
+     karena modul Sales Office sungguhan belum ada). Setelah user mengirim
+     screenshot MASERP "Daftar Sales Office" (5 baris SF00-SF04) yang
+     menunjukkan Area mana saja yang benar-benar tertaut ke tiap Sales
+     Office, field ini DIKOREKSI jadi menyimpan KODE Sales Office (SF00 s.d.
+     SF04, merujuk DATA.salesOffice di bawah) PERSIS sesuai screenshot:
+     SF00(SIDOARJO DC)→DUMMY,LN01 · SF01(SIDOARJO)→83117,AREAOFFICE,
+     JATIM001,JATIM002 · SF02(SEMARANG)→JATENG001 · SF03(TANGERANG)→
+     BANTEN01 · SF04(BANDUNG)→JABAR001 — total 9 area persis jumlah baris
+     DATA.area, tidak ada yang tercecer. Modul Master Wilayah (js/pages/
+     master-wilayah.*) ikut disesuaikan: picker "Sales Office" di form-nya
+     sekarang menautkan ke DATA.salesOffice sungguhan (bukan lagi
+     WL_CABANG_LIST dekoratif 8-cabang) — lihat catatan di module tsb. */
+  salesOffice:[
+    {kode:'SF00', nama:'SIDOARJO (DC)', ascm:'EDI YUWONO', status:'Aktif'},
+    {kode:'SF01', nama:'SIDOARJO', ascm:'EDI YUWONO', status:'Aktif'},
+    {kode:'SF02', nama:'SEMARANG', ascm:'ALDESGA DAVINO', status:'Aktif'},
+    {kode:'SF03', nama:'TANGERANG', ascm:'FIRMAN HIDAYAT', status:'Aktif'},
+    {kode:'SF04', nama:'BANDUNG', ascm:'ALDESGA DAVINO', status:'Aktif'},
+  ],
+  /* Master Group User — menu User Security > Group User (page:'groupUser').
+     Sesuai 3 screenshot MASERP yang dikirim user 2026-08-18: "Daftar Group
+     Hak Akses" (list: dark header + tombol "+Add MNGR"/"+Add PURCH"/
+     "+Add SALES"/"+Add" + tombol merah "Tutorial", toolbar page-size(20)+
+     Pencarian Global, kolom User Role Code/Name/Description/Gudang/
+     Administrator?/Edit/Delete, pager BARU gaya "First < [halaman] to Y
+     Of Total > Last" — SAMA PERSIS dengan tplRyKecPager() di
+     master-rayon.template.js, di sini DIPAKAI ULANG sebagai pager LIST
+     UTAMA/luar untuk pertama kalinya, bukan cuma sub-grid — lihat
+     tplGuPager() di group-user.template.js & class CSS .ry-kec-pager di
+     style.css yang sekarang dipakai lintas-modul, "Total Record: 60") dan
+     "Master User Role" (form Ubah: Kode User Role readonly abu-abu, Name,
+     Keterangan, field "Pilih Gudang" input+tombol search yang buka modal
+     checklist multi-pilih ke DATA.gudang, tombol "Duplicate Hak Akses dari
+     Jabatan Lain" yang buka modal pilih role lain lalu menyalin Keterangan+
+     Gudang-nya /simulasi duplikasi hak akses karena mockup ini belum py
+     matrix permission sungguhan/, checkbox "Is Administrator", Simpan/
+     Cancel).
+
+     20 baris PERTAMA (ACC s.d. BBB) PERSIS nama/kode dari screenshot list
+     (halaman pertama). Kolom "Gudang" pada screenshot asli menampilkan kode
+     gudang milik installasi MASERP lain (mis. "GKR-00"/"GRJ-00"/"NON-00")
+     yang TIDAK match DATA.gudang milik DBM — demi referential integrity
+     lintas modul (sama seperti WL_CABANG_LIST dipakai ulang di Master
+     Wilayah), kode gudang asli itu SENGAJA DIGANTI dengan kode gudang DBM
+     yang sudah ada di DATA.gudang (lihat js/pages/gudang.template.js/
+     GDG_CABANG_LIST): role tanpa akhiran cabang (mis. ADG/ADS/APJA/APJF)
+     dapat 1 gudang utama per cabang (00-GUU s.d. 07-GUU = akses lintas
+     cabang), role dengan akhiran -HO/-SMG/-TGR dapat SELURUH kode gudang
+     milik cabang itu saja (mis. ADG-HO dapat semua 00-GUU*, ADG-SMG dapat
+     semua 06-GUU*, ADG-TGR dapat semua 03-GUU*). ADM (Administrator?:true,
+     satu-satunya baris true persis screenshot) dapat semua 8 gudang utama.
+     Baris 'BBB'/'bbb' PERSIS apa adanya dari screenshot (baris contoh/test
+     di data asli, bukan salah ketik saya).
+
+     40 baris SISANYA (CS s.d. SALES-HO) adalah baris TAMBAHAN yang saya
+     susun sendiri (screenshot cuma menunjukkan halaman pertama, 20 dari 60
+     baris) supaya "Total Record: 60" tetap PERSIS sesuai screenshot & pager
+     baru bisa didemokan pindah 3 halaman sungguhan (page-size 20 x 3 hal. =
+     60) — mengikuti kode MNGR/PURCH/SALES supaya 3 tombol quick-add
+     "+Add MNGR"/"+Add PURCH"/"+Add SALES" di toolbar punya role yang benar-
+     benar cocok/masuk akal untuk didemokan menambah varian barunya. */
+  groupUser:[
+    {kode:'ACC', nama:'Accounting', keterangan:'Staff Accounting', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:false},
+    {kode:'ADG', nama:'Admin Gudang', keterangan:'Admin Gudang (Seluruh Cabang)', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:false},
+    {kode:'ADG-HO', nama:'Admin Gudang HO', keterangan:'Admin Gudang Head Office', gudangKode:['00-GUU','00-GUU-02','00-GUU-03','00-GUU-04'], isAdmin:false},
+    {kode:'ADG-SMG', nama:'Admin Gudang Semarang', keterangan:'Admin Gudang Cabang Semarang', gudangKode:['06-GUU','06-GUU-02','06-GUU-03','06-GUU-04','06-GUU-05'], isAdmin:false},
+    {kode:'ADG-TGR', nama:'Admin Gudang Tangerang', keterangan:'Admin Gudang Cabang Tangerang', gudangKode:['03-GUU','03-GUU-02','03-GUU-03','03-GUU-04'], isAdmin:false},
+    {kode:'ADM', nama:'Administrator', keterangan:'Administrator Sistem (Akses Penuh)', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:true},
+    {kode:'ADS', nama:'Admin Sales', keterangan:'Admin Sales (Seluruh Cabang)', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:false},
+    {kode:'ADS-HO', nama:'Admin Sales HO', keterangan:'Admin Sales Head Office', gudangKode:['00-GUU','00-GUU-02','00-GUU-03','00-GUU-04'], isAdmin:false},
+    {kode:'ADS-TGR', nama:'Admin Sales Tangerang', keterangan:'Admin Sales Cabang Tangerang', gudangKode:['03-GUU','03-GUU-02','03-GUU-03','03-GUU-04'], isAdmin:false},
+    {kode:'ADT', nama:'Admin Tax', keterangan:'Admin Tax / Perpajakan', gudangKode:['00-GUU'], isAdmin:false},
+    {kode:'APB', nama:'Account Payable BUMI', keterangan:'Account Payable', gudangKode:['00-GUU'], isAdmin:false},
+    {kode:'APJA', nama:'Penanggung Jawab Alat Kesehatan', keterangan:'Penanggung Jawab Alat Kesehatan (Seluruh Cabang)', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:false},
+    {kode:'APJA-HO', nama:'Penanggung Jawab Alat Kesehatan HO', keterangan:'Penanggung Jawab Alat Kesehatan Head Office', gudangKode:['00-GUU','00-GUU-02','00-GUU-03','00-GUU-04'], isAdmin:false},
+    {kode:'APJA-SMG', nama:'Penanggung Jawab Alat Kesehatan Semarang', keterangan:'Penanggung Jawab Alat Kesehatan Cabang Semarang', gudangKode:['06-GUU','06-GUU-02','06-GUU-03','06-GUU-04','06-GUU-05'], isAdmin:false},
+    {kode:'APJA-TGR', nama:'Penanggung Jawab Alat Kesehatan Tangerang', keterangan:'Penanggung Jawab Alat Kesehatan Cabang Tangerang', gudangKode:['03-GUU','03-GUU-02','03-GUU-03','03-GUU-04'], isAdmin:false},
+    {kode:'APJF', nama:'Penanggung Jawab Teknis Farma', keterangan:'Penanggung Jawab Teknis Farmasi (Seluruh Cabang)', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:false},
+    {kode:'APJF-HO', nama:'Penanggung Jawab Teknis Farma HO', keterangan:'Penanggung Jawab Teknis Farmasi Head Office', gudangKode:['00-GUU','00-GUU-02','00-GUU-03','00-GUU-04'], isAdmin:false},
+    {kode:'APJF-SMG', nama:'Penanggung Jawab Teknis Farma Semarang', keterangan:'Penanggung Jawab Teknis Farmasi Cabang Semarang', gudangKode:['06-GUU','06-GUU-02','06-GUU-03','06-GUU-04','06-GUU-05'], isAdmin:false},
+    {kode:'APJF-TGR', nama:'Penanggung Jawab Teknis Farma Tangerang', keterangan:'Penanggung Jawab Teknis Farmasi Cabang Tangerang', gudangKode:['03-GUU','03-GUU-02','03-GUU-03','03-GUU-04'], isAdmin:false},
+    {kode:'BBB', nama:'bbb', keterangan:'bbb', gudangKode:[], isAdmin:false},
+
+    {kode:'CS', nama:'Customer Service', keterangan:'Staff Customer Service (Seluruh Cabang)', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:false},
+    {kode:'CS-HO', nama:'Customer Service HO', keterangan:'Customer Service Head Office', gudangKode:['00-GUU','00-GUU-02','00-GUU-03','00-GUU-04'], isAdmin:false},
+    {kode:'CS-SMG', nama:'Customer Service Semarang', keterangan:'Customer Service Cabang Semarang', gudangKode:['06-GUU','06-GUU-02','06-GUU-03','06-GUU-04','06-GUU-05'], isAdmin:false},
+    {kode:'CS-TGR', nama:'Customer Service Tangerang', keterangan:'Customer Service Cabang Tangerang', gudangKode:['03-GUU','03-GUU-02','03-GUU-03','03-GUU-04'], isAdmin:false},
+    {kode:'DRV', nama:'Driver', keterangan:'Driver Pengiriman (Seluruh Cabang)', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:false},
+    {kode:'DRV-HO', nama:'Driver HO', keterangan:'Driver Pengiriman Head Office', gudangKode:['00-GUU','00-GUU-02','00-GUU-03','00-GUU-04'], isAdmin:false},
+    {kode:'DRV-SMG', nama:'Driver Semarang', keterangan:'Driver Pengiriman Cabang Semarang', gudangKode:['06-GUU','06-GUU-02','06-GUU-03','06-GUU-04','06-GUU-05'], isAdmin:false},
+    {kode:'DRV-TGR', nama:'Driver Tangerang', keterangan:'Driver Pengiriman Cabang Tangerang', gudangKode:['03-GUU','03-GUU-02','03-GUU-03','03-GUU-04'], isAdmin:false},
+    {kode:'EXP', nama:'Staff Ekspedisi', keterangan:'Staff Ekspedisi (Seluruh Cabang)', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:false},
+    {kode:'EXP-HO', nama:'Staff Ekspedisi HO', keterangan:'Staff Ekspedisi Head Office', gudangKode:['00-GUU','00-GUU-02','00-GUU-03','00-GUU-04'], isAdmin:false},
+    {kode:'EXP-SMG', nama:'Staff Ekspedisi Semarang', keterangan:'Staff Ekspedisi Cabang Semarang', gudangKode:['06-GUU','06-GUU-02','06-GUU-03','06-GUU-04','06-GUU-05'], isAdmin:false},
+    {kode:'EXP-TGR', nama:'Staff Ekspedisi Tangerang', keterangan:'Staff Ekspedisi Cabang Tangerang', gudangKode:['03-GUU','03-GUU-02','03-GUU-03','03-GUU-04'], isAdmin:false},
+    {kode:'FIN', nama:'Finance', keterangan:'Staff Finance (Seluruh Cabang)', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:false},
+    {kode:'FIN-HO', nama:'Finance HO', keterangan:'Staff Finance Head Office', gudangKode:['00-GUU','00-GUU-02','00-GUU-03','00-GUU-04'], isAdmin:false},
+    {kode:'GDG', nama:'Staff Gudang', keterangan:'Staff Gudang (Seluruh Cabang)', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:false},
+    {kode:'GDG-HO', nama:'Staff Gudang HO', keterangan:'Staff Gudang Head Office', gudangKode:['00-GUU','00-GUU-02','00-GUU-03','00-GUU-04'], isAdmin:false},
+    {kode:'GDG-SMG', nama:'Staff Gudang Semarang', keterangan:'Staff Gudang Cabang Semarang', gudangKode:['06-GUU','06-GUU-02','06-GUU-03','06-GUU-04','06-GUU-05'], isAdmin:false},
+    {kode:'GDG-TGR', nama:'Staff Gudang Tangerang', keterangan:'Staff Gudang Cabang Tangerang', gudangKode:['03-GUU','03-GUU-02','03-GUU-03','03-GUU-04'], isAdmin:false},
+    {kode:'HRD', nama:'Human Resource', keterangan:'Staff Human Resource / Personalia', gudangKode:['00-GUU'], isAdmin:false},
+    {kode:'ITG', nama:'IT & Teknologi Informasi', keterangan:'Staff IT / Teknologi Informasi', gudangKode:['00-GUU'], isAdmin:false},
+    {kode:'KAS', nama:'Kasir', keterangan:'Kasir (Seluruh Cabang)', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:false},
+    {kode:'KAS-HO', nama:'Kasir HO', keterangan:'Kasir Head Office', gudangKode:['00-GUU','00-GUU-02','00-GUU-03','00-GUU-04'], isAdmin:false},
+    {kode:'KAS-SMG', nama:'Kasir Semarang', keterangan:'Kasir Cabang Semarang', gudangKode:['06-GUU','06-GUU-02','06-GUU-03','06-GUU-04','06-GUU-05'], isAdmin:false},
+    {kode:'KAS-TGR', nama:'Kasir Tangerang', keterangan:'Kasir Cabang Tangerang', gudangKode:['03-GUU','03-GUU-02','03-GUU-03','03-GUU-04'], isAdmin:false},
+    {kode:'KOL', nama:'Kolektor Piutang', keterangan:'Kolektor Piutang (Seluruh Cabang)', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:false},
+    {kode:'KOL-HO', nama:'Kolektor Piutang HO', keterangan:'Kolektor Piutang Head Office', gudangKode:['00-GUU','00-GUU-02','00-GUU-03','00-GUU-04'], isAdmin:false},
+    {kode:'KOL-SMG', nama:'Kolektor Piutang Semarang', keterangan:'Kolektor Piutang Cabang Semarang', gudangKode:['06-GUU','06-GUU-02','06-GUU-03','06-GUU-04','06-GUU-05'], isAdmin:false},
+    {kode:'KOL-TGR', nama:'Kolektor Piutang Tangerang', keterangan:'Kolektor Piutang Cabang Tangerang', gudangKode:['03-GUU','03-GUU-02','03-GUU-03','03-GUU-04'], isAdmin:false},
+    {kode:'MNGR', nama:'Manager', keterangan:'Manager (Seluruh Cabang)', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:false},
+    {kode:'MNGR-HO', nama:'Manager HO', keterangan:'Manager Head Office', gudangKode:['00-GUU','00-GUU-02','00-GUU-03','00-GUU-04'], isAdmin:false},
+    {kode:'MNGR-SMG', nama:'Manager Semarang', keterangan:'Manager Cabang Semarang', gudangKode:['06-GUU','06-GUU-02','06-GUU-03','06-GUU-04','06-GUU-05'], isAdmin:false},
+    {kode:'MNGR-TGR', nama:'Manager Tangerang', keterangan:'Manager Cabang Tangerang', gudangKode:['03-GUU','03-GUU-02','03-GUU-03','03-GUU-04'], isAdmin:false},
+    {kode:'OPS', nama:'Operasional Gudang', keterangan:'Staff Operasional Gudang', gudangKode:['00-GUU'], isAdmin:false},
+    {kode:'PJK', nama:'Staff Pajak', keterangan:'Staff Pajak / Perpajakan', gudangKode:['00-GUU'], isAdmin:false},
+    {kode:'PURCH', nama:'Purchasing', keterangan:'Purchasing (Seluruh Cabang)', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:false},
+    {kode:'PURCH-HO', nama:'Purchasing HO', keterangan:'Purchasing Head Office', gudangKode:['00-GUU','00-GUU-02','00-GUU-03','00-GUU-04'], isAdmin:false},
+    {kode:'PURCH-SMG', nama:'Purchasing Semarang', keterangan:'Purchasing Cabang Semarang', gudangKode:['06-GUU','06-GUU-02','06-GUU-03','06-GUU-04','06-GUU-05'], isAdmin:false},
+    {kode:'PURCH-TGR', nama:'Purchasing Tangerang', keterangan:'Purchasing Cabang Tangerang', gudangKode:['03-GUU','03-GUU-02','03-GUU-03','03-GUU-04'], isAdmin:false},
+    {kode:'SALES', nama:'Sales', keterangan:'Sales (Seluruh Cabang)', gudangKode:['00-GUU','01-GUU','02-GUU','03-GUU','04-GUU','05-GUU','06-GUU','07-GUU'], isAdmin:false},
+    {kode:'SALES-HO', nama:'Sales HO', keterangan:'Sales Head Office', gudangKode:['00-GUU','00-GUU-02','00-GUU-03','00-GUU-04'], isAdmin:false},
+  ],
+  /* Administrasi Bulanan — menu Pengaturan > Administrasi Bulanan (page:
+     'adminBulanan', sebelumnya submenu Pengaturan ini bahkan tidak ada di
+     daftar — struktur lama cuma 3 placeholder generik "Setting Umum/
+     Setting Approval/Setting Numbering", diganti total jadi 12 item sesuai
+     screenshot sidebar MASERP: Update Software/Backup & Restore/Tutup
+     Buku/Schedule Maintenance/Generasi Sementara/Data Transfer/Saldo Awal/
+     Administrasi Bulanan/Regenerate Journal/Import Transaction/Import
+     Custom Field/Export Master — lihat js/menu.js; 11 dari 12 masih
+     placeholder, belum ada screenshot detailnya).
+
+     Sesuai screenshot MASERP "Administrasi Bulanan" yang dikirim user
+     2026-08-18: halaman UTILITY sederhana (BUKAN CRUD — tidak ada +Tambah/
+     Ubah/Hapus/pager/pencarian sama sekali), header terang [BUKA dark-
+     header seperti modul lain] dgn ikon+judul biru + tombol merah
+     "Tutorial", tabel statis No/Nama/Keterangan/tombol "Process" per
+     baris. 5 baris PERSIS teks dari screenshot (nama & keterangan lengkap
+     apa adanya, termasuk ejaan/tanda baca asli seperti "bulan Lalu" &
+     "dibulan ini" tanpa spasi — quirk data asli, bukan salah ketik saya).
+     Klik "Process" HANYA menampilkan `confirm()` "Apakah Anda yakin ingin
+     melakukan Proses [Nama]?" TANPA reaksi apa pun (baik user klik OK
+     maupun Cancel, tidak ada perubahan state/data) — sesuai instruksi
+     eksplisit user, karena proses-proses ini (generate jurnal, kunci
+     transaksi, dst.) butuh logic backend sungguhan yang di luar cakupan
+     mockup ini. */
+  adminBulanan:[
+    {nama:'Generate Jurnal Fixed Asset', keterangan:'Proses ini akan menghasilkan jurnal untuk masing-masing Inventaris (Fixed Asset) yang masih terjadi penyusutan.'},
+    {nama:'Kunci Transaksi Bulan Lalu', keterangan:'Apabila sudah ingin mencetak laporan Laba Rugi dan Neraca bulan, sebaiknya tidak membolehkan transaksi lagi di bulan lalu supaya tidak berubah laporannya.'},
+    {nama:'Generate Currency Accrual', keterangan:'Apabila perusahaan Anda menggunakan transaksi dengan mata uang asing, Anda dapat memilih untuk meraup untung/rugi kurs untuk transaksi tersebut berdasarkan kurs akhir bulan.'},
+    {nama:'Reject Expired Date Sales Quotation Pending', keterangan:'Proses ini akan melakukan Reject by Expired Date Sales Quotation Pending yang masih pending bulan Lalu.'},
+    {nama:'Transfer batch number yang akan ED & sudah ED', keterangan:'Proses ini akan melakukan transfer stock barang batch number yang akan ED ke gudang Near ED dan Sudah ED dibulan ini ke gudang Reject'},
   ],
 };

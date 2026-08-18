@@ -111,6 +111,7 @@ const PAGE_MODULES={
   pembelianBPB:{srcs:['js/pages/pembelian-bpb.template.js','js/pages/pembelian-bpb.js'], fn:'renderPembelianBPBPage'},
   kategoriBarang:{srcs:['js/pages/kategori-barang.template.js','js/pages/kategori-barang.js'], fn:'renderKategoriBarangPage'},
   customerGroup:{srcs:['js/pages/customer-group.template.js','js/pages/customer-group.js'], fn:'renderCustomerGroupPage'},
+  customers:{srcs:['js/pages/master-customer.template.js','js/pages/master-customer.js'], fn:'renderMasterCustomerPage'},
   promotion:{srcs:['js/pages/promotion.template.js','js/pages/promotion.js'], fn:'renderPromotionPage'},
   salesQuotation:{srcs:['js/pages/sales-quotation.template.js','js/pages/sales-quotation.js'], fn:'renderSalesQuotationPage'},
   salesOrders:{srcs:['js/pages/sales-order.template.js','js/pages/sales-order.js'], fn:'renderSalesOrderPage'},
@@ -121,6 +122,12 @@ const PAGE_MODULES={
   kasBank:{srcs:['js/pages/kas-bank.template.js','js/pages/kas-bank.js'], fn:'renderKasBankPage'},
   reports:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReports'},
   companyProfile:{srcs:['js/pages/company-profile.template.js','js/pages/company-profile.js'], fn:'renderCompanyProfile'},
+  masterRayon:{srcs:['js/pages/master-rayon.template.js','js/pages/master-rayon.js'], fn:'renderMasterRayonPage'},
+  masterWilayah:{srcs:['js/pages/master-wilayah.template.js','js/pages/master-wilayah.js'], fn:'renderMasterWilayahPage'},
+  groupUser:{srcs:['js/pages/group-user.template.js','js/pages/group-user.js'], fn:'renderGroupUserPage'},
+  users:{srcs:['js/pages/master-user.template.js','js/pages/master-user.js'], fn:'renderMasterUserPage'},
+  salesOffice:{srcs:['js/pages/sales-office.template.js','js/pages/sales-office.js'], fn:'renderSalesOfficePage'},
+  adminBulanan:{srcs:['js/pages/admin-bulanan.template.js','js/pages/admin-bulanan.js'], fn:'renderAdminBulananPage'},
 };
 const loadedModules=new Set();
 
@@ -161,7 +168,6 @@ function renderPage(){
   }
 
   const pages={
-    customers:{title:'Customer', cols:[['kode','Kode'],['nama','Nama Customer'],['kota','Kota'],['salesman','Salesman'],['limit','Limit Kredit',true],['status','Status','pill']], rows:DATA.customers},
     salesman:{title:'Salesman', cols:[['nama','Nama Salesman'],['area','Area'],['target','Target',true],['realisasi','Realisasi',true]], rows:DATA.salesman},
     packing:{title:'Packing', cols:[['no','No. Packing'],['tgl','Tanggal'],['so','No. SO'],['status','Status','pill']], rows:DATA.packing},
     penerimaanPiutang:{title:'Penerimaan Piutang', cols:[['no','No. Penerimaan'],['tgl','Tanggal'],['customer','Customer'],['jumlah','Jumlah',true],['metode','Metode']], rows:DATA.penerimaanPiutang},
@@ -171,7 +177,6 @@ function renderPage(){
     transaksiKas:{title:'Transaksi Kas', cols:[['tgl','Tanggal'],['ket','Keterangan'],['tipe','Tipe','pill'],['kategori','Kategori'],['jumlah','Jumlah',true]], rows:DATA.transaksiKas},
     jurnalUmum:{title:'Jurnal Umum', cols:[['tgl','Tanggal'],['no','No. Jurnal'],['akun','Akun'],['debit','Debit',true],['kredit','Kredit',true]], rows:DATA.jurnalUmum},
     aktivaTetap:{title:'Daftar Aktiva Tetap', cols:[['kode','Kode'],['nama','Nama Aktiva'],['tahun','Tahun'],['nilai','Nilai Perolehan',true],['akumulasi','Akum. Penyusutan',true],['buku','Nilai Buku',true]], rows:DATA.aktivaTetap},
-    users:{title:'Daftar User', cols:[['nama','Nama'],['username','Username'],['role','Role'],['status','Status','pill']], rows:DATA.users},
   };
   const cfg=pages[currentPage];
   if(cfg) return renderListPage(cfg);

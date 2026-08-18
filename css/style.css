@@ -258,6 +258,22 @@ canvas{max-width:100%;}
 .form-page-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;padding-top:16px;border-top:1px solid var(--border);}
 .btn-outline{background:#fff;color:var(--blue);border:1px solid var(--blue);padding:8px 14px;border-radius:6px;font-size:12.3px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
 .btn-outline:hover{background:#eaf1fb;}
+
+/* Tombol "Batalkan" gaya teks-polos (tanpa border/background) — dipakai
+   pertama kali di form Master Sales Office (screenshot MASERP 2026-08-18
+   menunjukkan "Batalkan" sebagai teks biru polos, BEDA dari .btn-outline
+   yang punya border, dipakai form-page-actions modul lain seperti Rayon/
+   Wilayah/Group User/Master User). Dibuat class terpisah supaya modul lain
+   yang screenshot-nya memang menunjukkan tombol bordered tetap pakai
+   .btn-outline apa adanya. */
+.btn-link-plain{background:none;border:none;color:var(--blue);font-weight:600;font-size:12.8px;cursor:pointer;padding:9px 6px;}
+.btn-link-plain:hover{text-decoration:underline;}
+
+/* Ikon sort dekoratif kecil di header kolom list — dipakai pertama kali
+   di Master Sales Office (screenshot menunjukkan ikon panah kecil di
+   beberapa header kolom). Non-fungsional (murni visual), modul lain tidak
+   memakainya karena screenshot masing-masing tidak menunjukkannya jelas. */
+.th-sort{color:var(--text-light);font-size:10px;margin-left:4px;}
 .toolbar-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
 .form-group input.readonly-cell,.form-group select.readonly-cell{background:#f4f6fb;color:var(--text-light);}
 
@@ -305,6 +321,25 @@ canvas{max-width:100%;}
 .radio-group input{width:auto;}
 
 .upload-box{border:1px solid var(--border);border-radius:6px;min-height:64px;overflow-y:auto;padding:6px 10px;font-size:12px;color:var(--text-light);background:#f9fafc;}
+
+/* Kotak preview kecil dipakai sub-grid Legalitas Outlet/Pemilik (Master
+   Customer) — placeholder thumbnail hasil "Upload File" per baris,
+   dekoratif (tidak ada upload sungguhan di mockup ini). */
+.leg-preview{width:56px;height:38px;border:1px dashed var(--border);border-radius:4px;background:#f9fafc;display:flex;align-items:center;justify-content:center;color:var(--text-light);}
+
+/* Pager BARU — awalnya khusus sub-grid "Kecamatan" (Master Rayon), gaya
+   lain dari .pager standar (First/Previous/1/2/3/Next/Last) dipakai modul
+   lain: "First < [kotak nomor halaman] to Y Of Total > Last". FUNGSIONAL
+   (bukan dekoratif) — lihat tplRyKecPager()/openRyKecPage() di
+   master-rayon.js. Sejak 2026-08-18 dipakai ULANG sebagai pager LIST UTAMA
+   (bukan cuma sub-grid) di Group User (menu User Security), sesuai
+   screenshot "Daftar Group Hak Akses" yang punya gaya pager identik —
+   lihat tplGuPager() di group-user.template.js. Class CSS ini generik
+   (tidak spesifik nama "ry"), jadi aman dipakai lintas modul apa pun. */
+.ry-kec-pager{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-light);flex-wrap:wrap;}
+.ry-kec-pager button{border:1px solid var(--border);background:#fff;padding:4px 9px;border-radius:4px;font-size:12px;cursor:pointer;color:var(--text);}
+.ry-kec-pager button:disabled{opacity:.45;cursor:default;}
+.ry-kec-pager input{width:42px;text-align:center;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;}
 
 .po-textarea{width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;font-family:inherit;resize:vertical;}
 
