@@ -424,7 +424,7 @@ const DATA = {
         {kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', satuan:'Dus', qtyPesan:30, qtyKirim:30, batch:'BT-260707-07', ed:'2027-07-31'},
         {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', satuan:'Dus', qtyPesan:40, qtyKirim:40, batch:'BT-260708-08', ed:'2027-08-31'},
       ],
-      jumlah:880000, posted:true, ts:'Invoice Selesai',
+      jumlah:880000, posted:true, ts:'Invoice Selesai', dibayar:0,
       tglInput:'08/08/2026 15:20', userInput:'sidik', tglEdit:'09/08/2026 09:15', userEdit:'sidik'},
     {no:'26/SI/MDN/08/00001', noSJ:'26/SJ/MDN/08/00001', tglBuat:'06/08/2026 11:00', tgl:'06/08/2026',
       cabang:'Medan', gudang:'(04-GUU) Gudang Utama-MDN', area:'SUMATERA UTARA',
@@ -464,7 +464,7 @@ const DATA = {
         {kode:'BRG-006', nama:'Kecap Manis ABC 600ml', satuan:'Dus', qtyPesan:60, qtyKirim:60, batch:'BT-260706-06', ed:'2027-03-31'},
         {kode:'BRG-009', nama:'Kopi Kapal Api 165gr', satuan:'Dus', qtyPesan:20, qtyKirim:20, batch:'BT-260709-09', ed:'2027-09-30'},
       ],
-      jumlah:1120000, posted:true, ts:'Invoice Selesai',
+      jumlah:1120000, posted:true, ts:'Invoice Selesai', dibayar:1120000,
       tglInput:'07/08/2026 16:00', userInput:'sidik', tglEdit:'07/08/2026 17:20', userEdit:'sidik'},
     {no:'26/SI/SMG/08/00001', noSJ:'26/SJ/SMG/08/00001', tglBuat:'05/08/2026 15:30', tgl:'05/08/2026',
       cabang:'Semarang', gudang:'(06-GUU) Gudang Utama-SMG', area:'JAWA TENGAH',
@@ -503,7 +503,7 @@ const DATA = {
       items:[
         {kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', satuan:'Dus', qtyPesan:70, qtyKirim:70, batch:'BT-260710-10', ed:'2027-10-31'},
       ],
-      jumlah:350000, posted:true, ts:'Invoice Selesai',
+      jumlah:350000, posted:true, ts:'Invoice Selesai', dibayar:150000,
       tglInput:'11/08/2026 14:10', userInput:'sidik', tglEdit:'11/08/2026 16:45', userEdit:'sidik'},
   ],
   /* Daftar Driver (dipakai field "Driver" di form Invoice, picker
@@ -642,11 +642,135 @@ const DATA = {
     {no:'PACK-0703', tgl:'2026-08-03', so:'SO-2026-0814', status:'Proses'},
     {no:'PACK-0704', tgl:'2026-08-04', so:'SO-2026-0816', status:'Baru'},
   ],
+  /* Penerimaan Piutang (Customer & Penjualan > Daftar Transaksi >
+     Penerimaan Piutang, page:'penerimaanPiutang') — lihat catatan
+     desain lengkap di header js/pages/penerimaan-piutang.template.js.
+     Sebelumnya 4 baris dummy {no,tgl,customer,jumlah,metode} lepas
+     tanpa hubungan ke modul lain — SUDAH DIHAPUS, diganti 8 baris di
+     bawah. 2 baris PERTAMA BENAR-BENAR chained ke DATA.invoices lewat
+     fakturs[].invoiceNo (Toko Sumber Rejeki melunasi 26/SI/HO/08/00001
+     penuh; Toko Family Mart Jaya melunasi 26/SI/HO/08/00002 sebagian,
+     sisa 200.000 masih outstanding — invoiceNo itu dipakai ppSave()/
+     openPpDeleteConfirm() di penerimaan-piutang.js utk menambah/
+     mengembalikan field `dibayar` pada invoice terkait). 6 baris
+     sisanya historis/dekoratif (nomor Juli, invoiceNo:'' — tidak
+     terhubung ke DATA.invoices yg cuma berisi Agustus), termasuk 1
+     baris (CV Maju Terus) dgn 2 faktur sekaligus utk mendemokan
+     "Lunasi Beberapa Faktur" beneran plural. UD Makmur Jaya
+     (26/SI/SBY/08/00001, posted, 880.000) SENGAJA tidak muncul di
+     sini sama sekali — dibiarkan belum lunas utk demo ujung-ke-ujung
+     fitur "+ Tambah". */
   penerimaanPiutang:[
-    {no:'RCV-0601', tgl:'2026-08-01', customer:'Toko Sumber Rejeki', jumlah:8250000, metode:'Transfer Bank'},
-    {no:'RCV-0602', tgl:'2026-08-02', customer:'Toko Sejahtera', jumlah:3120000, metode:'Tunai'},
-    {no:'RCV-0603', tgl:'2026-08-03', customer:'UD Makmur Jaya', jumlah:2500000, metode:'Transfer Bank'},
-    {no:'RCV-0604', tgl:'2026-08-04', customer:'CV Maju Terus', jumlah:4300000, metode:'Giro'},
+    {no:'26/CL/HO/08/00002', cabang:'Head Office', tgl:'13/08/2026',
+      customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya', badanUsaha:'', noPenagihanPiutang:'',
+      akunBankKode:'110107', tipeTransaksi:'Terima Kas', cair:true, noGiro:'', bankSumber:'', tglJthTempoBank:'13/08/2026',
+      fakturs:[{no:'26/SI/HO/08/00002', cabang:'Head Office', tipeTransaksi:'Jual Kredit', tglFaktur:'11/08/2026', tglJthTempo:'10/09/2026', mataUang:'IDR', kurs:1, reminder:350000, pembayaran:150000, checked:true, invoiceNo:'26/SI/HO/08/00002'}],
+      keteranganUangMuka:'', kursUangMuka:1, jadikanUangMuka:0,
+      keterangan:'VA - Terima Piutang 26/SI/HO/08/00002 TOKO FAMILY MART JAYA',
+      jumlahTidakSama:true, kursTarget:1, status:'Approved',
+      totalPembayaran:150000, jumlahBank:150000, jumlahPiutang:350000},
+    {no:'26/CL/HO/08/00001', cabang:'Head Office', tgl:'12/08/2026',
+      customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', badanUsaha:'', noPenagihanPiutang:'',
+      akunBankKode:'110107', tipeTransaksi:'Terima Kas', cair:true, noGiro:'', bankSumber:'', tglJthTempoBank:'12/08/2026',
+      fakturs:[{no:'26/SI/HO/08/00001', cabang:'Head Office', tipeTransaksi:'Jual Kredit', tglFaktur:'07/08/2026', tglJthTempo:'06/09/2026', mataUang:'IDR', kurs:1, reminder:1120000, pembayaran:1120000, checked:true, invoiceNo:'26/SI/HO/08/00001'}],
+      keteranganUangMuka:'', kursUangMuka:1, jadikanUangMuka:0,
+      keterangan:'VA - Terima Piutang 26/SI/HO/08/00001 TOKO SUMBER REJEKI',
+      jumlahTidakSama:false, kursTarget:1, status:'Approved',
+      totalPembayaran:1120000, jumlahBank:1120000, jumlahPiutang:1120000},
+    {no:'26/CL/TGR/07/00001', cabang:'Tangerang', tgl:'26/07/2026',
+      customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', badanUsaha:'', noPenagihanPiutang:'',
+      akunBankKode:'110115', tipeTransaksi:'Terima Kas', cair:true, noGiro:'', bankSumber:'', tglJthTempoBank:'26/07/2026',
+      fakturs:[{no:'26/SI/TGR/07/00028', cabang:'Tangerang', tipeTransaksi:'Jual Kredit', tglFaktur:'14/07/2026', tglJthTempo:'13/08/2026', mataUang:'IDR', kurs:1, reminder:530000, pembayaran:530000, checked:true, invoiceNo:''}],
+      keteranganUangMuka:'', kursUangMuka:1, jadikanUangMuka:0,
+      keterangan:'VA - Terima Piutang 26/SI/TGR/07/00028 TOKO SUMBER REJEKI',
+      jumlahTidakSama:false, kursTarget:1, status:'Approved',
+      totalPembayaran:530000, jumlahBank:530000, jumlahPiutang:530000},
+    {no:'26/CL/MKS/07/00001', cabang:'Makassar', tgl:'25/07/2026',
+      customerKode:'CUST-005', customerNama:'UD Sinar Harapan', badanUsaha:'', noPenagihanPiutang:'',
+      akunBankKode:'110121', tipeTransaksi:'Terima Kas', cair:true, noGiro:'', bankSumber:'', tglJthTempoBank:'25/07/2026',
+      fakturs:[{no:'26/SI/MKS/07/00012', cabang:'Makassar', tipeTransaksi:'Jual Kredit', tglFaktur:'12/07/2026', tglJthTempo:'12/07/2026', mataUang:'IDR', kurs:1, reminder:215000, pembayaran:215000, checked:true, invoiceNo:''}],
+      keteranganUangMuka:'', kursUangMuka:1, jadikanUangMuka:0,
+      keterangan:'VA - Terima Piutang 26/SI/MKS/07/00012 UD SINAR HARAPAN',
+      jumlahTidakSama:false, kursTarget:1, status:'Approved',
+      totalPembayaran:215000, jumlahBank:215000, jumlahPiutang:215000},
+    {no:'26/CL/MDN/07/00001', cabang:'Medan', tgl:'24/07/2026',
+      customerKode:'CUST-004', customerNama:'Toko Anugrah', badanUsaha:'', noPenagihanPiutang:'',
+      akunBankKode:'110118', tipeTransaksi:'Terima Cek', cair:true, noGiro:'CK-002310', bankSumber:'Bank BRI MDN', tglJthTempoBank:'24/07/2026',
+      fakturs:[{no:'26/SI/MDN/07/00005', cabang:'Medan', tipeTransaksi:'Jual Kredit', tglFaktur:'01/07/2026', tglJthTempo:'15/08/2026', mataUang:'IDR', kurs:1, reminder:660000, pembayaran:660000, checked:true, invoiceNo:''}],
+      keteranganUangMuka:'', kursUangMuka:1, jadikanUangMuka:0,
+      keterangan:'VA - Terima Piutang 26/SI/MDN/07/00005 TOKO ANUGRAH',
+      jumlahTidakSama:false, kursTarget:1, status:'Approved',
+      totalPembayaran:660000, jumlahBank:660000, jumlahPiutang:660000},
+    {no:'26/CL/BDG/07/00001', cabang:'Bandung', tgl:'23/07/2026',
+      customerKode:'CUST-003', customerNama:'CV Berkah Abadi', badanUsaha:'', noPenagihanPiutang:'',
+      akunBankKode:'110112', tipeTransaksi:'Terima Kas', cair:true, noGiro:'', bankSumber:'', tglJthTempoBank:'23/07/2026',
+      fakturs:[{no:'26/SI/BDG/07/00009', cabang:'Bandung', tipeTransaksi:'Jual Kredit', tglFaktur:'05/07/2026', tglJthTempo:'19/07/2026', mataUang:'IDR', kurs:1, reminder:430000, pembayaran:430000, checked:true, invoiceNo:''}],
+      keteranganUangMuka:'', kursUangMuka:1, jadikanUangMuka:0,
+      keterangan:'VA - Terima Piutang 26/SI/BDG/07/00009 CV BERKAH ABADI',
+      jumlahTidakSama:false, kursTarget:1, status:'Approved',
+      totalPembayaran:430000, jumlahBank:430000, jumlahPiutang:430000},
+    {no:'26/CL/SBY/07/00001', cabang:'Surabaya', tgl:'22/07/2026',
+      customerKode:'CUST-008', customerNama:'Toko Sejahtera', badanUsaha:'', noPenagihanPiutang:'',
+      akunBankKode:'110109', tipeTransaksi:'Terima Kas', cair:true, noGiro:'', bankSumber:'', tglJthTempoBank:'22/07/2026',
+      fakturs:[{no:'26/SI/SBY/07/00018', cabang:'Surabaya', tipeTransaksi:'Jual Kredit', tglFaktur:'10/07/2026', tglJthTempo:'24/07/2026', mataUang:'IDR', kurs:1, reminder:312000, pembayaran:312000, checked:true, invoiceNo:''}],
+      keteranganUangMuka:'', kursUangMuka:1, jadikanUangMuka:0,
+      keterangan:'VA - Terima Piutang 26/SI/SBY/07/00018 TOKO SEJAHTERA',
+      jumlahTidakSama:false, kursTarget:1, status:'Approved',
+      totalPembayaran:312000, jumlahBank:312000, jumlahPiutang:312000},
+    {no:'26/CL/SMG/07/00001', cabang:'Semarang', tgl:'20/07/2026',
+      customerKode:'CUST-007', customerNama:'CV Maju Terus', badanUsaha:'', noPenagihanPiutang:'',
+      akunBankKode:'110124', tipeTransaksi:'Terima Giro', cair:false, noGiro:'GR-000451', bankSumber:'Bank Permata SMG', tglJthTempoBank:'20/08/2026',
+      fakturs:[
+        {no:'26/SI/SMG/07/00021', cabang:'Semarang', tipeTransaksi:'Jual Kredit', tglFaktur:'01/07/2026', tglJthTempo:'31/07/2026', mataUang:'IDR', kurs:1, reminder:620000, pembayaran:620000, checked:true, invoiceNo:''},
+        /* Faktur ke-2 SENGAJA didemokan dengan PPN & PPH ditanggung
+           customer (fitur baru 2026-08-20, lihat catatan besar di
+           penerimaan-piutang.template.js): potonganPpn & potonganPph
+           dua-duanya true. PPN (57.477,48) masih BELUM diterima SSP-nya
+           (sudahTerimaSspPpn:false, jadi tetap outstanding di menu baru
+           "Transaksi A.R. SSP" — dipakai utk demo picker customer CV
+           MAJU TERUS di modul itu), sementara PPH (7.837,84) SUDAH
+           diterima SSP-nya (sudahTerimaSspPph:true) — dicatat lewat 1
+           baris histori DATA.penerimaanSsp (26/NK/SMG/07/00001) di bawah.
+           Nominal AR SSP dihitung dari Pembayaran (580.000) via
+           ppFakturTax(): DPP=522.522,52 (580.000/1,11), PPN=57.477,48,
+           PPH 1,5%=7.837,84 — persis formula yang diverifikasi cocok
+           dgn contoh screenshot user (DPP=Total/1,11, PPN=DPP x 11%). */
+        {no:'26/SI/SMG/07/00033', cabang:'Semarang', tipeTransaksi:'Jual Kredit', tglFaktur:'09/07/2026', tglJthTempo:'08/08/2026', mataUang:'IDR', kurs:1, reminder:580000, pembayaran:580000, checked:true, invoiceNo:'',
+          potonganPpn:true, potonganPph:true, sudahTerimaSspPpn:false, sudahTerimaSspPph:true, pphKode:'PPH 22 (1.5%)',
+          noNtpnPpnAda:false, noNtpnPpn:'', tglNtpnPpn:'',
+          noNtpnPphAda:true, noNtpnPph:'1234567890123456', tglNtpnPph:'20/07/2026'},
+      ],
+      keteranganUangMuka:'', kursUangMuka:1, jadikanUangMuka:0,
+      keterangan:'VA - Terima Piutang 26/SI/SMG/07/00021, 26/SI/SMG/07/00033 CV MAJU TERUS',
+      jumlahTidakSama:false, kursTarget:1, status:'Approved',
+      /* totalPembayaran/jumlahBank sudah memperhitungkan potongan PPN+PPH
+         faktur ke-2 (620.000 + [580.000-57.477,48-7.837,84]=514.684,68 =
+         1.134.684,68) — angka ini DIPRA-HITUNG persis sama dengan hasil
+         ppRecalcTotals()/ppFakturTax() supaya list & form (mode Lihat)
+         menampilkan nilai yang identik. jumlahPiutang TETAP gross
+         1.200.000 (AR yang dilunasi tidak berkurang oleh potongan pajak). */
+      totalPembayaran:1134684.68, jumlahBank:1134684.68, jumlahPiutang:1200000},
+  ],
+  /* Transaksi A.R. SSP (Customer & Penjualan > Daftar Transaksi >
+     Transaksi A.R. SSP, page:'penerimaanSsp', menu.js — sebelumnya
+     placeholder murni) — lihat catatan desain lengkap di header
+     js/pages/penerimaan-ssp.template.js. Setiap baris = 1 transaksi
+     "Nota Kredit" penerimaan bukti Surat Setoran Pajak (SSP) PPN/PPH
+     dari Customer, dibuat lewat modul ini (bukan lewat Penerimaan
+     Piutang) begitu SSP yang tadinya belum diterima (dicatat sbg AR
+     SSP PPN/PPH di Penerimaan Piutang) benar-benar sudah diterima.
+     1 baris histori di bawah mendokumentasikan settlement PPH faktur
+     26/SI/SMG/07/00033 (CV Maju Terus) yang sudahTerimaSspPph sudah
+     di-set true di DATA.penerimaanPiutang di atas — PPN faktur yang
+     sama SENGAJA dibiarkan belum diselesaikan (sudahTerimaSspPpn:false)
+     supaya modul ini punya 1 item nyata utk didemokan lewat customer
+     picker (pilih CV MAJU TERUS -> 1 baris outstanding PPN 57.477,48
+     muncul). */
+  penerimaanSsp:[
+    {no:'26/NK/SMG/07/00001', cabang:'Semarang', tgl:'21/07/2026', customerKode:'CUST-007', customerNama:'CV Maju Terus',
+      items:[{penerimaanPiutangNo:'26/CL/SMG/07/00001', fakturNo:'26/SI/SMG/07/00033', tipePajak:'PPH', nominal:7837.84, checked:true}],
+      totalPpn:0, totalPph:7837.84, jumlah:7837.84,
+      keterangan:'Terima SSP PPH 26/SI/SMG/07/00033 CV MAJU TERUS'},
   ],
   items:[
     {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', kategori:'Sembako', satuan:'Dus', stok:1240, harga:25000},
@@ -1059,36 +1183,50 @@ const DATA = {
     {kode:'2120002', nama:'PPN Keluaran', kategori:'B', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'4110004', nama:'Sales Item Discount (Principal)', kategori:'D', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'4110005', nama:'Sales Item Discount (Distributor)', kategori:'D', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    /* 4 akun baru — fitur PPN/PPH ditanggung customer di Penerimaan
+       Piutang (2026-08-20), lihat catatan besar di js/pages/
+       penerimaan-piutang.template.js. */
+    {kode:'1120003', nama:'Piutang SSP PPN', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'1120004', nama:'Piutang SSP PPH', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'2120003', nama:'PPN Pemungut', kategori:'B', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'1140003', nama:'Uang Muka PPH 22', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
   ],
   jurnalPembelian:[
     {kode:1, nama:'JURNAL PEMBELIAN KREDIT (IDR)', tipeJurnal:'Kredit', mataUang:'', cabang:'Head Office', konsinyasi:false, nonAktif:false,
       akunUtang:'2110001', akunKreditSementara:'2110002', akunBudgetDiskon:'', akunPPN:'1140002', akunOngkosKirim:'', akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunSelisihDebitKredit:'6510003', akunUangMuka:'1140001',
       akunReturUtang:'2110001', akunReturPajak:'1140002',
-      akunHppKonsinyasi:'', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'', akunPiutangRK:'', akunHutangBelumDifaktur:''},
+      akunHppKonsinyasi:'', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'', akunPiutangRK:'', akunHutangBelumDifaktur:'',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
     {kode:2, nama:'JURNAL PEMBELIAN KONSINYASI (SEMARANG)(IDR)', tipeJurnal:'Kredit', mataUang:'', cabang:'Semarang', konsinyasi:true, nonAktif:false,
       akunUtang:'2110001', akunKreditSementara:'', akunBudgetDiskon:'', akunPPN:'1140002', akunOngkosKirim:'', akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunSelisihDebitKredit:'6510003', akunUangMuka:'1140001',
       akunReturUtang:'2110001', akunReturPajak:'1140002',
-      akunHppKonsinyasi:'5110002', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'2110003', akunPiutangRK:'1120002', akunHutangBelumDifaktur:''},
+      akunHppKonsinyasi:'5110002', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'2110003', akunPiutangRK:'1120002', akunHutangBelumDifaktur:'',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
     {kode:3, nama:'JURNAL PEMBELIAN KONSINYASI (TANGERANG)(IDR)', tipeJurnal:'Kredit', mataUang:'', cabang:'Tangerang', konsinyasi:true, nonAktif:false,
       akunUtang:'2110001', akunKreditSementara:'', akunBudgetDiskon:'', akunPPN:'1140002', akunOngkosKirim:'', akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunSelisihDebitKredit:'6510003', akunUangMuka:'1140001',
       akunReturUtang:'2110001', akunReturPajak:'1140002',
-      akunHppKonsinyasi:'5110002', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'2110003', akunPiutangRK:'1120002', akunHutangBelumDifaktur:''},
+      akunHppKonsinyasi:'5110002', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'2110003', akunPiutangRK:'1120002', akunHutangBelumDifaktur:'',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
     {kode:4, nama:'JURNAL PEMBELIAN KONSINYASI (SIDOARJO)(IDR)', tipeJurnal:'Kredit', mataUang:'', cabang:'Sidoarjo', konsinyasi:true, nonAktif:false,
       akunUtang:'2110001', akunKreditSementara:'', akunBudgetDiskon:'', akunPPN:'1140002', akunOngkosKirim:'', akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunSelisihDebitKredit:'6510003', akunUangMuka:'1140001',
       akunReturUtang:'2110001', akunReturPajak:'1140002',
-      akunHppKonsinyasi:'5110002', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'2110003', akunPiutangRK:'1120002', akunHutangBelumDifaktur:''},
+      akunHppKonsinyasi:'5110002', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'2110003', akunPiutangRK:'1120002', akunHutangBelumDifaktur:'',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
     {kode:5, nama:'JURNAL PEMBELIAN CBD (IDR)', tipeJurnal:'Kas', mataUang:'IDR', cabang:'Head Office', konsinyasi:false, nonAktif:false,
       akunUtang:'2110001', akunKreditSementara:'', akunBudgetDiskon:'', akunPPN:'1140002', akunOngkosKirim:'', akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunSelisihDebitKredit:'6510003', akunUangMuka:'1140001',
       akunReturUtang:'2110001', akunReturPajak:'1140002',
-      akunHppKonsinyasi:'', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'', akunPiutangRK:'', akunHutangBelumDifaktur:''},
+      akunHppKonsinyasi:'', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'', akunPiutangRK:'', akunHutangBelumDifaktur:'',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
     {kode:6, nama:'JURNAL PEMBELIAN KONSINYASI (BANDUNG)(IDR)', tipeJurnal:'Kredit', mataUang:'', cabang:'Bandung', konsinyasi:true, nonAktif:false,
       akunUtang:'2110001', akunKreditSementara:'', akunBudgetDiskon:'', akunPPN:'1140002', akunOngkosKirim:'', akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunSelisihDebitKredit:'6510003', akunUangMuka:'1140001',
       akunReturUtang:'2110001', akunReturPajak:'1140002',
-      akunHppKonsinyasi:'5110002', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'2110003', akunPiutangRK:'1120002', akunHutangBelumDifaktur:''},
+      akunHppKonsinyasi:'5110002', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'2110003', akunPiutangRK:'1120002', akunHutangBelumDifaktur:'',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
     {kode:7, nama:'JURNAL PEMBELIAN COD (IDR)', tipeJurnal:'Kas', mataUang:'', cabang:'Head Office', konsinyasi:false, nonAktif:false,
       akunUtang:'2110001', akunKreditSementara:'', akunBudgetDiskon:'', akunPPN:'1140002', akunOngkosKirim:'', akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunSelisihDebitKredit:'6510003', akunUangMuka:'1140001',
       akunReturUtang:'2110001', akunReturPajak:'1140002',
-      akunHppKonsinyasi:'', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'', akunPiutangRK:'', akunHutangBelumDifaktur:''},
+      akunHppKonsinyasi:'', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'', akunPiutangRK:'', akunHutangBelumDifaktur:'',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
   ],
   /* Jurnal Penjualan — menu Customer & Penjualan > Master & Setting >
      Jurnal Penjualan (lihat js/pages/jurnal-penjualan.*). 1 baris sample
@@ -1103,7 +1241,8 @@ const DATA = {
   jurnalPenjualan:[
     {kode:1, nama:'JURNAL PENJUALAN KREDIT (IDR)', tipeJurnal:'Kredit', mataUang:'', active:true,
       akunPiutang:'1120001', akunDiskonPrincipal:'4110004', akunPersediaanIntransit:'1130002', akunDiskonDistributor:'4110005', akunDiskonSelisihHna:'4110004', akunDiskonVoucher:'', akunPPN:'2120002', akunOngkosKirim:'', akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunSelisihDebitKredit:'6510003', akunUangMuka:'2140001', reward:'',
-      akunReturKredit:'1120001', akunReturPajak:'2120002'},
+      akunReturKredit:'1120001', akunReturPajak:'2120002',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
   ],
   /* Stock Request — menu Persediaan Barang > Daftar Transaksi > Stock
      Request (lihat js/pages/stock-request.*). Setiap baris "items"
@@ -1738,6 +1877,181 @@ const DATA = {
       items:[
         {kategoriKode:'CATBMB', kategoriNama:'Bumbu', qty:20, discPrincipal:1, discPrincipalUnit:'%', discDistributor:1, discDistributorUnit:'%'},
       ]},
+  ],
+  /* Dominasi Claim Setting — menu Customer & Penjualan > Master & Setting >
+     Dominasi (page:'dominasi', tombol "Setting Claim Dominasi" di header
+     list, lihat js/pages/dominasi.*). Sesuai screenshot "Dominasi Claim
+     Setting" MASERP yang dikirim user: 1 baris sample (Tgl. Efektif
+     01/01/2024, Claim Persen 0.75). `claimPersen` SENGAJA disimpan &
+     ditampilkan apa adanya (0.75, bertitik) — bukan diformat lewat
+     num()/rp() (yang akan menampilkan "0,75" gaya Indonesia) — supaya
+     persis meniru tampilan screenshot asli. */
+  dominasiClaimSetting:[
+    {tglEfektif:'01/01/2024', claimPersen:0.75},
+  ],
+  /* Dominasi — menu Customer & Penjualan > Master & Setting > Dominasi
+     (page:'dominasi', sebelumnya placeholder murni). Sesuai 5 screenshot
+     MASERP yang dikirim user: list "Daftar Dominasi" + 2 varian form
+     "Dominasi Setting" tergantung field "Tipe" (Regular vs Fix) — lihat
+     catatan desain lengkap di header js/pages/dominasi.template.js.
+
+     Data customer/principal DIGANTI ke milik DBM sendiri (screenshot asli
+     menampilkan nama dokter/apotek/instansi pemerintah dari demo
+     distributor farmasi lain, bukan data PT Distriversa Buanamas) —
+     `customerKode`/`customerNama` dipetakan ke 8 baris DATA.customers yang
+     sudah ada, `principalKode`/`principalNama` ke DATA.suppliers yang
+     sudah ada, `bcKode`/`divKode` ke DATA.businessCentre/DATA.divisi yang
+     sudah ada. `customerRef`/`principalRef` adalah kode referensi kecil
+     dekoratif yang tampil di bawah field Customer/Principal di form
+     (murni tampilan, tidak dipakai modul lain) — formatnya meniru gaya
+     "A000023823"/"HOVDR102IDR" di screenshot asli.
+
+     10 baris pertama bertipe 'Regular' (noSpGuarantee & nilai mengikuti
+     screenshot list, `jumlahPakai` diisi 0 utk yang belum "Terpakai" &
+     disamakan dgn nominalMax utk yang sudah, `dipakai` diturunkan dari
+     situ). Baris ke-11 bertipe 'Fix', 3 baris rincian barang dari
+     DATA.items dgn Jumlah dihitung lewat formula HNA1 x (1 - discP% -
+     discD%) x Qty (lihat domRecalcItem() di dominasi.js) — totalnya
+     (225.000 + 560.000 + 900.000 = 1.685.000) SENGAJA persis sama dgn
+     `nominalMax` baris ini, meniru screenshot asli dimana Nominal Max
+     tipe Fix = SUM kolom Jumlah tabel rincian barang. */
+  dominasi:[
+    {no:'B-DM32026080009', tanggal:'18/08/2026', tipe:'Regular',
+     customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', customerRef:'A000001',
+     noSpGuarantee:'08/2026', tenor:9,
+     bcKode:'BSC104', bcNama:'Consumer Food', divKode:'DVS100', divNama:'Head Office',
+     principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara', principalRef:'HOVDR5015IDR',
+     nominalMax:14310000, jumlahPakai:0, statusAktif:'Active', dipakai:false, items:[]},
+    {no:'B-DM32026080007', tanggal:'18/08/2026', tipe:'Regular',
+     customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', customerRef:'A000001',
+     noSpGuarantee:'08/2026', tenor:6,
+     bcKode:'BSC104', bcNama:'Consumer Food', divKode:'DVS100', divNama:'Head Office',
+     principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara', principalRef:'HOVDR5015IDR',
+     nominalMax:9900000, jumlahPakai:0, statusAktif:'Active', dipakai:false, items:[]},
+    {no:'B-DM04426080004', tanggal:'18/08/2026', tipe:'Regular',
+     customerKode:'CUST-002', customerNama:'UD Makmur Jaya', customerRef:'A000002',
+     noSpGuarantee:'UD MAKMUR JAYA 14/08/2026', tenor:12,
+     bcKode:'BSC101', bcNama:'Generik', divKode:'DVS200', divNama:'Sales & Marketing',
+     principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia', principalRef:'HOVDR5016IDR',
+     nominalMax:367830000, jumlahPakai:367830000, statusAktif:'Active', dipakai:true, items:[]},
+    {no:'B-DM08326080007', tanggal:'18/08/2026', tipe:'Regular',
+     customerKode:'CUST-003', customerNama:'CV Berkah Abadi', customerRef:'A000003',
+     noSpGuarantee:'EP-01KZQ7CKAFB5B9DPP59SSJG3BW', tenor:9,
+     bcKode:'BSC103', bcNama:'Branded', divKode:'DVS300', divNama:'Warehouse & Logistik',
+     principalKode:'5017', principalNama:'PT Sinar Meadow', principalRef:'HOVDR5017IDR',
+     nominalMax:95113602, jumlahPakai:95113602, statusAktif:'Active', dipakai:true, items:[]},
+    {no:'B-DM04426080006', tanggal:'18/08/2026', tipe:'Regular',
+     customerKode:'CUST-002', customerNama:'UD Makmur Jaya', customerRef:'A000002',
+     noSpGuarantee:'UD MAKMUR JAYA 14/08/2026', tenor:12,
+     bcKode:'BSC101', bcNama:'Generik', divKode:'DVS200', divNama:'Sales & Marketing',
+     principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia', principalRef:'HOVDR5016IDR',
+     nominalMax:392499000, jumlahPakai:0, statusAktif:'Active', dipakai:false, items:[]},
+    {no:'B-DM19626080008', tanggal:'18/08/2026', tipe:'Regular',
+     customerKode:'CUST-004', customerNama:'Toko Anugrah', customerRef:'A000004',
+     noSpGuarantee:'000.3.2/SP.OBAT/007/VIII/2026', tenor:3,
+     bcKode:'BSC104', bcNama:'Consumer Food', divKode:'DVS400', divNama:'Finance & Accounting',
+     principalKode:'5019', principalNama:'PT Mayora Distribusi', principalRef:'HOVDR5019IDR',
+     nominalMax:4459500, jumlahPakai:0, statusAktif:'Active', dipakai:false, items:[]},
+    {no:'B-DM05526080005', tanggal:'18/08/2026', tipe:'Regular',
+     customerKode:'CUST-005', customerNama:'UD Sinar Harapan', customerRef:'A000005',
+     noSpGuarantee:'-', tenor:9,
+     bcKode:'BSC102', bcNama:'Alat Kesehatan', divKode:'DVS100', divNama:'Head Office',
+     principalKode:'5020', principalNama:'PT Indofood Distribusi', principalRef:'HOVDR5020IDR',
+     nominalMax:101527475, jumlahPakai:101527475, statusAktif:'Non Active', dipakai:true, items:[]},
+    {no:'B-DM08326080010', tanggal:'18/08/2026', tipe:'Regular',
+     customerKode:'CUST-003', customerNama:'CV Berkah Abadi', customerRef:'A000003',
+     noSpGuarantee:'EP-01KZNDV7C67PYEX0GKRW2CYPQA', tenor:9,
+     bcKode:'BSC103', bcNama:'Branded', divKode:'DVS300', divNama:'Warehouse & Logistik',
+     principalKode:'5017', principalNama:'PT Sinar Meadow', principalRef:'HOVDR5017IDR',
+     nominalMax:42254095, jumlahPakai:42254095, statusAktif:'Active', dipakai:true, items:[]},
+    {no:'B-DM06326080007', tanggal:'18/08/2026', tipe:'Regular',
+     customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya', customerRef:'A000006',
+     noSpGuarantee:'EP-01KZTC4ATJXFQK2VSK0SZ4N49S', tenor:6,
+     bcKode:'BSC104', bcNama:'Consumer Food', divKode:'DVS200', divNama:'Sales & Marketing',
+     principalKode:'5023', principalNama:'PT Sasa Inti', principalRef:'HOVDR5023IDR',
+     nominalMax:2510500, jumlahPakai:2510500, statusAktif:'Active', dipakai:true, items:[]},
+    {no:'B-DM02326080002', tanggal:'18/08/2026', tipe:'Regular',
+     customerKode:'CUST-007', customerNama:'CV Maju Terus', customerRef:'A000007',
+     noSpGuarantee:'662/58.12/PL OBAT-OBATAN/SP/435.102.101/2026', tenor:9,
+     bcKode:'BSC101', bcNama:'Generik', divKode:'DVS100', divNama:'Head Office',
+     principalKode:'5026', principalNama:'PT Roda Mas Trading', principalRef:'HOVDR5026IDR',
+     nominalMax:3911004.6, jumlahPakai:0, statusAktif:'Active', dipakai:false, items:[]},
+    {no:'B-DM060FIX26080001', tanggal:'14/08/2026', tipe:'Fix',
+     customerKode:'CUST-008', customerNama:'Toko Sejahtera', customerRef:'A000008',
+     noSpGuarantee:'AAA.08.26', tenor:6,
+     bcKode:'BSC104', bcNama:'Consumer Food', divKode:'DVS400', divNama:'Finance & Accounting',
+     principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara', principalRef:'HOVDR5015IDR',
+     nominalMax:1685000, jumlahPakai:0, statusAktif:'Active', dipakai:false,
+     items:[
+       {kode:'BRG-005', nama:'Mie Instan Indomie Goreng', satuan:'Dus', qty:100, hna:2500, hna1:2500, discPrincipal:10, discDistributor:0, jumlah:225000},
+       {kode:'BRG-009', nama:'Kopi Kapal Api 165gr', satuan:'Dus', qty:50, hna:14000, hna1:14000, discPrincipal:15, discDistributor:5, jumlah:560000},
+       {kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', satuan:'Dus', qty:200, hna:5000, hna1:5000, discPrincipal:8, discDistributor:2, jumlah:900000},
+     ]},
+  ],
+  /* Price List By Province — menu Persediaan Barang > Master & Setting >
+     Price List By Province (page:'priceListProvince', sebelumnya
+     placeholder murni). Sesuai 3 screenshot MASERP yang dikirim user:
+     list "Price List By Province" (toolbar chip periode "Agustus 2026" +
+     tombol "+Tambah"/"Impor Price List"/"Ekspor ke Excel", kolom No.
+     Transaksi/Tgl. Efektif/Keterangan/Province/Lihat/Ubah/Hapus) dan form
+     "+ Price List" (No. Otomatis + No. Transaksi + Tgl. Efektif +
+     Keterangan + picker Provincies, lalu section "Daftar Inventory" —
+     tabel SEMUA barang dengan 4 kolom "Harga Jual 1-4" [masing-masing
+     Satuan/Lama/Baru] + kotak %-header di atas tiap kolom Harga Jual
+     yang begitu diisi langsung menghitung ulang Baru = Lama x (1+%/100)
+     untuk SEMUA baris sekaligus — lihat catatan desain lengkap di header
+     js/pages/price-list-province.template.js).
+
+     PENYEDERHANAAN PENTING vs screenshot asli: screenshot MASERP asli
+     menampilkan katalog produk farmasi ~690 baris dengan 2 satuan aktif
+     per barang (BTL=Harga Jual 1, KRT=Harga Jual 2, kolom 3-4 kosong) —
+     "Daftar Inventory" di mockup ini SENGAJA reuse DATA.items apa adanya
+     (10 baris, satu satuan per barang, milik DBM sendiri, BUKAN nama
+     obat dari demo farmasi lain) daripada mengarang 690 baris dummy,
+     mengikuti precedent "downsize volume data demi kepraktisan" seperti
+     Master Rayon/Group User — jadi hanya kolom **Harga Jual 1** yang
+     benar-benar aktif (Satuan = item.satuan, Lama = item.harga, Baru =
+     %-header reaktif atau override manual per baris); kolom Harga Jual
+     2-4 tetap dirender strukturnya (persis 4 kolom di screenshot) tapi
+     SELALU kosong/nonaktif karena DATA.items di mockup ini memang cuma
+     punya 1 satuan per barang. "Kode Kategori" per baris dipetakan dari
+     DATA.kategoriBarang (dicocokkan lewat nama, karena DATA.items.kategori
+     menyimpan NAMA kategori bukan kode) — lihat kategoriKodeOf() di
+     price-list-province.js. Province dipetakan ke DATA.provinsiList (8
+     provinsi) yang sudah ada, bukan array baru.
+
+     3 baris sample (DKI Jakarta/Jawa Barat/Jawa Timur) masing2 mencakup
+     ke-10 DATA.items dengan markup seragam +6%/+4%/+8% dari harga master
+     (item.harga), dibulatkan ke ratusan terdekat — cuma utk demo tampilan
+     angka realistis, bukan hasil kalkulasi bisnis sungguhan. */
+  priceListProvince:[
+    {noTransaksi:'PLP/08/2026/0001', tglEfektif:'01/08/2026',
+     keterangan:'Penyesuaian harga jual Agustus 2026 - wilayah DKI Jakarta',
+     province:'DKI Jakarta',
+     items:[
+       {kode:'BRG-001', hargaBaru1:26500}, {kode:'BRG-002', hargaBaru1:15900}, {kode:'BRG-003', hargaBaru1:63600},
+       {kode:'BRG-004', hargaBaru1:12700}, {kode:'BRG-005', hargaBaru1:2700}, {kode:'BRG-006', hargaBaru1:14800},
+       {kode:'BRG-007', hargaBaru1:17000}, {kode:'BRG-008', hargaBaru1:10600}, {kode:'BRG-009', hargaBaru1:14800},
+       {kode:'BRG-010', hargaBaru1:5300},
+     ]},
+    {noTransaksi:'PLP/08/2026/0002', tglEfektif:'05/08/2026',
+     keterangan:'Penyesuaian harga jual Agustus 2026 - wilayah Jawa Barat',
+     province:'Jawa Barat',
+     items:[
+       {kode:'BRG-001', hargaBaru1:26000}, {kode:'BRG-002', hargaBaru1:15600}, {kode:'BRG-003', hargaBaru1:62400},
+       {kode:'BRG-004', hargaBaru1:12500}, {kode:'BRG-005', hargaBaru1:2600}, {kode:'BRG-006', hargaBaru1:14600},
+       {kode:'BRG-007', hargaBaru1:16600}, {kode:'BRG-008', hargaBaru1:10400}, {kode:'BRG-009', hargaBaru1:14600},
+       {kode:'BRG-010', hargaBaru1:5200},
+     ]},
+    {noTransaksi:'PLP/08/2026/0003', tglEfektif:'12/08/2026',
+     keterangan:'Penyesuaian harga jual Agustus 2026 - wilayah Jawa Timur',
+     province:'Jawa Timur',
+     items:[
+       {kode:'BRG-001', hargaBaru1:27000}, {kode:'BRG-002', hargaBaru1:16200}, {kode:'BRG-003', hargaBaru1:64800},
+       {kode:'BRG-004', hargaBaru1:13000}, {kode:'BRG-005', hargaBaru1:2700}, {kode:'BRG-006', hargaBaru1:15100},
+       {kode:'BRG-007', hargaBaru1:17300}, {kode:'BRG-008', hargaBaru1:10800}, {kode:'BRG-009', hargaBaru1:15100},
+       {kode:'BRG-010', hargaBaru1:5400},
+     ]},
   ],
   /* Daftar Kernet (dipakai field "Kernet" di form Faktur Penjualan Via
      S.J. — asisten driver saat pengiriman, picker dekoratif sederhana

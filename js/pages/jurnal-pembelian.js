@@ -47,7 +47,8 @@ function openJpForm(mode, tipeJurnal, idx){
     : { kode: null, nama:'', tipeJurnal: tipeJurnal||'Kredit', mataUang:'', cabang:'Head Office', konsinyasi:false, nonAktif:false,
         akunUtang:'', akunKreditSementara:'', akunBudgetDiskon:'', akunPPN:'', akunOngkosKirim:'', akunLabaSelisihKurs:'', akunRugiSelisihKurs:'', akunSelisihDebitKredit:'', akunUangMuka:'',
         akunReturUtang:'', akunReturPajak:'',
-        akunHppKonsinyasi:'', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'', akunPiutangRK:'', akunHutangBelumDifaktur:'' };
+        akunHppKonsinyasi:'', akunBiayaPemakaian:'', akunDiskonPrincipal:'', akunHutangRK:'', akunPiutangRK:'', akunHutangBelumDifaktur:'',
+        akunARSSPPPN:'', akunARSSPPPH:'', akunPPNPemungut:'', akunUangMukaPPH22:'' };
 
   content.innerHTML = tplJurnalPembelianForm(mode, row);
 

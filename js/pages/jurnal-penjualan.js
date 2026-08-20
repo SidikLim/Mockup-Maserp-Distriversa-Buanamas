@@ -45,7 +45,8 @@ function openJjForm(mode, tipeJurnal, idx){
     ? { ...DATA.jurnalPenjualan[idx] }
     : { kode: null, nama:'', tipeJurnal: tipeJurnal||'Kredit', mataUang:'', active:true,
         akunPiutang:'', akunDiskonPrincipal:'', akunPersediaanIntransit:'', akunDiskonDistributor:'', akunDiskonSelisihHna:'', akunDiskonVoucher:'', akunPPN:'', akunOngkosKirim:'', akunLabaSelisihKurs:'', akunRugiSelisihKurs:'', akunSelisihDebitKredit:'', akunUangMuka:'', reward:'',
-        akunReturKredit:'', akunReturPajak:'' };
+        akunReturKredit:'', akunReturPajak:'',
+        akunARSSPPPN:'', akunARSSPPPH:'', akunPPNPemungut:'', akunUangMukaPPH22:'' };
 
   content.innerHTML = tplJurnalPenjualanForm(mode, row);
 

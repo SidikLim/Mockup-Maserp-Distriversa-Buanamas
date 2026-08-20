@@ -58,7 +58,13 @@ function renderInvTable(){
   // Record SELALU dihitung dari panjang array data asli (8), BUKAN angka
   // dekoratif dari screenshot contoh (yang menampilkan "488").
   total.textContent = `Total Record: ${DATA.invoices.length}`;
-  tbody.querySelectorAll('[data-print]').forEach(b => b.onclick = () => openInvInfo('Cetak Invoice', `Preview PDF Invoice <b>${DATA.invoices[+b.dataset.print].no}</b> akan tersedia di sini.`));
+  // 2026-08-19 (lanjutan lagi): tombol printer polos = cetak cepat
+  // format Half Page langsung (default paling umum dipakai); tombol
+  // chevron di sebelahnya (data-print-menu) tetap buka dropdown pilihan
+  // (Half Page/Full Page/Surat Jalan) — lihat openInvPrintWindow() &
+  // openInvCetakDropdown() di bawah, dan catatan desain besar di
+  // tplInvPrintDoc() (invoice.template.js).
+  tbody.querySelectorAll('[data-print]').forEach(b => b.onclick = () => openInvPrintWindow(+b.dataset.print, 'half'));
   tbody.querySelectorAll('[data-print-menu]').forEach(b => b.onclick = () => openInvCetakDropdown(+b.dataset.printMenu));
   tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openInvForm('edit', +b.dataset.edit));
   tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => openInvDeleteConfirm(+b.dataset.del));
@@ -138,6 +144,122 @@ function invBuildEmptyRow(){
     alamatPengiriman:'', shipVia: INV_SHIP_VIA_LIST[0], noResi:'', driver:'',
     keterangan:'', items:[], jumlah:0, posted:false, ts:'Create Invoice',
     tglInput:'', userInput:'', tglEdit:'', userEdit:'',
+    jurnalMode:'otomatis', jurnalAkun:[],
+  };
+}
+
+/* ===== Rincian Jurnal Akun (tab kedua form) — lihat catatan desain
+   lengkap di header tplInvJurnalContent() (invoice.template.js).
+   invBuildJurnalOtomatis() SELALU dipanggil ulang oleh:
+   (1) pertama kali form dibuka (openInvForm), (2) tombol "Buat Jurnal",
+   (3) otomatis begitu tabel Produk berubah (qty kirim/pick SO-PL) SELAMA
+   row.jurnalMode masih 'otomatis' — supaya baris jurnal "otomatis" itu
+   selalu benar-benar reaktif terhadap Jumlah Invoice, bukan snapshot
+   statis. Begitu user pindah ke mode 'manual', regenerasi otomatis ini
+   berhenti (nilai jadi murni hasil edit manual) sampai user pindah balik
+   ke 'otomatis' atau klik "Buat Jurnal" lagi. ===== */
+function invBuildJurnalOtomatis(row){
+  invRecalcJumlah(row);
+  const ket = row.customerNama || '';
+  row.jurnalAkun = [
+    { kodeAkun:'1130001', namaAkun: invAkunNama('1130001'), keterangan: ket, debit: 0, kredit: row.jumlah },
+    { kodeAkun:'1130002', namaAkun: invAkunNama('1130002'), keterangan: ket, debit: row.jumlah, kredit: 0 },
+  ];
+}
+
+/* Render ulang SELURUH konten tab Jurnal (tabel + radio + ringkasan) —
+   dipakai tiap kali struktur baris berubah (ganti mode, Buat Jurnal,
+   tambah/hapus baris) supaya atribut readonly/editable & jumlah baris
+   selalu konsisten dengan state row.jurnalMode/row.jurnalAkun terkini. */
+function refreshInvJurnalContent(row){
+  const el = document.getElementById('invTabJurnalContent');
+  if(!el) return;
+  el.innerHTML = tplInvJurnalContent(row);
+  wireInvJurnalEvents(row);
+}
+
+/* Update ringan hanya pada field "Jumlah Debit - Kredit" — dipakai
+   setelah edit Keterangan/Debit/Kredit per baris (mode Manual) supaya
+   tidak perlu me-rebuild seluruh tabel & kehilangan fokus input yang
+   sedang diketik user. */
+function refreshInvJurnalSelisih(row){
+  const el = document.getElementById('invJurnalSelisih');
+  if(!el) return;
+  const totals = invJurnalTotals(row);
+  el.value = invNum2(totals.selisih);
+  el.style.color = Math.abs(totals.selisih) > 0.004 ? 'var(--red)' : 'var(--text)';
+}
+
+function wireInvJurnalEvents(row){
+  const btnOto = document.getElementById('invJurnalOtomatis');
+  const btnManual = document.getElementById('invJurnalManual');
+  if(btnOto) btnOto.onchange = () => {
+    row.jurnalMode = 'otomatis';
+    invBuildJurnalOtomatis(row);
+    refreshInvJurnalContent(row);
+  };
+  if(btnManual) btnManual.onchange = () => {
+    row.jurnalMode = 'manual';
+    refreshInvJurnalContent(row);
+  };
+
+  const btnBuat = document.getElementById('invBuatJurnal');
+  if(btnBuat) btnBuat.onclick = () => {
+    invBuildJurnalOtomatis(row);
+    refreshInvJurnalContent(row);
+  };
+
+  const addRow = document.getElementById('invJurnalAddRow');
+  if(addRow) addRow.onclick = (e) => {
+    e.preventDefault();
+    row.jurnalAkun.push({ kodeAkun:'', namaAkun:'', keterangan: row.customerNama||'', debit:0, kredit:0 });
+    refreshInvJurnalContent(row);
+  };
+
+  (row.jurnalAkun||[]).forEach((entry, idx) => {
+    const ket = document.querySelector(`[data-jurnal-ket="${idx}"]`);
+    if(ket) ket.onchange = () => { entry.keterangan = ket.value; };
+    const deb = document.querySelector(`[data-jurnal-debit="${idx}"]`);
+    if(deb) deb.onchange = () => { entry.debit = +deb.value || 0; refreshInvJurnalSelisih(row); };
+    const kre = document.querySelector(`[data-jurnal-kredit="${idx}"]`);
+    if(kre) kre.onchange = () => { entry.kredit = +kre.value || 0; refreshInvJurnalSelisih(row); };
+    const del = document.querySelector(`[data-jurnal-del="${idx}"]`);
+    if(del) del.onclick = () => { row.jurnalAkun.splice(idx,1); refreshInvJurnalContent(row); };
+    const search = document.querySelector(`[data-jurnal-akun-search="${idx}"]`);
+    if(search) search.onclick = () => openInvAkunPicker(idx, row);
+  });
+}
+
+/* Picker Akun GL khusus tabel Jurnal (mode Manual) — lihat catatan
+   di tplInvAkunPicker() (invoice.template.js) soal kenapa ini salinan
+   lokal, bukan reuse fungsi Jurnal Pembelian. */
+function openInvAkunPicker(idx, row){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplInvAkunPicker(DATA.akunGL);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+
+  const wireRows = () => {
+    overlay.querySelectorAll('[data-pick-akun]').forEach(btn => btn.onclick = () => {
+      const kode = btn.dataset.pickAkun;
+      row.jurnalAkun[idx].kodeAkun = kode;
+      row.jurnalAkun[idx].namaAkun = invAkunNama(kode);
+      document.getElementById(`invJurnalBody`).querySelector(`[data-jurnal-kode="${idx}"]`).value = kode;
+      document.getElementById(`invJurnalBody`).querySelector(`[data-jurnal-nama="${idx}"]`).value = invAkunNama(kode);
+      closeModal();
+    });
+  };
+  wireRows();
+
+  document.getElementById('invAkunPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const filtered = DATA.akunGL.filter(a => a.kode.toLowerCase().includes(q) || a.nama.toLowerCase().includes(q));
+    document.getElementById('invAkunPickerBody').innerHTML = tplInvAkunPickerRows(filtered);
+    wireRows();
   };
 }
 
@@ -150,6 +272,15 @@ function openInvForm(mode, idx){
     const src = DATA.invoices[idx];
     row = { ...src, items: src.items.map(it => ({ ...it })) };
   }
+
+  // NB: 8 baris sample DATA.invoices yang sudah ada sejak sebelum tab
+  // Rincian Jurnal Akun ini dibangun belum punya jurnalMode/jurnalAkun
+  // — default ke 'otomatis' + auto-generate 2 baris standar begitu form
+  // dibuka, supaya tab Jurnal langsung terisi tanpa user harus klik
+  // "Buat Jurnal" dulu (lihat invBuildJurnalOtomatis()).
+  row.jurnalMode = row.jurnalMode || 'otomatis';
+  row.jurnalAkun = row.jurnalAkun ? row.jurnalAkun.map(j => ({ ...j })) : [];
+  if(!row.jurnalAkun.length && row.jurnalMode === 'otomatis') invBuildJurnalOtomatis(row);
 
   content.innerHTML = tplInvForm(mode, row);
 
@@ -177,10 +308,15 @@ function openInvForm(mode, idx){
 
   wireInvTabs();
   wireInvItemEvents(row);
+  wireInvJurnalEvents(row);
 
   document.getElementById('invBatalkan').onclick = (e) => { e.preventDefault(); renderInvList(); };
+  // 2026-08-19 (lanjutan lagi): tombol "Cetak" di dalam form (hanya
+  // tampil mode Ubah, lihat tplInvForm()) membuka dropdown pilihan
+  // Half Page/Full Page yang sama seperti di LIST — mencetak dari
+  // `row` yang sedang diedit di layar ini (lihat openInvCetakDropdownFromForm()).
   const cetakBtn = document.getElementById('invCetak');
-  if(cetakBtn) cetakBtn.onclick = () => openInvInfo('Cetak Invoice', `Preview PDF Invoice <b>${row.no}</b> akan tersedia di sini.`);
+  if(cetakBtn) cetakBtn.onclick = () => openInvCetakDropdownFromForm(idx, row);
 
   document.getElementById('invSimpan').onclick = () => {
     if(!row.noSO && !row.noPL){ invValidationError('No SO atau No PL wajib dipilih terlebih dahulu'); return; }
@@ -236,11 +372,18 @@ function wireInvTabs(){
 
 /* ===== Tabel Produk: hanya Qty Kirim yang reaktif (tidak ada
    tambah/hapus baris, tidak ada kalkulasi total ditampilkan di form —
-   lihat catatan invRecalcJumlah()). ===== */
+   lihat catatan invRecalcJumlah()). Sejak tab Rincian Jurnal Akun
+   dibangun (2026-08-19): kalau row.jurnalMode masih 'otomatis', ganti
+   Qty Kirim ikut memicu regenerasi jurnal otomatis supaya baris jurnal
+   tetap sinkron dengan Jumlah Invoice terkini (lihat catatan
+   invBuildJurnalOtomatis()). ===== */
 function wireInvItemEvents(row){
   row.items.forEach((item, idx) => {
     const qtyKirimEl = document.querySelector(`[data-inv-qtykirim="${idx}"]`);
-    if(qtyKirimEl) qtyKirimEl.onchange = () => { item.qtyKirim = +qtyKirimEl.value || 0; };
+    if(qtyKirimEl) qtyKirimEl.onchange = () => {
+      item.qtyKirim = +qtyKirimEl.value || 0;
+      if(row.jurnalMode === 'otomatis'){ invBuildJurnalOtomatis(row); refreshInvJurnalContent(row); }
+    };
   });
 }
 
@@ -249,6 +392,7 @@ function rerenderInvItemsTable(row){
   wireInvItemEvents(row);
   const hint = document.getElementById('invItemsEmptyHint');
   if(hint) hint.style.display = row.items.length ? 'none' : '';
+  if(row.jurnalMode === 'otomatis'){ invBuildJurnalOtomatis(row); refreshInvJurnalContent(row); }
 }
 
 function invValidationError(text){
@@ -373,6 +517,10 @@ function openInvDriverPicker(row){
   });
 }
 
+/* Dipicu tombol chevron "Pilihan Cetak" di LIST — dicetak langsung dari
+   baris persisten DATA.invoices[idx] (bukan copy form), lihat
+   openInvCetakDropdownFromForm() untuk versi yang dipicu dari dalam
+   form Ubah. */
 function openInvCetakDropdown(idx){
   closeModal();
   const row = DATA.invoices[idx];
@@ -383,8 +531,60 @@ function openInvCetakDropdown(idx){
   document.getElementById('modalClose').onclick = closeModal;
   document.getElementById('modalCancel').onclick = closeModal;
   overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
-  document.getElementById('invCetakInvoice').onclick = () => openInvInfo('Cetak Invoice', `Preview PDF Invoice <b>${row.no}</b> akan tersedia di sini.`);
+  document.getElementById('invCetakHalf').onclick = () => openInvPrintWindow(idx, 'half');
+  document.getElementById('invCetakFull').onclick = () => openInvPrintWindow(idx, 'full');
   document.getElementById('invCetakSJ').onclick = () => openInvInfo('Cetak Surat Jalan', `Preview PDF Surat Jalan <b>${row.noSJ}</b> akan tersedia di sini.`);
+}
+
+/* Dipicu tombol "Cetak" di DALAM form Ubah — sama seperti
+   openInvCetakDropdown() tapi mencetak dari `row` yang sedang diedit di
+   layar (shallow-copy, lihat openInvForm()) supaya perubahan yang belum
+   di-Simpan tetap ikut tercetak (mis. Qty Kirim/pick SO-PL/Driver yang
+   memang live-bind ke `row`), sementara counter "Cetakan ke-N" tetap
+   ditambah ke baris PERSISTEN DATA.invoices[idx] (lihat parameter
+   liveRow di openInvPrintWindow()) supaya konsisten dipakai ulang lain
+   kali baris itu dicetak dari mana pun. */
+function openInvCetakDropdownFromForm(idx, row){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplInvCetakDropdown(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('invCetakHalf').onclick = () => openInvPrintWindow(idx, 'half', row);
+  document.getElementById('invCetakFull').onclick = () => openInvPrintWindow(idx, 'full', row);
+  document.getElementById('invCetakSJ').onclick = () => openInvInfo('Cetak Surat Jalan', `Preview PDF Surat Jalan <b>${row.noSJ}</b> akan tersedia di sini.`);
+}
+
+/* ===== Cetak Invoice — Half Page / Full Page (2026-08-19, lanjutan
+   lagi). Lihat catatan desain LENGKAP di header tplInvPrintDoc()
+   (invoice.template.js) untuk penjelasan setiap penyesuaian dari 2 PDF
+   acuan yang dikirim user. Membuka tab baru (window.open + document.write)
+   berisi dokumen cetak yang berdiri sendiri — fitur cetak PERTAMA di
+   seluruh mockup ini yang benar-benar merender dokumen, bukan modal info
+   dekoratif ("Preview PDF akan tersedia di sini").
+
+   cetakanKe SELALU ditambah ke DATA.invoices[idx] (baris PERSISTEN),
+   TIDAK PERNAH ke `liveRow` (copy form) saja — supaya counter konsisten
+   walau baris yang sama dicetak berulang kali dari LIST maupun dari
+   FORM, pola persis cetakanKe di Purchase Order (openPoCetak()). */
+function openInvPrintWindow(idx, mode, liveRow){
+  closeModal();
+  const persisted = DATA.invoices[idx];
+  if(!persisted) return;
+  persisted.cetakanKe = (persisted.cetakanKe || 0) + 1;
+  if(liveRow) liveRow.cetakanKe = persisted.cetakanKe;
+  const row = liveRow || persisted;
+  const w = window.open('', '_blank');
+  if(!w){
+    openInvInfo('Cetak Invoice', 'Pop-up diblokir browser. Izinkan pop-up untuk halaman ini agar bisa membuka preview cetak Invoice.');
+    return;
+  }
+  w.document.open();
+  w.document.write(tplInvPrintDoc(row, mode));
+  w.document.close();
 }
 
 function openInvDeleteConfirm(idx){

@@ -113,6 +113,7 @@ const PAGE_MODULES={
   customerGroup:{srcs:['js/pages/customer-group.template.js','js/pages/customer-group.js'], fn:'renderCustomerGroupPage'},
   customers:{srcs:['js/pages/master-customer.template.js','js/pages/master-customer.js'], fn:'renderMasterCustomerPage'},
   promotion:{srcs:['js/pages/promotion.template.js','js/pages/promotion.js'], fn:'renderPromotionPage'},
+  dominasi:{srcs:['js/pages/dominasi.template.js','js/pages/dominasi.js'], fn:'renderDominasiPage'},
   salesQuotation:{srcs:['js/pages/sales-quotation.template.js','js/pages/sales-quotation.js'], fn:'renderSalesQuotationPage'},
   salesOrders:{srcs:['js/pages/sales-order.template.js','js/pages/sales-order.js'], fn:'renderSalesOrderPage'},
   pickingList:{srcs:['js/pages/picking-list.template.js','js/pages/picking-list.js'], fn:'renderPickingListPage'},
@@ -128,6 +129,9 @@ const PAGE_MODULES={
   users:{srcs:['js/pages/master-user.template.js','js/pages/master-user.js'], fn:'renderMasterUserPage'},
   salesOffice:{srcs:['js/pages/sales-office.template.js','js/pages/sales-office.js'], fn:'renderSalesOfficePage'},
   adminBulanan:{srcs:['js/pages/admin-bulanan.template.js','js/pages/admin-bulanan.js'], fn:'renderAdminBulananPage'},
+  priceListProvince:{srcs:['js/pages/price-list-province.template.js','js/pages/price-list-province.js'], fn:'renderPriceListProvincePage'},
+  penerimaanPiutang:{srcs:['js/pages/penerimaan-piutang.template.js','js/pages/penerimaan-piutang.js'], fn:'renderPenerimaanPiutangPage'},
+  penerimaanSsp:{srcs:['js/pages/penerimaan-ssp.template.js','js/pages/penerimaan-ssp.js'], fn:'renderPenerimaanSspPage'},
 };
 const loadedModules=new Set();
 
@@ -170,7 +174,6 @@ function renderPage(){
   const pages={
     salesman:{title:'Salesman', cols:[['nama','Nama Salesman'],['area','Area'],['target','Target',true],['realisasi','Realisasi',true]], rows:DATA.salesman},
     packing:{title:'Packing', cols:[['no','No. Packing'],['tgl','Tanggal'],['so','No. SO'],['status','Status','pill']], rows:DATA.packing},
-    penerimaanPiutang:{title:'Penerimaan Piutang', cols:[['no','No. Penerimaan'],['tgl','Tanggal'],['customer','Customer'],['jumlah','Jumlah',true],['metode','Metode']], rows:DATA.penerimaanPiutang},
     items:{title:'Daftar Barang', cols:[['kode','Kode'],['nama','Nama Barang'],['kategori','Kategori'],['satuan','Satuan'],['stok','Stok','num'],['harga','Harga',true]], rows:DATA.items},
     kasMasuk:{title:'Kas Masuk', cols:[['tgl','Tanggal'],['ket','Keterangan'],['kategori','Kategori'],['jumlah','Jumlah',true]], rows:DATA.kasMasuk},
     kasKeluar:{title:'Kas Keluar', cols:[['tgl','Tanggal'],['ket','Keterangan'],['kategori','Kategori'],['jumlah','Jumlah',true]], rows:DATA.kasKeluar},

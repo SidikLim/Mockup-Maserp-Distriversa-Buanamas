@@ -351,6 +351,16 @@ canvas{max-width:100%;}
 .po-item-table input:disabled,.po-item-table textarea:disabled{background:#f4f6fb;color:var(--text-light);}
 .po-item-table textarea{width:100%;border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-size:12px;resize:vertical;min-height:34px;font-family:inherit;}
 .po-item-table input[type="checkbox"]{width:16px;height:16px;}
+
+/* Tabel "Daftar Inventory" di Price List By Province — 4 kolom Harga
+   Jual x 3 sub-kolom (Satuan/Lama/Baru) = 15 kolom total, terlalu
+   sempit kalau dipaksa muat 1 layar penuh (input Baru jadi nyaris tak
+   kelihatan). Dikasih min-width supaya browser overflow-scroll
+   horizontal (.table-wrap sudah overflow-x:auto) alih-alih memampatkan
+   tiap kolom sampai tidak terbaca — sama seperti versi asli MASERP
+   yang juga scrollable ke kanan untuk kolom Harga Jual 3/4. */
+.plz-price-table{min-width:1300px;}
+.plz-price-table td:nth-child(6),.plz-price-table td:nth-child(9),.plz-price-table td:nth-child(12),.plz-price-table td:nth-child(15){min-width:90px;}
 .po-rincian-table td:nth-child(2),.po-rincian-table td:nth-child(4){min-width:120px;}
 
 /* ===== Picking List: tag input multi-value (field "Picker"), satu-satunya

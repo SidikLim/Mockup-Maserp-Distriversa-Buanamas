@@ -43,6 +43,19 @@ const JP_AKUN_GROUPS = [
     { key:'akunPiutangRK', label:'Akun Piutang R/K' },
     { key:'akunHutangBelumDifaktur', label:'Akun Hutang Belum Difaktur' },
   ]},
+  /* Section baru 2026-08-20 — akun default utk PPN/PPH yang ditanggung
+     pihak lain (dipungut) saat Pelunasan Hutang/Piutang, lihat catatan
+     besar di js/pages/penerimaan-piutang.template.js (fitur ini dipakai
+     nyata oleh modul Penerimaan Piutang lewat DATA.jurnalPenjualan;
+     field yang sama juga ditambahkan di sini/Jurnal Pembelian untuk
+     sisi Hutang supaya kedua master tetap simetris, meski modul
+     "Pelunasan Utang" sendiri belum dibangun di mockup ini). */
+  { title: 'Akun Untuk Pelunasan (PPN/PPH Ditanggung Pihak Lain)', fields: [
+    { key:'akunARSSPPPN', label:'Akun AR SSP PPN' },
+    { key:'akunARSSPPPH', label:'Akun AR SSP PPH' },
+    { key:'akunPPNPemungut', label:'Akun PPn Pemungut' },
+    { key:'akunUangMukaPPH22', label:'Akun Uang Muka PPH 22' },
+  ]},
 ];
 const JP_CABANG_LIST = ['Head Office','Surabaya','Bandung','Medan','Makassar','Semarang','Tangerang','Sidoarjo'];
 
@@ -161,6 +174,11 @@ function tplJurnalPembelianForm(mode, row){
         <div class="jp-section-title">${JP_AKUN_GROUPS[2].title}</div>
         <table class="jp-akun-table">
           ${JP_AKUN_GROUPS[2].fields.map(f=>tplJpAkunRow(f,row)).join('')}
+        </table>
+
+        <div class="jp-section-title">${JP_AKUN_GROUPS[3].title}</div>
+        <table class="jp-akun-table">
+          ${JP_AKUN_GROUPS[3].fields.map(f=>tplJpAkunRow(f,row)).join('')}
         </table>
 
         <div class="form-page-actions">

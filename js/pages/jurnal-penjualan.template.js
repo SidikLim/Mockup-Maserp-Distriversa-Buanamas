@@ -42,6 +42,19 @@ const JJ_AKUN_GROUPS = [
     { key:'akunReturKredit', label:'Akun Retur Kredit' },
     { key:'akunReturPajak', label:'Akun Retur Pajak' },
   ]},
+  /* Section baru 2026-08-20 — akun default utk PPN/PPH yang ditanggung
+     customer (dipungut) saat Pelunasan Piutang. Dipakai NYATA oleh
+     modul Penerimaan Piutang (ppBuildJurnalLines() di penerimaan-
+     piutang.js membaca DATA.jurnalPenjualan[0].akunARSSPPPN dst, dgn
+     fallback ke konstanta lokal kalau kosong) — lihat catatan besar di
+     js/pages/penerimaan-piutang.template.js utk penjelasan lengkap &
+     contoh jurnal dari user. */
+  { title: 'Akun Untuk Pelunasan Piutang (PPN/PPH Ditanggung Customer)', fields: [
+    { key:'akunARSSPPPN', label:'Akun AR SSP PPN' },
+    { key:'akunARSSPPPH', label:'Akun AR SSP PPH' },
+    { key:'akunPPNPemungut', label:'Akun PPn Pemungut' },
+    { key:'akunUangMukaPPH22', label:'Akun Uang Muka PPH 22' },
+  ]},
 ];
 
 function jjAkunNama(kode){
@@ -139,6 +152,11 @@ function tplJurnalPenjualanForm(mode, row){
         <div class="jp-section-title">${JJ_AKUN_GROUPS[1].title}</div>
         <table class="jp-akun-table">
           ${JJ_AKUN_GROUPS[1].fields.map(f=>tplJjAkunRow(f,row)).join('')}
+        </table>
+
+        <div class="jp-section-title">${JJ_AKUN_GROUPS[2].title}</div>
+        <table class="jp-akun-table">
+          ${JJ_AKUN_GROUPS[2].fields.map(f=>tplJjAkunRow(f,row)).join('')}
         </table>
 
         <div class="form-page-actions">
