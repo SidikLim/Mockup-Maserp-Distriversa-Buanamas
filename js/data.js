@@ -4,6 +4,613 @@
 const rp = n => 'Rp ' + Number(n).toLocaleString('id-ID');
 const num = n => Number(n).toLocaleString('id-ID');
 
+/* =========================================================
+   REPORT CENTERS — isi menu "Daftar Laporan" (2026-08-21)
+   Ditambahkan 2026-08-21 (lanjutan mockup "Daftar Laporan"):
+   sebelumnya menu ini cuma grid kartu judul dekoratif dari
+   DATA.reports (array string polos, LIHAT versi lama di
+   riwayat git). Sekarang direplikasi persis struktur "Report
+   Center" MASERP sungguhan — 10 kategori submenu (Cetakan
+   Transaksi/Account Receivable/Penjualan/Account Payable/
+   Purchasing/Persediaan Barang/Kas-Bank/General Ledger/Aktiva
+   Tetap/Cabang), masing-masing berupa tabel No./Report/
+   Keterangan/Permission Code/Print/Edit Report/Reset Report,
+   dikelompokkan per header kategori (mis. "FINANCE",
+   "PELUNASAN HUTANG") PERSIS urutan & pengelompokan screenshot
+   MASERP yang dikirim user. Nama/keterangan/permission code
+   report SENGAJA TIDAK diganti ke istilah DBM manapun — ini
+   daftar nama-nama laporan sistem generik MASERP, bukan data
+   demo perusahaan lain, jadi valid dipakai apa adanya untuk
+   instalasi PT Distriversa Buanamas juga (beda dengan data
+   customer/supplier di modul lain yang memang diganti ke DBM).
+
+   Kategori "Cetakan Transaksi" pada screenshot asli berisi
+   jauh lebih banyak baris (belasan sub-kelompok kecil seperti
+   PROJECT/KWITANSI/KASBON/dll dengan hanya 1-4 baris masing²)
+   dalam resolusi gambar yang sangat kecil/padat sehingga sulit
+   dipastikan akurat sampai baris-baris paling detail — mengikuti
+   precedent modul Master Rayon (2026-08-18, kecamatan 117→24
+   baris) & Price List By Province (2026-08-19, ~690→10 baris),
+   volume di kategori ini DIRAMPINGKAN sambil tetap
+   mempertahankan SEMUA nama kelompok yang terlihat di screenshot
+   beserta contoh baris yang representatif per kelompok — bukan
+   replikasi 1:1 jumlah barisnya.
+
+   Tombol Print/Edit Report/Reset Report di tabel SENGAJA
+   dekoratif (buka modal info singkat) — sesuai instruksi user
+   modul ini baru sampai LIST laporannya saja, belum sampai
+   membangun format/desainer laporannya.
+========================================================= */
+function rcGroup(name, rows){
+  return { name, rows: rows.map(r=>({no:r[0], report:r[1], ket:r[2], perm:r[3]||''})) };
+}
+const REPORT_CENTERS_DATA = {
+  cabang:{ title:'Cabang', groups:[
+    rcGroup('CABANG', [
+      [1,'Laporan Kontrol Inventory','Dalam laporan ini anda dapat melihat Transaksi Inventory berdasarkan Cabang'],
+      [2,'Laporan Laba Rugi Multi Cabang','Laporan Laba / Rugi Multi Cabang berjejer kekanan.'],
+      [3,'Laporan Laba Rugi Multi Cabang (Excel)','Laporan Laba / Rugi Multi Cabang yang akan tampil dalam excel.'],
+      [4,'Laporan Laba Rugi Per Cabang','Laporan Laba / Rugi Per Cabang.'],
+      [5,'Laporan Neraca Per Cabang','Laporan Neraca Per Cabang.'],
+      [6,'Laporan Neraca Multiple Cabang','Laporan Neraca Multi Cabang berjejer kekanan.'],
+      [7,'Laporan Cabang Pembelian','Laporan Pembelian per Cabang.','DepartmentByPurchaseBill'],
+      [8,'Laporan Cabang Rekap Pembelian Per Bulan','Laporan Rekap Pembelian Berdasarkan Cabang Sortir Bulan.','DepartmentByPurchaseBillForRekap'],
+      [9,'Laporan Cabang Penjualan','Laporan Penjualan per Cabang.'],
+      [10,'Laporan Cabang Rekap Penjualan Per Bulan','Laporan Rekap Penjualan Berdasarkan Cabang Sortir Bulan.'],
+      [11,'Laporan Cabang Cash/Bank','Laporan Cash/Bank per Cabang.'],
+      [12,'Laporan Cabang Piutang','Laporan Piutang per Cabang.'],
+      [13,'Laporan Jurnal Umum','Laporan jurnal umum berdasarkan Cabang.'],
+      [14,'Laporan Buku Besar','Laporan buku besar berdasarkan Cabang (wajib menggunakan neraca per Cabang).'],
+      [15,'Laporan Aktivitas User Per Hari','Laporan Aktivitas User Per Hari.'],
+      [16,'Laporan Arus Kas Multi Cabang','Laporan Arus Kas Multi Cabang'],
+      [17,'Laporan Budgeting Cabang Per Bulan','Laporan Budgeting Cabang Per Bulan.'],
+      [18,'Laporan Budgeting Cabang 1 Tahun','Laporan Budgeting Cabang dalam satu tahun.'],
+      [19,'Laporan Budgeting Purchase Request Per Cabang','Laporan Budgeting Purchase Request Per Cabang.'],
+      [20,'Laporan Uang Muka Multiple Cabang','Laporan Uang Muka Cabang berjejer kekanan.'],
+      [21,'Laporan Omset Klinik','Laporan omset per Cabang.'],
+    ]),
+  ]},
+  aktivaTetap:{ title:'Fixed Asset', groups:[
+    rcGroup('', [
+      [1,'Daftar Fixed Asset','Dalam laporan ini Anda dapat melihat daftar fixed asset','PrintFixedAsset'],
+      [2,'Penyusutan Fixed Asset Bulanan','Dalam laporan ini Anda dapat melihat Penyusutan Fixed Asset Bulanan','PrintFixedAssetSaldo'],
+      [3,'Kartu Assets','Dalam laporan ini Anda dapat melihat rincian','PrintAssetCard'],
+      [4,'Pembelian Asset Tahun Ini','Dalam laporan ini Anda dapat melihat pembelian asset tahun ini','PrintAssetPurchasingThisYear'],
+      [5,'Biaya Asset','Dalam laporan ini Anda dapat melihat biaya asset.','PrintFixedAssetBiaya'],
+      [6,'History Pemakaian Inventory','Dalam laporan ini Anda dapat melihat History Pemakaian Inventory','PrintFixedAssetBiaya'],
+    ]),
+  ]},
+  ap:{ title:'Account Payable', groups:[
+    rcGroup('FINANCE', [
+      [1,'FA-02 Lap Hutang','Dalam laporan ini anda dapat melihat daftar Hutang Supplier','PrintListOfBillPayable'],
+      [2,'FA-03 Lap Hutang Per Faktur','Dalam laporan ini anda dapat melihat saldo Supplier perfaktur','ReportOfBillsPayableByNoFaktur'],
+      [3,'FA-04 Lap Umur Hutang','Dalam laporan ini anda dapat melihat umur Hutang Supplier','PrintPayablesDueDate'],
+    ]),
+    rcGroup('PELUNASAN HUTANG', [
+      [1,'Laporan Kartu Supplier','Cetak Kartu Supplier','SupplierCard'],
+      [2,'Laporan Rekap Umur Hutang','Dalam laporan ini anda dapat melihat rekap umur Hutang Supplier','PrintPayablesDueDateRekap'],
+      [3,'Laporan Rekening Koran','Dalam laporan ini anda dapat melihat rekening koran Supplier','PrintApStatementAllDateFaktur'],
+      [4,'Laporan Transaksi','Dalam laporan ini anda dapat melihat laporan transaksi Supplier','PrintPayableTransactionByFakturDate'],
+      [5,'Laporan Daftar Supplier Dengan Saldo','Dalam laporan ini anda dapat melihat dengan saldo Supplier','PrintSupplierWithBalance'],
+      [6,'Laporan Daftar Supplier Tanpa saldo','Dalam laporan ini anda dapat melihat tanpa saldo Supplier','PrintSupplierWithoutBalance'],
+      [7,'Laporan Daftar Supplier Perwilayah','Dalam laporan ini anda dapat melihat saldo Supplier perwilayah','PrintSupplierWithBalanceByLocation'],
+      [8,'Laporan Daftar Hutang Perfaktur Dengan Detail Kurs','Dalam laporan ini anda dapat melihat saldo Supplier perfaktur dengan detail kurs','ReportOfBillsPayableByNoFaktur'],
+      [9,'Cetak Bukti Transaksi AP','Dalam laporan ini anda dapat melihat Bukti Transaksi AP','PrintPayableTransactionByTransactionNumber'],
+      [10,'Cetak Bukti Transaksi AP Blank Form','Cetak Bukti Transaksi AP Form','PrintPayableTransactionBlankForm'],
+      [11,'Laporan Daftar Uang Muka Supplier','Dalam laporan ini anda dapat melihat Daftar Uang Muka Supplier','PrintSupplierDownPayment'],
+      [12,'Laporan Perbandingan A.P. dan GlAccount','Report ini menampilkan perbandingan antara Modul Rincian A.P. dengan Modul Rincian General Ledger yang berstatus cair (C).'],
+      [13,'Laporan Daftar Supplier Dengan Saldo Berdasarkan Kurs','Dalam laporan ini anda dapat melihat dengan saldo Supplier berdasarkan Kurs'],
+      [14,'Print Daftar Faktur pembelian yang sudah lunas dan belum isi nomor Faktur Pajak','Dalam laporan ini anda dapat melihat Faktur pembelian yang sudah lunas dan belum isi nomor Faktur Pajak','PrintListOfBillPayableNotExistsFakturP'],
+    ]),
+  ]},
+  ar:{ title:'Account Receivable', groups:[
+    rcGroup('FINANCE', [
+      [1,'FA-05 Lap Piutang','Dalam laporan ini anda dapat melihat daftar piutang customer','PrintListOfBillsReceivable'],
+      [2,'FA-06 Lap Piutang Per Faktur','Dalam laporan ini anda dapat melihat saldo customer perfaktur','PrintListOfBillsReceivableByNoFaktur'],
+      [3,'FA-07 Lap Piutang Per Wilayah','Dalam laporan ini anda dapat melihat saldo customer perwilayah','PrintCustomerWithBalanceByLocation'],
+      [4,'FA-08 Lap SSP Belum Diterima','Dalam laporan ini anda dapat melihat daftar SSP belum diterima','PrintReportSspListNotReceived'],
+      [5,'FA-09 Lap SSP Sudah Diterima','Dalam laporan ini anda dapat melihat daftar SSP sudah diterima','PrintReportSspListReceived'],
+      [6,'FA-10 Lap Umur Piutang','Dalam laporan ini anda dapat melihat umur piutang customer','PrintReceivabledDueDate'],
+      [7,'FA-11 Lap AR Faktur per Customer','Dalam laporan ini anda dapat melihat AR faktur per customer','PrintArFakturPerCustomer'],
+      [8,'FA-12 Lap AR vs Pelunasan per Customer','Dalam laporan ini anda dapat melihat AR vs pelunasan per customer','PrintArDanPelunasanPerCustomer'],
+      [9,'FA-13 Lap List Sales & Collection Cabang','Dalam laporan ini anda dapat melihat List Sales & Collection Cabang','PrintListSalesDanCollectionCabang'],
+      [10,'Laporan Umur Piutang Detail','Dalam laporan ini anda dapat melihat umur piutang customer per salesman','PrintReceivabledDueDatePerSalesman'],
+    ]),
+    rcGroup('CUSTOMER & PIUTANG', [
+      [1,'Laporan AR Konsumen','Dalam laporan ini anda dapat melihat daftar AR Konsumen','PrintARKonsumen'],
+      [2,'Laporan AR Faktur','Dalam laporan ini anda dapat melihat daftar AR Faktur','PrintARFaktur'],
+      [3,'Laporan Kartu Customer','Cetak Kartu Customer','CustomerCard'],
+      [4,'Laporan Rekap Umur Piutang','Dalam laporan ini anda dapat melihat rekap umur piutang customer','PrintReceivabledDueDateRekap'],
+      [5,'Laporan Rekening Koran','Dalam laporan ini anda dapat melihat rekening koran customer','PrintArStatementAllDateFaktur'],
+      [6,'Laporan Rekening Koran Full','Dalam laporan ini anda dapat melihat rekening koran customer dengan saldo uang muka dan giro','PrintArStatementAllDateFakturFull'],
+      [7,'Laporan Transaksi Penjualan Customer','Dalam laporan ini anda dapat melihat laporan transaksi customer','PrintReceivableTransactionByFakturDate'],
+      [8,'Laporan Daftar Customer Dengan Saldo','Dalam laporan ini anda dapat melihat dengan saldo customer','PrintCustomerWithBalance'],
+      [9,'Laporan Daftar Customer Tanpa saldo','Dalam laporan ini anda dapat melihat tanpa saldo customer','PrintCustomerWithoutBalance'],
+      [10,'Laporan Daftar Piutang Perfaktur Dengan Detail Kurs','Dalam laporan ini anda dapat melihat saldo customer perfaktur dengan detail kurs','PrintListOfBillsReceivableByNoFaktur'],
+      [11,'Cetak Bukti Transaksi AR','Dalam laporan ini anda dapat melihat Bukti Transaksi AR','PrintReceivableTransactionByTransactionNumber'],
+      [12,'Laporan Customer tanpa Penjualan','Dalam Laporan ini anda dapat mengetahui customer yang belum terjual.','PrintCustomerWithNoSales'],
+      [13,'Laporan Daftar Customer dengan Sisa Kredit','Dalam Laporan ini anda dapat mengetahui jumlah piutang, batas piutang, dan sisa piutang per customer.','PrintCustomerSisaBatasKredit'],
+      [14,'Laporan Perbandingan A.R. dan GlAccount','Report ini menampilkan perbandingan antara Modul Rincian A.R. dengan Modul Rincian General Ledger yang berstatus cair (C).','PrintPerbandinganAccountReceivableDanGlAccount'],
+      [15,'Laporan Daftar Uang Muka Customer','Dalam laporan ini anda dapat melihat Daftar Uang Muka Customer','PrintCustomerDownPayment'],
+      [16,'Laporan PPN Masukan dan PPN Keluaran','Dalam laporan ini anda dapat melihat Daftar PPN Masukan dan PPN Keluaran','PrintPPnInAndOut'],
+      [17,'Laporan Kartu AR','Dalam laporan ini anda dapat melihat Kartu AR (Mata Uang Sebenarnya)','PrintArCard'],
+    ]),
+    rcGroup('DOMINASI', [
+      [1,'Laporan Dominasi Approved','Dalam laporan ini anda dapat melihat laporan dominasi approved','PrintDominasiApproved'],
+      [2,'Laporan Dominasi Klaim','Dalam laporan ini anda dapat melihat laporan dominasi klaim','PrintDominasiKlaim'],
+      [3,'Laporan Dominasi Lunas','Dalam laporan ini anda dapat melihat laporan dominasi lunas','PrintDominasiLunas'],
+    ]),
+  ]},
+  purchasing:{ title:'Pembelian', groups:[
+    rcGroup('PURCHASE REQUEST', [
+      [1,'Laporan Purchase Request berdasarkan Departemen','Dalam laporan ini anda dapat mengetahui Purchase Request per Departemen','PrintPurchaseRequestByDepartment'],
+      [2,'Daftar Purchase Request','Daftar Purchase Request (1 halaman)','PrintPurchaseRequestList'],
+    ]),
+    rcGroup('PURCHASE ORDER', [
+      [1,'Laporan Purchase Order Pertanggal','Dalam laporan ini anda dapat melihat order Pembelian pertanggal','PrintPurchaseOrderByDate'],
+      [2,'Laporan Daftar Purchase Order','Daftar Purchase Order','PrintPurchaseOrderList'],
+      [3,'Laporan Back Order P.O.','Dalam laporan ini anda dapat melihat qty barang yang belum terkirim dan sudah terkirim','PrintBackOrderPo'],
+      [4,'Laporan Status Pengiriman PO Ke PU','Dalam laporan ini anda dapat mengetahui alur pengiriman PO ke PU','PoDeliveryStatus'],
+    ]),
+    rcGroup('PENERIMAAN BARANG', [
+      [1,'Laporan Daftar Penerimaan Barang','Dalam laporan ini anda dapat melihat Daftar Penerimaan Barang','PrintProofOfReceiptInventory'],
+      [2,'Laporan Daftar Penerimaan Barang Dengan Batch Number','Dalam laporan ini anda dapat melihat Daftar Penerimaan Barang dengan Batch Number','PrintProofOfReceiptInventoryWithBatchNumber'],
+      [3,'Laporan Back Order dari Purchase Order-Bukti Penerimaan Barang Pertanggal','Dalam laporan ini anda dapat melihat Purchase Order-Bukti Penerimaan Barang pertanggal','PrintReceiveInventoryReportBySjPerFaktur'],
+      [4,'Laporan Pembelian per hari bedasarkan BPB','Laporan ini untuk melihat BPB mana saja yang belum datang tagihannya dari Supplier','TransactionPurchaseByProofOfReceipt'],
+      [5,'Laporan BPB dengan harga beli','Laporan ini untuk melihat BPB dengan harga beli','PrintProofOfReceiptWithPrice'],
+      [6,'Laporan BPB Yang Belum Dibuatkan Faktur Pembelian','Dalam laporan ini dapat melihat bukti penerimaan barang yang belum dibuatkan Faktur Pembelian','PrintProofOfReceiptWithNoInvoice'],
+    ]),
+    rcGroup('PEMBELIAN', [
+      [1,'Laporan Pembelian','Dalam laporan ini anda dapat melihat Pembelian secara rinci','PrintPayablePerFaktur'],
+      [2,'Laporan History Pembelian PerProduk','Dalam laporan ini anda dapat melihat history pembelian perproduk','PrintPurhasingByProduct'],
+      [3,'Laporan Pembelian Perhari','Dalam laporan ini anda dapat melihat Pembelian perhari','PrintPurchasePerDay'],
+      [4,'Laporan Pembelian Terbanyak Supplier','Dalam laporan ini anda dapat melihat Pembelian Terbanyak Supplier','PrintHighestPurchasingBySupplier'],
+      [5,'Laporan Rekap Pembelian Per Produk','Dalam laporan ini anda dapat melihat Rekap Pembelian Per Produk','PrintPurchaseSummeryByProduct'],
+      [6,'Laporan Pembelian Per Supplier - Item','Dalam laporan ini anda dapat melihat pembelian barang persupplier item','PrintPurchaseItemPerSupplierItem'],
+      [7,'Laporan Pembelian Per Per Supplier - Kategori','Dalam laporan ini anda dapat melihat pembelian barang persupplier - Kategori','PrintPurchaseItemPerSupplierKategori'],
+      [8,'Laporan Pembelian Pertanggal','Dalam laporan ini anda dapat melihat Pembelian pertanggal','PrintTransactionPayablesPerDate'],
+      [9,'Laporan Alokasi Biaya Import v1','Dalam laporan ini anda dapat melihat Alokasi Biaya Import v1','PrintAlokasiBiayaImport'],
+      [10,'Laporan Biaya Import V2','Dalam laporan ini anda dapat melihat Biaya Import V1','PrintBiayaImport2'],
+    ]),
+    rcGroup('DELIVERY REQUEST', [
+      [1,'Laporan Delivery Request Cabang','Dalam laporan ini anda dapat melihat delivery request cabang','PrintDeliveryRequestCabang'],
+      [2,'Laporan Delivery Request Head Office','Dalam laporan ini anda dapat melihat delivery request head office','PrintDeliveryRequestHeadOffice'],
+      [3,'Laporan Terima Delivery Request','Dalam laporan ini dapat melihat daftar terima Delivery Request','PrintReceiveDeliveryRequest'],
+    ]),
+  ]},
+  kasBank:{ title:'Cash And Bank', groups:[
+    rcGroup('KAS DAN BANK', [
+      [1,'Laporan Keluar Masuk Kas/Bank (Per Tanggal)','Dalam laporan ini Anda dapat melihat transaksi keluar masuk uang dari perusahaan ini per harinya.','PrintCashBankInOutList'],
+      [2,'Laporan Saldo Bank','Dalam laporan ini Anda dapat melihat transaksi mutasi kas dan bank','PrintBankWithBalance'],
+      [3,'Laporan Giro Akan Jth Tmp.','Report ini menampilkan laporan rincian umur giro mundur yang akan jatuh tempo','PrintGiroWithDueDate'],
+      [4,'Laporan Kas dan Bank By Kode Bank','Dalam laporan ini Anda dapat mencetak transaksi kas dan bank berdasarkan kode bank','TransaksiKasBankByKodeBank'],
+      [5,'Laporan Rekening Koran','Dalam laporan ini Anda dapat mencetak rekening koran bank','PrintRekeningKoran'],
+      [6,'Laporan Pelunasan Piutang','Report ini menampilkan laporan piutang yang sudah dilunasakan','SettlementOfAccountReceivableReport'],
+      [7,'Laporan Pembayaran Hutang','Report ini menampilkan laporan hutang yang sudah dilunasakan','DebtPaymentReport'],
+      [8,'Laporan Perbandingan Kas/Bank dan GlAccount','Report ini menampilkan perbandingan antara Modul Rincian Kas Bank dengan Modul Rincian General Ledger yang berstatus cair (C)'],
+      [9,'Rekapitulasi Piutang Giro Mundur','Report ini menampilkan rekapitulasi piutang giro mundur'],
+    ]),
+    rcGroup('CASH FLOW', [
+      [1,'Laporan Arus Kas per Bank','Report ini menampilkan arus Kas / Bank','ReportCashFlow'],
+      [2,'Laporan Arus Kas Langsung','Dalam Report ini Anda dapat melihat Laporan Arus Kas Langsung secara total, dan detail Akun','ReportCashFlow'],
+      [3,'Laporan Arus Kas Langsung dengan detail transaksi','Dalam Report ini Anda dapat melihat Laporan Arus Kas Langsung dengan detail rincian transaksinya','ReportCashFlow'],
+    ]),
+    rcGroup('SELISIH KURS', [
+      [1,'Laporan Selisih Kurs Customer','Report ini menampilkan Selisih Kurs Customer','PrintCurrencyChangeForCustomer'],
+      [2,'Laporan Selisih Kurs Supplier','Report ini menampilkan Selisih Kurs Supplier','PrintCurrencyChangeForVendor'],
+      [3,'Laporan Selisih Kurs Cash / Bank','Report ini menampilkan Selisih Kurs Cash / Bank','PrintCurrencyChangeForCashBank'],
+    ]),
+    rcGroup('CETAKAN', [
+      [1,'Cetakan Transaksi Kas Blank Form','Cetakan Transaksi Kas Blank Form','PrintCashTransactionBlankForm'],
+      [2,'Cetak Bukti Bank Masuk','Report ini menampilkan cetakan laporan bukti bank masuk dari penerimaan piutang','CetakBuktiTerimaPiutang'],
+      [3,'Cetak Bukti Bank Keluar','Report ini menampilkan cetakan laporan bukti bank keluar dari pembayaran hutang','CetakBuktiBayarHutang'],
+      [4,'Cetak Bukti Kas Masuk','Report ini menampilkan cetakan laporan bukti kas masuk','CetakBuktiTransaksiLainlain'],
+      [5,'Cetak Bukti Kas Keluar','Report ini menampilkan cetakan laporan bukti kas keluar','CetakBuktiTransaksiLainlain'],
+    ]),
+    rcGroup('KARYAWAN', [
+      [1,'Cetak Bukti Kas Bon','Report ini menampilkan cetakan laporan bukti kas bon','CetakBuktiKasBon'],
+      [2,'Cetak Bukti Pengembalian Kas Bon','Report ini menampilkan cetakan laporan bukti pengembalian kas bon','CetakBuktiPengembalianKasBon'],
+      [3,'Laporan Daftar Kas Bon Karyawan','Dalam laporan ini Anda dapat melihat daftar piutang Karyawan','PrintListOfBillsEmployee'],
+      [4,'Laporan Daftar Karyawan Dengan Saldo','Dalam laporan ini Anda dapat melihat dengan saldo karyawan','PrintEmployeeWithBalance'],
+    ]),
+  ]},
+  gl:{ title:'General Ledger', groups:[
+    rcGroup('LAPORAN DAFTAR AKUN', [
+      [1,'Daftar Akun COA','Daftar akun Chart of Account beserta Kategorinya','DaftarAkunCOA'],
+      [2,'Daftar Akun COA Dengan Saldo','Daftar akun Chart of Account beserta Kategorinya dan saldo','DaftarAkunCOADenganSaldo'],
+      [3,'Daftar Akun COA Dengan Saldo Debit Kredit','Daftar akun Chart of Account beserta Kategorinya dan saldo debit kredit','DaftarAkunCOADenganSaldo'],
+      [4,'Kartu G.L.','Cetak Laporan Gl. Lengkap','GeneralLedgerCard'],
+      [5,'Kartu G.L. Per Departemen','Cetak Laporan Gl. Lengkap dengan departemen'],
+    ]),
+    rcGroup('LAPORAN TRANSAKSI G.L.', [
+      [1,'Buku Besar','Lihat rincian transaksi per kode Akun GL','PrintTransactionAccountPerAccountCode'],
+      [2,'Laporan Jurnal Umum','Transaksi jurnal yang terjadi dalam periode yang ditentukan.','PrintTransactionAccountsPerDate'],
+      [3,'Laporan Transaksi Saldo Awal','Transaksi saldo awal Per Kode Akun','PrintTransactionStartingBalancePerAccountCode'],
+      [4,'Laporan Lawan Akun','Laporan Lawan Akun'],
+      [5,'Buku Besar Per Departemen','Lihat rincian transaksi per kode Akun GL berdasarkan Departemen'],
+    ]),
+    rcGroup('LAPORAN NERACA', [
+      [1,'Neraca (Format Skontro)','Neraca untuk menganalisa aktiva dan passiva perusahaan untuk bulan yang sudah ditentukan.','PrintGeneralLedgerSKontro'],
+      [2,'Neraca (Format Staffel)','Neraca untuk menganalisa aktiva dan passiva perusahaan untuk bulan yang sudah ditentukan.','PrintGeneralLedgerStaffel'],
+      [3,'Neraca Mutasi','Neraca untuk mengetahui saldo awal, saldo berjalan, dan saldo akhir dalam bulan yang ditentukan.','BalanceSheetMutationByMonth'],
+      [4,'Neraca Perbandingan Periode Bulanan','Perbanding neraca berjejer selama bulan yang ditentukan','YearlyBalanceSheet'],
+      [5,'Neraca Percobaan (A4)','Laporan Nearaca Percobaan secara rekap, beserta saldo awal dan akhir','PrintGlTrialBalance'],
+      [6,'Transaksi Neraca Percobaan (Besar)','Report ini menampilkan laporan neraca percobaan(perincian saldo awal Db/Kr, mutasi Db/Kr dan saldo akhir Db/Kr).','PrintDebitCreditTrialBalanceLarge'],
+      [7,'Debit Kredit Neraca Percobaan','Report ini menampilkan laporan neraca percobaan(rekap saldo akhir Db/Kr)','PrintDebitCreditTrialBalance'],
+      [8,'Perbandingan Neraca Lintas Tahun dan Bulan (Format Staffel)','Report ini menampilkan Perbandingan Neraca Lintas Tahun dan Bulan','PrintComparisonBalanceSheetByYearAndMonthStaffel'],
+      [9,'Perbandingan Neraca Lintas Tahun dan Bulan (Format Skontro)','Report ini menampilkan Perbandingan Neraca Lintas Tahun dan Bulan','PrintComparisonBalanceSheetByYearAndMonthSkontro'],
+    ]),
+    rcGroup('LAPORAN LABA RUGI', [
+      [1,'Laba/Rugi (Profit/Loss)','Total jumlah dari pembelian, penjualan dan biaya untuk menghitung laba bersih perusahaan.','PrintGLRugiLabaBulan'],
+      [2,'Laporan Laba/Rugi Mutasi','Laporan Laba/Rugi Mutasi dari Saldo Awal Bulan, Mutasi Bulan, dan Saldo Akhir','PrintGLRugiLabaMutasi'],
+      [3,'Laporan Laba/Rugi Budgeting','Laporan Laba/Rugi Budgeting Per Bulan','ProfitLossWithBudget'],
+      [4,'Laba/Rugi (Profit/Loss) PerTahun','Total jumlah dari pembelian, penjualan dan biaya untuk menghitung laba bersih perusahaan per Tahun.','YearlyProfitLossReport'],
+      [5,'Laba/Rugi (Profit/Loss) Per 12 Bulan','Total jumlah dari pembelian, penjualan dan biaya untuk menghitung laba bersih perusahaan per 12 bulan.','TwelveMonthProfitLossReport'],
+      [6,'Laba/Rugi (Profit/Loss) Multi Cost Center','Total jumlah dari pembelian, penjualan dan biaya untuk menghitung laba bersih perusahaan.','PrintGlRugiLabaMutasiMultipleCostCenter'],
+      [7,'Laba/Rugi (Profit/Loss) Per Cost Center','Total jumlah dari pembelian, penjualan dan biaya untuk menghitung laba bersih perusahaan.','PrintGlRugiLabaMutasiSingleCostCenter'],
+      [8,'Laporan Laba/Rugi Perbandingan Triwulan Tahun Ini','Laporan Laba/Rugi Perbandingan Triwulan Tahun Ini','PrintGlRugiLabaTriwulan'],
+      [9,'Laporan Laba/Rugi Perbandingan Triwulan Tahun Ini Dan Tahun Lalu','Laporan Laba/Rugi Perbandingan Triwulan Tahun Ini Dan Tahun Lalu','PrintGlRugiLabaTriwulanDgnTahunLalu'],
+      [10,'Laporan Laba / Rugi Perbandingan Antar Tahun','Laporan Laba / Rugi Perbandingan Antar Tahun','PrintGlRugiLabaPerbandinganTahun'],
+      [11,'Laba/Rugi (Profit/Loss) Per 12 Bulan Per Departemen','Total jumlah dari pembelian, penjualan dan biaya untuk menghitung laba bersih perusahaan per 12 bulan per Departemen.','TwelveMonthProfitLossPerDepartmentReport'],
+      [12,'Laporan Laba/Rugi Perbandingan Bulan ini dan Bulan lalu','Laporan Laba/Rugi Perbandingan Bulan ini dan Bulan lalu','ProfitLossReportLastMonthComparison'],
+    ]),
+    rcGroup('LAPORAN RATIO', [
+      [1,'Laporan Ratio','Laporan Ratio','RatioReport'],
+    ]),
+    rcGroup('BUDGET', [
+      [1,'Budget Cost Center','Perbandingan Budget dengan Akun Per Cost Center','BudgetPerCostCenter'],
+      [2,'Budget Lintas Tahun dan Bulan','Perbandingan Budget dengan Akun Lintas Tahun dan Bulan','ComparisonBudgetByYearAndMonth'],
+      [3,'Laporan Budgeting Cost Center per 12 Bulan','Laporan Budgeting Cost Center sebanyak 12 kolom, dengan per kolom melambangkan 1 bulan','LaporanBudgeting'],
+    ]),
+    rcGroup('TEMPLATE', [
+      [1,'General Ledger Template','General Ledger Template'],
+    ]),
+  ]},
+  persediaan:{ title:'Inventory', groups:[
+    rcGroup('INVENTORY', [
+      [1,'INV-01 Lap Kartu Stock','Report ini menampilkan Kartu Stock Inventory','InventoryCard'],
+      [2,'INV-02 Lap Kartu Stock Batch','Report ini menampilkan Kartu Stock Inventory Dengan Batch Number','InventoryCardBatchNumber'],
+      [3,'INV-04 Lap Stock Per Batch','Report ini menampilkan List Inventory Stock dengan Batch Number','PrintListInventoryStockBatchNumber'],
+      [4,'INV-05 Lap Umur Stock','Report ini menampilkan Qty Barang berdasarkan umur','PrintAgingOfInventory'],
+      [5,'INV-06 Lap Barang Near ED','Report ini menampilkan List Barang Near ED','PrintListBarangNearEd'],
+      [6,'INV-07 Lap List Barang GIT Reguler','Report ini menampilkan List Barang GIT Reguler','PrintListBarangGitReguler'],
+    ]),
+    rcGroup('LAPORAN KARTU INVENTORY', [
+      [1,'Laporan Saldo Awal Inventory','Report ini menampilkan Daftar Barang dengan saldo awal','PrintDaftarBarangSaldoAwal'],
+      [2,'Laporan Saldo Awal Inventory Dengan Serial Number','Report ini menampilkan Daftar Barang dengan saldo awal dan serial number','PrintDaftarBarangSaldoAwalWithSn'],
+      [3,'Laporan Qty di bawah Minimum','Report ini menampilkan inventory yang di bawah Qty Minimum.','PrintInventoryQuantityMinimum'],
+      [4,'Laporan Qty diatas Maksimum','Report ini menampilkan Qty diatas Maksimum.','InventoryOverQty'],
+      [5,'Laporan Daftar Barang Stock Reorder Per Kode Item','Report ini menampilkan Laporan Daftar Barang Stock Reorder Per Kode Item','InventoryMinQtyPerkodeitem'],
+      [6,'Laporan Stock Multi Gudang','Report ini menampilkan daftar stock dari banyak gudang','DaftarStockMultiGudang'],
+      [7,'Laporan Stock Khusus','Report ini menampilkan daftar stock dengan batch number dan Qty','DaftarStockKhusus'],
+    ]),
+    rcGroup('LAPORAN DAFTAR INVENTORY', [
+      [1,'Laporan Daftar Barang','Menampilkan Daftar Inventory dengan posisi stock akhir','PrintDaftarBarang'],
+      [2,'Laporan Daftar Barang dengan Custom Field','Menampilkan Daftar Inventory dengan posisi stock akhir dengan custom field','PrintDaftarBarang'],
+      [3,'Laporan Daftar Barang Multi Satuan','Menampilkan Daftar Barang dan Multi Satuan apabila Anda menggunakan lebih dari satu satuan (contoh: PCS, LSN, BAL, CRATE)','PrintDaftarBarangMultiSatuan'],
+      [4,'Daftar Inventory Posisi Netto','Menampilkan Laporan Posisi Netto Stock (Qty Netto = Qty Real - Qty SO + Qty PO)','PrintInventoryDaftarPosisiNetto'],
+      [5,'Laporan Daftar Barang Dengan HPP','Menampilkan Daftar Barang dengan posisi stock akhir + Harga Pokok sekarang','PrintDaftarBarangDenganHpp'],
+      [6,'Laporan Daftar Barang Dengan Batch Number','Report ini menampilkan Daftar Barang yang menggunakan Batch Number','PrintInventoryMasterWithBatchNumber'],
+      [7,'Laporan Daftar Barang Dengan Serial Number','Report ini menampilkan Daftar Barang yang menggunakan Serial Number','PrintInventoryMasterWithSerialNumber'],
+      [8,'Laporan Pembantu Stock Opname','Menampilkan qty komputer sekarang dan juga menyediakan kolom Qty Asli yang dapat ditulis tangan pada saat proses stock opname. Hasil Stock Opname dapat diinput di menu Transaksi Stock Opname.','PrintSmallInventoryList'],
+      [9,'Laporan Pembantu Stock Opname Tanpa Saldo','Sama dengan diatas, tetapi tanpa Saldo, supaya orang gudang dapat mengecek total tanpa acuan Qty Komputer','PrintSmallInventoryWithOutBalanceList'],
+      [10,'Laporan Hasil Stock Opname','Report ini menampilkan hasil stock opname yang telah dilakukan','PrintStockOpname'],
+      [11,'Laporan Daftar Barang Harga Beli Spesial Supplier','Report ini menampilkan Daftar Inventory dengan Harga Beli Special Supplier','PrintListOfItemsSoldBySupplier'],
+      [12,'Laporan Daftar Harga Jual Barang','Report ini menampilkan daftar harga jual barang','InventoryPriceList'],
+      [13,'Laporan Daftar Harga Jual Barang dengan sisa stock','Report ini menampilkan daftar harga jual barang dengan sisa stock','InventoryPriceListWithBalance'],
+      [14,'Laporan Daftar Harga Beli Barang','Report ini menampilkan daftar harga beli barang','InventoryPurchasePriceList'],
+      [15,'Laporan Daftar Qty Inventory Tidak Cukup Untuk S.O.','Report ini menampilkan Qty Barang yang diperlukan untuk Sales Order tetapi qty di gudang tidak mencukupi','PrintInsufficientStockBackOrderSo'],
+      [16,'Laporan Mutasi Batch Number','Report ini menampilkan Daftar Barang yang menggunakan Batch Number','PrintMutasiBatchNumber'],
+    ]),
+    rcGroup('LAPORAN TRANSAKSI INVENTORY', [
+      [1,'Laporan Transaksi Inventory','Laporan Transaksi Inventory (pemakaian, penyesuaian positif, penyesuaian negatif).','PrintTransaksiInventory'],
+      [2,'Laporan Pengeluaran Barang','Report ini menampilkan transaksi barang dengan type transaksi pengeluaran dari modul Transaksi Inventory','PrintLaporanPengeluaranBarang'],
+      [3,'Laporan Transfer Out','Report ini menampilkan transaksi barang dengan type transaksi transfer out dari modul Transaksi Retur','PrintLaporanTransferOutBarang'],
+      [4,'Laporan Transfer Produk Bonus','Report ini menampilkan transaksi barang dengan type transaksi transfer produk bonus','PrintLaporanTransferProdukBonus'],
+      [5,'Laporan Back Order Stock Request','Dalam laporan ini anda dapat melihat qty barang yang direquest','PrintLaporanBackOrderSr'],
+      [6,'Laporan Perbandingan Inventory Dengan GL (Category Journal)','Report ini menampilkan perbandingan inventory dengan GL dengan company profile category journal'],
+    ]),
+    rcGroup('LAPORAN ANALISA INVENTORY', [
+      [1,'Laporan Analisa Penjualan Inventory','Report ini menampilkan laporan analisa penjualan berdasarkan inventory','PrintAnalisaPenjualan'],
+      [2,'Laporan Analisa Penjualan Inventory di bawah harga pokok','Report ini menampilkan laporan analisa penjualan dibawah harga pokok','PrintAnalisaPenjualanDibawahHargaPokok'],
+      [3,'Laporan Analisa Stock Minus','Report ini menampilkan Qty yang minus (-)','PrintInventoryQtyMinus'],
+      [4,'Laporan Analisa Harga Pokok Minus','Report ini menampilkan Harga Pokok yang minus (-)','PrintInventoryHppMinus'],
+      [5,'Laporan Laba Rugi Per Item','Report ini menampilkan Rugi Laba Per Item','RugiLabaPerItem'],
+      [6,'Laporan Analisa Penjualan Per Salesman','Report ini menampilkan laporan analisa penjualan berdasarkan salesman','PrintAnalisaPenjualanPersalesman'],
+      [7,'Laporan Inventory Batch Number','Report ini menampilkan daftar laporan analisa inventory batch Number','PrintLaporaninventoryBatchNumber'],
+      [8,'Laporan Analisa Penjualan Per Salesman Per Customer','Report ini menampilkan laporan analisa penjualan berdasarkan salesman dan customer','PrintAnalisaPenjualanPersalesmanPerCustomer'],
+      [9,'Laporan Analisa Penjualan Rinci','Report ini menampilkan laporan analisa penjualan secara detail','PrintAnalisaPenjualanPersalesmanPerCustomer'],
+    ]),
+    rcGroup('LAPORAN STATUS MUTASI', [
+      [1,'Laporan Status Mutasi Qty','Menampilkan status mutasi Qty per inventory untuk periode yang dipilih (Qty Awal, Qty Terima, Qty Keluar)','PrintSmallQtyStatus'],
+      [2,'Laporan Status Mutasi Nilai','Menampilkan status mutasi Nilai per inventory untuk periode yang dipilih (Nilai Awal, Nilai Terima, Nilai Keluar)','PrintSmallNilaiStatus'],
+      [3,'Laporan Status Mutasi Qty dan Nilai','Menampilkan status mutasi qty beserta nilai untuk setiap inventory di semua gudang.','PrintStatusMutasiQtyNilai'],
+      [4,'Laporan Status Mutasi Qty Per Rincian','Menampilkan status mutasi qty untuk setiap inventory di semua gudang secara lebih rinci.','PrintStatusMutasiQtyRinci'],
+      [5,'Laporan Status Mutasi Qty dan Nilai Perincian','Menampilkan status mutasi qty beserta nilai untuk setiap inventory di semua gudang secara lebih rinci.','PrintStatusMutasiQtyNilaiRinci'],
+      [6,'Print Perincian Inventory Qty dan Nilai Kelompok Besar Per Kategory','Menampilkan qty dan nilai inventory kelompok besar per kategori.','PrintInventoryKelompokBesarPerKategori'],
+      [7,'Print Perincian Inventory Qty dan Nilai Kelompok Besar','Menampilkan qty dan nilai inventory kelompok besar.','PrintInventoryKelompokBesar'],
+      [8,'Print Laporan Posisi Stok dan Back Order','Report ini menampilkan posisi stock dan back order semua gudang(max 6 gudang)','PrintInventoryBackOrder'],
+      [9,'Laporan Mutasi Multi Gudang','Report ini menampilkan daftar mutasi stock awal, akhir, terima, keluar barang','DaftarMutasiMultiGudang'],
+      [10,'Laporan Inventory Qty Boh','Report ini menampilkan daftar barang yang transaksinya minus','PrintLaporanInventoryQtyBoh'],
+      [11,'Laporan Status Mutasi barang Per gudang','Report ini menampilkan status mutasi barang per gudang','PrintLaporanStatusMutasiBarangPerGudang'],
+      [12,'Laporan Status Mutasi Qty Batch Number','Menampilkan status mutasi Qty per inventory dengan Batch Number untuk periode yang dipilih (Qty Awal, Qty Terima, Qty Keluar)','PrintSmallQtyStatus'],
+    ]),
+    rcGroup('CETAKAN BARCODE', [
+      [1,'Cetakan Barcode Barang','Report ini menampilkan barcode Barang','PrintBarcodeBarang'],
+      [2,'Cetakan QR Code Address','Report ini menampilkan QR Code Address','PrintQrCodeAddress'],
+      [3,'Cetakan QR Code Item','Report ini menampilkan QR Code Item','PrintQrCodeItem'],
+    ]),
+    rcGroup('INVENTORY PER ITEM', [
+      [1,'Cetakan Inventory Per Item','Report ini menampilkan detail Inventory per item','PrintInventoryPerItem'],
+    ]),
+    rcGroup('SLOW MOVING INVENTORY', [
+      [1,'Cetakan Slow Moving Inventory','Report ini menampilkan detail Slow Moving Inventory','PrintSlowMovingInventory'],
+    ]),
+    rcGroup('LIST BARANG', [
+      [1,'Cetakan Daftar Barang','Report ini daftar barang'],
+    ]),
+  ]},
+  penjualan:{ title:'Penjualan', groups:[
+    rcGroup('SALES', [
+      [1,'SI-01 List Sales Quotation (SQ)','Dalam laporan ini anda dapat melihat List Sales Quotation berdasarkan status','PrintListSalesQuotation'],
+      [2,'SI-02 List Sales Order (SO)','Dalam laporan ini anda dapat melihat List Sales Order berdasarkan status','PrintListSalesOrder'],
+      [3,'SI-03 List Sales & Retur','Dalam laporan ini anda dapat melihat list penjualan dan retur penjualan','PrintListSalesOrderDanRetur'],
+      [4,'SI-04 Lap Tracking Status','Dalam laporan ini anda dapat mengetahui alur pengiriman SQ ke SI','SoDeliveryStatus'],
+      [5,'SI-05 SQ vs SI','Dalam laporan ini anda dapat melihat SQ terhadap Faktur','PrintSQTerhadapFaktur'],
+      [6,'SI-06 Lap Sales Per Hari','Dalam laporan ini anda dapat melihat penjualan perhari','PrintSalesPerDay'],
+      [7,'SI-07 Lap Penjualan Produk Bulanan','Dalam laporan ini anda dapat melihat penjualan Produk Bulanan','PrintLaporanSalesProdukBulanan'],
+      [8,'SI-08 Lap Sales by Group Konsumen','Dalam laporan ini anda dapat melihat penjualan per Group Konsumen','PrintSalesByGroupKonsumen'],
+      [9,'SI-09 Lap Sales by Konsumen','Dalam laporan ini anda dapat melihat penjualan by konsumen','PrintSalesByCustomer'],
+      [10,'SI-10 Lap Sales by Rayon','Dalam laporan ini anda dapat melihat List Sales value by Rayon','PrintSalesValueByRayon'],
+      [11,'SI-11 Lap Sales Produk by Rayon','Dalam laporan ini anda dapat melihat List Faktur Produk & Value by Rayon','PrintSalesProdukAndValueByRayon'],
+      [12,'SI-12 Lap 20 Top Sellings by Unit','Dalam laporan ini anda dapat melihat top 20 penjualan per Unit','PrintTwentyTopSellingByUnit'],
+      [13,'SI-13 Lap 20 Top Sellings by Konsumen','Dalam laporan ini anda dapat melihat top 20 penjualan per Konsumen','PrintTwentyTopSellingByCustomer'],
+      [14,'SI-14 Lap Evaluasi Performance Individual Team Sales','Dalam laporan ini anda dapat melihat Evaluasi Performance Individual Team Sales','PrintEvaluasiPerformanceIndividualTeamSales'],
+      [15,'SI-15 Lap Evaluasi Performance Supervisor','Dalam laporan ini anda dapat melihat Evaluasi Performance Supervisor','PrintEvaluasiPerformanceSupervisor'],
+      [16,'SI-16 Lap Evaluasi Performance ASCM','Dalam laporan ini anda dapat melihat Evaluasi Performance ASCM','PrintEvaluasiPerformanceAscm'],
+    ]),
+    rcGroup('WAREHOUSE', [
+      [1,'WH-01 List Picking List (PL)','Dalam laporan ini anda dapat melihat List Picking List berdasarkan status','PrintListPickingList'],
+      [2,'WH-02 List Invoice (IV)','Dalam laporan ini anda dapat melihat List Invoice berdasarkan status','PrintListInvoice'],
+      [3,'WH-03 List SO Belum Terkirim','Dalam laporan ini anda dapat melihat sales order yang belum terkirim','PrintPendingPartialSalesOrder'],
+    ]),
+    rcGroup('PENJUALAN', [
+      [1,'Laporan Penjualan Per Customer dengan Rincian Faktur','Dalam laporan ini anda dapat melihat penjualan secara rinci','PrintSalesReceivablePerFaktur'],
+      [2,'Laporan Penjualan Per Produk','Dalam laporan ini anda dapat melihat penjualan per produk','PrintSalesByProduct'],
+      [3,'Laporan Penjualan Per Rekap Produk','Dalam laporan ini anda dapat melihat penjualan per rekap produk','PrintSalesByRecapProduct'],
+      [4,'Laporan Penjualan Per Wilayah','Dalam laporan ini anda dapat melihat penjualan barang per wilayah','PrintSalesByArea'],
+      [5,'Laporan Penjualan Item Tertentu','Dalam laporan ini anda dapat melihat penjualan item tertentu','PrintBestSeller'],
+      [6,'Laporan Penjualan Item Tertentu Per Kategori','Dalam laporan ini anda dapat melihat penjualan item tertentu per kategori','PrintItemTertentuPerKategori'],
+      [7,'Laporan Penjualan Per Kategori','Dalam laporan ini anda dapat melihat penjualan barang per kategori','PrintSalesItemPerKategori'],
+      [8,'Laporan Penjualan Per Langganan - Kategori','Dalam laporan ini anda dapat melihat penjualan barang per pelanggan - Kategori','PrintSalesItemPerLanggananKategori'],
+      [9,'Laporan Analisa Penjualan Per Produk','Dalam laporan ini anda dapat melihat laporan penjualan barang per produk','PrintAnalisaSalesByProduct'],
+      [10,'Laporan Analisa Penjualan Per Group Produk','Dalam laporan ini anda dapat melihat laporan penjualan barang per group produk','PrintAnalisaSalesByProduct'],
+      [11,'Laporan Analisa Penjualan Per Kategori','Dalam laporan ini anda dapat melihat rekap penjualan barang per kategori','PrintAnalisaRecapKategori'],
+      [12,'Laporan Rekap Penjualan Per Langganan','Dalam laporan ini anda dapat melihat penjualan barang per pelanggan','PrintTransactionSalesPerCustomer'],
+      [13,'Laporan Penjualan Pertanggal','Dalam laporan ini anda dapat melihat penjualan pertanggal','PrintTransactionSalesPerInvoice'],
+      [14,'Laporan Penjualan Per Nomor Faktur','Dalam laporan ini anda dapat melihat penjualan per nomor faktur','PrintTransactionSalesPerDateDepartemenPerProductPerCustomer'],
+      [15,'Laporan Penjualan Per Tanggal, Per Departemen, Per Produk, Per Customer','Dalam laporan ini anda dapat melihat Penjualan Per Tanggal, Per Departemen, Per Produk, dan Per Customer','PrintTransactionSalesInvoicePerMonthPerDepartementPerProductPerCustomer'],
+      [16,'Laporan SI Per Bulan, Per Departemen, Per Produk, Per Customer','Dalam laporan ini anda dapat melihat jumlah subtotal, diskon, DPP, PPN mengenai unggul, dan grand total berdasarkan penjualan per Customer','PrintRecapSalesByCustomer'],
+      [17,'Laporan Rekap Penjualan Per Customer','Dalam laporan ini anda dapat melihat penjualan buku penjualan','PrintBukuPenjualan'],
+      [18,'Laporan Laba / Rugi Per Customer','Dalam laporan ini anda dapat melihat laba/rugi penjualan barang per Customer','ProfitLossPerCustomer'],
+      [19,'Laporan Penjualan Rangkuman','Dalam laporan ini anda dapat melihat rangkuman keuntungan penjualan','PrintPenjualanRangkuman'],
+      [20,'Laporan Analisa Penjualan Per Customer per Brand','Dalam laporan ini anda dapat melihat laporan analisa penjualan per customer per brand','PrintAnalisaPenjualanPerCustPerBrand'],
+      [21,'Laporan Buku Penjualan','Dalam laporan ini anda dapat melihat laporan buku penjualan','PrintBukuPenjualan'],
+      [22,'Laporan Sales Journal','Dalam laporan ini anda dapat melihat sales journal','PrintSalesJournal'],
+      [23,'Laporan Penjualan Per Wilayah Per Sales','Dalam laporan ini anda dapat melihat penjualan barang per wilayah dan Per Sales','PrintSalesByAreaBySales'],
+      [24,'Laporan Ringkasan UZZT','Dalam laporan ini anda dapat melihat laporan ringkasan UZZT','PrintUzztSummary'],
+      [25,'Laporan Outstanding UZZT','Dalam laporan ini anda dapat melihat laporan Outstanding UZZT','PrintOutstandingList'],
+      [26,'Laporan Ringkasan Faktur Yang Belum Ditagih','Dalam laporan ini anda dapat melihat laporan Faktur Yang Belum Ditagih','PrintOutstandingDebitCollectionList'],
+      [27,'Laporan Ringkasan Pajak Standard List','Dalam laporan ini anda dapat melihat laporan Ringkasan Pajak Standard List','PrintListTaxSummary'],
+      [28,'Laporan Pembayaran Baru UZZT','Dalam laporan ini anda dapat melihat laporan Pembayaran Baru UZZT','PrintNewPaymentUzzt'],
+      [29,'Laporan Daftar Barang Indent','Dalam laporan ini anda dapat melihat laporan Daftar Barang Indent','PrintIndentItem'],
+      [30,'Laporan Penjualan Secara Rinci','Dalam laporan ini anda dapat melihat penjualan secara rinci','PrintSalesReportDetail'],
+      [31,'Laporan List Klaim Bulanan Biaya Support Principal','Dalam laporan ini anda dapat melihat List Klaim Bulanan Biaya Support Principal','PrintMonthlyClaimSupportPrincipalFee'],
+      [32,'Laporan Penjualan Per Item Dan Per Batch Number','Dalam laporan ini anda dapat melihat Penjualan Per Item Dan Per Batch Number','PrintPenjualanPerItemDanPerBatchNumber'],
+      [33,'Laporan E-WAS Keluar','Dalam laporan ini anda dapat melihat laporan E-WAS Keluar','PrintEwasKeluar'],
+      [34,'Laporan E-WAS Masuk','Dalam laporan ini anda dapat melihat laporan E-WAS Masuk','PrintEwasMasuk'],
+      [35,'Laporan Support Discount (Off Faktur)','Dalam laporan ini anda dapat melihat laporan Support Discount Off Faktur','PrintSupportDiscount'],
+      [36,'Laporan Klaim Discount ke Principle','Dalam laporan ini anda dapat melihat laporan klaim diskon ke principle','PrintClaimPrincipleDiscount'],
+    ]),
+    rcGroup('SALES ORDER', [
+      [1,'Laporan Sales Order Per Tanggal','Dalam laporan ini anda dapat melihat order penjualan pertanggal','ListSoByDate'],
+      [2,'Laporan Loss / Deal Penjualan','Dalam laporan ini anda dapat melihat sales order yang diajadikan sales order','LossAndDealSales'],
+      [3,'Laporan Sales Order Dengan Bonus','Dalam laporan ini anda dapat melihat sales order dengan rincian bonus','PrintPendingPartialSalesOrder'],
+      [4,'Laporan Sales Order Baru','Dalam laporan ini anda dapat melihat sales order baru','NewSalesOrder'],
+      [5,'Cetak SO per Wilayah per Salesman yang belum Dibuat Faktur','Cetak Daftar SO per Wilayah per Salesman yang Dibuat Faktur','SalesOrderBasedOnAreaAndSalesmanNotInvoiceYet'],
+    ]),
+    rcGroup('PENGIRIMAN BARANG', [
+      [1,'Laporan Surat Jalan Per Tanggal','Dalam laporan ini anda dapat melihat surat jalan pertanggal','PrintDeliveryPermitByDate'],
+      [2,'Laporan Retur Surat Jalan Per Tanggal','Dalam laporan ini anda dapat melihat retur surat jalan pertanggal','PrintDeliveryPermitRefundByDate'],
+      [3,'Laporan Back Order dari Sales Order-Surat Jalan Per Tanggal','Dalam laporan ini anda dapat melihat sales order-surat jalan yang sudah dibuatkan faktur dan yang belum','SalesPerDayByDeliveryPermit'],
+      [4,'Laporan Surat Jalan Yang Telah Dibuatkan Faktur Penjualan','Dalam laporan ini anda dapat melihat surat jalan yang sudah dibuatkan faktur penjualan untuk sales jalan itu beserta rincian barangnya.','PrintDeliveryPermitWithPrice'],
+      [5,'Laporan Surat Jalan Yang Belum Dibuatkan Faktur Penjualan','Dalam laporan ini anda dapat melihat surat jalan yang belum dibuatkan Faktur Penjualan','PrintDeliveryPermitWithNoSalesInvoice'],
+    ]),
+    rcGroup('SALES PERFORMANCE', [
+      [1,'Performance / Sales','Dalam laporan ini anda dapat melihat performance sales','PerformanceSales'],
+    ]),
+    rcGroup('SALES BY VENDOR', [
+      [1,'Laporan Penjualan(Vpp) Per Supplier','Dalam laporan ini anda dapat melihat laporan penjualan dari supplier'],
+      [2,'Laporan Penjualan(Detail) Per Supplier','Dalam laporan ini anda dapat melihat laporan penjualan dari supplier lebih detail'],
+    ]),
+    rcGroup('KOMISI SALESMAN', [
+      [1,'Laporan Komisi Salesman Per Item','Laporan komisi salesman menghitung persentase/nominal per item','ListCommissionPerItem'],
+      [2,'Hitungan Komisi Salesman Per Faktur','Hitungan komisi mengambil persentase dari total penjualan oleh salesman itu dibatasi periode yang ditentukan (per bulan atau per 3 bulan continuous). Komisi keluar hanya setelah faktur dilunasi.'],
+    ]),
+    rcGroup('SALESMAN', [
+      [1,'Laporan Penjualan Per Salesman','Dalam laporan ini anda dapat melihat penjualan per salesman','PrintSalesBySalesman'],
+      [2,'Laporan Penjualan Item Per Salesman','Dalam laporan ini anda dapat melihat penjualan barang per salesman','PrintItemPerSales'],
+      [3,'Laporan Analisa Penjualan Per Sales Nomor','Dalam laporan ini anda dapat melihat analisa penjualan per salesman','PrintAnalysisSalesBySalesman'],
+      [4,'Laporan Analisa Penjualan Per Sales dengan target','Dalam laporan ini anda dapat melihat analisa penjualan per salesman dengan target','PrintAnalysisSalesBySalesmanWithTarget'],
+      [5,'Laporan Penjualan Dengan Credit Note By Salesman (Excel)','Dalam laporan ini anda dapat melihat penjualan dengan nota debit berdasarkan salesman','PrintSalesInvoiceCreditNoteBySalesman'],
+      [6,'Laporan Penjualan Dengan Credit Note By Customer (Excel)','Dalam laporan ini anda dapat melihat penjualan dengan nota debit berdasarkan Customer','PrintSalesInvoiceCreditNoteByCustomer'],
+      [7,'Laporan Penjualan Dengan Credit Note By Salesman (Besar)','Dalam laporan ini anda dapat melihat penjualan dengan nota debit berdasarkan salesman','PrintSalesInvoiceCreditNoteBySalesman'],
+      [8,'Laporan Penjualan Dengan Credit Note By Customer (Besar)','Dalam laporan ini anda dapat melihat penjualan dengan nota debit berdasarkan Customer','PrintSalesInvoiceCreditNoteByCustomer'],
+      [9,'Laporan Penjualan Per Salesman per Kategory','Dalam laporan ini anda dapat melihat penjualan per salesman per Kategori','PrintSalesBySalesmanByCategory'],
+      [10,'Laporan Sales Total Per Area Per Salesman Dengan Target','Dalam laporan ini anda dapat melihat total penjualan per area per salesman dengan target','PrintSalesBySalesmanByAreaWithInvoice'],
+    ]),
+    rcGroup('REWARD', [
+      [1,'Laporan Perolehan Reward Customer','Dalam laporan ini anda dapat melihat paket, poin, dan kekurangan progress reward','PrintPromoCust'],
+    ]),
+    rcGroup('CUSTOMER', [
+      [1,'Laporan Barcode Customer','Dalam laporan ini anda dapat mencetak Barcode Customer','CustomerBarcode'],
+      [2,'Laporan Persiapan Legalitas Customer','Dalam laporan ini anda dapat mencetak Persiapan Legalitas Customer','CustomerPersiapanLegalitas'],
+    ]),
+    rcGroup('MEMBER', [
+      [1,'Laporan Poin Member','Dalam laporan ini anda dapat mencetak riwayat poin member'],
+    ]),
+    rcGroup('KONSINYASI', [
+      [1,'Laporan Pengembalian Transaksi Konsinyasi','Dalam laporan ini anda dapat mencetak Transaksi Pengembalian Konsinyasi'],
+    ]),
+    rcGroup('BONUS', [
+      [1,'Laporan Daftar Transaksi Barang Bonus','Dalam laporan ini anda dapat mencetak Penjualan Transaksi Barang Bonus','PrintTransactionInventoryBonus'],
+    ]),
+  ]},
+  cetakanTransaksi:{ title:'Cetakan Faktur', groups:[
+    rcGroup('PENJUALAN', [
+      [1,'Cetak Sales Quotation I Halaman','Cetakan Untuk Sales Quotation I Halaman','SalesQuotationFullPage'],
+      [2,'Cetak Sales Quotation (2) Halaman','Cetakan Untuk Sales Quotation (2) Halaman','SalesQuotationHalfPage'],
+      [3,'Cetak Sales Order I Halaman','Cetakan Untuk Sales Order I Halaman','SalesOrderFullPage'],
+      [4,'Cetak Sales Order (2) Halaman','Cetakan Untuk Sales Order (2) Halaman','SalesOrderHalfPage'],
+      [5,'Cetak Surat Jalan I Halaman','Cetakan Untuk Surat Jalan I Halaman','DeliveryPermitFullPage'],
+      [6,'Cetak Surat Jalan (2) Halaman','Cetakan Untuk Surat Jalan (2) Halaman','DeliveryPermitHalfPage'],
+      [7,'Cetak Faktur Jual I Halaman','Cetakan Untuk Faktur Jual I Halaman','SalesInvoiceTransactionFullPage'],
+      [8,'Cetak Faktur Jual I Halaman (Cetakan Faktur Penagihan)','Cetakan Untuk Faktur Jual I Halaman Dalam Bentuk Cetakan Faktur Penagihan','SalesInvoiceTransactionFullPageForPenagihan'],
+      [9,'Cetak Faktur Jual (2) Halaman','Cetakan Untuk Faktur Jual (2) Halaman','SalesInvoiceTransactionHalfPage'],
+      [10,'Cetak Continue Faktur I Halaman','Cetakan Untuk Continue Faktur I Halaman'],
+      [11,'Cetak Surat Jalan Di Halaman Longsum','Cetakan Untuk Surat Jalan Di Halaman Longsum'],
+      [12,'Cetak Surat Jalan Di Halaman Dengan Batch Number','Cetakan Untuk Surat Jalan Di Halaman Dengan Batch Number'],
+      [13,'Cetak Rekap Surat Jalan I Halaman','Cetakan Rekap Surat Jalan I Halaman'],
+      [14,'Cetak Invoice Blank Form I Halaman','Cetakan Untuk Sales Invoice Blank Form I Halaman'],
+      [15,'Cetak Invoice Blank Form (2) Halaman','Cetakan Untuk Sales Invoice Blank Form (2) Halaman'],
+      [16,'Cetak Delivery Order Menggunakan Batch Number I Halaman','Cetakan Delivery Order Menggunakan Batch Number I Halaman'],
+      [17,'Cetak Faktur Jual/Retur BAPBM','Cetakan Untuk Faktur Jual/Retur BAPBM'],
+      [18,'Cetak Faktur Penagihan Piutang','Cetakan Untuk Faktur Penagihan Piutang'],
+      [19,'Proforma Invoice (Sales Order)','Digunakan hanya untuk cetak Proforma Invoice (Sales Order)','SalesOrderPerformaInvoice'],
+      [20,'Proforma Invoice (Delivery Order)','Digunakan hanya untuk cetak Proforma Invoice (Delivery Order)','DeliveryOrderPerformaInvoice'],
+      [21,'Proforma Invoice 2 Half Page (Delivery Order)','Digunakan hanya untuk cetak Proforma Invoice 2 Half Page (Delivery Order)','DeliveryOrderPerformaInvoice2Half'],
+      [22,'Proforma Invoice 2 Full Page (Delivery Order)','Digunakan hanya untuk cetak Proforma Invoice 2 Full Page (Delivery Order)','DeliveryOrderPerformaInvoice2Full'],
+      [23,'Serah Terima Gudang','Digunakan untuk serah terima gudang'],
+      [24,'Cetak Daftar Picking List','Cetakan Untuk Picking List'],
+      [25,'Cetak Daftar Packing','Cetakan Untuk Daftar Packing'],
+      [26,'Cetak Daftar Picking Pengaturan Kustomer','Cetakan Untuk Daftar Picking Pengaturan Kustomer'],
+      [27,'Cetak Daftar Voucher','Cetakan Untuk Daftar Voucher'],
+      [28,'Picking List Manual I Halaman','Cetakan Untuk Picking List Manual I Halaman'],
+      [29,'Monitoring Control Delivery List','Cetakan Untuk Monitoring Control Delivery List'],
+      [30,'Cetak Delivery Order Konsinyasi (2) Halaman','Cetakan Untuk Delivery Order Konsinyasi (2) Halaman'],
+    ]),
+    rcGroup('PEMBELIAN', [
+      [1,'Purchase Request I Halaman','Cetakan Untuk Purchase Request I Halaman (cocok untuk printer dot matrix)'],
+      [2,'Purchase Request (2) Halaman','Cetakan Untuk Purchase Request (2) Halaman (cocok untuk printer dot matrix)'],
+      [3,'Purchase Order I Halaman','Cetakan Untuk Purchase Order I Halaman (cocok untuk printer dot matrix)'],
+      [4,'Purchase Order (2) Halaman','Cetakan Untuk Purchase Order (2) Halaman (cocok untuk printer dot matrix)'],
+      [5,'Bukti Penerimaan Barang I Halaman','Cetakan Untuk Bukti Penerimaan Barang I Halaman (cocok untuk printer dot matrix)'],
+      [6,'Bukti Penerimaan Barang (2) Halaman','Cetakan Untuk Bukti Penerimaan Barang (2) Halaman (cocok untuk printer dot matrix)'],
+      [7,'Faktur/Retur Pembelian I Halaman','Cetakan Untuk Faktur/Retur Pembelian I Halaman (cocok untuk printer dot matrix)'],
+      [8,'Retur Pembelian (2) Halaman','Cetakan Untuk Retur Pembelian (2) Halaman (cocok untuk printer dot matrix)'],
+      [9,'Bukti Penerimaan Barang Menggunakan Batch Number I Halaman','Cetakan Untuk Bukti Penerimaan Barang Menggunakan Batch Number I Halaman'],
+      [10,'Faktur/Retur Pembelian Menggunakan Batch Number I Halaman','Cetakan Untuk Faktur/Retur Pembelian Menggunakan Batch Number I Halaman'],
+      [11,'Draft Receipt I Halaman','Cetakan Untuk Draft Receipt I Halaman'],
+      [12,'Draft Receipt (2) Halaman','Cetakan Untuk Draft Receipt (2) Halaman'],
+      [13,'Draft Retur PB I Halaman','Cetakan Untuk Draft Retur Penerimaan Barang I Halaman'],
+      [14,'Draft Retur PB (2) Halaman','Cetakan Untuk Draft Retur Penerimaan Barang (2) Halaman'],
+      [15,'Purchase Quotation (2) Halaman','Cetakan Untuk Purchase Quotation (2) Halaman'],
+      [16,'Perbandingan Purchase Quotation (2) Halaman','Cetakan Untuk Perbandingan Purchase Quotation (2) Halaman'],
+      [17,'Cetak Proforma Dir (2) Halaman','Cetakan Proforma Dir (2) Halaman'],
+      [18,'Cetak Proforma Dir (1) Halaman','Cetakan Proforma Dir (1) Halaman'],
+      [19,'Cetak Delivery Request (2) Halaman','Cetakan Delivery Request (2) Halaman'],
+      [20,'Cetak Delivery Request I Halaman','Cetakan Delivery Request I Halaman'],
+      [21,'Cetak Faktur Draft Receipt In (2) Halaman','Cetakan Faktur Draft Receipt In (2) Halaman'],
+      [22,'Cetak Faktur Draft Receipt In I Halaman','Cetakan Faktur Draft Receipt In I Halaman'],
+      [23,'Cetak Terima Barang In (2) Halaman','Cetakan Terima Barang In (2) Halaman'],
+      [24,'Cetak Terima Barang In I Halaman','Cetakan Terima Barang In I Halaman'],
+      [25,'Cetak Purchase Order Konsinyasi I Halaman','Cetakan Purchase Order Konsinyasi I Halaman'],
+      [26,'Cetak Faktur Pembelian Konsinyasi I Halaman','Cetakan Faktur Pembelian Konsinyasi I Halaman'],
+      [27,'Cetak Faktur Pembelian Konsinyasi (2) Halaman','Cetakan Faktur Pembelian Konsinyasi (2) Halaman'],
+      [28,'Cetak Surat Pesanan Obat Tertentu','Cetakan Surat Pesanan Obat Tertentu'],
+      [29,'Cetak Purchase Order Konsinyasi Group By Kode I (Vertikal)','Cetakan Purchase Order Konsinyasi Group By Kode I (Vertikal)'],
+      [30,'Cetak Purchase Order Konsinyasi Group By Kode II (Horizontal)','Cetakan Purchase Order Konsinyasi Group By Kode II (Horizontal)'],
+      [31,'Cetak Terima Barang Konsinyasi I Halaman','Cetakan Terima Barang Konsinyasi I Halaman'],
+    ]),
+    rcGroup('CASH & BANK', [
+      [1,'Cetak Bukti Pelunasan Piutang (AR) I Halaman','Report ini menampilkan bukti masuk kas maupun bank penerimaan piutang(AR) dalam bentuk I Halaman','CashReceiveFullPage'],
+      [2,'Cetak Bukti Pelunasan Piutang (AR) (2) Halaman','Report ini menampilkan bukti masuk kas maupun bank penerimaan piutang(AR) dalam bentuk (2) Halaman','CashReceiveHalfPage'],
+      [3,'Cetak Bukti Pelunasan Hutang (AP) I Halaman','Report ini menampilkan bukti keluar kas maupun bank pembayaran hutang(AP) dalam bentuk I Halaman','ApCashOutFullPage'],
+      [4,'Cetak Bukti Pelunasan Hutang (AP) (2) Halaman','Report ini menampilkan bukti keluar kas maupun bank pembayaran hutang(AP) dalam bentuk (2) Halaman','ApCashOutHalfPage'],
+      [5,'Cetak Bukti Kas Masuk (Lain-Lain) I Halaman','Report ini menampilkan bukti kas masuk lain-lain dalam bentuk I Halaman','AllCashReceiveFullPage'],
+      [6,'Cetak Bukti Kas Keluar (Lain-Lain) I Halaman','Report ini menampilkan bukti kas keluar lain-lain dalam bentuk I Halaman','AllCashOutFullPage'],
+      [7,'Cetak Bukti Kas Bon Karyawan I Halaman','Report ini menampilkan bukti kas bon karyawan dalam bentuk I Halaman','EmployeeKasbonPrint'],
+      [8,'Cetak Bukti Giro Cair I Halaman','Cetakan bukti giro cair'],
+      [9,'Rekonsiliasi','Digunakan hanya untuk cetakan Rekonsiliasi Full Page'],
+    ]),
+    rcGroup('INVENTORY', [
+      [1,'Cetak Bukti Transaksi Inventory Full Page','Report ini menampilkan semua transaksi inventory di Report Ini Anda juga dapat mencetak transaksi Inventory secara detail','PrintBuktiTransaksiInventoryFullPage'],
+      [2,'Cetak Informasi Inventory Field','Report ini menampilkan informasi field pada Report Ini Anda juga dapat mencetak informasi field'],
+      [3,'Cetak Klaim Bonus Item I Halaman','Cetakan Untuk Klaim Bonus Item I Halaman'],
+      [4,'Cetak Terima Klaim Bonus Item I Halaman','Cetakan Untuk Terima Klaim Bonus Item I Halaman'],
+      [5,'Bereording Sheet I2 Halaman','Cetakan Untuk Reordering Sheet I2 Halaman'],
+      [6,'Cetak Transaksi Stock Request Full Page','Cetakan Untuk Transaksi Stock Request'],
+      [7,'Cetak Master Stock Opname','Cetakan Untuk Master Stock Opname'],
+      [8,'Cetak Transaksi Stock Opname','Cetakan Untuk Transaksi Stock Opname'],
+      [9,'Cetak Transaksi Transfer Out (Konsinyasi)','Cetakan Untuk Transaksi Transfer Out (Konsinyasi)'],
+      [10,'Cetak Transaksi Transfer In (Konsinyasi)','Cetakan Untuk Transaksi Transfer In (Konsinyasi)'],
+    ]),
+    rcGroup('PELUNASAN', [
+      [1,'Cetak Pelunasan Piutang (2) Halaman','Pelunasan Piutang (2) Halaman'],
+      [2,'Cetak Pelunasan Hutang (2) Halaman','Pelunasan Hutang (2) Halaman'],
+      [3,'Cetak Pelunasan Piutang I Halaman','Pelunasan Piutang I Halaman'],
+      [4,'Cetak Pelunasan Hutang I Halaman','Pelunasan Hutang I Halaman'],
+    ]),
+    rcGroup('GENERAL LEDGER', [
+      [1,'Cetak Bukti St. Account','PrintAccountTransaction'],
+    ]),
+    rcGroup('TANDA TERIMA DAN PAYMENT REQUEST', [
+      [1,'Cetak Tanda Terima I Halaman','Cetak Tanda Terima I Halaman'],
+      [2,'Cetak Tanda Terima (2) Halaman','Cetak Tanda Terima (2) Halaman'],
+      [3,'Laporan Payment Request I Halaman','Payment Request I Halaman'],
+      [4,'Laporan Payment Request (2) Halaman','Payment Request (2) Halaman'],
+    ]),
+    rcGroup('PROJECT', [
+      [1,'Laporan Project Billing Transaction I Halaman','Cetak Project Billing Transaction I Halaman'],
+      [2,'Laporan Project Billing Transaction (2) Halaman','Cetak Project Billing Transaction (2) Halaman'],
+      [3,'Laporan Project Billing Transaction Custom','Cetak Project Billing Transaction Custom'],
+    ]),
+    rcGroup('KWITANSI', [
+      [1,'Kwitansi','Kwitansi'],
+    ]),
+    rcGroup('UANG MUKA', [
+      [1,'Uang Muka Supplier','Cetak uang muka supplier'],
+      [2,'Uang Muka Customer','Cetak uang muka customer'],
+      [3,'Invoice Uang Muka Customer','Cetak invoice uang muka customer'],
+    ]),
+    rcGroup('KASBON', [
+      [1,'Kasbon Karyawan','Cetak Bukti Kasbon Karyawan'],
+      [2,'Pengembalian Kasbon Karyawan','Cetak Bukti Pengembalian Kasbon Karyawan'],
+    ]),
+    rcGroup('APPROVAL', [
+      [1,'Cetakan Daftar Approval','Kwitansi'],
+    ]),
+    rcGroup('INVOICE UANG MUKA TIPE 2', [
+      [1,'Invoice Uang Muka Customer','Digunakan hanya untuk cetakan Invoice Uang Muka Customer Full Page'],
+      [2,'Invoice Uang Muka Customer','Digunakan hanya untuk cetakan Invoice Uang Muka Customer Half Page'],
+      [3,'Invoice Uang Muka Supplier','Digunakan hanya untuk cetakan Invoice Uang Muka Supplier Full Page'],
+      [4,'Invoice Uang Muka Supplier','Digunakan hanya untuk cetakan Invoice Uang Muka Supplier Half Page'],
+    ]),
+    rcGroup('FIXED ASSET', [
+      [1,'Pemilikan Fixed Asset','Digunakan hanya untuk cetakan Pemilikan Fixed Asset'],
+      [2,'Penghapusan Fixed Asset','Digunakan hanya untuk cetakan Penghapusan Fixed Asset'],
+    ]),
+    rcGroup('BIAYA IMPORT', [
+      [1,'Biaya Import V.2','Digunakan hanya untuk cetakan Biaya Import V.2','FreightCostPrint'],
+    ]),
+    rcGroup('PRODUKSI', [
+      [1,'Cetak Work Order I Halaman','Cetakan Work Order I Halaman'],
+      [2,'Cetak Raw Material I Halaman','Cetakan Raw Material I Halaman'],
+      [3,'Cetak Finished Good I Halaman','Cetakan Finished Good I Halaman'],
+    ]),
+  ]},
+};
+
 const DATA = {
   kpi:[
     {label:'Overdue Invoice', value:'4', color:'kpi-red', ic:'alertTriangle'},
@@ -750,6 +1357,66 @@ const DATA = {
          menampilkan nilai yang identik. jumlahPiutang TETAP gross
          1.200.000 (AR yang dilunasi tidak berkurang oleh potongan pajak). */
       totalPembayaran:1134684.68, jumlahBank:1134684.68, jumlahPiutang:1200000},
+    /* 3 baris BARU 2026-08-21 (lanjutan fitur PPN/PPH SSP 2026-08-20),
+       ditambahkan khusus untuk mendemokan laporan baru "FA-08 Lap SSP
+       Belum Diterima" (Report Center > Account Receivable) — lihat
+       js/pages/reports.js (rcSspBuildRows). Sebelumnya cuma 1 faktur
+       (26/SI/SMG/07/00033 di atas) yang punya potonganPpn/Pph, jadi
+       laporan itu hanya akan menampilkan 1 baris — DITAMBAH 3 record
+       BARU (bukan mengedit yang sudah ada, supaya totalPembayaran/
+       jumlahBank/jumlahPiutang record LAMA yang sudah diverifikasi
+       tidak berisiko berubah) di 3 cabang lain supaya laporan punya
+       variasi cabang/customer yang masuk akal. Semua nilai dihitung
+       dari formula yang sama (ppFakturTax(): DPP=Pembayaran÷1,11,
+       PPN=Pembayaran−DPP, PPH=DPP×%KodePPH) sehingga totalPembayaran/
+       jumlahBank tetap konsisten dengan hasil ppRecalcTotals() kalau
+       baris ini dibuka lewat modul Penerimaan Piutang sendiri. */
+    {no:'26/CL/MDN/08/00001', cabang:'Medan', tgl:'07/08/2026',
+      customerKode:'CUST-004', customerNama:'Toko Anugrah', badanUsaha:'', noPenagihanPiutang:'',
+      akunBankKode:'110118', tipeTransaksi:'Terima Kas', cair:true, noGiro:'', bankSumber:'', tglJthTempoBank:'07/08/2026',
+      /* PPN & PPh dua-duanya baru pertama kali dilaporkan, belum ada
+         NTPN sama sekali (kontras dgn baris SMG yang PPh-nya sudah
+         diterima) — DPP=900.000/1,11=810.810,81, PPN=89.189,19,
+         PPh 1,5%=12.162,16. */
+      fakturs:[{no:'26/SI/MDN/08/00003', cabang:'Medan', tipeTransaksi:'Jual Kredit', tglFaktur:'05/08/2026', tglJthTempo:'04/09/2026', mataUang:'IDR', kurs:1, reminder:900000, pembayaran:900000, checked:true, invoiceNo:'',
+        potonganPpn:true, potonganPph:true, sudahTerimaSspPpn:false, sudahTerimaSspPph:false, pphKode:'PPH 22 (1.5%)',
+        noNtpnPpnAda:false, noNtpnPpn:'', tglNtpnPpn:'',
+        noNtpnPphAda:false, noNtpnPph:'', tglNtpnPph:''}],
+      keteranganUangMuka:'', kursUangMuka:1, jadikanUangMuka:0,
+      keterangan:'VA - Terima Piutang 26/SI/MDN/08/00003 TOKO ANUGRAH',
+      jumlahTidakSama:false, kursTarget:1, status:'Approved',
+      totalPembayaran:798648.65, jumlahBank:798648.65, jumlahPiutang:900000},
+    {no:'26/CL/SBY/08/00001', cabang:'Surabaya', tgl:'14/08/2026',
+      customerKode:'CUST-008', customerNama:'Toko Sejahtera', badanUsaha:'', noPenagihanPiutang:'',
+      akunBankKode:'110109', tipeTransaksi:'Terima Kas', cair:true, noGiro:'', bankSumber:'', tglJthTempoBank:'14/08/2026',
+      /* Hanya PPN yang dipotong customer (potonganPph:false, jadi
+         kolom PPh ps 22 di laporan tetap kosong utk baris ini) —
+         NTPN PPN SUDAH ada tapi Tgl NTPN-nya belum dikonfirmasi
+         (mendemokan variasi "nomor ada, tanggal menyusul" persis
+         beberapa baris di contoh PDF user). DPP=1.500.000/1,11=
+         1.351.351,35, PPN=148.648,65. */
+      fakturs:[{no:'26/SI/SBY/08/00006', cabang:'Surabaya', tipeTransaksi:'Jual Kredit', tglFaktur:'12/08/2026', tglJthTempo:'11/09/2026', mataUang:'IDR', kurs:1, reminder:1500000, pembayaran:1500000, checked:true, invoiceNo:'',
+        potonganPpn:true, potonganPph:false, sudahTerimaSspPpn:false, sudahTerimaSspPph:false, pphKode:'',
+        noNtpnPpnAda:true, noNtpnPpn:'0X4471182KDLQAE9', tglNtpnPpn:'',
+        noNtpnPphAda:false, noNtpnPph:'', tglNtpnPph:''}],
+      keteranganUangMuka:'', kursUangMuka:1, jadikanUangMuka:0,
+      keterangan:'VA - Terima Piutang 26/SI/SBY/08/00006 TOKO SEJAHTERA',
+      jumlahTidakSama:false, kursTarget:1, status:'Approved',
+      totalPembayaran:1351351.35, jumlahBank:1351351.35, jumlahPiutang:1500000},
+    {no:'26/CL/BDG/08/00001', cabang:'Bandung', tgl:'17/08/2026',
+      customerKode:'CUST-003', customerNama:'CV Berkah Abadi', badanUsaha:'', noPenagihanPiutang:'',
+      akunBankKode:'110112', tipeTransaksi:'Terima Kas', cair:true, noGiro:'', bankSumber:'', tglJthTempoBank:'17/08/2026',
+      /* PPN & PPh dua-duanya belum diterima, belum ada NTPN — DPP=
+         2.000.000/1,11=1.801.801,80, PPN=198.198,20, PPh 1,5%=
+         27.027,03. */
+      fakturs:[{no:'26/SI/BDG/08/00004', cabang:'Bandung', tipeTransaksi:'Jual Kredit', tglFaktur:'15/08/2026', tglJthTempo:'14/09/2026', mataUang:'IDR', kurs:1, reminder:2000000, pembayaran:2000000, checked:true, invoiceNo:'',
+        potonganPpn:true, potonganPph:true, sudahTerimaSspPpn:false, sudahTerimaSspPph:false, pphKode:'PPH 22 (1.5%)',
+        noNtpnPpnAda:false, noNtpnPpn:'', tglNtpnPpn:'',
+        noNtpnPphAda:false, noNtpnPph:'', tglNtpnPph:''}],
+      keteranganUangMuka:'', kursUangMuka:1, jadikanUangMuka:0,
+      keterangan:'VA - Terima Piutang 26/SI/BDG/08/00004 CV BERKAH ABADI',
+      jumlahTidakSama:false, kursTarget:1, status:'Approved',
+      totalPembayaran:1774774.77, jumlahBank:1774774.77, jumlahPiutang:2000000},
   ],
   /* Transaksi A.R. SSP (Customer & Penjualan > Daftar Transaksi >
      Transaksi A.R. SSP, page:'penerimaanSsp', menu.js — sebelumnya
@@ -1112,7 +1779,7 @@ const DATA = {
     {username:'andri_csh', nama:'Andri Santoso', email:'', role:'CSH', cabangKode:'03', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
     {username:'eka_gdg', nama:'Eka Nugroho', email:'', role:'GDG', cabangKode:'00', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
   ],
-  reports:['Laporan Penjualan','Laporan Pembelian','Laporan Persediaan / Stok','Laporan Piutang','Laporan Hutang','Laporan Laba Rugi','Laporan Kas / Bank','Laporan Aktiva Tetap','Laporan Komisi Salesman','Laporan Aging Piutang'],
+  reportCenters: REPORT_CENTERS_DATA,
   glKategori:[
     {kode:'A', nama:'Aktiva', noAwal:'11000000', glAwal:'AKTIVA LANCAR', noAkhir:'19999999', glAkhir:'AKTIVA'},
     {kode:'B', nama:'Hutang', noAwal:'20000000', glAwal:'PASSIVA', noAkhir:'29999999', glAkhir:'HUTANG'},
@@ -1272,6 +1939,77 @@ const DATA = {
         {kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', kategori:'Sembako', qtyReordering:2000, pilih:true, qty:2000, um:'Karung'},
       ],
       tglInput:'03/08/2026 13:00:56', userInput:'sarah_scc', tglEdit:'07/08/2026 10:42:41', userEdit:'sidik'},
+  ],
+  /* Reordering Sheet — menu Persediaan Barang > Daftar Transaksi >
+     Reordering Sheet (lihat js/pages/reordering-sheet.*). Sebelumnya
+     placeholder. 8 baris (1 per cabang) sesuai precedent downsize-volume
+     (screenshot asli "Total Record: 447" — terlalu besar untuk mockup).
+     On Hand/Qty. BoPo/Available tiap barang di `items[]` REAL, disalin
+     persis dari DATA.persediaan (cabang+kodeBarang yang sama) supaya
+     konsisten kalau dicek silang ke modul Persediaan. History Sales 6
+     bulan/Sales Agt/Outstanding DR/Qty BoSo/Qty Picking List/Alpha/
+     Faktorial ILUSTRATIF (tidak ada modul sumber di mockup ini — lihat
+     komentar di reordering-sheet.template.js). Baris HO/BDG/MDN/MKS/SMG/
+     SDA "belum dianalisa" (Max Stock/Forecast/Reorder masih 0, konsisten
+     kondisi screenshot asli). Baris SBY sudah dianalisa & SENGAJA
+     menyisakan 1 barang (BRG-002) dengan Forecast menyimpang >25% dari
+     Average untuk mendemokan rule highlight merah. Baris TGR SUDAH
+     dianalisa penuh & terhubung ke Stock Request SUNGGUHAN yang sudah
+     ada sejak awal (`DATA.stockRequest` no 26/SR/TGR/08/00001, field
+     `reorderingSheet` di sana sudah menunjuk ke '26/ROS/TGR/08/00001'
+     sejak modul Stock Request dibangun) — field `stockRequest` di baris
+     ini mengunci Ubah/Hapus (lihat tplRosRows), item & qty-nya (BRG-001
+     6000/BRG-002 3000/BRG-003 2000) PERSIS sama dengan qtyReordering di
+     Stock Request tersebut. */
+  reorderingSheet:[
+    {no:'26/ROS/HO/08/00001', tipe:'Reordering Sheet Reguler', tglRos:'01/08/2026', periode:'Agustus 2026', cabang:'Head Office', metode:'XP',
+      keterangan:'', filterPrincipal:'', filterPusatBisnis:'', filterKategoriNama:'Minuman', filterPersediaanNama:'',
+      items:[
+        {kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', hist:[0,0,0,0,0,0], alpha:0, faktorial:0, average:0, forecast:0, keteranganItem:'', salesAgt:0, onHand:192, qtyBoPo:0, outstandingDR:0, qtyBoSo:0, qtyPickingList:0, available:192, maxStock:0, shouldReorder:0, qtyKelipatanOrder:0, konversiKarton:1, reorder:0, pareto:''},
+        {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', hist:[0,0,0,0,0,0], alpha:0, faktorial:0, average:0, forecast:0, keteranganItem:'', salesAgt:0, onHand:216, qtyBoPo:0, outstandingDR:0, qtyBoSo:0, qtyPickingList:0, available:216, maxStock:0, shouldReorder:0, qtyKelipatanOrder:0, konversiKarton:1, reorder:0, pareto:''},
+        {kode:'BRG-009', nama:'Kopi Kapal Api 165gr', hist:[0,0,0,0,0,0], alpha:0, faktorial:0, average:0, forecast:0, keteranganItem:'', salesAgt:0, onHand:114, qtyBoPo:0, outstandingDR:0, qtyBoSo:0, qtyPickingList:0, available:114, maxStock:0, shouldReorder:0, qtyKelipatanOrder:0, konversiKarton:1, reorder:0, pareto:''},
+      ], tglInput:'01/08/2026 08:15:20', userEntry:'sidik', stockRequest:''},
+    {no:'26/ROS/SBY/08/00001', tipe:'Reordering Sheet Reguler', tglRos:'02/08/2026', periode:'Agustus 2026', cabang:'Surabaya', metode:'FIFO',
+      keterangan:'Analisa rutin bulanan', filterPrincipal:'PT Sumber Pangan Nusantara', filterPusatBisnis:'Consumer Food', filterKategoriNama:'Sembako', filterPersediaanNama:'',
+      items:[
+        {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', hist:[1100,1180,1250,1090,1200,1230], alpha:1, faktorial:1, average:1175, forecast:1150, keteranganItem:'', salesAgt:640, onHand:186, qtyBoPo:0, outstandingDR:40, qtyBoSo:60, qtyPickingList:20, available:186, maxStock:1800, shouldReorder:1614, qtyKelipatanOrder:50, konversiKarton:1, reorder:1600, pareto:'A'},
+        {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', hist:[520,560,610,590,540,575], alpha:1, faktorial:1, average:566, forecast:900, keteranganItem:'Cek ulang asumsi forecast', salesAgt:300, onHand:129, qtyBoPo:0, outstandingDR:15, qtyBoSo:25, qtyPickingList:10, available:129, maxStock:900, shouldReorder:771, qtyKelipatanOrder:25, konversiKarton:1, reorder:750, pareto:'B'},
+        {kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', hist:[210,225,240,230,205,220], alpha:1, faktorial:1, average:222, forecast:230, keteranganItem:'', salesAgt:120, onHand:62, qtyBoPo:0, outstandingDR:8, qtyBoSo:10, qtyPickingList:5, available:62, maxStock:450, shouldReorder:388, qtyKelipatanOrder:25, konversiKarton:1, reorder:375, pareto:'B'},
+      ], tglInput:'02/08/2026 09:40:12', userEntry:'sidik', stockRequest:''},
+    {no:'26/ROS/BDG/08/00001', tipe:'Reordering Sheet Reguler', tglRos:'02/08/2026', periode:'Agustus 2026', cabang:'Bandung', metode:'Manual',
+      keterangan:'', filterPrincipal:'', filterPusatBisnis:'', filterKategoriNama:'Bahan Baku', filterPersediaanNama:'',
+      items:[
+        {kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', hist:[0,0,0,0,0,0], alpha:0, faktorial:0, average:0, forecast:0, keteranganItem:'', salesAgt:0, onHand:99, qtyBoPo:0, outstandingDR:0, qtyBoSo:0, qtyPickingList:0, available:99, maxStock:0, shouldReorder:0, qtyKelipatanOrder:0, konversiKarton:1, reorder:0, pareto:''},
+      ], tglInput:'02/08/2026 10:05:44', userEntry:'sidik', stockRequest:''},
+    {no:'26/ROS/TGR/08/00001', tipe:'Reordering Sheet Reguler', tglRos:'01/08/2026', periode:'Agustus 2026', cabang:'Tangerang', metode:'XP',
+      keterangan:'Untuk PO PT. Sumber Pangan Nusantara', filterPrincipal:'PT Sumber Pangan Nusantara', filterPusatBisnis:'Consumer Food', filterKategoriNama:'Sembako', filterPersediaanNama:'',
+      items:[
+        {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', hist:[5800,6100,6400,6250,5950,6200], alpha:1, faktorial:1, average:6117, forecast:6200, keteranganItem:'', salesAgt:3200, onHand:186, qtyBoPo:0, outstandingDR:180, qtyBoSo:220, qtyPickingList:90, available:186, maxStock:6300, shouldReorder:6114, qtyKelipatanOrder:100, konversiKarton:1, reorder:6000, pareto:'A'},
+        {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', hist:[2850,2960,3120,3050,2900,3010], alpha:1, faktorial:1, average:2982, forecast:3000, keteranganItem:'', salesAgt:1450, onHand:129, qtyBoPo:0, outstandingDR:90, qtyBoSo:110, qtyPickingList:40, available:129, maxStock:3100, shouldReorder:2971, qtyKelipatanOrder:50, konversiKarton:1, reorder:3000, pareto:'A'},
+        {kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', hist:[1900,1980,2050,2020,1940,1995], alpha:1, faktorial:1, average:1981, forecast:2000, keteranganItem:'', salesAgt:980, onHand:62, qtyBoPo:0, outstandingDR:55, qtyBoSo:60, qtyPickingList:25, available:62, maxStock:2050, shouldReorder:1988, qtyKelipatanOrder:50, konversiKarton:1, reorder:2000, pareto:'A'},
+      ], tglInput:'01/08/2026 08:50:05', userEntry:'sarah_scc', stockRequest:'26/SR/TGR/08/00001'},
+    {no:'26/ROS/MDN/08/00001', tipe:'Reordering Sheet Konsinyasi', tglRos:'04/08/2026', periode:'Agustus 2026', cabang:'Medan', metode:'XP',
+      keterangan:'', filterPrincipal:'', filterPusatBisnis:'', filterKategoriNama:'Makanan', filterPersediaanNama:'',
+      items:[
+        {kode:'BRG-005', nama:'Mie Instan Indomie Goreng', hist:[0,0,0,0,0,0], alpha:0, faktorial:0, average:0, forecast:0, keteranganItem:'', salesAgt:0, onHand:177, qtyBoPo:0, outstandingDR:0, qtyBoSo:0, qtyPickingList:0, available:177, maxStock:0, shouldReorder:0, qtyKelipatanOrder:0, konversiKarton:1, reorder:0, pareto:''},
+      ], tglInput:'04/08/2026 11:20:33', userEntry:'sidik', stockRequest:''},
+    {no:'26/ROS/MKS/08/00001', tipe:'Reordering Sheet Reguler', tglRos:'05/08/2026', periode:'Agustus 2026', cabang:'Makassar', metode:'Manual',
+      keterangan:'', filterPrincipal:'', filterPusatBisnis:'', filterKategoriNama:'Bumbu', filterPersediaanNama:'',
+      items:[
+        {kode:'BRG-006', nama:'Kecap Manis ABC 600ml', hist:[0,0,0,0,0,0], alpha:0, faktorial:0, average:0, forecast:0, keteranganItem:'', salesAgt:0, onHand:37, qtyBoPo:0, outstandingDR:0, qtyBoSo:0, qtyPickingList:0, available:37, maxStock:0, shouldReorder:0, qtyKelipatanOrder:0, konversiKarton:1, reorder:0, pareto:''},
+      ], tglInput:'05/08/2026 09:05:10', userEntry:'sidik', stockRequest:''},
+    {no:'26/ROS/SMG/08/00001', tipe:'Reordering Sheet Reguler', tglRos:'06/08/2026', periode:'Agustus 2026', cabang:'Semarang', metode:'FIFO',
+      keterangan:'', filterPrincipal:'', filterPusatBisnis:'', filterKategoriNama:'Minuman', filterPersediaanNama:'',
+      items:[
+        {kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', hist:[0,0,0,0,0,0], alpha:0, faktorial:0, average:0, forecast:0, keteranganItem:'', salesAgt:0, onHand:51, qtyBoPo:0, outstandingDR:0, qtyBoSo:0, qtyPickingList:0, available:51, maxStock:0, shouldReorder:0, qtyKelipatanOrder:0, konversiKarton:1, reorder:0, pareto:''},
+        {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', hist:[0,0,0,0,0,0], alpha:0, faktorial:0, average:0, forecast:0, keteranganItem:'', salesAgt:0, onHand:58, qtyBoPo:0, outstandingDR:0, qtyBoSo:0, qtyPickingList:0, available:58, maxStock:0, shouldReorder:0, qtyKelipatanOrder:0, konversiKarton:1, reorder:0, pareto:''},
+        {kode:'BRG-009', nama:'Kopi Kapal Api 165gr', hist:[0,0,0,0,0,0], alpha:0, faktorial:0, average:0, forecast:0, keteranganItem:'', salesAgt:0, onHand:30, qtyBoPo:0, outstandingDR:0, qtyBoSo:0, qtyPickingList:0, available:30, maxStock:0, shouldReorder:0, qtyKelipatanOrder:0, konversiKarton:1, reorder:0, pareto:''},
+      ], tglInput:'06/08/2026 08:30:00', userEntry:'khalimatus_apja', stockRequest:''},
+    {no:'26/ROS/SDA/08/00001', tipe:'Reordering Sheet Reguler', tglRos:'07/08/2026', periode:'Agustus 2026', cabang:'Sidoarjo', metode:'XP',
+      keterangan:'', filterPrincipal:'', filterPusatBisnis:'', filterKategoriNama:'Toiletries', filterPersediaanNama:'',
+      items:[
+        {kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', hist:[0,0,0,0,0,0], alpha:0, faktorial:0, average:0, forecast:0, keteranganItem:'', salesAgt:0, onHand:69, qtyBoPo:0, outstandingDR:0, qtyBoSo:0, qtyPickingList:0, available:69, maxStock:0, shouldReorder:0, qtyKelipatanOrder:0, konversiKarton:1, reorder:0, pareto:''},
+      ], tglInput:'07/08/2026 09:00:00', userEntry:'sidik', stockRequest:''},
   ],
   /* Purchase Order — menu Supplier & Pembelian > Daftar Transaksi >
      Purchase Order (lihat js/pages/purchase-order.*). 11 baris data
@@ -1570,6 +2308,99 @@ const DATA = {
       akunDiskonPembelian:'', akunPembelianJasa:'', akunDiskonPembelianJasa:'', akunPenjualan:'', akunDiskonPrincipal:'', akunDiskonDistributor:'',
       akunDiskonSelisihHna:'', akunPenjualanJasa:'', akunDiskonPenjualanJasa:'', akunSalesRefund:'', akunReturDiskonPrincipal:'', akunReturDiskonDistributor:'',
       akunStokPersediaan:'', akunHpp:'', akunHppRetur:'', akunPersediaanReject:'', akunPersediaanIntransit:''},
+  ],
+
+  /* Zat Kandungan Aktif (Persediaan Barang > Master & Setting > Zat
+     Kandungan Aktif, page:'zatKandunganAktif'), sesuai screenshot MASERP
+     "Daftar Zat Kandungan Aktif" (Total Record: 324) yang dikirim user
+     2026-08-21. Field ini (& 3 tetangganya di sidebar — Farmakoterapi/
+     Sub-Farmakoterapi/Bentuk Sediaan, masih placeholder) khas distributor
+     farmasi/kesehatan, BEDA dari katalog FMCG sembako yang sudah dibangun
+     untuk DBM sejauh ini — user mengonfirmasi dibangun APA ADANYA (nama
+     zat aktif/INN obat adalah referensi standar industri, bukan data
+     rahasia perusahaan demo lain, jadi aman dipakai persis).
+
+     VOLUME diturunkan dari 324 baris (screenshot asli, terlalu besar untuk
+     mockup) ke 69 baris — mengikuti precedent downsize-volume Master
+     Rayon/Price List By Province/Cetakan Transaksi. 10 baris PALING ATAS
+     PERSIS sesuai screenshot, termasuk 2 kode non-standar
+     'ANTASIDADOENSLF'/'COTRIM400-80' (kuirk data asli — kode lama sebelum
+     skema penomoran KZA00000 dst. diberlakukan, direproduksi apa adanya).
+     59 baris sisanya nama generik/INN obat umum lain (BUKAN replikasi 314
+     baris sungguhan dari screenshot yang resolusinya tidak bisa dipastikan
+     akurat) — tetap genuinely cukup untuk mendemokan pagination
+     multi-halaman sungguhan (69÷10=7 halaman, kebetulan pas dengan jumlah
+     tombol nomor halaman "1..7" yang terlihat di screenshot). */
+  zatKandunganAktif:[
+    {kode:'ANTASIDADOENSLF', nama:'DRIED ALUMINIUM HYDROXIDE GEL|MAGNESIUM HYDROXIDE'},
+    {kode:'COTRIM400-80', nama:'SULFAMETHOXAZOLE|TRIMETHOPRIM'},
+    {kode:'KZA00000', nama:'Non'},
+    {kode:'KZA00001', nama:'2QR-Complex'},
+    {kode:'KZA00002', nama:'Acyclovir'},
+    {kode:'KZA00003', nama:'Alga Extract'},
+    {kode:'KZA00004', nama:'ALLOPURINOL'},
+    {kode:'KZA00005', nama:'Aluminium Hidroksida / Al(OH)3'},
+    {kode:'KZA00006', nama:'AMBROXOL HYDROCHLORIDE'},
+    {kode:'KZA00007', nama:'AMLODIPINE BESILATE'},
+    {kode:'KZA00008', nama:'Amoxicillin'},
+    {kode:'KZA00009', nama:'Ampicillin Trihydrate'},
+    {kode:'KZA00010', nama:'Antasida DOEN (Kombinasi)'},
+    {kode:'KZA00011', nama:'Ascorbic Acid (Vitamin C)'},
+    {kode:'KZA00012', nama:'Aspirin'},
+    {kode:'KZA00013', nama:'Atorvastatin Calcium'},
+    {kode:'KZA00014', nama:'Azithromycin'},
+    {kode:'KZA00015', nama:'Betamethasone Valerate'},
+    {kode:'KZA00016', nama:'Bisoprolol Fumarate'},
+    {kode:'KZA00017', nama:'Calcium Carbonate'},
+    {kode:'KZA00018', nama:'Calcium Lactate'},
+    {kode:'KZA00019', nama:'Captopril'},
+    {kode:'KZA00020', nama:'Cefadroxil'},
+    {kode:'KZA00021', nama:'Cefixime'},
+    {kode:'KZA00022', nama:'Cetirizine HCl'},
+    {kode:'KZA00023', nama:'Chlorpheniramine Maleate'},
+    {kode:'KZA00024', nama:'Ciprofloxacin HCl'},
+    {kode:'KZA00025', nama:'Clindamycin HCl'},
+    {kode:'KZA00026', nama:'Clopidogrel Bisulfate'},
+    {kode:'KZA00027', nama:'Dexamethasone'},
+    {kode:'KZA00028', nama:'Diclofenac Sodium'},
+    {kode:'KZA00029', nama:'Diphenhydramine HCl'},
+    {kode:'KZA00030', nama:'Domperidone'},
+    {kode:'KZA00031', nama:'Enalapril Maleate'},
+    {kode:'KZA00032', nama:'Erythromycin Stearate'},
+    {kode:'KZA00033', nama:'Famotidine'},
+    {kode:'KZA00034', nama:'Ferrous Sulfate'},
+    {kode:'KZA00035', nama:'Furosemide'},
+    {kode:'KZA00036', nama:'Glibenclamide'},
+    {kode:'KZA00037', nama:'Glimepiride'},
+    {kode:'KZA00038', nama:'Ibuprofen'},
+    {kode:'KZA00039', nama:'Ketoconazole'},
+    {kode:'KZA00040', nama:'Lansoprazole'},
+    {kode:'KZA00041', nama:'Levofloxacin'},
+    {kode:'KZA00042', nama:'Loperamide HCl'},
+    {kode:'KZA00043', nama:'Loratadine'},
+    {kode:'KZA00044', nama:'Losartan Potassium'},
+    {kode:'KZA00045', nama:'Meloxicam'},
+    {kode:'KZA00046', nama:'Metformin HCl'},
+    {kode:'KZA00047', nama:'Metoclopramide HCl'},
+    {kode:'KZA00048', nama:'Metronidazole'},
+    {kode:'KZA00049', nama:'Miconazole Nitrate'},
+    {kode:'KZA00050', nama:'Multivitamin & Mineral'},
+    {kode:'KZA00051', nama:'Naproxen Sodium'},
+    {kode:'KZA00052', nama:'Neomycin Sulfate'},
+    {kode:'KZA00053', nama:'Omeprazole'},
+    {kode:'KZA00054', nama:'Ondansetron HCl'},
+    {kode:'KZA00055', nama:'Paracetamol'},
+    {kode:'KZA00056', nama:'Phenylephrine HCl'},
+    {kode:'KZA00057', nama:'Piroxicam'},
+    {kode:'KZA00058', nama:'Prednisone'},
+    {kode:'KZA00059', nama:'Ranitidine HCl'},
+    {kode:'KZA00060', nama:'Salbutamol Sulfate'},
+    {kode:'KZA00061', nama:'Simvastatin'},
+    {kode:'KZA00062', nama:'Vitamin B Complex'},
+    {kode:'KZA00063', nama:'Vitamin B12 (Cyanocobalamin)'},
+    {kode:'KZA00064', nama:'Vitamin D3 (Cholecalciferol)'},
+    {kode:'KZA00065', nama:'Zinc Sulfate'},
+    {kode:'KZA00066', nama:'Zolpidem Tartrate'},
   ],
 
   /* Master Gudang (Persediaan Barang > Master & Setting > Gudang), sesuai

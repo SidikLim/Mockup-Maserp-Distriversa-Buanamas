@@ -194,7 +194,7 @@ function openSrRosPicker(row){
   closeModal();
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
-  overlay.innerHTML = tplSrRosPicker(SR_REORDERING_SHEET_LIST);
+  overlay.innerHTML = tplSrRosPicker(DATA.reorderingSheet);
   document.body.appendChild(overlay);
   document.getElementById('modalClose').onclick = closeModal;
   document.getElementById('modalCancel').onclick = closeModal;

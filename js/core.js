@@ -121,7 +121,16 @@ const PAGE_MODULES={
   fakturPenjualanSJ:{srcs:['js/pages/faktur-penjualan-sj.template.js','js/pages/faktur-penjualan-sj.js'], fn:'renderFakturPenjualanSJPage'},
   gudang:{srcs:['js/pages/gudang.template.js','js/pages/gudang.js'], fn:'renderGudangPage'},
   kasBank:{srcs:['js/pages/kas-bank.template.js','js/pages/kas-bank.js'], fn:'renderKasBankPage'},
-  reports:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReports'},
+  reportCabang:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportCabang'},
+  reportAktivaTetap:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportAktivaTetap'},
+  reportAP:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportAP'},
+  reportAR:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportAR'},
+  reportPurchasing:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportPurchasing'},
+  reportKasBank:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportKasBank'},
+  reportGL:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportGL'},
+  reportPersediaan:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportPersediaan'},
+  reportPenjualan:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportPenjualan'},
+  reportCetakanTransaksi:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportCetakanTransaksi'},
   companyProfile:{srcs:['js/pages/company-profile.template.js','js/pages/company-profile.js'], fn:'renderCompanyProfile'},
   masterRayon:{srcs:['js/pages/master-rayon.template.js','js/pages/master-rayon.js'], fn:'renderMasterRayonPage'},
   masterWilayah:{srcs:['js/pages/master-wilayah.template.js','js/pages/master-wilayah.js'], fn:'renderMasterWilayahPage'},
@@ -132,6 +141,8 @@ const PAGE_MODULES={
   priceListProvince:{srcs:['js/pages/price-list-province.template.js','js/pages/price-list-province.js'], fn:'renderPriceListProvincePage'},
   penerimaanPiutang:{srcs:['js/pages/penerimaan-piutang.template.js','js/pages/penerimaan-piutang.js'], fn:'renderPenerimaanPiutangPage'},
   penerimaanSsp:{srcs:['js/pages/penerimaan-ssp.template.js','js/pages/penerimaan-ssp.js'], fn:'renderPenerimaanSspPage'},
+  reorderingSheet:{srcs:['js/pages/reordering-sheet.template.js','js/pages/reordering-sheet.js'], fn:'renderReorderingSheetPage'},
+  zatKandunganAktif:{srcs:['js/pages/zat-kandungan-aktif.template.js','js/pages/zat-kandungan-aktif.js'], fn:'renderZatKandunganAktifPage'},
 };
 const loadedModules=new Set();
 

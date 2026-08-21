@@ -28,15 +28,6 @@ const SR_GUDANG_LIST = [
   '(06-GTG) Gudang Tangerang',
   '(07-GSD) Gudang Sidoarjo',
 ];
-/* Reordering Sheet belum jadi menu tersendiri (masih placeholder di
-   sidebar), jadi daftar ini hanya dummy untuk kebutuhan picker di
-   field "No. Reordering Sheet". */
-const SR_REORDERING_SHEET_LIST = [
-  {kode:'26/ROS/HO/08/00001', cabang:'Head Office', tgl:'01/08/2026'},
-  {kode:'26/ROS/SMG/08/00001', cabang:'Semarang', tgl:'04/08/2026'},
-  {kode:'26/ROS/TGR/08/00001', cabang:'Tangerang', tgl:'01/08/2026'},
-  {kode:'26/ROS/BDG/08/00001', cabang:'Bandung', tgl:'02/08/2026'},
-];
 const SR_ED_OPTIONS = [0,1,2,3,6,12];
 
 /* Kelompokkan array items (dari row.items / DATA.items) berdasarkan
@@ -279,21 +270,28 @@ function tplSrInfoModal(title,text){
     </div>`;
 }
 
+/* Sejak modul Reordering Sheet dibangun (2026-08-21), picker ini
+   menyaring DATA.reorderingSheet SUNGGUHAN (bukan dummy lagi) — lihat
+   openSrRosPicker() di stock-request.js. Reordering Sheet yang sudah
+   punya Stock Request lain (r.stockRequest terisi & bukan punya baris
+   Stock Request yang sedang diedit ini) TETAP ditampilkan (dipilih ulang
+   akan menimpa referensi lama, sama seperti pola picker No.SQ/No.SP di
+   modul lain) — mockup ini tidak menegakkan validasi 1:1 yang ketat. */
 function tplSrRosPicker(list){
   return `
-    <div class="modal-box" style="max-width:520px;">
+    <div class="modal-box" style="max-width:560px;">
       <div class="modal-header"><span>Pilih Reordering Sheet</span><span class="close" id="modalClose">&times;</span></div>
       <div class="modal-body">
         <div class="table-wrap"><table>
           <thead><tr><th>No. Reordering Sheet</th><th>Cabang</th><th>Tanggal</th><th></th></tr></thead>
           <tbody>
-            ${list.map(r=>`
+            ${list.length ? list.map(r=>`
               <tr>
-                <td>${r.kode}</td>
+                <td>${r.no}</td>
                 <td>${r.cabang}</td>
-                <td>${r.tgl}</td>
-                <td><button class="btn-pick" data-pick-ros="${r.kode}">Pilih</button></td>
-              </tr>`).join('')}
+                <td>${r.tglRos}</td>
+                <td><button class="btn-pick" data-pick-ros="${r.no}">Pilih</button></td>
+              </tr>`).join('') : `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada data Reordering Sheet</td></tr>`}
           </tbody>
         </table></div>
       </div>
