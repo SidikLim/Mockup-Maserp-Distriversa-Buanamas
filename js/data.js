@@ -2403,6 +2403,477 @@ const DATA = {
     {kode:'KZA00066', nama:'Zolpidem Tartrate'},
   ],
 
+  /* Farmakoterapi (Persediaan Barang > Master & Setting >
+     Farmakoterapi, page:'farmakoterapi'), sesuai screenshot MASERP
+     "Master Farmakoterapi" (Total Record: 80, kolom Kode/Nama
+     Farmakoterapi dengan ikon sort di kedua header, page-size 10
+     default + Pencarian Global, pager First/Previous/1..7/Next/Last)
+     yang dikirim user 2026-08-21. Pola & keputusan data SAMA
+     persis dengan Zat Kandungan Aktif (menu tetangga di atas):
+     field khas distributor farmasi, dibangun apa adanya karena
+     nama kelas terapi (farmakoterapi) adalah terminologi
+     farmakologi standar (mis. ATC-like), bukan data rahasia
+     perusahaan demo lain.
+
+     TIDAK ADA downsize volume di sini — Total Record: 80 pada
+     screenshot asli SUDAH sewajarnya (beda dgn Zat Kandungan
+     Aktif yg 324 baris di-downsize ke 60), jadi 80 baris
+     dipertahankan utuh: 10 baris PALING ATAS PERSIS sesuai
+     screenshot (FRK00000-FRK00009), 70 baris sisanya nama kelas
+     farmakoterapi generik lain (bukan replikasi baris
+     sungguhan screenshot yg tak termuat di layar), diurutkan
+     alfabetis mengikuti pola natural penomoran kode berurutan
+     yang terlihat di 10 baris pertama. Reuse `tplZkaPager()`-
+     style windowed pager & real column-sort dari Zat Kandungan
+     Aktif (lihat farmakoterapi.template.js). 80÷10=8 halaman,
+     window pager tampil "1..7" + Next di halaman 1 — persis
+     screenshot. */
+  farmakoterapi:[
+    {kode:'FRK00000', nama:'Non'},
+    {kode:'FRK00001', nama:'Anafilaksis'},
+    {kode:'FRK00002', nama:'Analgesik'},
+    {kode:'FRK00003', nama:'Analgesik, Antipiretik'},
+    {kode:'FRK00004', nama:'Analgesik, Antipiretik, Antiinflamasi Nonsteroid'},
+    {kode:'FRK00005', nama:'Anemia'},
+    {kode:'FRK00006', nama:'Anestetik'},
+    {kode:'FRK00007', nama:'Antialergi'},
+    {kode:'FRK00008', nama:'Antibiotik'},
+    {kode:'FRK00009', nama:'Antidiabetik Oral'},
+    {kode:'FRK00010', nama:'Analgesik Opioid'},
+    {kode:'FRK00011', nama:'Antasida'},
+    {kode:'FRK00012', nama:'Antidepresan'},
+    {kode:'FRK00013', nama:'Antidiare'},
+    {kode:'FRK00014', nama:'Antiemetik'},
+    {kode:'FRK00015', nama:'Antifungal (Antijamur)'},
+    {kode:'FRK00016', nama:'Antihipertensi'},
+    {kode:'FRK00017', nama:'Antihistamin'},
+    {kode:'FRK00018', nama:'Antiinflamasi'},
+    {kode:'FRK00019', nama:'Antijamur Topikal'},
+    {kode:'FRK00020', nama:'Antikoagulan'},
+    {kode:'FRK00021', nama:'Antikonvulsan'},
+    {kode:'FRK00022', nama:'Antimalaria'},
+    {kode:'FRK00023', nama:'Antimigrain'},
+    {kode:'FRK00024', nama:'Antiparkinson'},
+    {kode:'FRK00025', nama:'Antipsikotik'},
+    {kode:'FRK00026', nama:'Antiseptik & Disinfektan'},
+    {kode:'FRK00027', nama:'Antiseptik Kulit'},
+    {kode:'FRK00028', nama:'Antituberkulosis'},
+    {kode:'FRK00029', nama:'Antitusif'},
+    {kode:'FRK00030', nama:'Antivirus'},
+    {kode:'FRK00031', nama:'Anxiolitik'},
+    {kode:'FRK00032', nama:'Bronkodilator'},
+    {kode:'FRK00033', nama:'Diuretik'},
+    {kode:'FRK00034', nama:'Ekspektoran'},
+    {kode:'FRK00035', nama:'Elektrolit & Cairan'},
+    {kode:'FRK00036', nama:'Gangguan Tiroid'},
+    {kode:'FRK00037', nama:'Gastrointestinal'},
+    {kode:'FRK00038', nama:'Hematologi'},
+    {kode:'FRK00039', nama:'Hepatoprotektor'},
+    {kode:'FRK00040', nama:'Hipnotik & Sedatif'},
+    {kode:'FRK00041', nama:'Hipolipidemik'},
+    {kode:'FRK00042', nama:'Hormon & Endokrin'},
+    {kode:'FRK00043', nama:'Imunosupresan'},
+    {kode:'FRK00044', nama:'Kardiovaskular'},
+    {kode:'FRK00045', nama:'Kemoterapi'},
+    {kode:'FRK00046', nama:'Kesehatan Gigi & Mulut'},
+    {kode:'FRK00047', nama:'Kontrasepsi'},
+    {kode:'FRK00048', nama:'Kortikosteroid'},
+    {kode:'FRK00049', nama:'Laksatif'},
+    {kode:'FRK00050', nama:'Mukolitik'},
+    {kode:'FRK00051', nama:'Muskuloskeletal'},
+    {kode:'FRK00052', nama:'Nefrologi'},
+    {kode:'FRK00053', nama:'Neurologi'},
+    {kode:'FRK00054', nama:'Nutrisi & Suplemen'},
+    {kode:'FRK00055', nama:'Obat Batuk'},
+    {kode:'FRK00056', nama:'Obat Flu'},
+    {kode:'FRK00057', nama:'Oftalmologi'},
+    {kode:'FRK00058', nama:'Opioid'},
+    {kode:'FRK00059', nama:'Osteoporosis'},
+    {kode:'FRK00060', nama:'Otologi'},
+    {kode:'FRK00061', nama:'Penyakit Jantung Koroner'},
+    {kode:'FRK00062', nama:'Perawatan Kulit'},
+    {kode:'FRK00063', nama:'Psikiatri'},
+    {kode:'FRK00064', nama:'Relaksan Otot'},
+    {kode:'FRK00065', nama:'Respirasi'},
+    {kode:'FRK00066', nama:'Sistem Saraf Pusat'},
+    {kode:'FRK00067', nama:'Stroke'},
+    {kode:'FRK00068', nama:'Trombolitik'},
+    {kode:'FRK00069', nama:'Urologi'},
+    {kode:'FRK00070', nama:'Vaksin & Imunisasi'},
+    {kode:'FRK00071', nama:'Vertigo'},
+    {kode:'FRK00072', nama:'Vitamin & Mineral'},
+    {kode:'FRK00073', nama:'Vitamin A'},
+    {kode:'FRK00074', nama:'Vitamin B Complex'},
+    {kode:'FRK00075', nama:'Vitamin C'},
+    {kode:'FRK00076', nama:'Vitamin D'},
+    {kode:'FRK00077', nama:'Vitamin E'},
+    {kode:'FRK00078', nama:'Vitamin K'},
+    {kode:'FRK00079', nama:'Zat Besi (Suplemen)'},
+  ],
+
+  /* Sub-Farmakoterapi (Persediaan Barang > Master & Setting >
+     Sub-Farmakoterapi, page:'subFarmakoterapi'), sesuai 2
+     screenshot MASERP "Master Sub-Farmakoterapi" (Total Record:
+     150, page-size 20 default + Pencarian Global, pager
+     First/Previous/1..7/Next/Last) yang dikirim user 2026-08-21.
+     Pola & keputusan data SAMA dengan Zat Kandungan Aktif &
+     Farmakoterapi: field khas farmasi, nama sub-kelas terapi
+     adalah terminologi farmakologi standar, dibangun apa adanya.
+
+     CATATAN PERBAIKAN vs screenshot: header kolom asli di
+     screenshot MASERP tertulis "Kode Zat Kandungan Aktif"/"Nama
+     Zat Kandungan Aktif" — ini bug label copy-paste di sistem
+     asli (isinya jelas data Sub-Farmakoterapi berkode SFK, bukan
+     KZA). Di mockup ini header diperbaiki jadi "Kode/Nama
+     Sub-Farmakoterapi" karena ini typo UI, bukan data — beda
+     kasus dengan kode legacy ANTASIDADOENSLF/COTRIM400-80 di Zat
+     Kandungan Aktif yang memang bagian dari DATA asli (dipertahankan
+     apa adanya), sedangkan ini cuma label kolom yang salah ketik.
+
+     TIDAK ADA downsize volume — Total Record: 150 dipertahankan
+     utuh: 20 baris PALING ATAS PERSIS sesuai screenshot
+     (SFK00000-SFK00019, termasuk urutan nama yang TIDAK strict
+     alfabetis persis seperti screenshot asli — mis. "Neuromyalgics"
+     di SFK00006 nyempil di antara nama-nama "Analgesik...", direproduksi
+     apa adanya bukan disortir ulang), 130 baris sisanya nama
+     sub-kelas farmakologi generik lain (mekanisme/golongan obat,
+     mis. "Inhibitor Pompa Proton (PPI)", "Antagonis Reseptor
+     Muskarinik" dst.) menyambung penomoran SFK00020-SFK00149.
+     Page-size default 20 (beda dari Zat Kandungan Aktif/
+     Farmakoterapi yang default 10) — opsi dropdown 10/20/50 sesuai
+     nilai "20" yang terlihat aktif di screenshot. 150÷20=8 halaman,
+     window pager tampil "1..7"+Next di halaman 1 — persis
+     screenshot. Reuse windowed pager & real column-sort pattern. */
+  subFarmakoterapi:[
+    {kode:'SFK00000', nama:'Non'},
+    {kode:'SFK00001', nama:'ACE Inhibitors'},
+    {kode:'SFK00002', nama:'Alkohol'},
+    {kode:'SFK00003', nama:'Aminoglikosida'},
+    {kode:'SFK00004', nama:'Anafilaksis'},
+    {kode:'SFK00005', nama:'Analgesik Non Narkotik, Antipiretik'},
+    {kode:'SFK00006', nama:'Neuromyalgics'},
+    {kode:'SFK00007', nama:'Analgesik Non Opioid'},
+    {kode:'SFK00008', nama:'Analgesik Non Opioid dan Antialergi'},
+    {kode:'SFK00009', nama:'Analgesik Opioid'},
+    {kode:'SFK00010', nama:'Analgesik Topikal'},
+    {kode:'SFK00011', nama:'Analgesik, Antipiretik, Antiinflamasi Nonsteroid'},
+    {kode:'SFK00012', nama:'Anemia Defisiensi Zat Besi'},
+    {kode:'SFK00013', nama:'Anestesi Barbiturat'},
+    {kode:'SFK00014', nama:'Anestesik Umum'},
+    {kode:'SFK00015', nama:'Anestetik Lokal'},
+    {kode:'SFK00016', nama:'Antagonis 5-HT3'},
+    {kode:'SFK00017', nama:'Antagonis Kalsium'},
+    {kode:'SFK00018', nama:'Antagonis Reseptor Angiotensin II'},
+    {kode:'SFK00019', nama:'Antagonis Reseptor H2'},
+    {kode:'SFK00020', nama:'Agonis Adrenergik Alfa'},
+    {kode:'SFK00021', nama:'Agonis Adrenergik Beta'},
+    {kode:'SFK00022', nama:'Antagonis Adrenergik Beta (Beta Blocker)'},
+    {kode:'SFK00023', nama:'Inhibitor Pompa Proton (PPI)'},
+    {kode:'SFK00024', nama:'Inhibitor Reuptake Serotonin (SSRI)'},
+    {kode:'SFK00025', nama:'Inhibitor Reuptake Serotonin-Norepinefrin (SNRI)'},
+    {kode:'SFK00026', nama:'Inhibitor Monoamine Oksidase (MAOI)'},
+    {kode:'SFK00027', nama:'Inhibitor HMG-CoA Reduktase (Statin)'},
+    {kode:'SFK00028', nama:'Inhibitor Alfa-Glukosidase'},
+    {kode:'SFK00029', nama:'Inhibitor DPP-4'},
+    {kode:'SFK00030', nama:'Inhibitor SGLT2'},
+    {kode:'SFK00031', nama:'Inhibitor Beta-Laktamase'},
+    {kode:'SFK00032', nama:'Antagonis Reseptor Histamin H1'},
+    {kode:'SFK00033', nama:'Antagonis Reseptor Muskarinik'},
+    {kode:'SFK00034', nama:'Antagonis Reseptor Opioid'},
+    {kode:'SFK00035', nama:'Antagonis Reseptor Dopamin'},
+    {kode:'SFK00036', nama:'Antagonis Reseptor Serotonin'},
+    {kode:'SFK00037', nama:'Antagonis Reseptor Leukotrien'},
+    {kode:'SFK00038', nama:'Agonis Reseptor GABA'},
+    {kode:'SFK00039', nama:'Agonis Reseptor Opioid'},
+    {kode:'SFK00040', nama:'Agonis Reseptor Dopamin'},
+    {kode:'SFK00041', nama:'Agonis Reseptor Beta-2 (Bronkodilator)'},
+    {kode:'SFK00042', nama:'Diuretik Loop'},
+    {kode:'SFK00043', nama:'Diuretik Tiazid'},
+    {kode:'SFK00044', nama:'Diuretik Hemat Kalium'},
+    {kode:'SFK00045', nama:'Diuretik Osmotik'},
+    {kode:'SFK00046', nama:'Antikoagulan Oral (Warfarin)'},
+    {kode:'SFK00047', nama:'Antikoagulan Heparin'},
+    {kode:'SFK00048', nama:'Antiplatelet'},
+    {kode:'SFK00049', nama:'Antikonvulsan Golongan Barbiturat'},
+    {kode:'SFK00050', nama:'Antikonvulsan Golongan Benzodiazepin'},
+    {kode:'SFK00051', nama:'Antibiotik Golongan Penisilin'},
+    {kode:'SFK00052', nama:'Antibiotik Golongan Sefalosporin'},
+    {kode:'SFK00053', nama:'Antibiotik Golongan Makrolida'},
+    {kode:'SFK00054', nama:'Antibiotik Golongan Fluorokuinolon'},
+    {kode:'SFK00055', nama:'Antibiotik Golongan Tetrasiklin'},
+    {kode:'SFK00056', nama:'Antijamur Golongan Azol'},
+    {kode:'SFK00057', nama:'Antijamur Golongan Polien'},
+    {kode:'SFK00058', nama:'Antivirus Golongan Nukleosida'},
+    {kode:'SFK00059', nama:'Antivirus Antiretroviral'},
+    {kode:'SFK00060', nama:'Kortikosteroid Sistemik'},
+    {kode:'SFK00061', nama:'Kortikosteroid Topikal'},
+    {kode:'SFK00062', nama:'Kortikosteroid Inhalasi'},
+    {kode:'SFK00063', nama:'Mukolitik'},
+    {kode:'SFK00064', nama:'Ekspektoran'},
+    {kode:'SFK00065', nama:'Antitusif Golongan Opioid'},
+    {kode:'SFK00066', nama:'Antitusif Non-Opioid'},
+    {kode:'SFK00067', nama:'Laksatif Stimulan'},
+    {kode:'SFK00068', nama:'Laksatif Osmotik'},
+    {kode:'SFK00069', nama:'Laksatif Pembentuk Massa'},
+    {kode:'SFK00070', nama:'Antasida Golongan Aluminium'},
+    {kode:'SFK00071', nama:'Antasida Golongan Magnesium'},
+    {kode:'SFK00072', nama:'Sitoprotektif Lambung'},
+    {kode:'SFK00073', nama:'Antiemetik Antagonis Dopamin'},
+    {kode:'SFK00074', nama:'Antiemetik Antagonis Serotonin'},
+    {kode:'SFK00075', nama:'Vitamin Larut Lemak'},
+    {kode:'SFK00076', nama:'Vitamin Larut Air'},
+    {kode:'SFK00077', nama:'Mineral Trace Element'},
+    {kode:'SFK00078', nama:'Elektrolit Kalium'},
+    {kode:'SFK00079', nama:'Elektrolit Natrium'},
+    {kode:'SFK00080', nama:'Elektrolit Kalsium'},
+    {kode:'SFK00081', nama:'Elektrolit Magnesium'},
+    {kode:'SFK00082', nama:'Hormon Tiroid'},
+    {kode:'SFK00083', nama:'Antitiroid'},
+    {kode:'SFK00084', nama:'Hormon Kortikosteroid Adrenal'},
+    {kode:'SFK00085', nama:'Hormon Reproduksi Estrogen'},
+    {kode:'SFK00086', nama:'Hormon Reproduksi Progesteron'},
+    {kode:'SFK00087', nama:'Insulin Kerja Cepat'},
+    {kode:'SFK00088', nama:'Insulin Kerja Menengah'},
+    {kode:'SFK00089', nama:'Insulin Kerja Panjang'},
+    {kode:'SFK00090', nama:'Antidiabetik Golongan Sulfonilurea'},
+    {kode:'SFK00091', nama:'Antidiabetik Golongan Biguanid'},
+    {kode:'SFK00092', nama:'Antidiabetik Golongan Thiazolidinedione'},
+    {kode:'SFK00093', nama:'Imunosupresan Golongan Kalsineurin Inhibitor'},
+    {kode:'SFK00094', nama:'Imunosupresan Golongan Antimetabolit'},
+    {kode:'SFK00095', nama:'Sitostatika Alkilator'},
+    {kode:'SFK00096', nama:'Sitostatika Antimetabolit'},
+    {kode:'SFK00097', nama:'Sitostatika Antibiotik'},
+    {kode:'SFK00098', nama:'Relaksan Otot Depolarisasi'},
+    {kode:'SFK00099', nama:'Relaksan Otot Non-Depolarisasi'},
+    {kode:'SFK00100', nama:'Anestesi Inhalasi'},
+    {kode:'SFK00101', nama:'Anestesi Intravena'},
+    {kode:'SFK00102', nama:'Analgesik Antipiretik'},
+    {kode:'SFK00103', nama:'Analgesik Adjuvant'},
+    {kode:'SFK00104', nama:'Antihistamin Generasi Pertama'},
+    {kode:'SFK00105', nama:'Antihistamin Generasi Kedua'},
+    {kode:'SFK00106', nama:'Bronkodilator Antikolinergik'},
+    {kode:'SFK00107', nama:'Bronkodilator Metilxantin'},
+    {kode:'SFK00108', nama:'Antiseptik Golongan Alkohol'},
+    {kode:'SFK00109', nama:'Antiseptik Golongan Halogen'},
+    {kode:'SFK00110', nama:'Disinfektan Golongan Aldehid'},
+    {kode:'SFK00111', nama:'Suplemen Zat Besi'},
+    {kode:'SFK00112', nama:'Suplemen Kalsium'},
+    {kode:'SFK00113', nama:'Suplemen Asam Folat'},
+    {kode:'SFK00114', nama:'Antihipertensi Golongan ARB'},
+    {kode:'SFK00115', nama:'Antihipertensi Golongan CCB'},
+    {kode:'SFK00116', nama:'Antihipertensi Golongan Diuretik'},
+    {kode:'SFK00117', nama:'Antihipertensi Golongan Vasodilator'},
+    {kode:'SFK00118', nama:'Trombolitik Golongan Aktivator Plasminogen'},
+    {kode:'SFK00119', nama:'Antikoagulan Golongan DOAC'},
+    {kode:'SFK00120', nama:'Vaksin Hidup Dilemahkan'},
+    {kode:'SFK00121', nama:'Vaksin Inaktif'},
+    {kode:'SFK00122', nama:'Vaksin Subunit'},
+    {kode:'SFK00123', nama:'Analgesik Topikal NSAID'},
+    {kode:'SFK00124', nama:'Analgesik Topikal Kapsaisin'},
+    {kode:'SFK00125', nama:'Antivertigo'},
+    {kode:'SFK00126', nama:'Nootropik'},
+    {kode:'SFK00127', nama:'Neuroprotektif'},
+    {kode:'SFK00128', nama:'Antipsikotik Tipikal'},
+    {kode:'SFK00129', nama:'Antipsikotik Atipikal'},
+    {kode:'SFK00130', nama:'Antidepresan Trisiklik'},
+    {kode:'SFK00131', nama:'Antidepresan SSRI'},
+    {kode:'SFK00132', nama:'Antidepresan SNRI'},
+    {kode:'SFK00133', nama:'Ansiolitik Golongan Benzodiazepin'},
+    {kode:'SFK00134', nama:'Ansiolitik Non-Benzodiazepin'},
+    {kode:'SFK00135', nama:'Hipnotik Golongan Benzodiazepin'},
+    {kode:'SFK00136', nama:'Hipnotik Non-Benzodiazepin (Z-drugs)'},
+    {kode:'SFK00137', nama:'Antiparkinson Golongan Dopaminergik'},
+    {kode:'SFK00138', nama:'Antiparkinson Golongan Antikolinergik'},
+    {kode:'SFK00139', nama:'Obat Migrain Golongan Triptan'},
+    {kode:'SFK00140', nama:'Obat Osteoporosis Golongan Bifosfonat'},
+    {kode:'SFK00141', nama:'Suplemen Probiotik'},
+    {kode:'SFK00142', nama:'Enzim Pencernaan'},
+    {kode:'SFK00143', nama:'Antidiare Adsorben'},
+    {kode:'SFK00144', nama:'Antidiare Antimotilitas'},
+    {kode:'SFK00145', nama:'Pencahar (Laksatif) Lubrikan'},
+    {kode:'SFK00146', nama:'Analgesik Non-Steroid Selektif COX-2'},
+    {kode:'SFK00147', nama:'Antikoagulan Antagonis Vitamin K'},
+    {kode:'SFK00148', nama:'Bronkodilator Kombinasi'},
+    {kode:'SFK00149', nama:'Antibiotik Golongan Karbapenem'},
+  ],
+
+  /* Daftar Kategory Reordering Sheet (Persediaan Barang > Master
+     & Setting > Daftar Kategory Reordering Sheet, page:
+     'kategoriReorderingSheet'), sesuai screenshot MASERP "Daftar
+     Kategory Reordering Sheet" yang dikirim user 2026-08-21
+     (Total Record: 7, kolom Kode/Nama Kategori Reordering Sheet
+     dengan ikon sort + Grup Penjualan, tanpa Pencarian Global/
+     page-size besar karena datanya kecil). Field ini KHAS
+     regulasi distribusi farmasi (ALKES=Alat Kesehatan, BBS=Bahan
+     Baku Sediaan/Non Obat-Non Alkes, OOT=Obat Wajib Apotek/Obat
+     Tertentu, PRE=Prekursor, PSI=Psikotropik) — kategori
+     PENGAWASAN REGULATORI, bukan kategori produk FMCG biasa —
+     jadi mengikuti keputusan user yang sama (dikonfirmasi lewat
+     AskUserQuestion sebelumnya untuk Zat Kandungan Aktif dkk.):
+     dibangun APA ADANYA karena ini singkatan regulasi standar
+     industri farmasi (istilah BPOM), bukan data rahasia
+     perusahaan demo lain.
+
+     CATATAN PENTING — TIDAK terhubung ke filter "Kat. Reordering
+     Sheet" di form modul Reordering Sheet (`openRosKategoriPicker()`
+     di reordering-sheet.js): filter itu SUDAH fungsional nyata
+     memakai kode kategori FMCG (CATSMB/CATBHB/dst.) yang benar-
+     benar ada di `DATA.persediaan`/`DATA.kategoriBarang` — kode
+     regulatori ALKES/BBS/NON/ODP/OOT/PRE/PSI di master INI tidak
+     overlap sama sekali dengan kode itu, dan tidak ada barang di
+     `DATA.persediaan` yang punya kategori regulatori ini. Menyambungkan
+     keduanya butuh menambah field kategori-regulatori baru ke tiap
+     barang persediaan yang di luar cakupan permintaan sesi ini —
+     jadi master ini SENGAJA dibangun independen/berdiri sendiri
+     (bukan bug, konsisten dengan banyak master lain di mockup ini
+     yang belum punya konsumen lintas-modul, mis. Group Produk).
+     Kolom "Grup Penjualan" disimpan sebagai teks bebas (bukan
+     picker ke master lain — tidak ada master "Grup Penjualan"
+     terpisah di mockup ini), persis apa adanya dari screenshot. */
+  kategoriReorderingSheet:[
+    {kode:'ALKES', nama:'ALAT KESEHATAN', grupPenjualan:'GROUP ALKES'},
+    {kode:'BBS', nama:'NON OBAT - NON ALKES', grupPenjualan:'GROUP NON-OBAT NON-ALKES'},
+    {kode:'NON', nama:'NON REORDERING SHEET', grupPenjualan:'GROUP NON REORDERING SHEET'},
+    {kode:'ODP', nama:'OBAT DILUAR PPOT', grupPenjualan:'GROUP OBAT DILUAR PPOT'},
+    {kode:'OOT', nama:'OBAT OBAT TERTENTU', grupPenjualan:'GROUP OOT'},
+    {kode:'PRE', nama:'PREKURSOR', grupPenjualan:'GROUP PREKURSOR'},
+    {kode:'PSI', nama:'OBAT PSIKOTROPIK', grupPenjualan:'GROUP PSIKOTROPIK'},
+  ],
+
+  /* Group Produk (Persediaan Barang > Master & Setting > Group
+     Produk, page:'groupProduk'), sesuai screenshot MASERP
+     "Daftar Group Produk" yang dikirim user 2026-08-21 (Total
+     Record: 1 — dataset sekecil ini dipertahankan apa adanya,
+     tidak perlu didownsize/diperbanyak). CRUD sederhana pola
+     Master Divisi (3 field: Kode/Nama/Keterangan, tanpa sub-grid
+     atau kalkulasi). BEDA dari Zat Kandungan Aktif/Farmakoterapi/
+     Sub-Farmakoterapi/Bentuk Sediaan: 1 baris contoh di screenshot
+     asli ("DANPAC"/"DANPAC GROUP PRODUCT") terlihat seperti kode
+     internal SPESIFIK milik instalasi demo lain (mirip nama
+     brand/principal tertentu, BUKAN istilah farmakologi standar
+     seperti nama zat aktif/kelas terapi/bentuk sediaan) — jadi
+     diperlakukan sebagai data yang perlu diganti (konsisten
+     dengan konvensi umum proyek ini: ganti data spesifik
+     perusahaan demo lain dengan data DBM sendiri), bukan
+     dipertahankan apa adanya. Diganti dengan 1 baris contoh
+     relevan untuk bisnis DBM (distributor sembako/FMCG). */
+  groupProduk:[
+    {kode:'SMBK01', nama:'KELOMPOK PRODUK SEMBAKO UTAMA', keterangan:''},
+  ],
+
+  /* Bentuk Sediaan (Persediaan Barang > Master & Setting > Bentuk
+     Sediaan, page:'bentukSediaan'), sesuai screenshot MASERP
+     "Daftar Bentuk Sediaan" yang dikirim user 2026-08-21 (Total
+     Record: 80, kolom Kode/Nama Bentuk Sediaan dengan ikon sort
+     di kedua header, page-size 25 default + Pencarian Global,
+     pager First/Previous/1-4/Next/Last). Field KEEMPAT & TERAKHIR
+     dari grup field khas farmasi yang keputusan datanya sudah
+     dikonfirmasi user sebelumnya lewat `AskUserQuestion` (lihat
+     komentar di atas array `zatKandunganAktif`) — tidak ditanya
+     ulang. "Bentuk Sediaan" (dosage form: Tablet/Kapsul/Sirup/
+     Injeksi dst.) adalah terminologi farmasi UNIVERSAL/generik,
+     bukan data rahasia perusahaan demo lain, jadi dibangun apa
+     adanya.
+
+     TIDAK ADA downsize volume (sama seperti Farmakoterapi/Sub-
+     Farmakoterapi) — Total Record: 80 pada screenshot asli sudah
+     sewajarnya dipertahankan utuh. Kode 3-digit `SED000`-`SED079`
+     (BEDA dari `KZA`/`FRK`/`SFK` yang 5-digit) — mengikuti persis
+     lebar digit yang terlihat di screenshot. 25 baris PALING ATAS
+     PERSIS sesuai screenshot (`SED000`-`SED024`), 55 baris sisanya
+     nama bentuk sediaan farmasi generik lain diurutkan alfabetis
+     menyambung penomoran kode berurutan (pola sama seperti
+     Farmakoterapi/Sub-Farmakoterapi). Page-size default 25 (opsi
+     dropdown 10/25/50) sesuai nilai "25" aktif di screenshot.
+     80÷25=4 halaman — reuse pager windowed & sort kolom SUNGGUHAN
+     fungsional dari Zat Kandungan Aktif (redundan di sini karena
+     4 halaman muat penuh di jendela 7, tapi kode dibiarkan generik
+     sama seperti modul saudaranya untuk konsistensi). */
+  bentukSediaan:[
+    {kode:'SED000', nama:'Non'},
+    {kode:'SED001', nama:'Bedak / Talk'},
+    {kode:'SED002', nama:'Cairan'},
+    {kode:'SED003', nama:'Compress'},
+    {kode:'SED004', nama:'Cassette'},
+    {kode:'SED005', nama:'Drops'},
+    {kode:'SED006', nama:'Eliksir'},
+    {kode:'SED007', nama:'Emulsi'},
+    {kode:'SED008', nama:'Gel'},
+    {kode:'SED009', nama:'Granul'},
+    {kode:'SED010', nama:'Implan'},
+    {kode:'SED011', nama:'Infus'},
+    {kode:'SED012', nama:'Inhalasi'},
+    {kode:'SED013', nama:'IUD'},
+    {kode:'SED014', nama:'Injeksi'},
+    {kode:'SED015', nama:'Kaplet'},
+    {kode:'SED016', nama:'Kaplet Salut Selaput'},
+    {kode:'SED017', nama:'Kaplet Salut Enterik'},
+    {kode:'SED018', nama:'Kapsul'},
+    {kode:'SED019', nama:'Kapsul Lunak'},
+    {kode:'SED020', nama:'Kondom'},
+    {kode:'SED021', nama:'Krim'},
+    {kode:'SED022', nama:'Krim Steril'},
+    {kode:'SED023', nama:'Lotion'},
+    {kode:'SED024', nama:'Midstream'},
+    {kode:'SED025', nama:'Aerosol'},
+    {kode:'SED026', nama:'Balsem'},
+    {kode:'SED027', nama:'Bubuk'},
+    {kode:'SED028', nama:'Effervescent'},
+    {kode:'SED029', nama:'Enema'},
+    {kode:'SED030', nama:'Film Strip'},
+    {kode:'SED031', nama:'Gargle'},
+    {kode:'SED032', nama:'Gauze / Kasa'},
+    {kode:'SED033', nama:'Hair Tonic'},
+    {kode:'SED034', nama:'Jelly'},
+    {kode:'SED035', nama:'Kertas Tempel'},
+    {kode:'SED036', nama:'Larutan'},
+    {kode:'SED037', nama:'Minyak Angin'},
+    {kode:'SED038', nama:'Minyak Gosok'},
+    {kode:'SED039', nama:'Nebulizer'},
+    {kode:'SED040', nama:'Obat Kumur'},
+    {kode:'SED041', nama:'Oral Gel'},
+    {kode:'SED042', nama:'Ovula'},
+    {kode:'SED043', nama:'Pasta Gigi'},
+    {kode:'SED044', nama:'Patch'},
+    {kode:'SED045', nama:'Pen Insulin'},
+    {kode:'SED046', nama:'Pessary'},
+    {kode:'SED047', nama:'Pil'},
+    {kode:'SED048', nama:'Plester'},
+    {kode:'SED049', nama:'Sabun Antiseptik'},
+    {kode:'SED050', nama:'Salep'},
+    {kode:'SED051', nama:'Salep Mata'},
+    {kode:'SED052', nama:'Serbuk'},
+    {kode:'SED053', nama:'Serbuk Effervescent'},
+    {kode:'SED054', nama:'Shampoo'},
+    {kode:'SED055', nama:'Sirup'},
+    {kode:'SED056', nama:'Sirup Kering'},
+    {kode:'SED057', nama:'Spray'},
+    {kode:'SED058', nama:'Spray Hidung'},
+    {kode:'SED059', nama:'Strip Test'},
+    {kode:'SED060', nama:'Suntik'},
+    {kode:'SED061', nama:'Suppositoria'},
+    {kode:'SED062', nama:'Suspensi'},
+    {kode:'SED063', nama:'Tablet'},
+    {kode:'SED064', nama:'Tablet Effervescent'},
+    {kode:'SED065', nama:'Tablet Hisap'},
+    {kode:'SED066', nama:'Tablet Kunyah'},
+    {kode:'SED067', nama:'Tablet Lepas Lambat'},
+    {kode:'SED068', nama:'Tablet Salut Enterik'},
+    {kode:'SED069', nama:'Tablet Salut Gula'},
+    {kode:'SED070', nama:'Tablet Sublingual'},
+    {kode:'SED071', nama:'Tampon'},
+    {kode:'SED072', nama:'Tetes Hidung'},
+    {kode:'SED073', nama:'Tetes Mata'},
+    {kode:'SED074', nama:'Tetes Telinga'},
+    {kode:'SED075', nama:'Tincture'},
+    {kode:'SED076', nama:'Tisu Antiseptik'},
+    {kode:'SED077', nama:'Transdermal Patch'},
+    {kode:'SED078', nama:'Vaginal Cream'},
+    {kode:'SED079', nama:'Vaginal Gel'},
+  ],
+
+
+
   /* Master Gudang (Persediaan Barang > Master & Setting > Gudang), sesuai
      2 screenshot MASERP "Daftar Gudang" (list) & "Gudang" (form Tambah) yang
      dikirim user 2026-08-12. 29 baris data sample tersebar di 8 cabang DBM
@@ -3354,7 +3825,10 @@ const DATA = {
       kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:4750000, pajak11:'PPN11', ppnAmount:522500,
       pphAktif:true, pphKode:'PPH 22 (0.3)', pphPersen:0.3, pphAmount:14250, ongkosAngkut:0, jumlahTotal:5258250,
       uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, sisaJumlah:5258250,
-      pembayaran:0, tglInput:'09/08/2026 15:10:00', userInput:'sidik', tglEdit:'', userEdit:''},
+      /* pembayaran DIISI 5.258.250 (lunas PENUH) — dilunasi lewat Pelunasan
+         Utang 26/CL/HO/08/00001 (lihat DATA.pelunasanUtang, js/pages/
+         pelunasan-utang.*), pembuktian mekanisme `pembayaran` end-to-end. */
+      pembayaran:5258250, tglInput:'09/08/2026 15:10:00', userInput:'sidik', tglEdit:'', userEdit:''},
     {no:'26/PU/HO/08/00002', noBPB:'26/BPB/HO/08/00002', noPO:'26/PO/HO/08/00010', noReturPB:'', supplier:'PT Wilmar Nabati Indonesia',
       keterangan:'PJK/WNI/08/0088 ; SJK SJ/WNI/08/0088 ; 26/BPB/HO/08/00002',
       cabang:'Head Office', noOtomatis:'PU001',
@@ -3365,7 +3839,10 @@ const DATA = {
       kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:7350000, pajak11:'PPN11', ppnAmount:808500,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:8158500,
       uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, sisaJumlah:8158500,
-      pembayaran:0, tglInput:'10/08/2026 10:45:00', userInput:'sidik', tglEdit:'', userEdit:''},
+      /* pembayaran DIISI 5.000.000 (lunas SEBAGIAN, sisa 3.158.500 masih
+         outstanding) — dilunasi sebagian lewat Pelunasan Utang
+         26/CL/HO/08/00002 (lihat DATA.pelunasanUtang). */
+      pembayaran:5000000, tglInput:'10/08/2026 10:45:00', userInput:'sidik', tglEdit:'', userEdit:''},
     {no:'26/PU/HO/08/00003', noBPB:'26/BPB/HO/08/00003', noPO:'26/PO/HO/08/00009', noReturPB:'', supplier:'CV Distribusi Sentosa',
       keterangan:'PJK/CDS/08/0045 ; SJK SJ/CDS/08/0045 ; 26/BPB/HO/08/00003',
       cabang:'Head Office', noOtomatis:'PU001',
@@ -3388,6 +3865,189 @@ const DATA = {
       pphAktif:true, pphKode:'PPH 22 (0.3)', pphPersen:0.3, pphAmount:12222, ongkosAngkut:0, jumlahTotal:4509918,
       uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, sisaJumlah:4509918,
       pembayaran:0, tglInput:'10/08/2026 14:20:00', userInput:'sidik', tglEdit:'', userEdit:''},
+  ],
+  /* Pelunasan Utang — menu Supplier & Pembelian > Daftar Transaksi >
+     Pelunasan Utang (lihat js/pages/pelunasan-utang.*, ganti dari
+     placeholder lama). 14 baris sesuai screenshot MASERP "Daftar
+     Pembayaran Utang" (Total Record: 14) yang dikirim user 2026-08-21.
+     Nama Supplier di screenshot asli ("PT SATORIA ANEKA INDUSTRI",
+     "NOVAPHARIN", dst — demo perusahaan lain, farmasi/tidak terkait
+     DBM) DIGANTI TOTAL dengan Supplier DBM sendiri (DATA.suppliers yg
+     sudah ada), lihat catatan lengkap di header pelunasan-utang.
+     template.js.
+
+     2 baris PERTAMA benar-benar chained ke DATA.pembelianBPB sungguhan
+     (lihat komentar di masing-masing baris pembelianBPB di atas): PT
+     Sumber Pangan Nusantara 26/PU/HO/08/00001 dilunasi PENUH, PT
+     Wilmar Nabati Indonesia 26/PU/HO/08/00002 dilunasi SEBAGIAN (sisa
+     3.158.500 masih outstanding) — pembuktian mekanisme `pembayaran`
+     end-to-end, pola identik 2 baris pembuktian DATA.penerimaanPiutang.
+
+     12 baris sisanya historis/dekoratif (fakturNo:'' — TIDAK terhubung
+     ke DATA.pembelianBPB, no. faktur di dalamnya sekadar ilustrasi):
+     6 baris Cabang non-HO bulan Juli 2026 (1 per cabang TGR/MKS/MDN/
+     BDG/SBY/SMG, Supplier dicocokkan dgn field `wilayah` masing-masing
+     di DATA.suppliers supaya masuk akal secara geografis — SBY sengaja
+     memakai Supplier yg sama dgn baris live #2, mewakili histori
+     pembayaran sebelumnya ke supplier yg sama), + 6 baris Cabang Head
+     Office bulan Agustus 2026 (Supplier yang wilayahnya tidak memiliki
+     cabang tersendiri di PU_CABANG_LIST — Yogyakarta/Solo/Bekasi/
+     Cirebon/Jakarta Selatan — dibayar terpusat lewat Head Office; PT
+     Mayora Distribusi dipakai 2x di tanggal berbeda, wajar utk
+     supplier FMCG rutin). CATATAN: DATA.suppliers CV Distribusi
+     Sentosa & PT Sasa Inti SENGAJA tidak dipakai jadi baris "lunas
+     penuh" di sini (mereka baris historis Juli sengaja ilustrasi
+     "pembayaran cicilan sebelumnya", BUKAN pelunasan penuh faktur
+     26/PU/HO/08/00003 & 00004 miliknya yg TETAP dibiarkan utuh belum
+     tersentuh sama sekali di DATA.pembelianBPB) — coba "+ Tambah" &
+     pilih salah satu Supplier ini utk melihat faktur itu muncul nyata
+     di tab Lunasi Beberapa Faktur.
+
+     Tiap baris jurnalMode:'otomatis' dgn jurnalAkun 2 baris standar
+     (Hutang Usaha 2110001 Debit / Akun Bank terkait Kredit) — sudah
+     dihitung supaya balance (Debit=Kredit=totalPembayaran), konsisten
+     dgn puBuildJurnalOtomatis() (pelunasan-utang.js). */
+  pelunasanUtang:[
+    {no:'26/CL/HO/08/00002', cabang:'Head Office', tgl:'13/08/2026',
+      supplierKode:'5016', supplierNama:'PT Wilmar Nabati Indonesia', noPengajuanPembayaran:'',
+      akunBankKode:'110106', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'13/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00002', supplierNoFaktur:'INV/WNI/08/0088-A', tipeTransaksi:'Beli Kredit', tglFaktur:'10/08/2026', tglJthTempo:'24/09/2026', mataUang:'IDR', kurs:1, reminder:8158500, pembayaran:5000000, checked:true, fakturNo:'26/PU/HO/08/00002'}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:true, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Wilmar Nabati Indonesia', debit:5000000, kredit:0},
+        {kodeAkun:'110106', namaAkun:'110106 - Bank Mandiri HO', keterangan:'PT Wilmar Nabati Indonesia', debit:0, kredit:5000000},
+      ],
+      totalPembayaran:5000000, jumlahKeluarKas:5000000, jumlahUtang:5000000},
+    {no:'26/CL/HO/08/00001', cabang:'Head Office', tgl:'12/08/2026',
+      supplierKode:'5015', supplierNama:'PT Sumber Pangan Nusantara', noPengajuanPembayaran:'',
+      akunBankKode:'110107', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'12/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00001', supplierNoFaktur:'INV/SPN/08/0231-A', tipeTransaksi:'Beli Kredit', tglFaktur:'09/08/2026', tglJthTempo:'08/10/2026', mataUang:'IDR', kurs:1, reminder:5258250, pembayaran:5258250, checked:true, fakturNo:'26/PU/HO/08/00001'}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Sumber Pangan Nusantara', debit:5258250, kredit:0},
+        {kodeAkun:'110107', namaAkun:'110107 - Bank BCA HO', keterangan:'PT Sumber Pangan Nusantara', debit:0, kredit:5258250},
+      ],
+      totalPembayaran:5258250, jumlahKeluarKas:5258250, jumlahUtang:5258250},
+    {no:'26/CL/HO/08/00008', cabang:'Head Office', tgl:'19/08/2026',
+      supplierKode:'5019', supplierNama:'PT Mayora Distribusi', noPengajuanPembayaran:'',
+      akunBankKode:'110107', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'19/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00099', supplierNoFaktur:'INV/MYR/08/0119', tipeTransaksi:'Beli Kredit', tglFaktur:'05/08/2026', tglJthTempo:'19/08/2026', mataUang:'IDR', kurs:1, reminder:3950000, pembayaran:3950000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Mayora Distribusi', debit:3950000, kredit:0},
+        {kodeAkun:'110107', namaAkun:'110107 - Bank BCA HO', keterangan:'PT Mayora Distribusi', debit:0, kredit:3950000},
+      ],
+      totalPembayaran:3950000, jumlahKeluarKas:3950000, jumlahUtang:3950000},
+    {no:'26/CL/HO/08/00007', cabang:'Head Office', tgl:'17/08/2026',
+      supplierKode:'5026', supplierNama:'PT Roda Mas Trading', noPengajuanPembayaran:'',
+      akunBankKode:'110106', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'17/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00087', supplierNoFaktur:'INV/RMT/08/0064', tipeTransaksi:'Beli Kredit', tglFaktur:'01/08/2026', tglJthTempo:'17/08/2026', mataUang:'IDR', kurs:1, reminder:6600000, pembayaran:6600000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Roda Mas Trading', debit:6600000, kredit:0},
+        {kodeAkun:'110106', namaAkun:'110106 - Bank Mandiri HO', keterangan:'PT Roda Mas Trading', debit:0, kredit:6600000},
+      ],
+      totalPembayaran:6600000, jumlahKeluarKas:6600000, jumlahUtang:6600000},
+    {no:'26/CL/HO/08/00006', cabang:'Head Office', tgl:'14/08/2026',
+      supplierKode:'5024', supplierNama:'Toko Bahan Baku Jaya', noPengajuanPembayaran:'',
+      akunBankKode:'110107', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'14/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00071', supplierNoFaktur:'INV/TBBJ/08/0027', tipeTransaksi:'Beli Kredit', tglFaktur:'31/07/2026', tglJthTempo:'14/08/2026', mataUang:'IDR', kurs:1, reminder:1200000, pembayaran:1200000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'Toko Bahan Baku Jaya', debit:1200000, kredit:0},
+        {kodeAkun:'110107', namaAkun:'110107 - Bank BCA HO', keterangan:'Toko Bahan Baku Jaya', debit:0, kredit:1200000},
+      ],
+      totalPembayaran:1200000, jumlahKeluarKas:1200000, jumlahUtang:1200000},
+    {no:'26/CL/HO/08/00005', cabang:'Head Office', tgl:'10/08/2026',
+      supplierKode:'5022', supplierNama:'CV Karya Abadi', noPengajuanPembayaran:'',
+      akunBankKode:'110106', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'10/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00058', supplierNoFaktur:'INV/CKA/07/0091', tipeTransaksi:'Beli Kredit', tglFaktur:'27/07/2026', tglJthTempo:'10/08/2026', mataUang:'IDR', kurs:1, reminder:2975000, pembayaran:2975000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'CV Karya Abadi', debit:2975000, kredit:0},
+        {kodeAkun:'110106', namaAkun:'110106 - Bank Mandiri HO', keterangan:'CV Karya Abadi', debit:0, kredit:2975000},
+      ],
+      totalPembayaran:2975000, jumlahKeluarKas:2975000, jumlahUtang:2975000},
+    {no:'26/CL/HO/08/00004', cabang:'Head Office', tgl:'07/08/2026',
+      supplierKode:'5021', supplierNama:'UD Sumber Makmur', noPengajuanPembayaran:'',
+      akunBankKode:'110107', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'07/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00042', supplierNoFaktur:'INV/USM/07/0038', tipeTransaksi:'Beli Kredit', tglFaktur:'25/07/2026', tglJthTempo:'07/08/2026', mataUang:'IDR', kurs:1, reminder:1850000, pembayaran:1850000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'UD Sumber Makmur', debit:1850000, kredit:0},
+        {kodeAkun:'110107', namaAkun:'110107 - Bank BCA HO', keterangan:'UD Sumber Makmur', debit:0, kredit:1850000},
+      ],
+      totalPembayaran:1850000, jumlahKeluarKas:1850000, jumlahUtang:1850000},
+    {no:'26/CL/HO/08/00003', cabang:'Head Office', tgl:'05/08/2026',
+      supplierKode:'5019', supplierNama:'PT Mayora Distribusi', noPengajuanPembayaran:'',
+      akunBankKode:'110107', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'05/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00033', supplierNoFaktur:'INV/MYR/07/0102', tipeTransaksi:'Beli Kredit', tglFaktur:'22/07/2026', tglJthTempo:'05/08/2026', mataUang:'IDR', kurs:1, reminder:8400000, pembayaran:8400000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Mayora Distribusi', debit:8400000, kredit:0},
+        {kodeAkun:'110107', namaAkun:'110107 - Bank BCA HO', keterangan:'PT Mayora Distribusi', debit:0, kredit:8400000},
+      ],
+      totalPembayaran:8400000, jumlahKeluarKas:8400000, jumlahUtang:8400000},
+    {no:'26/CL/TGR/07/00001', cabang:'Tangerang', tgl:'24/07/2026',
+      supplierKode:'5025', supplierNama:'CV Anugerah Logistik', noPengajuanPembayaran:'',
+      akunBankKode:'110115', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'24/07/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/TGR/07/00012', supplierNoFaktur:'INV/CAL/07/0015', tipeTransaksi:'Beli Kredit', tglFaktur:'10/07/2026', tglJthTempo:'24/07/2026', mataUang:'IDR', kurs:1, reminder:4200000, pembayaran:4200000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'CV Anugerah Logistik', debit:4200000, kredit:0},
+        {kodeAkun:'110115', namaAkun:'110115 - Bank BCA TGR', keterangan:'CV Anugerah Logistik', debit:0, kredit:4200000},
+      ],
+      totalPembayaran:4200000, jumlahKeluarKas:4200000, jumlahUtang:4200000},
+    {no:'26/CL/MKS/07/00001', cabang:'Makassar', tgl:'23/07/2026',
+      supplierKode:'5023', supplierNama:'PT Sasa Inti', noPengajuanPembayaran:'',
+      akunBankKode:'110121', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'23/07/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/MKS/07/00009', supplierNoFaktur:'INV/SASA/07/0388', tipeTransaksi:'Beli Kredit', tglFaktur:'09/07/2026', tglJthTempo:'23/07/2026', mataUang:'IDR', kurs:1, reminder:6750000, pembayaran:6750000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Sasa Inti', debit:6750000, kredit:0},
+        {kodeAkun:'110121', namaAkun:'110121 - Bank Danamon MKS', keterangan:'PT Sasa Inti', debit:0, kredit:6750000},
+      ],
+      totalPembayaran:6750000, jumlahKeluarKas:6750000, jumlahUtang:6750000},
+    {no:'26/CL/MDN/07/00001', cabang:'Medan', tgl:'22/07/2026',
+      supplierKode:'5020', supplierNama:'PT Indofood Distribusi', noPengajuanPembayaran:'',
+      akunBankKode:'110118', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'22/07/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/MDN/07/00016', supplierNoFaktur:'INV/IFD/07/0203', tipeTransaksi:'Beli Kredit', tglFaktur:'06/07/2026', tglJthTempo:'22/07/2026', mataUang:'IDR', kurs:1, reminder:15300000, pembayaran:15300000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Indofood Distribusi', debit:15300000, kredit:0},
+        {kodeAkun:'110118', namaAkun:'110118 - Bank BRI MDN', keterangan:'PT Indofood Distribusi', debit:0, kredit:15300000},
+      ],
+      totalPembayaran:15300000, jumlahKeluarKas:15300000, jumlahUtang:15300000},
+    {no:'26/CL/BDG/07/00001', cabang:'Bandung', tgl:'21/07/2026',
+      supplierKode:'5018', supplierNama:'CV Distribusi Sentosa', noPengajuanPembayaran:'',
+      akunBankKode:'110112', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'21/07/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/BDG/07/00007', supplierNoFaktur:'INV/CDS/07/0029', tipeTransaksi:'Beli Kredit', tglFaktur:'07/07/2026', tglJthTempo:'21/07/2026', mataUang:'IDR', kurs:1, reminder:2100000, pembayaran:2100000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'CV Distribusi Sentosa', debit:2100000, kredit:0},
+        {kodeAkun:'110112', namaAkun:'110112 - Bank Mandiri BDG', keterangan:'CV Distribusi Sentosa', debit:0, kredit:2100000},
+      ],
+      totalPembayaran:2100000, jumlahKeluarKas:2100000, jumlahUtang:2100000},
+    {no:'26/CL/SBY/07/00001', cabang:'Surabaya', tgl:'20/07/2026',
+      supplierKode:'5016', supplierNama:'PT Wilmar Nabati Indonesia', noPengajuanPembayaran:'',
+      akunBankKode:'110109', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'20/07/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/SBY/07/00021', supplierNoFaktur:'INV/WNI/07/0055', tipeTransaksi:'Beli Kredit', tglFaktur:'06/07/2026', tglJthTempo:'20/07/2026', mataUang:'IDR', kurs:1, reminder:9850000, pembayaran:9850000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Wilmar Nabati Indonesia', debit:9850000, kredit:0},
+        {kodeAkun:'110109', namaAkun:'110109 - Bank BNI SBY', keterangan:'PT Wilmar Nabati Indonesia', debit:0, kredit:9850000},
+      ],
+      totalPembayaran:9850000, jumlahKeluarKas:9850000, jumlahUtang:9850000},
+    {no:'26/CL/SMG/07/00001', cabang:'Semarang', tgl:'19/07/2026',
+      supplierKode:'5017', supplierNama:'PT Sinar Meadow', noPengajuanPembayaran:'',
+      akunBankKode:'110124', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'19/07/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/SMG/07/00010', supplierNoFaktur:'INV/SMD/07/0071', tipeTransaksi:'Beli Kredit', tglFaktur:'05/07/2026', tglJthTempo:'19/07/2026', mataUang:'IDR', kurs:1, reminder:3600000, pembayaran:3600000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Sinar Meadow', debit:3600000, kredit:0},
+        {kodeAkun:'110124', namaAkun:'110124 - Bank Permata SMG', keterangan:'PT Sinar Meadow', debit:0, kredit:3600000},
+      ],
+      totalPembayaran:3600000, jumlahKeluarKas:3600000, jumlahUtang:3600000},
   ],
   /* Master Rayon — menu Lain-lain > Rayon (page:'masterRayon', ganti dari
      placeholder lama, lihat js/menu.js). Sesuai 3 screenshot MASERP yang

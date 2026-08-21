@@ -2934,6 +2934,477 @@ const DATA = {
     {kode:'KZA00066', nama:'Zolpidem Tartrate'},
   ],
 
+  /* Farmakoterapi (Persediaan Barang > Master & Setting >
+     Farmakoterapi, page:'farmakoterapi'), sesuai screenshot MASERP
+     "Master Farmakoterapi" (Total Record: 80, kolom Kode/Nama
+     Farmakoterapi dengan ikon sort di kedua header, page-size 10
+     default + Pencarian Global, pager First/Previous/1..7/Next/Last)
+     yang dikirim user 2026-08-21. Pola & keputusan data SAMA
+     persis dengan Zat Kandungan Aktif (menu tetangga di atas):
+     field khas distributor farmasi, dibangun apa adanya karena
+     nama kelas terapi (farmakoterapi) adalah terminologi
+     farmakologi standar (mis. ATC-like), bukan data rahasia
+     perusahaan demo lain.
+
+     TIDAK ADA downsize volume di sini — Total Record: 80 pada
+     screenshot asli SUDAH sewajarnya (beda dgn Zat Kandungan
+     Aktif yg 324 baris di-downsize ke 60), jadi 80 baris
+     dipertahankan utuh: 10 baris PALING ATAS PERSIS sesuai
+     screenshot (FRK00000-FRK00009), 70 baris sisanya nama kelas
+     farmakoterapi generik lain (bukan replikasi baris
+     sungguhan screenshot yg tak termuat di layar), diurutkan
+     alfabetis mengikuti pola natural penomoran kode berurutan
+     yang terlihat di 10 baris pertama. Reuse `tplZkaPager()`-
+     style windowed pager & real column-sort dari Zat Kandungan
+     Aktif (lihat farmakoterapi.template.js). 80÷10=8 halaman,
+     window pager tampil "1..7" + Next di halaman 1 — persis
+     screenshot. */
+  farmakoterapi:[
+    {kode:'FRK00000', nama:'Non'},
+    {kode:'FRK00001', nama:'Anafilaksis'},
+    {kode:'FRK00002', nama:'Analgesik'},
+    {kode:'FRK00003', nama:'Analgesik, Antipiretik'},
+    {kode:'FRK00004', nama:'Analgesik, Antipiretik, Antiinflamasi Nonsteroid'},
+    {kode:'FRK00005', nama:'Anemia'},
+    {kode:'FRK00006', nama:'Anestetik'},
+    {kode:'FRK00007', nama:'Antialergi'},
+    {kode:'FRK00008', nama:'Antibiotik'},
+    {kode:'FRK00009', nama:'Antidiabetik Oral'},
+    {kode:'FRK00010', nama:'Analgesik Opioid'},
+    {kode:'FRK00011', nama:'Antasida'},
+    {kode:'FRK00012', nama:'Antidepresan'},
+    {kode:'FRK00013', nama:'Antidiare'},
+    {kode:'FRK00014', nama:'Antiemetik'},
+    {kode:'FRK00015', nama:'Antifungal (Antijamur)'},
+    {kode:'FRK00016', nama:'Antihipertensi'},
+    {kode:'FRK00017', nama:'Antihistamin'},
+    {kode:'FRK00018', nama:'Antiinflamasi'},
+    {kode:'FRK00019', nama:'Antijamur Topikal'},
+    {kode:'FRK00020', nama:'Antikoagulan'},
+    {kode:'FRK00021', nama:'Antikonvulsan'},
+    {kode:'FRK00022', nama:'Antimalaria'},
+    {kode:'FRK00023', nama:'Antimigrain'},
+    {kode:'FRK00024', nama:'Antiparkinson'},
+    {kode:'FRK00025', nama:'Antipsikotik'},
+    {kode:'FRK00026', nama:'Antiseptik & Disinfektan'},
+    {kode:'FRK00027', nama:'Antiseptik Kulit'},
+    {kode:'FRK00028', nama:'Antituberkulosis'},
+    {kode:'FRK00029', nama:'Antitusif'},
+    {kode:'FRK00030', nama:'Antivirus'},
+    {kode:'FRK00031', nama:'Anxiolitik'},
+    {kode:'FRK00032', nama:'Bronkodilator'},
+    {kode:'FRK00033', nama:'Diuretik'},
+    {kode:'FRK00034', nama:'Ekspektoran'},
+    {kode:'FRK00035', nama:'Elektrolit & Cairan'},
+    {kode:'FRK00036', nama:'Gangguan Tiroid'},
+    {kode:'FRK00037', nama:'Gastrointestinal'},
+    {kode:'FRK00038', nama:'Hematologi'},
+    {kode:'FRK00039', nama:'Hepatoprotektor'},
+    {kode:'FRK00040', nama:'Hipnotik & Sedatif'},
+    {kode:'FRK00041', nama:'Hipolipidemik'},
+    {kode:'FRK00042', nama:'Hormon & Endokrin'},
+    {kode:'FRK00043', nama:'Imunosupresan'},
+    {kode:'FRK00044', nama:'Kardiovaskular'},
+    {kode:'FRK00045', nama:'Kemoterapi'},
+    {kode:'FRK00046', nama:'Kesehatan Gigi & Mulut'},
+    {kode:'FRK00047', nama:'Kontrasepsi'},
+    {kode:'FRK00048', nama:'Kortikosteroid'},
+    {kode:'FRK00049', nama:'Laksatif'},
+    {kode:'FRK00050', nama:'Mukolitik'},
+    {kode:'FRK00051', nama:'Muskuloskeletal'},
+    {kode:'FRK00052', nama:'Nefrologi'},
+    {kode:'FRK00053', nama:'Neurologi'},
+    {kode:'FRK00054', nama:'Nutrisi & Suplemen'},
+    {kode:'FRK00055', nama:'Obat Batuk'},
+    {kode:'FRK00056', nama:'Obat Flu'},
+    {kode:'FRK00057', nama:'Oftalmologi'},
+    {kode:'FRK00058', nama:'Opioid'},
+    {kode:'FRK00059', nama:'Osteoporosis'},
+    {kode:'FRK00060', nama:'Otologi'},
+    {kode:'FRK00061', nama:'Penyakit Jantung Koroner'},
+    {kode:'FRK00062', nama:'Perawatan Kulit'},
+    {kode:'FRK00063', nama:'Psikiatri'},
+    {kode:'FRK00064', nama:'Relaksan Otot'},
+    {kode:'FRK00065', nama:'Respirasi'},
+    {kode:'FRK00066', nama:'Sistem Saraf Pusat'},
+    {kode:'FRK00067', nama:'Stroke'},
+    {kode:'FRK00068', nama:'Trombolitik'},
+    {kode:'FRK00069', nama:'Urologi'},
+    {kode:'FRK00070', nama:'Vaksin & Imunisasi'},
+    {kode:'FRK00071', nama:'Vertigo'},
+    {kode:'FRK00072', nama:'Vitamin & Mineral'},
+    {kode:'FRK00073', nama:'Vitamin A'},
+    {kode:'FRK00074', nama:'Vitamin B Complex'},
+    {kode:'FRK00075', nama:'Vitamin C'},
+    {kode:'FRK00076', nama:'Vitamin D'},
+    {kode:'FRK00077', nama:'Vitamin E'},
+    {kode:'FRK00078', nama:'Vitamin K'},
+    {kode:'FRK00079', nama:'Zat Besi (Suplemen)'},
+  ],
+
+  /* Sub-Farmakoterapi (Persediaan Barang > Master & Setting >
+     Sub-Farmakoterapi, page:'subFarmakoterapi'), sesuai 2
+     screenshot MASERP "Master Sub-Farmakoterapi" (Total Record:
+     150, page-size 20 default + Pencarian Global, pager
+     First/Previous/1..7/Next/Last) yang dikirim user 2026-08-21.
+     Pola & keputusan data SAMA dengan Zat Kandungan Aktif &
+     Farmakoterapi: field khas farmasi, nama sub-kelas terapi
+     adalah terminologi farmakologi standar, dibangun apa adanya.
+
+     CATATAN PERBAIKAN vs screenshot: header kolom asli di
+     screenshot MASERP tertulis "Kode Zat Kandungan Aktif"/"Nama
+     Zat Kandungan Aktif" — ini bug label copy-paste di sistem
+     asli (isinya jelas data Sub-Farmakoterapi berkode SFK, bukan
+     KZA). Di mockup ini header diperbaiki jadi "Kode/Nama
+     Sub-Farmakoterapi" karena ini typo UI, bukan data — beda
+     kasus dengan kode legacy ANTASIDADOENSLF/COTRIM400-80 di Zat
+     Kandungan Aktif yang memang bagian dari DATA asli (dipertahankan
+     apa adanya), sedangkan ini cuma label kolom yang salah ketik.
+
+     TIDAK ADA downsize volume — Total Record: 150 dipertahankan
+     utuh: 20 baris PALING ATAS PERSIS sesuai screenshot
+     (SFK00000-SFK00019, termasuk urutan nama yang TIDAK strict
+     alfabetis persis seperti screenshot asli — mis. "Neuromyalgics"
+     di SFK00006 nyempil di antara nama-nama "Analgesik...", direproduksi
+     apa adanya bukan disortir ulang), 130 baris sisanya nama
+     sub-kelas farmakologi generik lain (mekanisme/golongan obat,
+     mis. "Inhibitor Pompa Proton (PPI)", "Antagonis Reseptor
+     Muskarinik" dst.) menyambung penomoran SFK00020-SFK00149.
+     Page-size default 20 (beda dari Zat Kandungan Aktif/
+     Farmakoterapi yang default 10) — opsi dropdown 10/20/50 sesuai
+     nilai "20" yang terlihat aktif di screenshot. 150÷20=8 halaman,
+     window pager tampil "1..7"+Next di halaman 1 — persis
+     screenshot. Reuse windowed pager & real column-sort pattern. */
+  subFarmakoterapi:[
+    {kode:'SFK00000', nama:'Non'},
+    {kode:'SFK00001', nama:'ACE Inhibitors'},
+    {kode:'SFK00002', nama:'Alkohol'},
+    {kode:'SFK00003', nama:'Aminoglikosida'},
+    {kode:'SFK00004', nama:'Anafilaksis'},
+    {kode:'SFK00005', nama:'Analgesik Non Narkotik, Antipiretik'},
+    {kode:'SFK00006', nama:'Neuromyalgics'},
+    {kode:'SFK00007', nama:'Analgesik Non Opioid'},
+    {kode:'SFK00008', nama:'Analgesik Non Opioid dan Antialergi'},
+    {kode:'SFK00009', nama:'Analgesik Opioid'},
+    {kode:'SFK00010', nama:'Analgesik Topikal'},
+    {kode:'SFK00011', nama:'Analgesik, Antipiretik, Antiinflamasi Nonsteroid'},
+    {kode:'SFK00012', nama:'Anemia Defisiensi Zat Besi'},
+    {kode:'SFK00013', nama:'Anestesi Barbiturat'},
+    {kode:'SFK00014', nama:'Anestesik Umum'},
+    {kode:'SFK00015', nama:'Anestetik Lokal'},
+    {kode:'SFK00016', nama:'Antagonis 5-HT3'},
+    {kode:'SFK00017', nama:'Antagonis Kalsium'},
+    {kode:'SFK00018', nama:'Antagonis Reseptor Angiotensin II'},
+    {kode:'SFK00019', nama:'Antagonis Reseptor H2'},
+    {kode:'SFK00020', nama:'Agonis Adrenergik Alfa'},
+    {kode:'SFK00021', nama:'Agonis Adrenergik Beta'},
+    {kode:'SFK00022', nama:'Antagonis Adrenergik Beta (Beta Blocker)'},
+    {kode:'SFK00023', nama:'Inhibitor Pompa Proton (PPI)'},
+    {kode:'SFK00024', nama:'Inhibitor Reuptake Serotonin (SSRI)'},
+    {kode:'SFK00025', nama:'Inhibitor Reuptake Serotonin-Norepinefrin (SNRI)'},
+    {kode:'SFK00026', nama:'Inhibitor Monoamine Oksidase (MAOI)'},
+    {kode:'SFK00027', nama:'Inhibitor HMG-CoA Reduktase (Statin)'},
+    {kode:'SFK00028', nama:'Inhibitor Alfa-Glukosidase'},
+    {kode:'SFK00029', nama:'Inhibitor DPP-4'},
+    {kode:'SFK00030', nama:'Inhibitor SGLT2'},
+    {kode:'SFK00031', nama:'Inhibitor Beta-Laktamase'},
+    {kode:'SFK00032', nama:'Antagonis Reseptor Histamin H1'},
+    {kode:'SFK00033', nama:'Antagonis Reseptor Muskarinik'},
+    {kode:'SFK00034', nama:'Antagonis Reseptor Opioid'},
+    {kode:'SFK00035', nama:'Antagonis Reseptor Dopamin'},
+    {kode:'SFK00036', nama:'Antagonis Reseptor Serotonin'},
+    {kode:'SFK00037', nama:'Antagonis Reseptor Leukotrien'},
+    {kode:'SFK00038', nama:'Agonis Reseptor GABA'},
+    {kode:'SFK00039', nama:'Agonis Reseptor Opioid'},
+    {kode:'SFK00040', nama:'Agonis Reseptor Dopamin'},
+    {kode:'SFK00041', nama:'Agonis Reseptor Beta-2 (Bronkodilator)'},
+    {kode:'SFK00042', nama:'Diuretik Loop'},
+    {kode:'SFK00043', nama:'Diuretik Tiazid'},
+    {kode:'SFK00044', nama:'Diuretik Hemat Kalium'},
+    {kode:'SFK00045', nama:'Diuretik Osmotik'},
+    {kode:'SFK00046', nama:'Antikoagulan Oral (Warfarin)'},
+    {kode:'SFK00047', nama:'Antikoagulan Heparin'},
+    {kode:'SFK00048', nama:'Antiplatelet'},
+    {kode:'SFK00049', nama:'Antikonvulsan Golongan Barbiturat'},
+    {kode:'SFK00050', nama:'Antikonvulsan Golongan Benzodiazepin'},
+    {kode:'SFK00051', nama:'Antibiotik Golongan Penisilin'},
+    {kode:'SFK00052', nama:'Antibiotik Golongan Sefalosporin'},
+    {kode:'SFK00053', nama:'Antibiotik Golongan Makrolida'},
+    {kode:'SFK00054', nama:'Antibiotik Golongan Fluorokuinolon'},
+    {kode:'SFK00055', nama:'Antibiotik Golongan Tetrasiklin'},
+    {kode:'SFK00056', nama:'Antijamur Golongan Azol'},
+    {kode:'SFK00057', nama:'Antijamur Golongan Polien'},
+    {kode:'SFK00058', nama:'Antivirus Golongan Nukleosida'},
+    {kode:'SFK00059', nama:'Antivirus Antiretroviral'},
+    {kode:'SFK00060', nama:'Kortikosteroid Sistemik'},
+    {kode:'SFK00061', nama:'Kortikosteroid Topikal'},
+    {kode:'SFK00062', nama:'Kortikosteroid Inhalasi'},
+    {kode:'SFK00063', nama:'Mukolitik'},
+    {kode:'SFK00064', nama:'Ekspektoran'},
+    {kode:'SFK00065', nama:'Antitusif Golongan Opioid'},
+    {kode:'SFK00066', nama:'Antitusif Non-Opioid'},
+    {kode:'SFK00067', nama:'Laksatif Stimulan'},
+    {kode:'SFK00068', nama:'Laksatif Osmotik'},
+    {kode:'SFK00069', nama:'Laksatif Pembentuk Massa'},
+    {kode:'SFK00070', nama:'Antasida Golongan Aluminium'},
+    {kode:'SFK00071', nama:'Antasida Golongan Magnesium'},
+    {kode:'SFK00072', nama:'Sitoprotektif Lambung'},
+    {kode:'SFK00073', nama:'Antiemetik Antagonis Dopamin'},
+    {kode:'SFK00074', nama:'Antiemetik Antagonis Serotonin'},
+    {kode:'SFK00075', nama:'Vitamin Larut Lemak'},
+    {kode:'SFK00076', nama:'Vitamin Larut Air'},
+    {kode:'SFK00077', nama:'Mineral Trace Element'},
+    {kode:'SFK00078', nama:'Elektrolit Kalium'},
+    {kode:'SFK00079', nama:'Elektrolit Natrium'},
+    {kode:'SFK00080', nama:'Elektrolit Kalsium'},
+    {kode:'SFK00081', nama:'Elektrolit Magnesium'},
+    {kode:'SFK00082', nama:'Hormon Tiroid'},
+    {kode:'SFK00083', nama:'Antitiroid'},
+    {kode:'SFK00084', nama:'Hormon Kortikosteroid Adrenal'},
+    {kode:'SFK00085', nama:'Hormon Reproduksi Estrogen'},
+    {kode:'SFK00086', nama:'Hormon Reproduksi Progesteron'},
+    {kode:'SFK00087', nama:'Insulin Kerja Cepat'},
+    {kode:'SFK00088', nama:'Insulin Kerja Menengah'},
+    {kode:'SFK00089', nama:'Insulin Kerja Panjang'},
+    {kode:'SFK00090', nama:'Antidiabetik Golongan Sulfonilurea'},
+    {kode:'SFK00091', nama:'Antidiabetik Golongan Biguanid'},
+    {kode:'SFK00092', nama:'Antidiabetik Golongan Thiazolidinedione'},
+    {kode:'SFK00093', nama:'Imunosupresan Golongan Kalsineurin Inhibitor'},
+    {kode:'SFK00094', nama:'Imunosupresan Golongan Antimetabolit'},
+    {kode:'SFK00095', nama:'Sitostatika Alkilator'},
+    {kode:'SFK00096', nama:'Sitostatika Antimetabolit'},
+    {kode:'SFK00097', nama:'Sitostatika Antibiotik'},
+    {kode:'SFK00098', nama:'Relaksan Otot Depolarisasi'},
+    {kode:'SFK00099', nama:'Relaksan Otot Non-Depolarisasi'},
+    {kode:'SFK00100', nama:'Anestesi Inhalasi'},
+    {kode:'SFK00101', nama:'Anestesi Intravena'},
+    {kode:'SFK00102', nama:'Analgesik Antipiretik'},
+    {kode:'SFK00103', nama:'Analgesik Adjuvant'},
+    {kode:'SFK00104', nama:'Antihistamin Generasi Pertama'},
+    {kode:'SFK00105', nama:'Antihistamin Generasi Kedua'},
+    {kode:'SFK00106', nama:'Bronkodilator Antikolinergik'},
+    {kode:'SFK00107', nama:'Bronkodilator Metilxantin'},
+    {kode:'SFK00108', nama:'Antiseptik Golongan Alkohol'},
+    {kode:'SFK00109', nama:'Antiseptik Golongan Halogen'},
+    {kode:'SFK00110', nama:'Disinfektan Golongan Aldehid'},
+    {kode:'SFK00111', nama:'Suplemen Zat Besi'},
+    {kode:'SFK00112', nama:'Suplemen Kalsium'},
+    {kode:'SFK00113', nama:'Suplemen Asam Folat'},
+    {kode:'SFK00114', nama:'Antihipertensi Golongan ARB'},
+    {kode:'SFK00115', nama:'Antihipertensi Golongan CCB'},
+    {kode:'SFK00116', nama:'Antihipertensi Golongan Diuretik'},
+    {kode:'SFK00117', nama:'Antihipertensi Golongan Vasodilator'},
+    {kode:'SFK00118', nama:'Trombolitik Golongan Aktivator Plasminogen'},
+    {kode:'SFK00119', nama:'Antikoagulan Golongan DOAC'},
+    {kode:'SFK00120', nama:'Vaksin Hidup Dilemahkan'},
+    {kode:'SFK00121', nama:'Vaksin Inaktif'},
+    {kode:'SFK00122', nama:'Vaksin Subunit'},
+    {kode:'SFK00123', nama:'Analgesik Topikal NSAID'},
+    {kode:'SFK00124', nama:'Analgesik Topikal Kapsaisin'},
+    {kode:'SFK00125', nama:'Antivertigo'},
+    {kode:'SFK00126', nama:'Nootropik'},
+    {kode:'SFK00127', nama:'Neuroprotektif'},
+    {kode:'SFK00128', nama:'Antipsikotik Tipikal'},
+    {kode:'SFK00129', nama:'Antipsikotik Atipikal'},
+    {kode:'SFK00130', nama:'Antidepresan Trisiklik'},
+    {kode:'SFK00131', nama:'Antidepresan SSRI'},
+    {kode:'SFK00132', nama:'Antidepresan SNRI'},
+    {kode:'SFK00133', nama:'Ansiolitik Golongan Benzodiazepin'},
+    {kode:'SFK00134', nama:'Ansiolitik Non-Benzodiazepin'},
+    {kode:'SFK00135', nama:'Hipnotik Golongan Benzodiazepin'},
+    {kode:'SFK00136', nama:'Hipnotik Non-Benzodiazepin (Z-drugs)'},
+    {kode:'SFK00137', nama:'Antiparkinson Golongan Dopaminergik'},
+    {kode:'SFK00138', nama:'Antiparkinson Golongan Antikolinergik'},
+    {kode:'SFK00139', nama:'Obat Migrain Golongan Triptan'},
+    {kode:'SFK00140', nama:'Obat Osteoporosis Golongan Bifosfonat'},
+    {kode:'SFK00141', nama:'Suplemen Probiotik'},
+    {kode:'SFK00142', nama:'Enzim Pencernaan'},
+    {kode:'SFK00143', nama:'Antidiare Adsorben'},
+    {kode:'SFK00144', nama:'Antidiare Antimotilitas'},
+    {kode:'SFK00145', nama:'Pencahar (Laksatif) Lubrikan'},
+    {kode:'SFK00146', nama:'Analgesik Non-Steroid Selektif COX-2'},
+    {kode:'SFK00147', nama:'Antikoagulan Antagonis Vitamin K'},
+    {kode:'SFK00148', nama:'Bronkodilator Kombinasi'},
+    {kode:'SFK00149', nama:'Antibiotik Golongan Karbapenem'},
+  ],
+
+  /* Daftar Kategory Reordering Sheet (Persediaan Barang > Master
+     & Setting > Daftar Kategory Reordering Sheet, page:
+     'kategoriReorderingSheet'), sesuai screenshot MASERP "Daftar
+     Kategory Reordering Sheet" yang dikirim user 2026-08-21
+     (Total Record: 7, kolom Kode/Nama Kategori Reordering Sheet
+     dengan ikon sort + Grup Penjualan, tanpa Pencarian Global/
+     page-size besar karena datanya kecil). Field ini KHAS
+     regulasi distribusi farmasi (ALKES=Alat Kesehatan, BBS=Bahan
+     Baku Sediaan/Non Obat-Non Alkes, OOT=Obat Wajib Apotek/Obat
+     Tertentu, PRE=Prekursor, PSI=Psikotropik) — kategori
+     PENGAWASAN REGULATORI, bukan kategori produk FMCG biasa —
+     jadi mengikuti keputusan user yang sama (dikonfirmasi lewat
+     AskUserQuestion sebelumnya untuk Zat Kandungan Aktif dkk.):
+     dibangun APA ADANYA karena ini singkatan regulasi standar
+     industri farmasi (istilah BPOM), bukan data rahasia
+     perusahaan demo lain.
+
+     CATATAN PENTING — TIDAK terhubung ke filter "Kat. Reordering
+     Sheet" di form modul Reordering Sheet (`openRosKategoriPicker()`
+     di reordering-sheet.js): filter itu SUDAH fungsional nyata
+     memakai kode kategori FMCG (CATSMB/CATBHB/dst.) yang benar-
+     benar ada di `DATA.persediaan`/`DATA.kategoriBarang` — kode
+     regulatori ALKES/BBS/NON/ODP/OOT/PRE/PSI di master INI tidak
+     overlap sama sekali dengan kode itu, dan tidak ada barang di
+     `DATA.persediaan` yang punya kategori regulatori ini. Menyambungkan
+     keduanya butuh menambah field kategori-regulatori baru ke tiap
+     barang persediaan yang di luar cakupan permintaan sesi ini —
+     jadi master ini SENGAJA dibangun independen/berdiri sendiri
+     (bukan bug, konsisten dengan banyak master lain di mockup ini
+     yang belum punya konsumen lintas-modul, mis. Group Produk).
+     Kolom "Grup Penjualan" disimpan sebagai teks bebas (bukan
+     picker ke master lain — tidak ada master "Grup Penjualan"
+     terpisah di mockup ini), persis apa adanya dari screenshot. */
+  kategoriReorderingSheet:[
+    {kode:'ALKES', nama:'ALAT KESEHATAN', grupPenjualan:'GROUP ALKES'},
+    {kode:'BBS', nama:'NON OBAT - NON ALKES', grupPenjualan:'GROUP NON-OBAT NON-ALKES'},
+    {kode:'NON', nama:'NON REORDERING SHEET', grupPenjualan:'GROUP NON REORDERING SHEET'},
+    {kode:'ODP', nama:'OBAT DILUAR PPOT', grupPenjualan:'GROUP OBAT DILUAR PPOT'},
+    {kode:'OOT', nama:'OBAT OBAT TERTENTU', grupPenjualan:'GROUP OOT'},
+    {kode:'PRE', nama:'PREKURSOR', grupPenjualan:'GROUP PREKURSOR'},
+    {kode:'PSI', nama:'OBAT PSIKOTROPIK', grupPenjualan:'GROUP PSIKOTROPIK'},
+  ],
+
+  /* Group Produk (Persediaan Barang > Master & Setting > Group
+     Produk, page:'groupProduk'), sesuai screenshot MASERP
+     "Daftar Group Produk" yang dikirim user 2026-08-21 (Total
+     Record: 1 — dataset sekecil ini dipertahankan apa adanya,
+     tidak perlu didownsize/diperbanyak). CRUD sederhana pola
+     Master Divisi (3 field: Kode/Nama/Keterangan, tanpa sub-grid
+     atau kalkulasi). BEDA dari Zat Kandungan Aktif/Farmakoterapi/
+     Sub-Farmakoterapi/Bentuk Sediaan: 1 baris contoh di screenshot
+     asli ("DANPAC"/"DANPAC GROUP PRODUCT") terlihat seperti kode
+     internal SPESIFIK milik instalasi demo lain (mirip nama
+     brand/principal tertentu, BUKAN istilah farmakologi standar
+     seperti nama zat aktif/kelas terapi/bentuk sediaan) — jadi
+     diperlakukan sebagai data yang perlu diganti (konsisten
+     dengan konvensi umum proyek ini: ganti data spesifik
+     perusahaan demo lain dengan data DBM sendiri), bukan
+     dipertahankan apa adanya. Diganti dengan 1 baris contoh
+     relevan untuk bisnis DBM (distributor sembako/FMCG). */
+  groupProduk:[
+    {kode:'SMBK01', nama:'KELOMPOK PRODUK SEMBAKO UTAMA', keterangan:''},
+  ],
+
+  /* Bentuk Sediaan (Persediaan Barang > Master & Setting > Bentuk
+     Sediaan, page:'bentukSediaan'), sesuai screenshot MASERP
+     "Daftar Bentuk Sediaan" yang dikirim user 2026-08-21 (Total
+     Record: 80, kolom Kode/Nama Bentuk Sediaan dengan ikon sort
+     di kedua header, page-size 25 default + Pencarian Global,
+     pager First/Previous/1-4/Next/Last). Field KEEMPAT & TERAKHIR
+     dari grup field khas farmasi yang keputusan datanya sudah
+     dikonfirmasi user sebelumnya lewat `AskUserQuestion` (lihat
+     komentar di atas array `zatKandunganAktif`) — tidak ditanya
+     ulang. "Bentuk Sediaan" (dosage form: Tablet/Kapsul/Sirup/
+     Injeksi dst.) adalah terminologi farmasi UNIVERSAL/generik,
+     bukan data rahasia perusahaan demo lain, jadi dibangun apa
+     adanya.
+
+     TIDAK ADA downsize volume (sama seperti Farmakoterapi/Sub-
+     Farmakoterapi) — Total Record: 80 pada screenshot asli sudah
+     sewajarnya dipertahankan utuh. Kode 3-digit `SED000`-`SED079`
+     (BEDA dari `KZA`/`FRK`/`SFK` yang 5-digit) — mengikuti persis
+     lebar digit yang terlihat di screenshot. 25 baris PALING ATAS
+     PERSIS sesuai screenshot (`SED000`-`SED024`), 55 baris sisanya
+     nama bentuk sediaan farmasi generik lain diurutkan alfabetis
+     menyambung penomoran kode berurutan (pola sama seperti
+     Farmakoterapi/Sub-Farmakoterapi). Page-size default 25 (opsi
+     dropdown 10/25/50) sesuai nilai "25" aktif di screenshot.
+     80÷25=4 halaman — reuse pager windowed & sort kolom SUNGGUHAN
+     fungsional dari Zat Kandungan Aktif (redundan di sini karena
+     4 halaman muat penuh di jendela 7, tapi kode dibiarkan generik
+     sama seperti modul saudaranya untuk konsistensi). */
+  bentukSediaan:[
+    {kode:'SED000', nama:'Non'},
+    {kode:'SED001', nama:'Bedak / Talk'},
+    {kode:'SED002', nama:'Cairan'},
+    {kode:'SED003', nama:'Compress'},
+    {kode:'SED004', nama:'Cassette'},
+    {kode:'SED005', nama:'Drops'},
+    {kode:'SED006', nama:'Eliksir'},
+    {kode:'SED007', nama:'Emulsi'},
+    {kode:'SED008', nama:'Gel'},
+    {kode:'SED009', nama:'Granul'},
+    {kode:'SED010', nama:'Implan'},
+    {kode:'SED011', nama:'Infus'},
+    {kode:'SED012', nama:'Inhalasi'},
+    {kode:'SED013', nama:'IUD'},
+    {kode:'SED014', nama:'Injeksi'},
+    {kode:'SED015', nama:'Kaplet'},
+    {kode:'SED016', nama:'Kaplet Salut Selaput'},
+    {kode:'SED017', nama:'Kaplet Salut Enterik'},
+    {kode:'SED018', nama:'Kapsul'},
+    {kode:'SED019', nama:'Kapsul Lunak'},
+    {kode:'SED020', nama:'Kondom'},
+    {kode:'SED021', nama:'Krim'},
+    {kode:'SED022', nama:'Krim Steril'},
+    {kode:'SED023', nama:'Lotion'},
+    {kode:'SED024', nama:'Midstream'},
+    {kode:'SED025', nama:'Aerosol'},
+    {kode:'SED026', nama:'Balsem'},
+    {kode:'SED027', nama:'Bubuk'},
+    {kode:'SED028', nama:'Effervescent'},
+    {kode:'SED029', nama:'Enema'},
+    {kode:'SED030', nama:'Film Strip'},
+    {kode:'SED031', nama:'Gargle'},
+    {kode:'SED032', nama:'Gauze / Kasa'},
+    {kode:'SED033', nama:'Hair Tonic'},
+    {kode:'SED034', nama:'Jelly'},
+    {kode:'SED035', nama:'Kertas Tempel'},
+    {kode:'SED036', nama:'Larutan'},
+    {kode:'SED037', nama:'Minyak Angin'},
+    {kode:'SED038', nama:'Minyak Gosok'},
+    {kode:'SED039', nama:'Nebulizer'},
+    {kode:'SED040', nama:'Obat Kumur'},
+    {kode:'SED041', nama:'Oral Gel'},
+    {kode:'SED042', nama:'Ovula'},
+    {kode:'SED043', nama:'Pasta Gigi'},
+    {kode:'SED044', nama:'Patch'},
+    {kode:'SED045', nama:'Pen Insulin'},
+    {kode:'SED046', nama:'Pessary'},
+    {kode:'SED047', nama:'Pil'},
+    {kode:'SED048', nama:'Plester'},
+    {kode:'SED049', nama:'Sabun Antiseptik'},
+    {kode:'SED050', nama:'Salep'},
+    {kode:'SED051', nama:'Salep Mata'},
+    {kode:'SED052', nama:'Serbuk'},
+    {kode:'SED053', nama:'Serbuk Effervescent'},
+    {kode:'SED054', nama:'Shampoo'},
+    {kode:'SED055', nama:'Sirup'},
+    {kode:'SED056', nama:'Sirup Kering'},
+    {kode:'SED057', nama:'Spray'},
+    {kode:'SED058', nama:'Spray Hidung'},
+    {kode:'SED059', nama:'Strip Test'},
+    {kode:'SED060', nama:'Suntik'},
+    {kode:'SED061', nama:'Suppositoria'},
+    {kode:'SED062', nama:'Suspensi'},
+    {kode:'SED063', nama:'Tablet'},
+    {kode:'SED064', nama:'Tablet Effervescent'},
+    {kode:'SED065', nama:'Tablet Hisap'},
+    {kode:'SED066', nama:'Tablet Kunyah'},
+    {kode:'SED067', nama:'Tablet Lepas Lambat'},
+    {kode:'SED068', nama:'Tablet Salut Enterik'},
+    {kode:'SED069', nama:'Tablet Salut Gula'},
+    {kode:'SED070', nama:'Tablet Sublingual'},
+    {kode:'SED071', nama:'Tampon'},
+    {kode:'SED072', nama:'Tetes Hidung'},
+    {kode:'SED073', nama:'Tetes Mata'},
+    {kode:'SED074', nama:'Tetes Telinga'},
+    {kode:'SED075', nama:'Tincture'},
+    {kode:'SED076', nama:'Tisu Antiseptik'},
+    {kode:'SED077', nama:'Transdermal Patch'},
+    {kode:'SED078', nama:'Vaginal Cream'},
+    {kode:'SED079', nama:'Vaginal Gel'},
+  ],
+
+
+
   /* Master Gudang (Persediaan Barang > Master & Setting > Gudang), sesuai
      2 screenshot MASERP "Daftar Gudang" (list) & "Gudang" (form Tambah) yang
      dikirim user 2026-08-12. 29 baris data sample tersebar di 8 cabang DBM
@@ -3885,7 +4356,10 @@ const DATA = {
       kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:4750000, pajak11:'PPN11', ppnAmount:522500,
       pphAktif:true, pphKode:'PPH 22 (0.3)', pphPersen:0.3, pphAmount:14250, ongkosAngkut:0, jumlahTotal:5258250,
       uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, sisaJumlah:5258250,
-      pembayaran:0, tglInput:'09/08/2026 15:10:00', userInput:'sidik', tglEdit:'', userEdit:''},
+      /* pembayaran DIISI 5.258.250 (lunas PENUH) — dilunasi lewat Pelunasan
+         Utang 26/CL/HO/08/00001 (lihat DATA.pelunasanUtang, js/pages/
+         pelunasan-utang.*), pembuktian mekanisme `pembayaran` end-to-end. */
+      pembayaran:5258250, tglInput:'09/08/2026 15:10:00', userInput:'sidik', tglEdit:'', userEdit:''},
     {no:'26/PU/HO/08/00002', noBPB:'26/BPB/HO/08/00002', noPO:'26/PO/HO/08/00010', noReturPB:'', supplier:'PT Wilmar Nabati Indonesia',
       keterangan:'PJK/WNI/08/0088 ; SJK SJ/WNI/08/0088 ; 26/BPB/HO/08/00002',
       cabang:'Head Office', noOtomatis:'PU001',
@@ -3896,7 +4370,10 @@ const DATA = {
       kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:7350000, pajak11:'PPN11', ppnAmount:808500,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:8158500,
       uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, sisaJumlah:8158500,
-      pembayaran:0, tglInput:'10/08/2026 10:45:00', userInput:'sidik', tglEdit:'', userEdit:''},
+      /* pembayaran DIISI 5.000.000 (lunas SEBAGIAN, sisa 3.158.500 masih
+         outstanding) — dilunasi sebagian lewat Pelunasan Utang
+         26/CL/HO/08/00002 (lihat DATA.pelunasanUtang). */
+      pembayaran:5000000, tglInput:'10/08/2026 10:45:00', userInput:'sidik', tglEdit:'', userEdit:''},
     {no:'26/PU/HO/08/00003', noBPB:'26/BPB/HO/08/00003', noPO:'26/PO/HO/08/00009', noReturPB:'', supplier:'CV Distribusi Sentosa',
       keterangan:'PJK/CDS/08/0045 ; SJK SJ/CDS/08/0045 ; 26/BPB/HO/08/00003',
       cabang:'Head Office', noOtomatis:'PU001',
@@ -3919,6 +4396,189 @@ const DATA = {
       pphAktif:true, pphKode:'PPH 22 (0.3)', pphPersen:0.3, pphAmount:12222, ongkosAngkut:0, jumlahTotal:4509918,
       uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, sisaJumlah:4509918,
       pembayaran:0, tglInput:'10/08/2026 14:20:00', userInput:'sidik', tglEdit:'', userEdit:''},
+  ],
+  /* Pelunasan Utang — menu Supplier & Pembelian > Daftar Transaksi >
+     Pelunasan Utang (lihat js/pages/pelunasan-utang.*, ganti dari
+     placeholder lama). 14 baris sesuai screenshot MASERP "Daftar
+     Pembayaran Utang" (Total Record: 14) yang dikirim user 2026-08-21.
+     Nama Supplier di screenshot asli ("PT SATORIA ANEKA INDUSTRI",
+     "NOVAPHARIN", dst — demo perusahaan lain, farmasi/tidak terkait
+     DBM) DIGANTI TOTAL dengan Supplier DBM sendiri (DATA.suppliers yg
+     sudah ada), lihat catatan lengkap di header pelunasan-utang.
+     template.js.
+
+     2 baris PERTAMA benar-benar chained ke DATA.pembelianBPB sungguhan
+     (lihat komentar di masing-masing baris pembelianBPB di atas): PT
+     Sumber Pangan Nusantara 26/PU/HO/08/00001 dilunasi PENUH, PT
+     Wilmar Nabati Indonesia 26/PU/HO/08/00002 dilunasi SEBAGIAN (sisa
+     3.158.500 masih outstanding) — pembuktian mekanisme `pembayaran`
+     end-to-end, pola identik 2 baris pembuktian DATA.penerimaanPiutang.
+
+     12 baris sisanya historis/dekoratif (fakturNo:'' — TIDAK terhubung
+     ke DATA.pembelianBPB, no. faktur di dalamnya sekadar ilustrasi):
+     6 baris Cabang non-HO bulan Juli 2026 (1 per cabang TGR/MKS/MDN/
+     BDG/SBY/SMG, Supplier dicocokkan dgn field `wilayah` masing-masing
+     di DATA.suppliers supaya masuk akal secara geografis — SBY sengaja
+     memakai Supplier yg sama dgn baris live #2, mewakili histori
+     pembayaran sebelumnya ke supplier yg sama), + 6 baris Cabang Head
+     Office bulan Agustus 2026 (Supplier yang wilayahnya tidak memiliki
+     cabang tersendiri di PU_CABANG_LIST — Yogyakarta/Solo/Bekasi/
+     Cirebon/Jakarta Selatan — dibayar terpusat lewat Head Office; PT
+     Mayora Distribusi dipakai 2x di tanggal berbeda, wajar utk
+     supplier FMCG rutin). CATATAN: DATA.suppliers CV Distribusi
+     Sentosa & PT Sasa Inti SENGAJA tidak dipakai jadi baris "lunas
+     penuh" di sini (mereka baris historis Juli sengaja ilustrasi
+     "pembayaran cicilan sebelumnya", BUKAN pelunasan penuh faktur
+     26/PU/HO/08/00003 & 00004 miliknya yg TETAP dibiarkan utuh belum
+     tersentuh sama sekali di DATA.pembelianBPB) — coba "+ Tambah" &
+     pilih salah satu Supplier ini utk melihat faktur itu muncul nyata
+     di tab Lunasi Beberapa Faktur.
+
+     Tiap baris jurnalMode:'otomatis' dgn jurnalAkun 2 baris standar
+     (Hutang Usaha 2110001 Debit / Akun Bank terkait Kredit) — sudah
+     dihitung supaya balance (Debit=Kredit=totalPembayaran), konsisten
+     dgn puBuildJurnalOtomatis() (pelunasan-utang.js). */
+  pelunasanUtang:[
+    {no:'26/CL/HO/08/00002', cabang:'Head Office', tgl:'13/08/2026',
+      supplierKode:'5016', supplierNama:'PT Wilmar Nabati Indonesia', noPengajuanPembayaran:'',
+      akunBankKode:'110106', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'13/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00002', supplierNoFaktur:'INV/WNI/08/0088-A', tipeTransaksi:'Beli Kredit', tglFaktur:'10/08/2026', tglJthTempo:'24/09/2026', mataUang:'IDR', kurs:1, reminder:8158500, pembayaran:5000000, checked:true, fakturNo:'26/PU/HO/08/00002'}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:true, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Wilmar Nabati Indonesia', debit:5000000, kredit:0},
+        {kodeAkun:'110106', namaAkun:'110106 - Bank Mandiri HO', keterangan:'PT Wilmar Nabati Indonesia', debit:0, kredit:5000000},
+      ],
+      totalPembayaran:5000000, jumlahKeluarKas:5000000, jumlahUtang:5000000},
+    {no:'26/CL/HO/08/00001', cabang:'Head Office', tgl:'12/08/2026',
+      supplierKode:'5015', supplierNama:'PT Sumber Pangan Nusantara', noPengajuanPembayaran:'',
+      akunBankKode:'110107', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'12/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00001', supplierNoFaktur:'INV/SPN/08/0231-A', tipeTransaksi:'Beli Kredit', tglFaktur:'09/08/2026', tglJthTempo:'08/10/2026', mataUang:'IDR', kurs:1, reminder:5258250, pembayaran:5258250, checked:true, fakturNo:'26/PU/HO/08/00001'}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Sumber Pangan Nusantara', debit:5258250, kredit:0},
+        {kodeAkun:'110107', namaAkun:'110107 - Bank BCA HO', keterangan:'PT Sumber Pangan Nusantara', debit:0, kredit:5258250},
+      ],
+      totalPembayaran:5258250, jumlahKeluarKas:5258250, jumlahUtang:5258250},
+    {no:'26/CL/HO/08/00008', cabang:'Head Office', tgl:'19/08/2026',
+      supplierKode:'5019', supplierNama:'PT Mayora Distribusi', noPengajuanPembayaran:'',
+      akunBankKode:'110107', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'19/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00099', supplierNoFaktur:'INV/MYR/08/0119', tipeTransaksi:'Beli Kredit', tglFaktur:'05/08/2026', tglJthTempo:'19/08/2026', mataUang:'IDR', kurs:1, reminder:3950000, pembayaran:3950000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Mayora Distribusi', debit:3950000, kredit:0},
+        {kodeAkun:'110107', namaAkun:'110107 - Bank BCA HO', keterangan:'PT Mayora Distribusi', debit:0, kredit:3950000},
+      ],
+      totalPembayaran:3950000, jumlahKeluarKas:3950000, jumlahUtang:3950000},
+    {no:'26/CL/HO/08/00007', cabang:'Head Office', tgl:'17/08/2026',
+      supplierKode:'5026', supplierNama:'PT Roda Mas Trading', noPengajuanPembayaran:'',
+      akunBankKode:'110106', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'17/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00087', supplierNoFaktur:'INV/RMT/08/0064', tipeTransaksi:'Beli Kredit', tglFaktur:'01/08/2026', tglJthTempo:'17/08/2026', mataUang:'IDR', kurs:1, reminder:6600000, pembayaran:6600000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Roda Mas Trading', debit:6600000, kredit:0},
+        {kodeAkun:'110106', namaAkun:'110106 - Bank Mandiri HO', keterangan:'PT Roda Mas Trading', debit:0, kredit:6600000},
+      ],
+      totalPembayaran:6600000, jumlahKeluarKas:6600000, jumlahUtang:6600000},
+    {no:'26/CL/HO/08/00006', cabang:'Head Office', tgl:'14/08/2026',
+      supplierKode:'5024', supplierNama:'Toko Bahan Baku Jaya', noPengajuanPembayaran:'',
+      akunBankKode:'110107', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'14/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00071', supplierNoFaktur:'INV/TBBJ/08/0027', tipeTransaksi:'Beli Kredit', tglFaktur:'31/07/2026', tglJthTempo:'14/08/2026', mataUang:'IDR', kurs:1, reminder:1200000, pembayaran:1200000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'Toko Bahan Baku Jaya', debit:1200000, kredit:0},
+        {kodeAkun:'110107', namaAkun:'110107 - Bank BCA HO', keterangan:'Toko Bahan Baku Jaya', debit:0, kredit:1200000},
+      ],
+      totalPembayaran:1200000, jumlahKeluarKas:1200000, jumlahUtang:1200000},
+    {no:'26/CL/HO/08/00005', cabang:'Head Office', tgl:'10/08/2026',
+      supplierKode:'5022', supplierNama:'CV Karya Abadi', noPengajuanPembayaran:'',
+      akunBankKode:'110106', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'10/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00058', supplierNoFaktur:'INV/CKA/07/0091', tipeTransaksi:'Beli Kredit', tglFaktur:'27/07/2026', tglJthTempo:'10/08/2026', mataUang:'IDR', kurs:1, reminder:2975000, pembayaran:2975000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'CV Karya Abadi', debit:2975000, kredit:0},
+        {kodeAkun:'110106', namaAkun:'110106 - Bank Mandiri HO', keterangan:'CV Karya Abadi', debit:0, kredit:2975000},
+      ],
+      totalPembayaran:2975000, jumlahKeluarKas:2975000, jumlahUtang:2975000},
+    {no:'26/CL/HO/08/00004', cabang:'Head Office', tgl:'07/08/2026',
+      supplierKode:'5021', supplierNama:'UD Sumber Makmur', noPengajuanPembayaran:'',
+      akunBankKode:'110107', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'07/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00042', supplierNoFaktur:'INV/USM/07/0038', tipeTransaksi:'Beli Kredit', tglFaktur:'25/07/2026', tglJthTempo:'07/08/2026', mataUang:'IDR', kurs:1, reminder:1850000, pembayaran:1850000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'UD Sumber Makmur', debit:1850000, kredit:0},
+        {kodeAkun:'110107', namaAkun:'110107 - Bank BCA HO', keterangan:'UD Sumber Makmur', debit:0, kredit:1850000},
+      ],
+      totalPembayaran:1850000, jumlahKeluarKas:1850000, jumlahUtang:1850000},
+    {no:'26/CL/HO/08/00003', cabang:'Head Office', tgl:'05/08/2026',
+      supplierKode:'5019', supplierNama:'PT Mayora Distribusi', noPengajuanPembayaran:'',
+      akunBankKode:'110107', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'05/08/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/HO/08/00033', supplierNoFaktur:'INV/MYR/07/0102', tipeTransaksi:'Beli Kredit', tglFaktur:'22/07/2026', tglJthTempo:'05/08/2026', mataUang:'IDR', kurs:1, reminder:8400000, pembayaran:8400000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Mayora Distribusi', debit:8400000, kredit:0},
+        {kodeAkun:'110107', namaAkun:'110107 - Bank BCA HO', keterangan:'PT Mayora Distribusi', debit:0, kredit:8400000},
+      ],
+      totalPembayaran:8400000, jumlahKeluarKas:8400000, jumlahUtang:8400000},
+    {no:'26/CL/TGR/07/00001', cabang:'Tangerang', tgl:'24/07/2026',
+      supplierKode:'5025', supplierNama:'CV Anugerah Logistik', noPengajuanPembayaran:'',
+      akunBankKode:'110115', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'24/07/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/TGR/07/00012', supplierNoFaktur:'INV/CAL/07/0015', tipeTransaksi:'Beli Kredit', tglFaktur:'10/07/2026', tglJthTempo:'24/07/2026', mataUang:'IDR', kurs:1, reminder:4200000, pembayaran:4200000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'CV Anugerah Logistik', debit:4200000, kredit:0},
+        {kodeAkun:'110115', namaAkun:'110115 - Bank BCA TGR', keterangan:'CV Anugerah Logistik', debit:0, kredit:4200000},
+      ],
+      totalPembayaran:4200000, jumlahKeluarKas:4200000, jumlahUtang:4200000},
+    {no:'26/CL/MKS/07/00001', cabang:'Makassar', tgl:'23/07/2026',
+      supplierKode:'5023', supplierNama:'PT Sasa Inti', noPengajuanPembayaran:'',
+      akunBankKode:'110121', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'23/07/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/MKS/07/00009', supplierNoFaktur:'INV/SASA/07/0388', tipeTransaksi:'Beli Kredit', tglFaktur:'09/07/2026', tglJthTempo:'23/07/2026', mataUang:'IDR', kurs:1, reminder:6750000, pembayaran:6750000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Sasa Inti', debit:6750000, kredit:0},
+        {kodeAkun:'110121', namaAkun:'110121 - Bank Danamon MKS', keterangan:'PT Sasa Inti', debit:0, kredit:6750000},
+      ],
+      totalPembayaran:6750000, jumlahKeluarKas:6750000, jumlahUtang:6750000},
+    {no:'26/CL/MDN/07/00001', cabang:'Medan', tgl:'22/07/2026',
+      supplierKode:'5020', supplierNama:'PT Indofood Distribusi', noPengajuanPembayaran:'',
+      akunBankKode:'110118', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'22/07/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/MDN/07/00016', supplierNoFaktur:'INV/IFD/07/0203', tipeTransaksi:'Beli Kredit', tglFaktur:'06/07/2026', tglJthTempo:'22/07/2026', mataUang:'IDR', kurs:1, reminder:15300000, pembayaran:15300000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Indofood Distribusi', debit:15300000, kredit:0},
+        {kodeAkun:'110118', namaAkun:'110118 - Bank BRI MDN', keterangan:'PT Indofood Distribusi', debit:0, kredit:15300000},
+      ],
+      totalPembayaran:15300000, jumlahKeluarKas:15300000, jumlahUtang:15300000},
+    {no:'26/CL/BDG/07/00001', cabang:'Bandung', tgl:'21/07/2026',
+      supplierKode:'5018', supplierNama:'CV Distribusi Sentosa', noPengajuanPembayaran:'',
+      akunBankKode:'110112', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'21/07/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/BDG/07/00007', supplierNoFaktur:'INV/CDS/07/0029', tipeTransaksi:'Beli Kredit', tglFaktur:'07/07/2026', tglJthTempo:'21/07/2026', mataUang:'IDR', kurs:1, reminder:2100000, pembayaran:2100000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'CV Distribusi Sentosa', debit:2100000, kredit:0},
+        {kodeAkun:'110112', namaAkun:'110112 - Bank Mandiri BDG', keterangan:'CV Distribusi Sentosa', debit:0, kredit:2100000},
+      ],
+      totalPembayaran:2100000, jumlahKeluarKas:2100000, jumlahUtang:2100000},
+    {no:'26/CL/SBY/07/00001', cabang:'Surabaya', tgl:'20/07/2026',
+      supplierKode:'5016', supplierNama:'PT Wilmar Nabati Indonesia', noPengajuanPembayaran:'',
+      akunBankKode:'110109', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'20/07/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/SBY/07/00021', supplierNoFaktur:'INV/WNI/07/0055', tipeTransaksi:'Beli Kredit', tglFaktur:'06/07/2026', tglJthTempo:'20/07/2026', mataUang:'IDR', kurs:1, reminder:9850000, pembayaran:9850000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Wilmar Nabati Indonesia', debit:9850000, kredit:0},
+        {kodeAkun:'110109', namaAkun:'110109 - Bank BNI SBY', keterangan:'PT Wilmar Nabati Indonesia', debit:0, kredit:9850000},
+      ],
+      totalPembayaran:9850000, jumlahKeluarKas:9850000, jumlahUtang:9850000},
+    {no:'26/CL/SMG/07/00001', cabang:'Semarang', tgl:'19/07/2026',
+      supplierKode:'5017', supplierNama:'PT Sinar Meadow', noPengajuanPembayaran:'',
+      akunBankKode:'110124', tipeTransaksi:'Keluar Kas', cair:true, noGiro:'', tglJthTempoBank:'19/07/2026', kursTarget:1,
+      fakturs:[{no:'26/PU/SMG/07/00010', supplierNoFaktur:'INV/SMD/07/0071', tipeTransaksi:'Beli Kredit', tglFaktur:'05/07/2026', tglJthTempo:'19/07/2026', mataUang:'IDR', kurs:1, reminder:3600000, pembayaran:3600000, checked:true, fakturNo:''}],
+      keterangan:'Pembayaran Hutang Dagang', jumlahTidakSama:false, status:'Approved',
+      jurnalMode:'otomatis', jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'PT Sinar Meadow', debit:3600000, kredit:0},
+        {kodeAkun:'110124', namaAkun:'110124 - Bank Permata SMG', keterangan:'PT Sinar Meadow', debit:0, kredit:3600000},
+      ],
+      totalPembayaran:3600000, jumlahKeluarKas:3600000, jumlahUtang:3600000},
   ],
   /* Master Rayon — menu Lain-lain > Rayon (page:'masterRayon', ganti dari
      placeholder lama, lihat js/menu.js). Sesuai 3 screenshot MASERP yang
@@ -4237,7 +4897,7 @@ const MENU=[
    {label:'Pembelian dari PO', page:'placeholder', title:'Pembelian dari PO'},
    {label:'Pembelian Langsung', page:'placeholder', title:'Pembelian Langsung'},
    {label:'Biaya Impor V.1', page:'placeholder', title:'Biaya Impor V.1'},
-   {label:'Pelunasan Utang', page:'placeholder', title:'Pelunasan Utang'},
+   {label:'Pelunasan Utang', page:'pelunasanUtang'},
    {label:'Retur Pembelian', page:'placeholder', title:'Retur Pembelian'},
    {label:'Pengajuan Pembayaran', page:'placeholder', title:'Pengajuan Pembayaran'},
    {header:'Transaksi Konsinyasi'},
@@ -4296,12 +4956,12 @@ const MENU=[
    {label:'Inventory', page:'items'},
    {label:'Gudang', page:'gudang'},
    {label:'Zat Kandungan Aktif', page:'zatKandunganAktif'},
-   {label:'Farmakoterapi', page:'placeholder', title:'Farmakoterapi'},
-   {label:'Sub-Farmakoterapi', page:'placeholder', title:'Sub-Farmakoterapi'},
-   {label:'Bentuk Sediaan', page:'placeholder', title:'Bentuk Sediaan'},
+   {label:'Farmakoterapi', page:'farmakoterapi'},
+   {label:'Sub-Farmakoterapi', page:'subFarmakoterapi'},
+   {label:'Bentuk Sediaan', page:'bentukSediaan'},
    {label:'Kategori Barang', page:'kategoriBarang'},
-   {label:'Group Produk', page:'placeholder', title:'Group Produk'},
-   {label:'Daftar Kategory Reordering Sheet', page:'placeholder', title:'Daftar Kategory Reordering Sheet'},
+   {label:'Group Produk', page:'groupProduk'},
+   {label:'Daftar Kategory Reordering Sheet', page:'kategoriReorderingSheet'},
    {label:'Rack', page:'placeholder', title:'Rack'},
    {label:'Jurnal Persediaan', page:'placeholder', title:'Jurnal Persediaan'},
    {label:'Duplikat Barang', page:'placeholder', title:'Duplikat Barang'},
@@ -4627,6 +5287,131 @@ function tplAkGlInfoModal(title, text){
       <div class="modal-body"><p>${text}</p></div>
       <div class="modal-footer">
         <button class="btn-primary" id="modalOk">Mengerti</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
+   TEMPLATE (HTML saja) — Bentuk Sediaan (Persediaan Barang >
+   Master & Setting > Bentuk Sediaan, page:'bentukSediaan').
+   Semua fungsi di file ini HANYA menyusun & mengembalikan
+   markup HTML (string), TIDAK ada logic/DOM-binding di sini.
+   Logic-nya ada di file sebelah: bentuk-sediaan.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Sebelumnya placeholder murni. Dibangun 2026-08-21 sesuai
+   screenshot MASERP "Daftar Bentuk Sediaan" (Total Record: 80,
+   kolom Kode/Nama Bentuk Sediaan dengan ikon sort di kedua
+   header, page-size 25 default + Pencarian Global, pager
+   First/Previous/1-4/Next/Last). Field KEEMPAT & TERAKHIR dari
+   grup field khas farmasi yang keputusan datanya (dibangun apa
+   adanya, terminologi universal industri) sudah dikonfirmasi
+   user sebelumnya via `AskUserQuestion` — lihat komentar
+   lengkap di zat-kandungan-aktif.template.js & di atas array
+   `DATA.zatKandunganAktif`/`DATA.bentukSediaan` di js/data.js,
+   tidak diulang di sini. Pola HTML/CRUD/pager windowed/sort
+   disalin persis dari Zat Kandungan Aktif.
+
+   BEDA dari Zat Kandungan Aktif: TIDAK ada downsize volume (80
+   baris dipertahankan utuh, sama seperti Farmakoterapi/Sub-
+   Farmakoterapi); Kode 3-digit `SED000`-`SED079` (bukan 5-digit
+   `KZA#####`); page-size default 25 (opsi dropdown 10/25/50).
+========================================================= */
+
+function tplSedPage(){
+  return `
+    <div class="breadcrumb">Home / <b>Bentuk Sediaan</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('box',15)} Daftar Bentuk Sediaan</h3>
+        <button class="btn-primary" id="btnSedAdd">${icon('plus',14)} Tambah</button>
+      </div>
+      <div class="table-toolbar">
+        <select id="sedPageSize"><option>10</option><option selected>25</option><option>50</option></select>
+        <input type="text" id="sedSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>${tplSedSortHeader('Kode Bentuk Sediaan','kode')}</th>
+          <th>${tplSedSortHeader('Nama Bentuk Sediaan','nama')}</th>
+          <th style="width:70px;">Ubah</th>
+          <th style="width:70px;">Hapus</th>
+        </tr></thead>
+        <tbody id="sedTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="sedPager"></div><div id="sedTotal"></div></div>
+    </div>`;
+}
+
+function tplSedSortHeader(label, field){
+  return `<span class="sed-sort-header" data-sed-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="sedSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplSedRows(rows, page, pageSize){
+  if(!rows.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada data Bentuk Sediaan</td></tr>`;
+  const start = (page-1)*pageSize;
+  return rows.slice(start, start+pageSize).map((r) => {
+    const idx = DATA.bentukSediaan.indexOf(r);
+    return `
+    <tr>
+      <td><a href="#" class="row-link" data-edit="${idx}" style="color:var(--blue);font-weight:600;">${r.kode}</a></td>
+      <td>${r.nama || 'Non'}</td>
+      <td><button class="icon-btn edit" data-edit="${idx}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* Pager windowed maks. 7 nomor halaman — pola sama Zat Kandungan
+   Aktif (redundan untuk 4 halaman tapi dibiarkan generik). */
+function tplSedPager(page, totalPages){
+  if(totalPages <= 1) return '';
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+  let nums = '';
+  for(let p = start; p <= end; p++){
+    nums += `<button class="${p===page?'active':''}" data-sedpage="${p}">${p}</button>`;
+  }
+  return `
+    <button data-sedpage="1" ${page<=1?'disabled':''}>First</button>
+    <button data-sedpage="${Math.max(1,page-1)}" ${page<=1?'disabled':''}>Previous</button>
+    ${nums}
+    <button data-sedpage="${Math.min(totalPages,page+1)}" ${page>=totalPages?'disabled':''}>Next</button>
+    <button data-sedpage="${totalPages}" ${page>=totalPages?'disabled':''}>Last</button>`;
+}
+
+function tplSedModal(mode, row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${mode==='edit'?'Ubah Bentuk Sediaan':'Tambah Bentuk Sediaan'}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Kode Bentuk Sediaan</label>
+          <input type="text" id="fSedKode" value="${row.kode}" readonly style="background:#f2f3f6;color:var(--text-light);">
+        </div>
+        <div class="form-group">
+          <label>Nama Bentuk Sediaan</label>
+          <input type="text" id="fSedNama" value="${row.nama||''}" placeholder="Contoh: Tablet">
+          <div class="form-error" id="fSedNamaErr">Nama Bentuk Sediaan wajib diisi</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-primary" id="modalSave">Simpan</button>
+      </div>
+    </div>`;
+}
+
+function tplSedDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Bentuk Sediaan</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Bentuk Sediaan <b>${row.kode}</b> — ${row.nama||'Non'}?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
       </div>
     </div>`;
 }
@@ -6350,6 +7135,134 @@ function tplFktPphPicker(list){
 }
 
 /* =========================================================
+   TEMPLATE (HTML saja) — Farmakoterapi (Persediaan Barang >
+   Master & Setting > Farmakoterapi, page:'farmakoterapi').
+   Semua fungsi di file ini HANYA menyusun & mengembalikan
+   markup HTML (string), TIDAK ada logic/DOM-binding di sini.
+   Logic-nya ada di file sebelah: farmakoterapi.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Sebelumnya placeholder murni. Dibangun 2026-08-21 sesuai
+   screenshot MASERP "Master Farmakoterapi" (Total Record: 80,
+   kolom Kode/Nama Farmakoterapi dengan ikon sort di kedua
+   header, Ubah/Hapus, page-size 10 default + Pencarian Global,
+   pager First/Previous/1..7/Next/Last). Pola HTML/CRUD/pager/
+   sort di file ini SENGAJA disalin persis dari menu tetangga
+   "Zat Kandungan Aktif" (zat-kandungan-aktif.template.js) yang
+   dibangun sebelumnya di sesi yang sama — lihat catatan
+   keputusan data & pager windowed lengkap di sana; tidak
+   diulang di sini supaya tidak duplikatif. Ringkasnya: field
+   khas farmasi, nama kelas terapi adalah terminologi
+   farmakologi standar (bukan data rahasia perusahaan demo
+   lain), dibangun apa adanya sesuai keputusan user yang sama
+   yang berlaku utk seluruh grup field farmasi ini (Zat
+   Kandungan Aktif/Farmakoterapi/Sub-Farmakoterapi/Bentuk
+   Sediaan). Detail data lihat komentar di js/data.js.
+
+   BEDA dari Zat Kandungan Aktif: TIDAK ada downsize volume —
+   Total Record: 80 pada screenshot asli sudah wajar untuk
+   dipertahankan utuh (lihat js/data.js). 80÷10=8 halaman.
+========================================================= */
+
+function tplFrkPage(){
+  return `
+    <div class="breadcrumb">Home / <b>Farmakoterapi</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('box',15)} Master Farmakoterapi</h3>
+        <button class="btn-primary" id="btnFrkAdd">${icon('plus',14)} Tambah</button>
+      </div>
+      <div class="table-toolbar">
+        <select id="frkPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="frkSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>${tplFrkSortHeader('Kode Farmakoterapi','kode')}</th>
+          <th>${tplFrkSortHeader('Nama Farmakoterapi','nama')}</th>
+          <th style="width:70px;">Ubah</th>
+          <th style="width:70px;">Hapus</th>
+        </tr></thead>
+        <tbody id="frkTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="frkPager"></div><div id="frkTotal"></div></div>
+    </div>`;
+}
+
+function tplFrkSortHeader(label, field){
+  return `<span class="frk-sort-header" data-frk-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="frkSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplFrkRows(rows, page, pageSize){
+  if(!rows.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada data Farmakoterapi</td></tr>`;
+  const start = (page-1)*pageSize;
+  return rows.slice(start, start+pageSize).map((r) => {
+    const idx = DATA.farmakoterapi.indexOf(r);
+    return `
+    <tr>
+      <td><a href="#" class="row-link" data-edit="${idx}" style="color:var(--blue);font-weight:600;">${r.kode}</a></td>
+      <td>${r.nama || 'Non'}</td>
+      <td><button class="icon-btn edit" data-edit="${idx}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* Pager windowed maks. 7 nomor halaman, plus First/Previous/Next/
+   Last — pola sama seperti Zat Kandungan Aktif (tplZkaPager()). */
+function tplFrkPager(page, totalPages){
+  if(totalPages <= 1) return '';
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+  let nums = '';
+  for(let p = start; p <= end; p++){
+    nums += `<button class="${p===page?'active':''}" data-frkpage="${p}">${p}</button>`;
+  }
+  return `
+    <button data-frkpage="1" ${page<=1?'disabled':''}>First</button>
+    <button data-frkpage="${Math.max(1,page-1)}" ${page<=1?'disabled':''}>Previous</button>
+    ${nums}
+    <button data-frkpage="${Math.min(totalPages,page+1)}" ${page>=totalPages?'disabled':''}>Next</button>
+    <button data-frkpage="${totalPages}" ${page>=totalPages?'disabled':''}>Last</button>`;
+}
+
+function tplFrkModal(mode, row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${mode==='edit'?'Ubah Farmakoterapi':'Tambah Farmakoterapi'}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Kode Farmakoterapi</label>
+          <input type="text" id="fFrkKode" value="${row.kode}" readonly style="background:#f2f3f6;color:var(--text-light);">
+        </div>
+        <div class="form-group">
+          <label>Nama Farmakoterapi</label>
+          <input type="text" id="fFrkNama" value="${row.nama||''}" placeholder="Contoh: Antibiotik">
+          <div class="form-error" id="fFrkNamaErr">Nama Farmakoterapi wajib diisi</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-primary" id="modalSave">Simpan</button>
+      </div>
+    </div>`;
+}
+
+function tplFrkDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Farmakoterapi</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Farmakoterapi <b>${row.kode}</b> — ${row.nama||'Non'}?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
    TEMPLATE (HTML saja) — GL Kategori (General Ledger > Master & Setting)
    Semua fungsi di file ini HANYA menyusun & mengembalikan
    markup HTML (string), TIDAK ada logic/DOM-binding/data
@@ -6446,6 +7359,130 @@ function tplGlKategoriHelpModal(){
       </div>
       <div class="modal-footer">
         <button class="btn-primary" id="modalOk">Mengerti</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
+   TEMPLATE (HTML saja) — Group Produk (Persediaan Barang >
+   Master & Setting > Group Produk, page:'groupProduk'). Semua
+   fungsi di file ini HANYA menyusun & mengembalikan markup
+   HTML (string), TIDAK ada logic/DOM-binding di sini. Logic-nya
+   ada di file sebelah: group-produk.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Sebelumnya placeholder murni. Dibangun 2026-08-21 sesuai
+   screenshot MASERP "Daftar Group Produk" (Total Record: 1,
+   kolom Kode/Nama Group Produk dengan ikon sort + Keterangan,
+   Ubah/Hapus). CRUD sederhana pola Master Divisi (3 field,
+   tanpa sub-grid/kalkulasi). Baris contoh di screenshot asli
+   ("DANPAC"/"DANPAC GROUP PRODUCT") terlihat seperti kode
+   internal spesifik instalasi demo lain (bukan istilah generik
+   seperti nama zat aktif/kelas terapi), jadi DIGANTI dengan
+   contoh relevan bisnis DBM (sembako/FMCG) — lihat komentar
+   lengkap di atas array `DATA.groupProduk` di js/data.js. Kode
+   dientri MANUAL (bukan auto-generate), readonly di mode Ubah.
+========================================================= */
+
+function tplGrpPage(){
+  return `
+    <div class="breadcrumb">Home / <b>Group Produk</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('box',15)} Daftar Group Produk</h3>
+        <button class="btn-primary" id="btnGrpAdd">${icon('plus',14)} Tambah</button>
+      </div>
+      <div class="table-toolbar">
+        <select id="grpPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="grpSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>${tplGrpSortHeader('Kode Group Produk','kode')}</th>
+          <th>${tplGrpSortHeader('Nama Group Produk','nama')}</th>
+          <th>Keterangan</th>
+          <th style="width:70px;">Ubah</th>
+          <th style="width:70px;">Hapus</th>
+        </tr></thead>
+        <tbody id="grpTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="grpPager"></div><div id="grpTotal"></div></div>
+    </div>`;
+}
+
+function tplGrpSortHeader(label, field){
+  return `<span class="grp-sort-header" data-grp-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="grpSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplGrpRows(rows, page, pageSize){
+  if(!rows.length) return `<tr><td colspan="5" style="color:var(--text-light);">Tidak ada data Group Produk</td></tr>`;
+  const start = (page-1)*pageSize;
+  return rows.slice(start, start+pageSize).map((r) => {
+    const idx = DATA.groupProduk.indexOf(r);
+    return `
+    <tr>
+      <td><a href="#" class="row-link" data-edit="${idx}" style="color:var(--blue);font-weight:600;">${r.kode}</a></td>
+      <td>${r.nama || 'Non'}</td>
+      <td>${r.keterangan || ''}</td>
+      <td><button class="icon-btn edit" data-edit="${idx}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function tplGrpPager(page, totalPages){
+  if(totalPages <= 1) return '';
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+  let nums = '';
+  for(let p = start; p <= end; p++){
+    nums += `<button class="${p===page?'active':''}" data-grppage="${p}">${p}</button>`;
+  }
+  return `
+    <button data-grppage="1" ${page<=1?'disabled':''}>First</button>
+    <button data-grppage="${Math.max(1,page-1)}" ${page<=1?'disabled':''}>Previous</button>
+    ${nums}
+    <button data-grppage="${Math.min(totalPages,page+1)}" ${page>=totalPages?'disabled':''}>Next</button>
+    <button data-grppage="${totalPages}" ${page>=totalPages?'disabled':''}>Last</button>`;
+}
+
+function tplGrpModal(mode, row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${mode==='edit'?'Ubah Group Produk':'Tambah Group Produk'}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Kode Group Produk</label>
+          <input type="text" id="fGrpKode" value="${row.kode}" ${mode==='edit'?'readonly style="background:#f2f3f6;color:var(--text-light);"':'placeholder="Contoh: SMBK02"'}>
+          <div class="form-error" id="fGrpKodeErr">Kode Group Produk wajib diisi</div>
+        </div>
+        <div class="form-group">
+          <label>Nama Group Produk</label>
+          <input type="text" id="fGrpNama" value="${row.nama||''}" placeholder="Contoh: KELOMPOK PRODUK MINUMAN">
+          <div class="form-error" id="fGrpNamaErr">Nama Group Produk wajib diisi</div>
+        </div>
+        <div class="form-group">
+          <label>Keterangan</label>
+          <textarea id="fGrpKeterangan" rows="2" placeholder="Keterangan (opsional)">${row.keterangan||''}</textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-primary" id="modalSave">Simpan</button>
+      </div>
+    </div>`;
+}
+
+function tplGrpDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Group Produk</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Group Produk <b>${row.kode}</b> — ${row.nama||'Non'}?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
       </div>
     </div>`;
 }
@@ -8676,6 +9713,138 @@ function tplKbInfoModal(title,text){
 }
 
 /* =========================================================
+   TEMPLATE (HTML saja) — Daftar Kategory Reordering Sheet
+   (Persediaan Barang > Master & Setting > Daftar Kategory
+   Reordering Sheet, page:'kategoriReorderingSheet'). Semua
+   fungsi di file ini HANYA menyusun & mengembalikan markup
+   HTML (string), TIDAK ada logic/DOM-binding di sini. Logic-nya
+   ada di file sebelah: kategori-reordering-sheet.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Sebelumnya placeholder murni. Dibangun 2026-08-21 sesuai
+   screenshot MASERP "Daftar Kategory Reordering Sheet" (Total
+   Record: 7, kolom Kode/Nama Kategori Reordering Sheet dengan
+   ikon sort di kedua header + Grup Penjualan, Ubah/Hapus).
+   Field ini KHAS regulasi distribusi farmasi (ALKES/BBS/NON/
+   ODP/OOT/PRE/PSI = kategori pengawasan BPOM, BUKAN kategori
+   produk FMCG biasa) — mengikuti keputusan user yang sama
+   (dikonfirmasi via AskUserQuestion sebelumnya untuk Zat
+   Kandungan Aktif dkk.): dibangun apa adanya karena ini
+   singkatan regulasi standar industri, bukan data rahasia
+   perusahaan demo lain. TIDAK terhubung ke filter "Kat.
+   Reordering Sheet" di modul Reordering Sheet (yang sudah
+   fungsional nyata memakai kategori FMCG dari `DATA.persediaan`)
+   — lihat komentar lengkap di atas array `DATA.kategoriReorderingSheet`
+   di js/data.js. Kode dientri MANUAL (bukan auto-generate
+   sequential — kode aslinya singkatan bermakna seperti ALKES/
+   PSI, bukan nomor urut), readonly di mode Ubah — pola sama
+   Supplier Group/Master Divisi.
+========================================================= */
+
+function tplKrsPage(){
+  return `
+    <div class="breadcrumb">Home / <b>Daftar Kategory Reordering Sheet</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('box',15)} Daftar Kategory Reordering Sheet</h3>
+        <button class="btn-primary" id="btnKrsAdd">${icon('plus',14)} Tambah</button>
+      </div>
+      <div class="table-toolbar">
+        <select id="krsPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="krsSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>${tplKrsSortHeader('Kode Kategori Reordering Sheet','kode')}</th>
+          <th>${tplKrsSortHeader('Nama Kategori Reordering Sheet','nama')}</th>
+          <th>Grup Penjualan</th>
+          <th style="width:70px;">Ubah</th>
+          <th style="width:70px;">Hapus</th>
+        </tr></thead>
+        <tbody id="krsTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="krsPager"></div><div id="krsTotal"></div></div>
+    </div>`;
+}
+
+function tplKrsSortHeader(label, field){
+  return `<span class="krs-sort-header" data-krs-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="krsSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplKrsRows(rows, page, pageSize){
+  if(!rows.length) return `<tr><td colspan="5" style="color:var(--text-light);">Tidak ada data Kategori Reordering Sheet</td></tr>`;
+  const start = (page-1)*pageSize;
+  return rows.slice(start, start+pageSize).map((r) => {
+    const idx = DATA.kategoriReorderingSheet.indexOf(r);
+    return `
+    <tr>
+      <td><a href="#" class="row-link" data-edit="${idx}" style="color:var(--blue);font-weight:600;">${r.kode}</a></td>
+      <td>${r.nama || 'Non'}</td>
+      <td>${r.grupPenjualan || ''}</td>
+      <td><button class="icon-btn edit" data-edit="${idx}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function tplKrsPager(page, totalPages){
+  if(totalPages <= 1) return '';
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+  let nums = '';
+  for(let p = start; p <= end; p++){
+    nums += `<button class="${p===page?'active':''}" data-krspage="${p}">${p}</button>`;
+  }
+  return `
+    <button data-krspage="1" ${page<=1?'disabled':''}>First</button>
+    <button data-krspage="${Math.max(1,page-1)}" ${page<=1?'disabled':''}>Previous</button>
+    ${nums}
+    <button data-krspage="${Math.min(totalPages,page+1)}" ${page>=totalPages?'disabled':''}>Next</button>
+    <button data-krspage="${totalPages}" ${page>=totalPages?'disabled':''}>Last</button>`;
+}
+
+function tplKrsModal(mode, row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${mode==='edit'?'Ubah Kategori Reordering Sheet':'Tambah Kategori Reordering Sheet'}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Kode Kategori Reordering Sheet</label>
+          <input type="text" id="fKrsKode" value="${row.kode}" ${mode==='edit'?'readonly style="background:#f2f3f6;color:var(--text-light);"':'placeholder="Contoh: OTC"'}>
+          <div class="form-error" id="fKrsKodeErr">Kode Kategori Reordering Sheet wajib diisi</div>
+        </div>
+        <div class="form-group">
+          <label>Nama Kategori Reordering Sheet</label>
+          <input type="text" id="fKrsNama" value="${row.nama||''}" placeholder="Contoh: OBAT BEBAS TERBATAS">
+          <div class="form-error" id="fKrsNamaErr">Nama Kategori Reordering Sheet wajib diisi</div>
+        </div>
+        <div class="form-group">
+          <label>Grup Penjualan</label>
+          <input type="text" id="fKrsGrup" value="${row.grupPenjualan||''}" placeholder="Contoh: GROUP OTC">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-primary" id="modalSave">Simpan</button>
+      </div>
+    </div>`;
+}
+
+function tplKrsDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Kategori Reordering Sheet</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Kategori Reordering Sheet <b>${row.kode}</b> — ${row.nama||'Non'}?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
    TEMPLATE (HTML saja) — Master Customer (Customer & Penjualan >
    Master & Setting > Customer, page 'customers'). Semua fungsi di
    file ini HANYA menyusun & mengembalikan markup HTML (string),
@@ -10390,6 +11559,619 @@ function tplWlDeleteConfirm(row){
         <button class="btn-secondary" id="modalCancel">Batal</button>
         <button class="btn-danger" id="modalDelete">Hapus</button>
       </div>
+    </div>`;
+}
+
+/* =========================================================
+   TEMPLATE (HTML saja) — Pelunasan Utang (Supplier & Pembelian >
+   Daftar Transaksi > Pelunasan Utang, key page:'pelunasanUtang').
+   Semua fungsi di file ini HANYA menyusun & mengembalikan markup HTML
+   (string) atau helper murni, TIDAK ada DOM-binding di sini. Logic-nya
+   ada di file sebelah: pelunasan-utang.js
+
+   3 screenshot MASERP yang dikirim user ("Pelunasan Utang" — form dgn
+   tabel 1 baris Akun Bank/Nama Bank/Mata Uang/Kurs/dst, tab "Lunasi
+   Beberapa Faktur" (aktif di 1 screenshot, supplier "PT SATORIA ANEKA
+   INDUSTRI" 6 faktur total Rp 500.000.000) & "Rincian Jurnal Akun"
+   (aktif di screenshot lain, radio Otomatis/Manual + tombol "Buat
+   Jurnal"), dan "Daftar Pembayaran Utang" — list 10 kolom, Total
+   Record: 14) dijadikan acuan LAYOUT. Modul ini adalah KEBALIKAN
+   (mirror) dari Penerimaan Piutang (Customer & Penjualan > Daftar
+   Transaksi, lihat penerimaan-piutang.template.js utk catatan desain
+   AR yang jadi acuan pola di sini) — di sana Piutang (AR) dilunasi
+   Customer, di sini Utang (AP) dilunasi ke Supplier. Prefix fungsi/id
+   "Pu"/"pu" (Pelunasan Utang), TIDAK bertabrakan dgn "po" (Purchase
+   Order) atau "pp" (Penerimaan Piutang) yang sudah ada.
+
+   Semua nama Supplier & data contoh di screenshot ("PT SATORIA ANEKA
+   INDUSTRI", "NOVAPHARIN", "PT AMANAH FARMA BERSAUDARA", "TRAVELOKA",
+   "88 Catering Service", "PT INTISUMBER HASIL SEMPURNA GLOBAL", "PT
+   RODA HAMMERINDO JAYA SURABAYA" — demo perusahaan FARMASI/lain yang
+   tidak ada hubungannya dengan DBM) DIGANTI TOTAL dengan Supplier DBM
+   sendiri (DATA.suppliers yang sudah ada — PT Sumber Pangan Nusantara
+   dkk, FMCG/sembako, bukan RS/apotek/agen tiket), pola yang sama
+   seperti Penerimaan Piutang.
+
+   Sebelumnya page:'pelunasanUtang' cuma placeholder (menu Supplier &
+   Pembelian > Daftar Transaksi > Pelunasan Utang, lihat js/menu.js) —
+   SEKARANG modul CRUD sungguhan yang BENAR-BENAR chained ke
+   DATA.pembelianBPB: field `pembayaran` yang SUDAH ADA di tiap baris
+   DATA.pembelianBPB (default 0, dibuat sejak modul Pembelian Melalui
+   BPB dibangun) dipakai persis seperti `dibayar` pada DATA.invoices di
+   Penerimaan Piutang — Faktur Pembelian (26/PU/{cabang}/08/{urut})
+   yang masih ada sisa (jumlahTotal - pembayaran > 0) untuk Supplier yg
+   dipilih, itulah yang muncul di tab "Lunasi Beberapa Faktur". TIDAK
+   ada konsep "posted" di Pembelian Melalui BPB (beda dari Invoice yang
+   perlu di-Posting dulu) — begitu Faktur BPB disimpan, otomatis sudah
+   "final" & boleh dilunasi.
+
+   CATATAN PENTING soal data model: DATA.pembelianBPB menyimpan Supplier
+   sebagai STRING NAMA (field `supplier`, bukan kode) — bukan keputusan
+   modul ini, itu struktur yang sudah ada sejak Pembelian Melalui BPB
+   dibangun. Jadi puOutstandingInvoicesForSupplier() (pelunasan-
+   utang.js) mencocokkan berdasarkan NAMA, bukan kode — konsekuensinya:
+   kalau 2 supplier di DATA.suppliers punya nama identik modul ini akan
+   keliru; tidak masalah di mockup ini karena semua nama supplier unik.
+
+   Penomoran No. Transaksi: screenshot asli "26/CL-HO/08/00197" (tanda
+   hubung antara "CL" & kode cabang, SAMA seperti screenshot asli
+   Penerimaan Piutang) — dinormalisasi jadi "26/CL/{KodeCabang}/08/
+   {urut}" (garis miring penuh, konsisten dgn modul lain), PERSIS pola
+   yang dipakai Penerimaan Piutang. PU_CABANG_LIST/PU_CABANG_CODE di
+   bawah SALINAN LOKAL dari PP_CABANG_LIST/PP_CABANG_CODE (bukan
+   reference lintas modul — urutan lazy-load antar modul tidak
+   terjamin, lihat catatan "local copy" yang sama di semua modul
+   transaksi lain). Counter urut DIHITUNG SENDIRI dari
+   DATA.pelunasanUtang (independen dari counter Penerimaan Piutang) —
+   di ERP sungguhan 2 modul ini idealnya beda skema penomoran, tapi
+   screenshot MASERP asli literally memakai prefix "CL" utk keduanya,
+   jadi dibiarkan sama demi konsistensi visual dgn sumbernya; TIDAK
+   masalah kalau kebetulan menghasilkan angka urut yang sama dgn
+   Penerimaan Piutang karena keduanya array data yang terpisah total.
+
+   Format angka uang di MODUL INI SENGAJA TANPA prefix "Rp" (persis
+   pola ppNum2()/invNum2() — beda dari rp() global di data.js yang
+   selalu pakai "Rp "), meniru screenshot: setiap kotak/kolom angka
+   (Jumlah Keluar Kas, Setelah Konversi Kurs, Total Utang Dibayar,
+   Reminder, Pembayaran, Jumlah Debit/Kredit Jurnal, kolom "Jumlah" di
+   list) selalu tampil polos 2 desimal ("500.000.000,00") tanpa "Rp".
+   Kolom "Jumlah" di list ditampilkan dalam tanda kurung warna merah
+   ("(500.000.000,00)") — meniru screenshot asli yang menandai nominal
+   ini sebagai KAS KELUAR (uang berkurang), beda dari list Penerimaan
+   Piutang yang tidak memakai warna karena uang masuk.
+
+   Kurs/Kurs Target: seluruh mockup ini IDR-only, jadi field ini tetap
+   dekoratif ("1,00") persis pola Penerimaan Piutang.
+
+   "Pengajuan Pembayaran": di screenshot field ini HANYA tampil sebagai
+   label + bar abu-abu tanpa kotak input yang jelas (kemungkinan
+   scrollbar tabel yang render tumpang-tindih di screenshot, resolusi
+   asli kurang jelas) — diinterpretasikan di sini sebagai picker
+   dekoratif input+ikon cari (persis pola "Penagihan Piutang" milik
+   Penerimaan Piutang, tplPuDecorativePicker() SALINAN LOKAL dari
+   tplPpDecorativePicker(), dataset SELALU kosong karena belum ada
+   modul master "Pengajuan Pembayaran" tersendiri di mockup ini).
+
+   Kolom "Jurnal" di baris tabel Akun Bank SENGAJA auto-terisi read-
+   only dari Akun Bank yang dipilih, sama seperti Penerimaan Piutang —
+   begitu Akun Bank dipilih, akun GL Kas/Bank yang dikredit otomatis
+   sudah jelas.
+
+   Tab "Rincian Jurnal Akun" di sini BEDA dari Penerimaan Piutang (yang
+   versi sederhana read-only-Otomatis-saja) — screenshot modul ini
+   justru menunjukkan pola LENGKAP radio Jurnal Otomatis/Manual +
+   tombol "Buat Jurnal" + tabel editable (tambah/hapus baris, cari Akun
+   GL) SAMA PERSIS dgn tab Jurnal Invoice (lihat catatan desain lengkap
+   di header tplInvJurnalContent(), invoice.template.js) — jadi pola
+   INI yang dicontek (bukan pola PP), disalin lokal sebagai
+   tplPuJurnalContent()/tplPuAkunPicker() dgn prefix "pu"/"Pu".
+
+   Mode Otomatis (default) SELALU 2 baris: Debit "Hutang Usaha"
+   (2110001, akun yg sudah ada di DATA.akunGL, dipetakan dari kode demo
+   screenshot "210201" yang skema 6-digit farmasi lain) sebesar Jumlah
+   Keluar Kas, Kredit Akun Bank terpilih sebesar nilai yang sama — jadi
+   "Jumlah Debit - Kredit" mode Otomatis SELALU 0 (2 baris memang saling
+   menyeimbangkan by construction, kebalikan arah dari jurnal Penerimaan
+   Piutang: di sana Bank(D)/Piutang(K), di sini Hutang(D)/Bank(K) —
+   melunasi utang = utang berkurang (Debit) & kas berkurang (Kredit)).
+   Mode Manual membuka tabel jadi editable via tplPuAkunPicker() (list
+   DATA.akunGL) — sama seperti Invoice, tidak ada validasi wajib-balance.
+
+   TIDAK ADA fitur "PPN/PPH ditanggung Supplier" di modul ini — 3
+   screenshot yang dikirim user tidak menunjukkan panel semacam itu
+   (beda dari Penerimaan Piutang yang memang ada screenshot fitur PPN/
+   PPH ditanggung Customer terpisah) — jangan ditambahkan tanpa
+   permintaan/screenshot baru dari user.
+
+   Keterangan & checkbox "Total keluar kas tidak sama dengan utang?" di
+   screenshot TAMPIL PERSIS SAMA baik saat tab Faktur maupun tab Jurnal
+   aktif — artinya keduanya field DI LUAR/DI BAWAH kedua tab (bukan
+   bagian dari tab Faktur seperti field serupa di Penerimaan Piutang),
+   diletakkan di level form (tplPuForm()) SETELAH kedua div tab, SAMA
+   posisinya dgn checkbox itu di Penerimaan Piutang tapi Keterangan-nya
+   dipindah keluar. Keterangan default "Pembayaran Hutang Dagang" (teks
+   statis, bisa diedit user) — BEDA dari Penerimaan Piutang yang
+   otomatis menyusun teks dari nomor faktur (ppComposeKeterangan) karena
+   screenshot list "Daftar Pembayaran Utang" menunjukkan mayoritas baris
+   memang literally berketerangan sama "Pembayaran Hutang Dagang" apa
+   adanya, jadi tidak perlu logic compose yang lebih rumit.
+
+   Hapus (Hapus button di list): MENGEMBALIKAN `pembayaran` yang sudah
+   dikurangkan ke tiap Faktur Pembelian BPB yang direferensikan
+   row.fakturs[].fakturNo (kalau ada) sebelum baris Pelunasan Utang itu
+   sendiri dihapus — persis pola reversal Penerimaan Piutang, supaya
+   pembukuan AP tetap konsisten.
+
+   Cetak (tombol "Cetak dan Simpan" di form, tombol Cetak di list)
+   SENGAJA dekoratif (buka modal info) — sama seperti Penerimaan
+   Piutang, belum ada contoh cetakan Pelunasan Utang yang dikirim user.
+
+   14 baris sample DATA.pelunasanUtang (lihat js/data.js): 2 baris
+   PERTAMA benar-benar chained ke DATA.pembelianBPB sungguhan (PT Sumber
+   Pangan Nusantara 26/PU/HO/08/00001 dilunasi PENUH; PT Wilmar Nabati
+   Indonesia 26/PU/HO/08/00002 dilunasi SEBAGIAN, sisa 3.158.500 masih
+   outstanding) — membuktikan mekanisme `pembayaran` ini nyata, bukan
+   sekadar teks dekoratif, pola identik 2 baris pembuktian Penerimaan
+   Piutang. 12 baris sisanya historis/dekoratif (Juli & Agustus 2026,
+   fakturNo kosong tidak terhubung ke DATA.pembelianBPB) menyebar ke 12
+   Supplier DBM yang ada supaya representatif. CV Distribusi Sentosa
+   (26/PU/HO/08/00003, sisa 1.332.000) & PT Sasa Inti (26/PU/HO/08/00004,
+   sisa 4.509.918) SENGAJA dibiarkan belum tersentuh sama sekali —
+   pilih salah satu Supplier ini saat mencoba "+ Tambah" untuk melihat
+   faktur itu muncul nyata di tab Lunasi Beberapa Faktur.
+========================================================= */
+
+const PU_CABANG_LIST = ['Head Office','Surabaya','Bandung','Medan','Makassar','Semarang','Tangerang','Sidoarjo'];
+const PU_CABANG_CODE = {'Head Office':'HO','Surabaya':'SBY','Bandung':'BDG','Medan':'MDN','Makassar':'MKS','Semarang':'SMG','Tangerang':'TGR','Sidoarjo':'SDA'};
+const PU_TIPE_TRANSAKSI_LIST = ['Keluar Kas','Keluar Giro','Keluar Cek'];
+
+function puNum2(n){ return Number(n||0).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function puAkunNama(kode){ const a = DATA.akunGL.find(x => x.kode === kode); return a ? a.nama : ''; }
+
+/* =====================================================================
+   LIST PAGE — "Daftar Pembayaran Utang" (judul list PERSIS screenshot,
+   beda dari label menu "Pelunasan Utang" — pola sama seperti Penerimaan
+   Piutang yg judul list "Daftar Penerimaan Piutang" tapi label menu
+   "Penerimaan Piutang").
+===================================================================== */
+function tplPelunasanUtangListPage(){
+  return `
+    <div class="breadcrumb">Home / <b>Pelunasan Utang</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('wallet',15)} Daftar Pembayaran Utang</h3>
+        <div class="toolbar-actions">
+          <select class="chip-btn" id="puPeriodFilter"><option>Agustus 2026</option></select>
+          <button class="btn-primary" id="btnPuAdd">${icon('plus',14)} Tambah</button>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <select id="puPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="puSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>No. Transaksi</th>
+          <th>No. Faktur</th>
+          <th>Supplier</th>
+          <th>Tgl. Trn.</th>
+          <th>Keterangan</th>
+          <th>Jumlah</th>
+          <th>Lihat</th>
+          <th>Cetak</th>
+          <th>Ubah</th>
+          <th>Hapus</th>
+        </tr></thead>
+        <tbody id="puTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager"><button>First</button><button>Previous</button><button class="active">1</button><button>Next</button><button>Last</button></div><div id="puTotal"></div></div>
+    </div>`;
+}
+
+function tplPuRows(rows){
+  if(!rows.length) return `<tr><td colspan="10" style="color:var(--text-light);">Tidak ada data Pelunasan Utang</td></tr>`;
+  return rows.map((r,i)=>{
+    const fakturLabel = (r.fakturs && r.fakturs.length)
+      ? r.fakturs[0].no + (r.fakturs.length>1 ? ` <span style="color:var(--text-light);">(+${r.fakturs.length-1} lainnya)</span>` : '')
+      : '';
+    return `
+    <tr>
+      <td><b style="color:var(--blue);">${r.no}</b></td>
+      <td>${fakturLabel}</td>
+      <td>${r.supplierNama||''}</td>
+      <td>${r.tgl||''}</td>
+      <td style="max-width:220px;">
+        <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${r.keterangan||''}">${r.keterangan||''}</div>
+        <span class="status-pill status-paid">${r.status||'Approved'}</span>
+      </td>
+      <td class="text-right" style="white-space:nowrap;color:var(--red);">(${puNum2(r.totalPembayaran)})</td>
+      <td>
+        <div style="display:inline-flex;gap:2px;">
+          <button class="icon-btn view" data-view="${i}" title="Lihat">${icon('eye',15)}</button>
+          <button class="icon-btn view" data-view-menu="${i}" title="Pilihan Lihat" style="width:18px;">${icon('chevronDown',12)}</button>
+        </div>
+      </td>
+      <td>
+        <div style="display:inline-flex;gap:2px;">
+          <button class="icon-btn print" data-print="${i}" title="Cetak">${icon('printer',15)}</button>
+          <button class="icon-btn print" data-print-menu="${i}" title="Pilihan Cetak" style="width:18px;">${icon('chevronDown',12)}</button>
+        </div>
+      </td>
+      <td><button class="icon-btn edit" data-edit="${i}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del="${i}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* =====================================================================
+   FORM (full page, sama pola dgn Invoice/Penerimaan Piutang)
+===================================================================== */
+function tplPuForm(mode, row){
+  const isAdd = mode === 'add';
+  const isView = mode === 'view';
+  const dis = isView ? 'disabled' : '';
+  const titleAction = isAdd ? 'Tambah' : (isView ? 'Lihat' : 'Ubah');
+  const headerIcon = isAdd ? 'plus' : (isView ? 'eye' : 'edit');
+  const totals = puRecalcTotals(row);
+  return `
+    <div class="breadcrumb">Home / Pelunasan Utang / <b>${titleAction}</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon(headerIcon,15)} ${isAdd?'+ Pelunasan Utang':'Pelunasan Utang'}</h3>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+          <h2 style="font-size:20px;font-weight:700;color:var(--navy);margin:0;">Pelunasan Utang</h2>
+          <div class="form-group" style="max-width:220px;min-width:180px;margin-bottom:0;">
+            <label>Cabang</label>
+            <select id="fPuCabang" ${(!isAdd)?'disabled':dis}>${PU_CABANG_LIST.map(c=>`<option ${row.cabang===c?'selected':''}>${c}</option>`).join('')}</select>
+          </div>
+        </div>
+
+        <div class="form-grid-3" style="margin-top:18px;grid-template-columns:repeat(4,1fr);">
+          <div class="form-group">
+            <label>No. Transaksi</label>
+            <div class="input-with-btn">
+              <input type="text" id="fPuNo" value="${row.no||''}" readonly>
+              ${isAdd ? `<button type="button" class="icon-btn edit" id="puRefreshNo" title="Generate Ulang Nomor">${icon('refreshCw',13)}</button>` : ''}
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Tgl. Trn.</label>
+            <div class="input-with-btn">
+              <input type="text" id="fPuTgl" value="${row.tgl||''}" ${dis}>
+              <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',13)}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Dari Supplier</label>
+            <div class="input-with-btn">
+              <input type="text" id="fPuSupplier" value="${row.supplierNama||''}" placeholder="Pilih Supplier" readonly>
+              ${!isView ? `<button type="button" class="icon-btn edit" id="puSupplierSearch" title="Cari Supplier">${icon('search',13)}</button>` : ''}
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Pengajuan Pembayaran</label>
+            <div class="input-with-btn">
+              <input type="text" id="fPuPengajuan" value="${row.noPengajuanPembayaran||''}" placeholder="Pengajuan Pembayaran" readonly>
+              ${!isView ? `<button type="button" class="icon-btn edit" id="puPengajuanSearch" title="Cari Pengajuan Pembayaran">${icon('search',13)}</button>` : ''}
+            </div>
+          </div>
+        </div>
+
+        <div class="card-header dark-header" style="border-radius:6px;margin:18px 0 0;">
+          <h3>${icon('bank',14)} Rekening Pengeluaran</h3>
+        </div>
+        <div class="table-wrap" style="margin:6px 0 6px;">
+          <table class="po-item-table">
+            <thead><tr>
+              <th>Akun Bank</th>
+              <th>Nama Bank</th>
+              <th>Mata Uang</th>
+              <th>Kurs (IDR)</th>
+              <th>Kurs Target (IDR)</th>
+              <th>Tipe Transaksi</th>
+              <th>Cair?</th>
+              <th>No. Giro</th>
+              <th>Tgl. Jth. Tempo</th>
+              <th>Jurnal</th>
+              <th>Keterangan</th>
+            </tr></thead>
+            <tbody id="puBankRowBody">${tplPuBankRow(row, isView)}</tbody>
+          </table>
+        </div>
+        <a href="#" id="puTambahBankBaru" class="link-add" style="${isView?'display:none;':''}">${icon('plus',12)} Tambah Bank Baru</a>
+
+        <div style="display:flex;justify-content:flex-end;margin:14px 0 0;">
+          <div style="max-width:280px;width:100%;">
+            <div class="form-group">
+              <label>Jumlah Keluar Kas</label>
+              <input type="text" id="puJumlahKeluarKas" value="${puNum2(totals.jumlahKeluarKas)}" readonly style="text-align:right;font-weight:700;">
+            </div>
+            <div class="form-group">
+              <label>Setelah Konversi Kurs</label>
+              <input type="text" id="puSetelahKonversi" value="${puNum2(totals.setelahKonversi)}" readonly style="text-align:right;">
+            </div>
+          </div>
+        </div>
+
+        <div class="inv-tabs">
+          <button type="button" class="inv-tab-btn active" id="puTabFakturBtn">Lunasi Beberapa Faktur</button>
+          <button type="button" class="inv-tab-btn" id="puTabJurnalBtn">Rincian Jurnal Akun</button>
+        </div>
+
+        <div id="puTabFakturContent">${tplPuFakturTab(row, isView, totals)}</div>
+        <div id="puTabJurnalContent" style="display:none;">${tplPuJurnalContent(row)}</div>
+
+        <table class="field-table" style="margin-top:16px;">
+          <tr><td class="flabel">Keterangan</td><td><textarea id="fPuKeterangan" class="po-textarea" rows="2" ${isView?'disabled':''}>${row.keterangan||''}</textarea></td></tr>
+        </table>
+
+        <div style="font-size:11.8px;color:var(--text-light);margin-top:4px;line-height:1.7;">
+          <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="fPuTidakSama" ${row.jumlahTidakSama?'checked':''} style="width:auto;margin-top:2px;" ${dis}>
+            <span>Total keluar kas tidak sama dengan utang dapat disimpan?</span>
+          </label>
+        </div>
+      </div>
+      <div class="card-footer" style="display:flex;gap:10px;justify-content:flex-end;padding:14px 20px;border-top:1px solid var(--border);">
+        ${!isView ? `
+          <button type="button" class="btn-teal" id="puCetakSimpan">Cetak dan Simpan</button>
+          <button type="button" class="btn-primary" id="puSimpan">Simpan</button>
+        ` : ''}
+        <button type="button" class="btn-secondary" id="puBatalkan">${isView?'Tutup':'Batalkan'}</button>
+      </div>
+    </div>`;
+}
+
+function tplPuBankRow(row, isView){
+  const dis = isView ? 'disabled' : '';
+  const bank = puFindKasBank(row.akunBankKode);
+  const cairForced = row.tipeTransaksi === 'Keluar Kas';
+  return `
+    <tr>
+      <td style="min-width:110px;">
+        <div class="input-with-btn">
+          <input type="text" id="fPuAkunBank" value="${row.akunBankKode||''}" readonly>
+          ${!isView ? `<button type="button" class="icon-btn edit" id="puAkunBankSearch" title="Cari Akun Bank">${icon('search',13)}</button>` : ''}
+        </div>
+      </td>
+      <td style="min-width:150px;"><input type="text" id="fPuNamaBank" value="${bank?bank.nama:''}" readonly></td>
+      <td style="width:90px;"><select id="fPuMataUang" disabled><option>IDR</option></select></td>
+      <td style="width:90px;"><input type="text" id="fPuKurs" value="${puNum2(1)}" disabled></td>
+      <td style="width:110px;"><input type="text" id="fPuKursTarget" value="${puNum2(row.kursTarget!=null?row.kursTarget:1)}" ${dis}></td>
+      <td style="min-width:130px;">
+        <select id="fPuTipeTransaksi" ${dis}>${PU_TIPE_TRANSAKSI_LIST.map(t=>`<option ${row.tipeTransaksi===t?'selected':''}>${t}</option>`).join('')}</select>
+      </td>
+      <td style="width:60px;text-align:center;"><input type="checkbox" id="fPuCair" ${row.cair?'checked':''} ${(cairForced||isView)?'disabled':''}></td>
+      <td style="width:110px;"><input type="text" id="fPuNoGiro" value="${row.noGiro||''}" ${dis}></td>
+      <td style="width:120px;"><input type="text" id="fPuTglJthTempo" value="${row.tglJthTempoBank||''}" ${dis}></td>
+      <td style="min-width:140px;"><input type="text" id="fPuJurnal" value="${bank?(bank.kode+' - '+bank.nama):''}" readonly></td>
+      <td style="min-width:200px;"><input type="text" id="fPuBankKeterangan" value="${row.keterangan||''}" readonly></td>
+    </tr>`;
+}
+
+function tplPuFakturTab(row, isView, totals){
+  return `
+    <div class="table-toolbar">
+      <select id="puFakturPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+      <input type="text" id="puFakturSearch" placeholder="Pencarian Global">
+    </div>
+    <div class="table-wrap">
+      <table class="po-item-table">
+        <thead><tr>
+          <th>Bayar</th>
+          <th>No. Faktur</th>
+          <th>No. Faktur Supplier</th>
+          <th>Tipe Transaksi</th>
+          <th>Tgl. Trn. Faktur</th>
+          <th>Tgl. Jth. Tempo</th>
+          <th>Mata Uang</th>
+          <th>Kurs</th>
+          <th>Reminder</th>
+          <th>Pembayaran</th>
+        </tr></thead>
+        <tbody id="puFakturBody">${tplPuFakturRows(row.fakturs, isView)}</tbody>
+      </table>
+    </div>
+    <div id="puFakturEmptyHint" style="font-size:11.5px;color:var(--text-light);margin-top:6px;${(row.fakturs&&row.fakturs.length)?'display:none;':''}">Belum ada faktur yang dipilih — pilih Supplier terlebih dahulu, Faktur Pembelian yang masih ada sisa akan tampil di sini.</div>
+
+    <div style="display:flex;justify-content:flex-end;margin-top:14px;">
+      <div style="max-width:280px;width:100%;">
+        <div class="form-group">
+          <label>Total Utang Dibayar</label>
+          <input type="text" id="puTotalUtangDibayar" value="${puNum2(totals.jumlahUtang)}" readonly style="text-align:right;font-weight:700;color:var(--blue);">
+        </div>
+      </div>
+    </div>`;
+}
+
+function tplPuFakturRows(fakturs, isView){
+  if(!fakturs || !fakturs.length) return `<tr><td colspan="10" style="color:var(--text-light);">Belum ada faktur — pilih Supplier terlebih dahulu.</td></tr>`;
+  return fakturs.map((f,idx)=>`
+    <tr>
+      <td style="text-align:center;width:50px;"><input type="checkbox" data-pu-bayar="${idx}" ${f.checked?'checked':''} ${isView?'disabled':''}></td>
+      <td>${f.no}</td>
+      <td>${f.supplierNoFaktur||''}</td>
+      <td>${f.tipeTransaksi||'Beli Kredit'}</td>
+      <td>${f.tglFaktur||''}</td>
+      <td>${f.tglJthTempo||''}</td>
+      <td>${f.mataUang||'IDR'}</td>
+      <td>${puNum2(f.kurs!=null?f.kurs:1)}</td>
+      <td class="text-right">${puNum2(f.reminder)}</td>
+      <td style="width:130px;"><input type="text" data-pu-pembayaran="${idx}" value="${puNum2(f.pembayaran)}" style="text-align:right;" ${(!f.checked||isView)?'disabled':''}></td>
+    </tr>`).join('');
+}
+
+/* Tab "Rincian Jurnal Akun" — pola LENGKAP disalin dari tplInvJurnalContent()
+   (invoice.template.js: radio Otomatis/Manual + "Buat Jurnal" + tabel
+   editable mode Manual) — BUKAN pola sederhana read-only milik Penerimaan
+   Piutang, lihat catatan besar di header file ini kenapa. SALINAN LOKAL
+   (prefix "Pu"/"pu"), bukan reference cross-file. */
+function puJurnalTotals(row){
+  const list = row.jurnalAkun || [];
+  const debit = list.reduce((s,r)=>s+(+r.debit||0),0);
+  const kredit = list.reduce((s,r)=>s+(+r.kredit||0),0);
+  return { debit, kredit, selisih: debit - kredit };
+}
+
+function tplPuJurnalRow(entry, idx, isManual){
+  if(isManual){
+    return `
+    <tr data-pu-jurnal-row="${idx}">
+      <td style="min-width:120px;">
+        <div class="input-with-btn">
+          <input type="text" data-pu-jurnal-kode="${idx}" value="${entry.kodeAkun||''}" readonly>
+          <button type="button" class="icon-btn edit" data-pu-jurnal-akun-search="${idx}" title="Cari Akun GL">${icon('search',12)}</button>
+        </div>
+      </td>
+      <td style="min-width:180px;"><input type="text" data-pu-jurnal-nama="${idx}" value="${entry.namaAkun||''}" readonly></td>
+      <td style="min-width:170px;"><input type="text" data-pu-jurnal-ket="${idx}" value="${entry.keterangan||''}"></td>
+      <td style="width:140px;"><input type="number" step="0.01" min="0" data-pu-jurnal-debit="${idx}" value="${entry.debit||0}"></td>
+      <td style="width:140px;"><input type="number" step="0.01" min="0" data-pu-jurnal-kredit="${idx}" value="${entry.kredit||0}"></td>
+      <td style="width:36px;"><button type="button" class="icon-btn del" data-pu-jurnal-del="${idx}" title="Hapus Baris">${icon('trash',14)}</button></td>
+    </tr>`;
+  }
+  return `
+    <tr>
+      <td style="min-width:120px;"><input type="text" value="${entry.kodeAkun||''}" readonly></td>
+      <td style="min-width:180px;"><input type="text" value="${entry.namaAkun||''}" readonly></td>
+      <td style="min-width:170px;"><input type="text" value="${entry.keterangan||''}" readonly></td>
+      <td style="width:140px;"><input type="text" value="${puNum2(entry.debit||0)}" readonly style="text-align:right;"></td>
+      <td style="width:140px;"><input type="text" value="${puNum2(entry.kredit||0)}" readonly style="text-align:right;"></td>
+    </tr>`;
+}
+
+function tplPuJurnalRows(list, isManual){
+  if(!list || !list.length) return `<tr><td colspan="${isManual?6:5}" style="color:var(--text-light);">Belum ada rincian jurnal — klik "Buat Jurnal".</td></tr>`;
+  return list.map((entry,idx) => tplPuJurnalRow(entry, idx, isManual)).join('');
+}
+
+function tplPuJurnalContent(row){
+  const isManual = row.jurnalMode === 'manual';
+  const totals = puJurnalTotals(row);
+  const selisihColor = Math.abs(totals.selisih) > 0.004 ? 'var(--red)' : 'var(--text)';
+  return `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0 14px;flex-wrap:wrap;">
+      <div class="radio-inline" style="padding-top:0;">
+        <label><input type="radio" name="puJurnalMode" id="puJurnalOtomatis" value="otomatis" ${!isManual?'checked':''}> Jurnal Otomatis</label>
+        <label><input type="radio" name="puJurnalMode" id="puJurnalManual" value="manual" ${isManual?'checked':''}> Jurnal Manual</label>
+      </div>
+      <button type="button" class="btn-teal" id="puBuatJurnal">${icon('refreshCw',13)} Buat Jurnal</button>
+    </div>
+    <div class="table-wrap">
+      <table class="po-item-table">
+        <thead><tr>
+          <th>Kode Akun</th><th>Nama Akun</th><th>Keterangan</th><th>Jumlah Debit</th><th>Jumlah Kredit</th>${isManual?'<th></th>':''}
+        </tr></thead>
+        <tbody id="puJurnalBody">${tplPuJurnalRows(row.jurnalAkun, isManual)}</tbody>
+      </table>
+    </div>
+    ${isManual ? `<a href="#" id="puJurnalAddRow" class="link-add">${icon('plus',12)} Tambah Akun Baru</a>` : ''}
+    <div style="max-width:260px;margin:16px 0 0 auto;">
+      <div style="font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:4px;">Jumlah Debit - Kredit</div>
+      <input type="text" id="puJurnalSelisih" value="${puNum2(totals.selisih)}" readonly style="text-align:right;font-weight:700;color:${selisihColor};">
+    </div>`;
+}
+
+/* Picker Akun GL untuk tabel Rincian Jurnal Akun (mode Manual) — SALINAN
+   LOKAL dari tplInvAkunPicker()/tplInvAkunPickerRows() (invoice.template.js). */
+function tplPuAkunPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Akun GL</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="puAkunPickerSearch" placeholder="Cari kode / nama akun..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Akun</th><th>Kat.</th><th></th></tr></thead>
+            <tbody id="puAkunPickerBody">${tplPuAkunPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplPuAkunPickerRows(list){
+  if(!list.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada akun ditemukan</td></tr>`;
+  return list.map(a=>`
+    <tr>
+      <td>${a.kode}</td>
+      <td>${a.nama}</td>
+      <td>${a.kategori}</td>
+      <td><button class="btn-pick" data-pu-pick-akun="${a.kode}">Pilih</button></td>
+    </tr>`).join('');
+}
+
+/* =====================================================================
+   PICKER Supplier — SALINAN LOKAL dari tplPpCustomerPicker() (Penerimaan
+   Piutang), disesuaikan ke DATA.suppliers.
+===================================================================== */
+function tplPuSupplierPicker(list){
+  return `
+    <div class="modal-box" style="max-width:560px;">
+      <div class="modal-header"><span>Pilih Supplier</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="table-wrap" style="max-height:340px;overflow:auto;"><table>
+          <thead><tr><th>Kode</th><th>Nama Supplier</th><th>Wilayah</th><th></th></tr></thead>
+          <tbody>${list.map(s=>`<tr><td>${s.kode}</td><td>${s.nama}</td><td>${s.wilayah||''}</td><td><button class="btn-pick" data-pick-supplier="${s.kode}">Pilih</button></td></tr>`).join('')}</tbody>
+        </table></div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplPuAkunBankPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Akun Bank</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;"><table>
+          <thead><tr><th>Kode</th><th>Nama</th><th>Tipe</th><th>No. Rekening</th><th></th></tr></thead>
+          <tbody>${list.map(b=>`<tr><td>${b.kode}</td><td>${b.nama}</td><td>${b.tipeRekening}</td><td>${b.noRekening||'-'}</td><td><button class="btn-pick" data-pick-akunbank="${b.kode}">Pilih</button></td></tr>`).join('')}</tbody>
+        </table></div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+/* Picker dekoratif "Pengajuan Pembayaran" — SALINAN LOKAL dari pola
+   tplPpDecorativePicker(), dataset SELALU kosong (belum ada modul master
+   "Pengajuan Pembayaran" di mockup ini — lihat catatan besar di header
+   file ini). */
+function tplPuDecorativePicker(title, list){
+  return `
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="table-wrap"><table>
+          <thead><tr><th>No.</th><th>Tanggal</th><th>Keterangan</th></tr></thead>
+          <tbody>${list.length ? '' : `<tr><td colspan="3" style="color:var(--text-light);">Tidak ada data</td></tr>`}</tbody>
+        </table></div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplPuDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Pelunasan Utang</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Pelunasan Utang <b>${row.no}</b>? Sisa utang pada Faktur Pembelian terkait akan dikembalikan seperti semula.</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+function tplPuInfoModal(title, text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer"><button class="btn-primary" id="modalOk">Mengerti</button></div>
     </div>`;
 }
 
@@ -15479,6 +17261,139 @@ function tplSrEdPicker(options){
 }
 
 /* =========================================================
+   TEMPLATE (HTML saja) — Sub-Farmakoterapi (Persediaan Barang
+   > Master & Setting > Sub-Farmakoterapi, page:'subFarmakoterapi').
+   Semua fungsi di file ini HANYA menyusun & mengembalikan
+   markup HTML (string), TIDAK ada logic/DOM-binding di sini.
+   Logic-nya ada di file sebelah: sub-farmakoterapi.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Sebelumnya placeholder murni. Dibangun 2026-08-21 sesuai 2
+   screenshot MASERP "Master Sub-Farmakoterapi" (Total Record:
+   150, page-size 20 default + Pencarian Global, pager
+   First/Previous/1..7/Next/Last). Pola HTML/CRUD/pager/sort
+   disalin dari Zat Kandungan Aktif & Farmakoterapi (menu
+   tetangga yang dibangun lebih dulu di sesi yang sama) — lihat
+   catatan keputusan data lengkap di zat-kandungan-aktif.template.js
+   & js/data.js, tidak diulang di sini.
+
+   CATATAN PERBAIKAN vs screenshot: header kolom ASLI di
+   screenshot MASERP tertulis "Kode Zat Kandungan Aktif"/"Nama
+   Zat Kandungan Aktif" — ini bug label copy-paste di sistem
+   asli (data di dalamnya jelas Sub-Farmakoterapi berkode SFK).
+   Di mockup ini header DIPERBAIKI jadi "Kode/Nama
+   Sub-Farmakoterapi" karena ini typo UI, bukan bagian dari data
+   yang perlu direproduksi apa adanya (beda kasus dgn kode
+   legacy ANTASIDADOENSLF/COTRIM400-80 di Zat Kandungan Aktif
+   yang memang datanya, bukan label).
+
+   BEDA lain dari Zat Kandungan Aktif/Farmakoterapi: page-size
+   default 20 (bukan 10), opsi dropdown 10/20/50 — sesuai nilai
+   "20" yang aktif di screenshot. TIDAK ada downsize volume:
+   Total Record: 150 dipertahankan utuh (150÷20=8 halaman,
+   window pager tampil "1..7"+Next di halaman 1 — persis
+   screenshot).
+========================================================= */
+
+function tplSfkPage(){
+  return `
+    <div class="breadcrumb">Home / <b>Sub-Farmakoterapi</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('box',15)} Master Sub-Farmakoterapi</h3>
+        <button class="btn-primary" id="btnSfkAdd">${icon('plus',14)} Tambah</button>
+      </div>
+      <div class="table-toolbar">
+        <select id="sfkPageSize"><option>10</option><option selected>20</option><option>50</option></select>
+        <input type="text" id="sfkSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>${tplSfkSortHeader('Kode Sub-Farmakoterapi','kode')}</th>
+          <th>${tplSfkSortHeader('Nama Sub-Farmakoterapi','nama')}</th>
+          <th style="width:70px;">Ubah</th>
+          <th style="width:70px;">Hapus</th>
+        </tr></thead>
+        <tbody id="sfkTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="sfkPager"></div><div id="sfkTotal"></div></div>
+    </div>`;
+}
+
+function tplSfkSortHeader(label, field){
+  return `<span class="sfk-sort-header" data-sfk-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="sfkSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplSfkRows(rows, page, pageSize){
+  if(!rows.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada data Sub-Farmakoterapi</td></tr>`;
+  const start = (page-1)*pageSize;
+  return rows.slice(start, start+pageSize).map((r) => {
+    const idx = DATA.subFarmakoterapi.indexOf(r);
+    return `
+    <tr>
+      <td><a href="#" class="row-link" data-edit="${idx}" style="color:var(--blue);font-weight:600;">${r.kode}</a></td>
+      <td>${r.nama || 'Non'}</td>
+      <td><button class="icon-btn edit" data-edit="${idx}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* Pager windowed maks. 7 nomor halaman, plus First/Previous/Next/
+   Last — pola sama seperti Zat Kandungan Aktif (tplZkaPager()). */
+function tplSfkPager(page, totalPages){
+  if(totalPages <= 1) return '';
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+  let nums = '';
+  for(let p = start; p <= end; p++){
+    nums += `<button class="${p===page?'active':''}" data-sfkpage="${p}">${p}</button>`;
+  }
+  return `
+    <button data-sfkpage="1" ${page<=1?'disabled':''}>First</button>
+    <button data-sfkpage="${Math.max(1,page-1)}" ${page<=1?'disabled':''}>Previous</button>
+    ${nums}
+    <button data-sfkpage="${Math.min(totalPages,page+1)}" ${page>=totalPages?'disabled':''}>Next</button>
+    <button data-sfkpage="${totalPages}" ${page>=totalPages?'disabled':''}>Last</button>`;
+}
+
+function tplSfkModal(mode, row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${mode==='edit'?'Ubah Sub-Farmakoterapi':'Tambah Sub-Farmakoterapi'}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Kode Sub-Farmakoterapi</label>
+          <input type="text" id="fSfkKode" value="${row.kode}" readonly style="background:#f2f3f6;color:var(--text-light);">
+        </div>
+        <div class="form-group">
+          <label>Nama Sub-Farmakoterapi</label>
+          <input type="text" id="fSfkNama" value="${row.nama||''}" placeholder="Contoh: Antagonis Reseptor H2">
+          <div class="form-error" id="fSfkNamaErr">Nama Sub-Farmakoterapi wajib diisi</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-primary" id="modalSave">Simpan</button>
+      </div>
+    </div>`;
+}
+
+function tplSfkDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Sub-Farmakoterapi</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Sub-Farmakoterapi <b>${row.kode}</b> — ${row.nama||'Non'}?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
    TEMPLATE (HTML saja) — Supplier Group (Supplier & Pembelian)
    Semua fungsi di file ini HANYA menyusun & mengembalikan
    markup HTML (string), TIDAK ada logic/DOM-binding/data
@@ -16208,6 +18123,141 @@ function openAkGlInfo(title,text){
   document.getElementById('modalClose').onclick=closeModal;
   document.getElementById('modalOk').onclick=closeModal;
   overlay.onclick=(e)=>{ if(e.target===overlay) closeModal(); };
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Bentuk Sediaan (Persediaan Barang > Master
+   & Setting > Bentuk Sediaan, page:'bentukSediaan'). Dimuat
+   otomatis (lazy-load) oleh core.js saat menu ini pertama kali
+   diklik — lihat PAGE_MODULES di js/core.js. Markup HTML-nya
+   ada di file sebelah: bentuk-sediaan.template.js.
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Pola CRUD + pencarian/pagination/sort SAMA persis dengan Zat
+   Kandungan Aktif (zat-kandungan-aktif.js) — lihat catatan
+   lengkap di sana. Beda: kode 3-digit (`SED000` dst., bukan
+   5-digit) & default page-size 25 (lihat sedPageSize()).
+========================================================= */
+
+let sedState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+
+function renderBentukSediaanPage(){
+  content.innerHTML = tplSedPage();
+  sedState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+  document.getElementById('btnSedAdd').onclick = () => openSedModal('add');
+  document.getElementById('sedPageSize').onchange = () => { sedState.page = 1; renderSedTable(); };
+  document.getElementById('sedSearch').oninput = (e) => {
+    sedState.search = e.target.value.trim().toLowerCase();
+    sedState.page = 1;
+    renderSedTable();
+  };
+  document.querySelectorAll('[data-sed-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.sedSort;
+    if(sedState.sortField === field){
+      sedState.sortDir = sedState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      sedState.sortField = field;
+      sedState.sortDir = 'asc';
+    }
+    sedState.page = 1;
+    renderSedTable();
+  });
+  renderSedTable();
+}
+
+function sedPageSize(){
+  const sel = document.getElementById('sedPageSize');
+  return sel ? parseInt(sel.value, 10) : 25;
+}
+
+function sedFilteredSortedRows(){
+  const q = sedState.search;
+  let rows = !q ? DATA.bentukSediaan.slice() : DATA.bentukSediaan.filter(r =>
+    (r.kode||'').toLowerCase().includes(q) || (r.nama||'').toLowerCase().includes(q));
+  const field = sedState.sortField;
+  const dir = sedState.sortDir === 'desc' ? -1 : 1;
+  rows.sort((a,b) => (a[field]||'').localeCompare(b[field]||'', 'id') * dir);
+  return rows;
+}
+
+function renderSedTable(){
+  const perPage = sedPageSize();
+  const filtered = sedFilteredSortedRows();
+  const totalPages = Math.max(1, Math.ceil(filtered.length/perPage));
+  if(sedState.page > totalPages) sedState.page = totalPages;
+  if(sedState.page < 1) sedState.page = 1;
+
+  document.getElementById('sedTbody').innerHTML = tplSedRows(filtered, sedState.page, perPage);
+  document.getElementById('sedTotal').textContent = `Total Record: ${filtered.length}`;
+  document.getElementById('sedPager').innerHTML = tplSedPager(sedState.page, totalPages);
+
+  ['kode','nama'].forEach(f => {
+    const el = document.getElementById(`sedSortIcon_${f}`);
+    if(!el) return;
+    if(sedState.sortField === f){
+      el.innerHTML = sedState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+
+  const tbody = document.getElementById('sedTbody');
+  tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = (e) => { e.preventDefault(); openSedModal('edit', +b.dataset.edit); });
+  tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => openSedDeleteConfirm(+b.dataset.del));
+
+  const pager = document.getElementById('sedPager');
+  pager.querySelectorAll('[data-sedpage]').forEach(b => b.onclick = () => { sedState.page = +b.dataset.sedpage; renderSedTable(); });
+}
+
+function sedNextKode(){
+  const nums = DATA.bentukSediaan
+    .map(r => /^SED(\d{3})$/i.exec(r.kode))
+    .filter(Boolean)
+    .map(m => parseInt(m[1], 10));
+  const next = nums.length ? Math.max(...nums) + 1 : 0;
+  return 'SED' + String(next).padStart(3, '0');
+}
+
+function openSedModal(mode, idx){
+  closeModal();
+  const row = mode === 'edit' ? DATA.bentukSediaan[idx] : { kode: sedNextKode(), nama: '' };
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplSedModal(mode, row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalSave').onclick = () => {
+    const nama = document.getElementById('fSedNama').value.trim();
+    if(!nama){ document.getElementById('fSedNamaErr').style.display = 'block'; return; }
+    if(mode === 'add'){
+      DATA.bentukSediaan.push({ kode: row.kode, nama });
+    } else {
+      DATA.bentukSediaan[idx].nama = nama;
+    }
+    closeModal();
+    renderSedTable();
+  };
+}
+
+function openSedDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.bentukSediaan[idx];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplSedDeleteConfirm(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.bentukSediaan.splice(idx, 1);
+    closeModal();
+    renderSedTable();
+  };
 }
 
 /* =========================================================
@@ -17725,6 +19775,140 @@ function openFktInfo(title, text){
 }
 
 /* =========================================================
+   LOGIC (JS saja) — Farmakoterapi (Persediaan Barang > Master
+   & Setting > Farmakoterapi, page:'farmakoterapi'). Dimuat
+   otomatis (lazy-load) oleh core.js saat menu ini pertama kali
+   diklik — lihat PAGE_MODULES di js/core.js. Markup HTML-nya
+   ada di file sebelah: farmakoterapi.template.js.
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Pola CRUD + pencarian/pagination/sort SAMA persis dengan Zat
+   Kandungan Aktif (zat-kandungan-aktif.js) — lihat catatan
+   lengkap di sana, tidak diulang di sini.
+========================================================= */
+
+let frkState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+
+function renderFarmakoterapiPage(){
+  content.innerHTML = tplFrkPage();
+  frkState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+  document.getElementById('btnFrkAdd').onclick = () => openFrkModal('add');
+  document.getElementById('frkPageSize').onchange = () => { frkState.page = 1; renderFrkTable(); };
+  document.getElementById('frkSearch').oninput = (e) => {
+    frkState.search = e.target.value.trim().toLowerCase();
+    frkState.page = 1;
+    renderFrkTable();
+  };
+  document.querySelectorAll('[data-frk-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.frkSort;
+    if(frkState.sortField === field){
+      frkState.sortDir = frkState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      frkState.sortField = field;
+      frkState.sortDir = 'asc';
+    }
+    frkState.page = 1;
+    renderFrkTable();
+  });
+  renderFrkTable();
+}
+
+function frkPageSize(){
+  const sel = document.getElementById('frkPageSize');
+  return sel ? parseInt(sel.value, 10) : 10;
+}
+
+function frkFilteredSortedRows(){
+  const q = frkState.search;
+  let rows = !q ? DATA.farmakoterapi.slice() : DATA.farmakoterapi.filter(r =>
+    (r.kode||'').toLowerCase().includes(q) || (r.nama||'').toLowerCase().includes(q));
+  const field = frkState.sortField;
+  const dir = frkState.sortDir === 'desc' ? -1 : 1;
+  rows.sort((a,b) => (a[field]||'').localeCompare(b[field]||'', 'id') * dir);
+  return rows;
+}
+
+function renderFrkTable(){
+  const perPage = frkPageSize();
+  const filtered = frkFilteredSortedRows();
+  const totalPages = Math.max(1, Math.ceil(filtered.length/perPage));
+  if(frkState.page > totalPages) frkState.page = totalPages;
+  if(frkState.page < 1) frkState.page = 1;
+
+  document.getElementById('frkTbody').innerHTML = tplFrkRows(filtered, frkState.page, perPage);
+  document.getElementById('frkTotal').textContent = `Total Record: ${filtered.length}`;
+  document.getElementById('frkPager').innerHTML = tplFrkPager(frkState.page, totalPages);
+
+  ['kode','nama'].forEach(f => {
+    const el = document.getElementById(`frkSortIcon_${f}`);
+    if(!el) return;
+    if(frkState.sortField === f){
+      el.innerHTML = frkState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+
+  const tbody = document.getElementById('frkTbody');
+  tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = (e) => { e.preventDefault(); openFrkModal('edit', +b.dataset.edit); });
+  tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => openFrkDeleteConfirm(+b.dataset.del));
+
+  const pager = document.getElementById('frkPager');
+  pager.querySelectorAll('[data-frkpage]').forEach(b => b.onclick = () => { frkState.page = +b.dataset.frkpage; renderFrkTable(); });
+}
+
+function frkNextKode(){
+  const nums = DATA.farmakoterapi
+    .map(r => /^FRK(\d{5})$/i.exec(r.kode))
+    .filter(Boolean)
+    .map(m => parseInt(m[1], 10));
+  const next = nums.length ? Math.max(...nums) + 1 : 0;
+  return 'FRK' + String(next).padStart(5, '0');
+}
+
+function openFrkModal(mode, idx){
+  closeModal();
+  const row = mode === 'edit' ? DATA.farmakoterapi[idx] : { kode: frkNextKode(), nama: '' };
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplFrkModal(mode, row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalSave').onclick = () => {
+    const nama = document.getElementById('fFrkNama').value.trim();
+    if(!nama){ document.getElementById('fFrkNamaErr').style.display = 'block'; return; }
+    if(mode === 'add'){
+      DATA.farmakoterapi.push({ kode: row.kode, nama });
+    } else {
+      DATA.farmakoterapi[idx].nama = nama;
+    }
+    closeModal();
+    renderFrkTable();
+  };
+}
+
+function openFrkDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.farmakoterapi[idx];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplFrkDeleteConfirm(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.farmakoterapi.splice(idx, 1);
+    closeModal();
+    renderFrkTable();
+  };
+}
+
+/* =========================================================
    LOGIC (JS saja) — GL Kategori (General Ledger > Master & Setting).
    Dimuat otomatis (lazy-load) oleh core.js saat menu ini
    pertama kali diklik — lihat PAGE_MODULES di js/core.js.
@@ -17781,6 +19965,142 @@ function openGlKategoriHelp(){
   document.getElementById('modalClose').onclick=closeModal;
   document.getElementById('modalOk').onclick=closeModal;
   overlay.onclick=(e)=>{ if(e.target===overlay) closeModal(); };
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Group Produk (Persediaan Barang > Master &
+   Setting > Group Produk, page:'groupProduk'). Dimuat otomatis
+   (lazy-load) oleh core.js saat menu ini pertama kali diklik —
+   lihat PAGE_MODULES di js/core.js. Markup HTML-nya ada di file
+   sebelah: group-produk.template.js.
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Pola CRUD sederhana pola Master Divisi (kode manual, wajib
+   unik, readonly di mode Ubah) + sort kolom, sama seperti
+   Kategori Reordering Sheet.
+========================================================= */
+
+let grpState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+
+function renderGroupProdukPage(){
+  content.innerHTML = tplGrpPage();
+  grpState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+  document.getElementById('btnGrpAdd').onclick = () => openGrpModal('add');
+  document.getElementById('grpPageSize').onchange = () => { grpState.page = 1; renderGrpTable(); };
+  document.getElementById('grpSearch').oninput = (e) => {
+    grpState.search = e.target.value.trim().toLowerCase();
+    grpState.page = 1;
+    renderGrpTable();
+  };
+  document.querySelectorAll('[data-grp-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.grpSort;
+    if(grpState.sortField === field){
+      grpState.sortDir = grpState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      grpState.sortField = field;
+      grpState.sortDir = 'asc';
+    }
+    grpState.page = 1;
+    renderGrpTable();
+  });
+  renderGrpTable();
+}
+
+function grpPageSize(){
+  const sel = document.getElementById('grpPageSize');
+  return sel ? parseInt(sel.value, 10) : 10;
+}
+
+function grpFilteredSortedRows(){
+  const q = grpState.search;
+  let rows = !q ? DATA.groupProduk.slice() : DATA.groupProduk.filter(r =>
+    (r.kode||'').toLowerCase().includes(q) || (r.nama||'').toLowerCase().includes(q) || (r.keterangan||'').toLowerCase().includes(q));
+  const field = grpState.sortField;
+  const dir = grpState.sortDir === 'desc' ? -1 : 1;
+  rows.sort((a,b) => (a[field]||'').localeCompare(b[field]||'', 'id') * dir);
+  return rows;
+}
+
+function renderGrpTable(){
+  const perPage = grpPageSize();
+  const filtered = grpFilteredSortedRows();
+  const totalPages = Math.max(1, Math.ceil(filtered.length/perPage));
+  if(grpState.page > totalPages) grpState.page = totalPages;
+  if(grpState.page < 1) grpState.page = 1;
+
+  document.getElementById('grpTbody').innerHTML = tplGrpRows(filtered, grpState.page, perPage);
+  document.getElementById('grpTotal').textContent = `Total Record: ${filtered.length}`;
+  document.getElementById('grpPager').innerHTML = tplGrpPager(grpState.page, totalPages);
+
+  ['kode','nama'].forEach(f => {
+    const el = document.getElementById(`grpSortIcon_${f}`);
+    if(!el) return;
+    if(grpState.sortField === f){
+      el.innerHTML = grpState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+
+  const tbody = document.getElementById('grpTbody');
+  tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = (e) => { e.preventDefault(); openGrpModal('edit', +b.dataset.edit); });
+  tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => openGrpDeleteConfirm(+b.dataset.del));
+
+  const pager = document.getElementById('grpPager');
+  pager.querySelectorAll('[data-grppage]').forEach(b => b.onclick = () => { grpState.page = +b.dataset.grppage; renderGrpTable(); });
+}
+
+function openGrpModal(mode, idx){
+  closeModal();
+  const row = mode === 'edit' ? DATA.groupProduk[idx] : { kode: '', nama: '', keterangan: '' };
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplGrpModal(mode, row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalSave').onclick = () => {
+    const kode = document.getElementById('fGrpKode').value.trim().toUpperCase();
+    const nama = document.getElementById('fGrpNama').value.trim();
+    const keterangan = document.getElementById('fGrpKeterangan').value.trim();
+    let ok = true;
+    if(!kode){ document.getElementById('fGrpKodeErr').textContent = 'Kode Group Produk wajib diisi'; document.getElementById('fGrpKodeErr').style.display = 'block'; ok = false; }
+    else if(mode === 'add' && DATA.groupProduk.some(r => r.kode.toUpperCase() === kode)){
+      document.getElementById('fGrpKodeErr').textContent = 'Kode sudah dipakai, gunakan kode lain'; document.getElementById('fGrpKodeErr').style.display = 'block'; ok = false;
+    } else {
+      document.getElementById('fGrpKodeErr').style.display = 'none';
+    }
+    if(!nama){ document.getElementById('fGrpNamaErr').style.display = 'block'; ok = false; } else { document.getElementById('fGrpNamaErr').style.display = 'none'; }
+    if(!ok) return;
+    if(mode === 'add'){
+      DATA.groupProduk.push({ kode, nama, keterangan });
+    } else {
+      DATA.groupProduk[idx].nama = nama;
+      DATA.groupProduk[idx].keterangan = keterangan;
+    }
+    closeModal();
+    renderGrpTable();
+  };
+}
+
+function openGrpDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.groupProduk[idx];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplGrpDeleteConfirm(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.groupProduk.splice(idx, 1);
+    closeModal();
+    renderGrpTable();
+  };
 }
 
 /* =========================================================
@@ -19379,6 +21699,143 @@ function openKbInfo(title, text){
 }
 
 /* =========================================================
+   LOGIC (JS saja) — Daftar Kategory Reordering Sheet
+   (Persediaan Barang > Master & Setting > Daftar Kategory
+   Reordering Sheet, page:'kategoriReorderingSheet'). Dimuat
+   otomatis (lazy-load) oleh core.js saat menu ini pertama kali
+   diklik — lihat PAGE_MODULES di js/core.js. Markup HTML-nya
+   ada di file sebelah: kategori-reordering-sheet.template.js.
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Pola CRUD + sort SAMA seperti Zat Kandungan Aktif, TAPI kode
+   dientri MANUAL (bukan auto-generate) — lihat validasi
+   `fKrsKodeErr` (wajib isi + wajib unik) di `openKrsModal()`.
+========================================================= */
+
+let krsState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+
+function renderKategoriReorderingSheetPage(){
+  content.innerHTML = tplKrsPage();
+  krsState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+  document.getElementById('btnKrsAdd').onclick = () => openKrsModal('add');
+  document.getElementById('krsPageSize').onchange = () => { krsState.page = 1; renderKrsTable(); };
+  document.getElementById('krsSearch').oninput = (e) => {
+    krsState.search = e.target.value.trim().toLowerCase();
+    krsState.page = 1;
+    renderKrsTable();
+  };
+  document.querySelectorAll('[data-krs-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.krsSort;
+    if(krsState.sortField === field){
+      krsState.sortDir = krsState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      krsState.sortField = field;
+      krsState.sortDir = 'asc';
+    }
+    krsState.page = 1;
+    renderKrsTable();
+  });
+  renderKrsTable();
+}
+
+function krsPageSize(){
+  const sel = document.getElementById('krsPageSize');
+  return sel ? parseInt(sel.value, 10) : 10;
+}
+
+function krsFilteredSortedRows(){
+  const q = krsState.search;
+  let rows = !q ? DATA.kategoriReorderingSheet.slice() : DATA.kategoriReorderingSheet.filter(r =>
+    (r.kode||'').toLowerCase().includes(q) || (r.nama||'').toLowerCase().includes(q) || (r.grupPenjualan||'').toLowerCase().includes(q));
+  const field = krsState.sortField;
+  const dir = krsState.sortDir === 'desc' ? -1 : 1;
+  rows.sort((a,b) => (a[field]||'').localeCompare(b[field]||'', 'id') * dir);
+  return rows;
+}
+
+function renderKrsTable(){
+  const perPage = krsPageSize();
+  const filtered = krsFilteredSortedRows();
+  const totalPages = Math.max(1, Math.ceil(filtered.length/perPage));
+  if(krsState.page > totalPages) krsState.page = totalPages;
+  if(krsState.page < 1) krsState.page = 1;
+
+  document.getElementById('krsTbody').innerHTML = tplKrsRows(filtered, krsState.page, perPage);
+  document.getElementById('krsTotal').textContent = `Total Record: ${filtered.length}`;
+  document.getElementById('krsPager').innerHTML = tplKrsPager(krsState.page, totalPages);
+
+  ['kode','nama'].forEach(f => {
+    const el = document.getElementById(`krsSortIcon_${f}`);
+    if(!el) return;
+    if(krsState.sortField === f){
+      el.innerHTML = krsState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+
+  const tbody = document.getElementById('krsTbody');
+  tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = (e) => { e.preventDefault(); openKrsModal('edit', +b.dataset.edit); });
+  tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => openKrsDeleteConfirm(+b.dataset.del));
+
+  const pager = document.getElementById('krsPager');
+  pager.querySelectorAll('[data-krspage]').forEach(b => b.onclick = () => { krsState.page = +b.dataset.krspage; renderKrsTable(); });
+}
+
+function openKrsModal(mode, idx){
+  closeModal();
+  const row = mode === 'edit' ? DATA.kategoriReorderingSheet[idx] : { kode: '', nama: '', grupPenjualan: '' };
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplKrsModal(mode, row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalSave').onclick = () => {
+    const kode = document.getElementById('fKrsKode').value.trim().toUpperCase();
+    const nama = document.getElementById('fKrsNama').value.trim();
+    const grupPenjualan = document.getElementById('fKrsGrup').value.trim();
+    let ok = true;
+    if(!kode){ document.getElementById('fKrsKodeErr').textContent = 'Kode Kategori Reordering Sheet wajib diisi'; document.getElementById('fKrsKodeErr').style.display = 'block'; ok = false; }
+    else if(mode === 'add' && DATA.kategoriReorderingSheet.some(r => r.kode.toUpperCase() === kode)){
+      document.getElementById('fKrsKodeErr').textContent = 'Kode sudah dipakai, gunakan kode lain'; document.getElementById('fKrsKodeErr').style.display = 'block'; ok = false;
+    } else {
+      document.getElementById('fKrsKodeErr').style.display = 'none';
+    }
+    if(!nama){ document.getElementById('fKrsNamaErr').style.display = 'block'; ok = false; } else { document.getElementById('fKrsNamaErr').style.display = 'none'; }
+    if(!ok) return;
+    if(mode === 'add'){
+      DATA.kategoriReorderingSheet.push({ kode, nama, grupPenjualan });
+    } else {
+      DATA.kategoriReorderingSheet[idx].nama = nama;
+      DATA.kategoriReorderingSheet[idx].grupPenjualan = grupPenjualan;
+    }
+    closeModal();
+    renderKrsTable();
+  };
+}
+
+function openKrsDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.kategoriReorderingSheet[idx];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplKrsDeleteConfirm(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.kategoriReorderingSheet.splice(idx, 1);
+    closeModal();
+    renderKrsTable();
+  };
+}
+
+/* =========================================================
    LOGIC (JS saja) — Master Customer (Customer & Penjualan > Master
    & Setting > Customer, page 'customers'). Dimuat otomatis (lazy-
    load) oleh core.js saat menu ini pertama kali diklik — lihat
@@ -20667,6 +23124,495 @@ function openWlDeleteConfirm(idx){
     closeModal();
     renderWlTable();
   };
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Pelunasan Utang (Supplier & Pembelian > Daftar
+   Transaksi > Pelunasan Utang). Dimuat otomatis (lazy-load) oleh
+   core.js saat menu ini pertama kali diklik — lihat PAGE_MODULES di
+   js/core.js. Markup HTML-nya ada di file sebelah:
+   pelunasan-utang.template.js (tplPelunasanUtangListPage/tplPuRows/
+   tplPuForm/dst, plus konstanta PU_CABANG_LIST/PU_TIPE_TRANSAKSI_LIST
+   & catatan desain lengkap di headernya — termasuk kenapa tab Jurnal
+   di modul ini memakai pola LENGKAP Otomatis/Manual milik Invoice,
+   bukan pola sederhana milik Penerimaan Piutang).
+
+   Alur inti (BENAR-BENAR reaktif, bukan dekoratif — kebalikan/mirror
+   dari Penerimaan Piutang, lihat penerimaan-piutang.js utk pola AR yg
+   jadi acuan di sini):
+   1) Pilih Supplier (openPuSupplierPicker) -> row.fakturs diisi ulang
+      dari puOutstandingInvoicesForSupplier(nama) — Faktur Pembelian
+      (DATA.pembelianBPB) milik Supplier itu yang masih ada sisa
+      (jumlahTotal - pembayaran > 0). Semua baris hasil default
+      checked:true & Pembayaran = Reminder penuh.
+   2) Centang/nilai Pembayaran diubah -> puRecalcTotals() menghitung
+      ulang Jumlah Keluar Kas/Setelah Konversi Kurs/Total Utang
+      Dibayar, ditampilkan reaktif.
+   3) Simpan (puSave) -> baris baru di-push/replace ke
+      DATA.pelunasanUtang DAN `pembayaran` tiap Faktur Pembelian yang
+      dicentang (row.fakturs[].fakturNo) BENAR-BENAR ditambah sebesar
+      Pembayaran-nya di DATA.pembelianBPB — supaya lain kali modul ini
+      dibuka, faktur yang sudah lunas tidak muncul lagi di tab Lunasi
+      Beberapa Faktur untuk supplier itu.
+   4) Hapus (openPuDeleteConfirm) -> kebalikannya: `pembayaran` yang
+      tadi ditambahkan DIKEMBALIKAN ke Faktur Pembelian terkait sebelum
+      baris Pelunasan Utang itu sendiri di-splice, supaya pembukuan AP
+      tetap konsisten.
+========================================================= */
+
+function renderPelunasanUtangPage(){
+  renderPuList();
+}
+
+function renderPuList(){
+  content.innerHTML = tplPelunasanUtangListPage();
+  document.getElementById('btnPuAdd').onclick = () => openPuForm('add');
+  renderPuTable();
+}
+
+function renderPuTable(){
+  const tbody = document.getElementById('puTbody');
+  const total = document.getElementById('puTotal');
+  tbody.innerHTML = tplPuRows(DATA.pelunasanUtang);
+  total.textContent = `Total Record: ${DATA.pelunasanUtang.length}`;
+  tbody.querySelectorAll('[data-view]').forEach(b => b.onclick = () => openPuForm('view', +b.dataset.view));
+  tbody.querySelectorAll('[data-view-menu]').forEach(b => b.onclick = () => openPuForm('view', +b.dataset.viewMenu));
+  tbody.querySelectorAll('[data-print]').forEach(b => b.onclick = () => {
+    const r = DATA.pelunasanUtang[+b.dataset.print];
+    openPuInfo('Cetak Pelunasan Utang', `Preview PDF Pelunasan Utang <b>${r.no}</b> akan tersedia di sini.`);
+  });
+  tbody.querySelectorAll('[data-print-menu]').forEach(b => b.onclick = () => {
+    const r = DATA.pelunasanUtang[+b.dataset.printMenu];
+    openPuInfo('Cetak Pelunasan Utang', `Preview PDF Pelunasan Utang <b>${r.no}</b> akan tersedia di sini.`);
+  });
+  tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openPuForm('edit', +b.dataset.edit));
+  tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => openPuDeleteConfirm(+b.dataset.del));
+}
+
+/* ===== Helper murni (no DOM) ===== */
+function puGenerateNo(cabang){
+  const kode = PU_CABANG_CODE[cabang] || 'XXX';
+  const seq = DATA.pelunasanUtang.filter(r => r.cabang === cabang).length + 1;
+  return `26/CL/${kode}/08/${String(seq).padStart(5,'0')}`;
+}
+
+function puFindKasBank(kode){
+  return DATA.kasBank.find(b => b.kode === kode);
+}
+
+function puParseNum(str){
+  if(typeof str === 'number') return str;
+  const cleaned = String(str||'0').replace(/\./g,'').replace(',', '.');
+  const n = parseFloat(cleaned);
+  return Number.isFinite(n) ? n : 0;
+}
+
+/* Faktur Pembelian (DATA.pembelianBPB) yang BOLEH dilunasi via modul
+   ini: milik Supplier yang dipilih (cocok berdasarkan NAMA, lihat
+   catatan data model di header pelunasan-utang.template.js) DAN masih
+   ada sisa (jumlahTotal - pembayaran > 0). */
+function puOutstandingInvoicesForSupplier(supplierNama){
+  return DATA.pembelianBPB.filter(p => p.supplier === supplierNama && (p.jumlahTotal - (p.pembayaran||0)) > 0.004);
+}
+
+function puBuildFakturRow(p){
+  const sisa = Math.round((p.jumlahTotal - (p.pembayaran||0)) * 100) / 100;
+  return {
+    no: p.no, supplierNoFaktur: p.supplierNoFaktur||'', tipeTransaksi: 'Beli Kredit',
+    tglFaktur: p.tglFaktur, tglJthTempo: p.tglJatuhTempo,
+    mataUang: p.mataUang||'IDR', kurs: p.kurs!=null?p.kurs:1,
+    reminder: sisa, pembayaran: sisa, checked: true,
+    fakturNo: p.no,
+  };
+}
+
+function puAkunNamaFallback(kode, fallback){
+  const a = DATA.akunGL.find(x => x.kode === kode);
+  return a ? a.nama : (fallback || '');
+}
+
+function puRecalcTotals(row){
+  const fakturs = row.fakturs || [];
+  const checked = fakturs.filter(f => f.checked);
+  const jumlahKeluarKas = Math.round(checked.reduce((s,f) => s + (+f.pembayaran||0), 0) * 100) / 100;
+  const kursTarget = row.kursTarget != null ? (+row.kursTarget||1) : 1;
+  const setelahKonversi = Math.round(jumlahKeluarKas * kursTarget * 100) / 100;
+  const jumlahUtang = jumlahKeluarKas; // tidak ada potongan pajak di modul ini (lihat catatan header template)
+  return { jumlahKeluarKas, setelahKonversi, jumlahUtang };
+}
+
+/* ===== Rincian Jurnal Akun (tab kedua form) — pola LENGKAP Otomatis/
+   Manual disalin dari invBuildJurnalOtomatis()/wireInvJurnalEvents()
+   (invoice.js), lihat catatan desain lengkap di header
+   pelunasan-utang.template.js. puBuildJurnalOtomatis() SELALU dipanggil
+   ulang oleh: (1) pertama kali form dibuka, (2) tombol "Buat Jurnal",
+   (3) otomatis begitu tabel Faktur/Akun Bank berubah SELAMA
+   row.jurnalMode masih 'otomatis'. ===== */
+function puBuildJurnalOtomatis(row){
+  const totals = puRecalcTotals(row);
+  const bank = puFindKasBank(row.akunBankKode);
+  const namaBank = bank ? (bank.kode + ' - ' + bank.nama) : '(pilih Akun Bank)';
+  const ket = row.supplierNama || '';
+  row.jurnalAkun = [
+    { kodeAkun:'2110001', namaAkun: puAkunNamaFallback('2110001','Hutang Usaha'), keterangan: ket, debit: totals.jumlahUtang, kredit: 0 },
+    { kodeAkun: bank?bank.kode:'', namaAkun: namaBank, keterangan: ket, debit: 0, kredit: totals.jumlahKeluarKas },
+  ];
+}
+
+function refreshPuJurnalContent(row){
+  const el = document.getElementById('puTabJurnalContent');
+  if(!el) return;
+  el.innerHTML = tplPuJurnalContent(row);
+  wirePuJurnalEvents(row);
+}
+
+function refreshPuJurnalSelisih(row){
+  const el = document.getElementById('puJurnalSelisih');
+  if(!el) return;
+  const totals = puJurnalTotals(row);
+  el.value = puNum2(totals.selisih);
+  el.style.color = Math.abs(totals.selisih) > 0.004 ? 'var(--red)' : 'var(--text)';
+}
+
+function wirePuJurnalEvents(row){
+  const btnOto = document.getElementById('puJurnalOtomatis');
+  const btnManual = document.getElementById('puJurnalManual');
+  if(btnOto) btnOto.onchange = () => {
+    row.jurnalMode = 'otomatis';
+    puBuildJurnalOtomatis(row);
+    refreshPuJurnalContent(row);
+  };
+  if(btnManual) btnManual.onchange = () => {
+    row.jurnalMode = 'manual';
+    refreshPuJurnalContent(row);
+  };
+
+  const btnBuat = document.getElementById('puBuatJurnal');
+  if(btnBuat) btnBuat.onclick = () => {
+    puBuildJurnalOtomatis(row);
+    refreshPuJurnalContent(row);
+  };
+
+  const addRow = document.getElementById('puJurnalAddRow');
+  if(addRow) addRow.onclick = (e) => {
+    e.preventDefault();
+    row.jurnalAkun.push({ kodeAkun:'', namaAkun:'', keterangan: row.supplierNama||'', debit:0, kredit:0 });
+    refreshPuJurnalContent(row);
+  };
+
+  (row.jurnalAkun||[]).forEach((entry, idx) => {
+    const ket = document.querySelector(`[data-pu-jurnal-ket="${idx}"]`);
+    if(ket) ket.onchange = () => { entry.keterangan = ket.value; };
+    const deb = document.querySelector(`[data-pu-jurnal-debit="${idx}"]`);
+    if(deb) deb.onchange = () => { entry.debit = +deb.value || 0; refreshPuJurnalSelisih(row); };
+    const kre = document.querySelector(`[data-pu-jurnal-kredit="${idx}"]`);
+    if(kre) kre.onchange = () => { entry.kredit = +kre.value || 0; refreshPuJurnalSelisih(row); };
+    const del = document.querySelector(`[data-pu-jurnal-del="${idx}"]`);
+    if(del) del.onclick = () => { row.jurnalAkun.splice(idx,1); refreshPuJurnalContent(row); };
+    const search = document.querySelector(`[data-pu-jurnal-akun-search="${idx}"]`);
+    if(search) search.onclick = () => openPuAkunPicker(idx, row);
+  });
+}
+
+function openPuAkunPicker(idx, row){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplPuAkunPicker(DATA.akunGL);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+
+  const wireRows = () => {
+    overlay.querySelectorAll('[data-pu-pick-akun]').forEach(btn => btn.onclick = () => {
+      const kode = btn.dataset.puPickAkun;
+      row.jurnalAkun[idx].kodeAkun = kode;
+      row.jurnalAkun[idx].namaAkun = puAkunNama(kode);
+      document.getElementById('puJurnalBody').querySelector(`[data-pu-jurnal-kode="${idx}"]`).value = kode;
+      document.getElementById('puJurnalBody').querySelector(`[data-pu-jurnal-nama="${idx}"]`).value = puAkunNama(kode);
+      closeModal();
+    });
+  };
+  wireRows();
+
+  document.getElementById('puAkunPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const filtered = DATA.akunGL.filter(a => a.kode.toLowerCase().includes(q) || a.nama.toLowerCase().includes(q));
+    document.getElementById('puAkunPickerBody').innerHTML = tplPuAkunPickerRows(filtered);
+    wireRows();
+  };
+}
+
+function puBuildEmptyRow(){
+  const cabang0 = PU_CABANG_LIST[0];
+  return {
+    no: puGenerateNo(cabang0), cabang: cabang0, tgl: '21/08/2026',
+    supplierKode: '', supplierNama: '', noPengajuanPembayaran: '',
+    akunBankKode: '', tipeTransaksi: 'Keluar Kas', cair: true, noGiro: '', tglJthTempoBank: '21/08/2026',
+    fakturs: [], keterangan: 'Pembayaran Hutang Dagang',
+    jumlahTidakSama: true, kursTarget: 1, status: 'Approved',
+    jurnalMode: 'otomatis', jurnalAkun: [],
+  };
+}
+
+/* ===== FORM (full page) ===== */
+function openPuForm(mode, idx){
+  let row;
+  const isAdd = mode === 'add';
+  if(isAdd){
+    row = puBuildEmptyRow();
+  } else {
+    const src = DATA.pelunasanUtang[idx];
+    row = { ...src, fakturs: (src.fakturs||[]).map(f => ({...f})), jurnalAkun: (src.jurnalAkun||[]).map(j => ({...j})) };
+  }
+  if(!row.jurnalAkun.length && row.jurnalMode !== 'manual') puBuildJurnalOtomatis(row);
+  content.innerHTML = tplPuForm(mode, row);
+  wirePuForm(mode, idx, row);
+}
+
+function refreshPuTotalsDOM(row){
+  const totals = puRecalcTotals(row);
+  document.getElementById('puJumlahKeluarKas').value = puNum2(totals.jumlahKeluarKas);
+  document.getElementById('puSetelahKonversi').value = puNum2(totals.setelahKonversi);
+  const tud = document.getElementById('puTotalUtangDibayar');
+  if(tud) tud.value = puNum2(totals.jumlahUtang);
+  if(row.jurnalMode === 'otomatis'){
+    puBuildJurnalOtomatis(row);
+    const jurnalTab = document.getElementById('puTabJurnalContent');
+    if(jurnalTab && jurnalTab.style.display !== 'none') refreshPuJurnalContent(row);
+  }
+  return totals;
+}
+
+function refreshPuFakturTableDOM(mode, row){
+  const isView = mode === 'view';
+  document.getElementById('puFakturBody').innerHTML = tplPuFakturRows(row.fakturs, isView);
+  const hint = document.getElementById('puFakturEmptyHint');
+  if(hint) hint.style.display = (row.fakturs && row.fakturs.length) ? 'none' : '';
+  wirePuFakturRows(mode, row);
+}
+
+function wirePuFakturRows(mode, row){
+  const isView = mode === 'view';
+  if(isView) return;
+  document.querySelectorAll('[data-pu-bayar]').forEach(cb => cb.onchange = (e) => {
+    const i = +cb.dataset.puBayar;
+    row.fakturs[i].checked = e.target.checked;
+    if(e.target.checked && !row.fakturs[i].pembayaran){
+      row.fakturs[i].pembayaran = row.fakturs[i].reminder;
+    }
+    refreshPuFakturTableDOM(mode, row);
+    refreshPuTotalsDOM(row);
+  });
+  document.querySelectorAll('[data-pu-pembayaran]').forEach(inp => inp.oninput = (e) => {
+    const i = +inp.dataset.puPembayaran;
+    row.fakturs[i].pembayaran = puParseNum(e.target.value);
+    refreshPuTotalsDOM(row);
+  });
+}
+
+function wirePuForm(mode, idx, row){
+  const isAdd = mode === 'add';
+  const isView = mode === 'view';
+
+  wirePuFakturRows(mode, row);
+
+  if(!isView){
+    if(isAdd){
+      document.getElementById('fPuCabang').onchange = (e) => {
+        row.cabang = e.target.value;
+        row.no = puGenerateNo(row.cabang);
+        document.getElementById('fPuNo').value = row.no;
+      };
+      const refreshBtn = document.getElementById('puRefreshNo');
+      if(refreshBtn) refreshBtn.onclick = () => {
+        row.no = puGenerateNo(document.getElementById('fPuCabang').value);
+        document.getElementById('fPuNo').value = row.no;
+      };
+    }
+
+    document.getElementById('fPuTgl').oninput = (e) => { row.tgl = e.target.value; };
+    document.getElementById('puSupplierSearch').onclick = () => openPuSupplierPicker(mode, row);
+    const pengajuanBtn = document.getElementById('puPengajuanSearch');
+    if(pengajuanBtn) pengajuanBtn.onclick = () => openPuDecorativePicker('Pilih Pengajuan Pembayaran', []);
+
+    document.getElementById('puAkunBankSearch').onclick = () => openPuAkunBankPicker(row);
+    document.getElementById('fPuKursTarget').oninput = (e) => {
+      row.kursTarget = puParseNum(e.target.value);
+      refreshPuTotalsDOM(row);
+    };
+    document.getElementById('fPuTipeTransaksi').onchange = (e) => {
+      row.tipeTransaksi = e.target.value;
+      const cairBox = document.getElementById('fPuCair');
+      if(row.tipeTransaksi === 'Keluar Kas'){
+        row.cair = true;
+        cairBox.checked = true;
+        cairBox.disabled = true;
+      } else {
+        cairBox.disabled = false;
+      }
+    };
+    document.getElementById('fPuCair').onchange = (e) => { row.cair = e.target.checked; };
+    document.getElementById('fPuNoGiro').oninput = (e) => { row.noGiro = e.target.value; };
+    document.getElementById('fPuTglJthTempo').oninput = (e) => { row.tglJthTempoBank = e.target.value; };
+
+    const tambahBankBtn = document.getElementById('puTambahBankBaru');
+    if(tambahBankBtn) tambahBankBtn.onclick = (e) => {
+      e.preventDefault();
+      openPuInfo('Tambah Bank Baru', 'Mockup ini hanya mendukung 1 Rekening Pengeluaran per transaksi Pelunasan Utang.');
+    };
+
+    document.getElementById('fPuKeterangan').oninput = (e) => {
+      row.keterangan = e.target.value;
+      const ketBank = document.getElementById('fPuBankKeterangan');
+      if(ketBank) ketBank.value = row.keterangan;
+    };
+    document.getElementById('fPuTidakSama').onchange = (e) => { row.jumlahTidakSama = e.target.checked; };
+
+    document.getElementById('puSimpan').onclick = () => puSave(mode, idx, row, false);
+    document.getElementById('puCetakSimpan').onclick = () => puSave(mode, idx, row, true);
+  }
+
+  document.getElementById('puBatalkan').onclick = () => renderPuList();
+
+  const tabFakturBtn = document.getElementById('puTabFakturBtn');
+  const tabJurnalBtn = document.getElementById('puTabJurnalBtn');
+  const fakturContent = document.getElementById('puTabFakturContent');
+  const jurnalContent = document.getElementById('puTabJurnalContent');
+  tabFakturBtn.onclick = () => {
+    tabFakturBtn.classList.add('active'); tabJurnalBtn.classList.remove('active');
+    fakturContent.style.display = ''; jurnalContent.style.display = 'none';
+  };
+  tabJurnalBtn.onclick = () => {
+    tabJurnalBtn.classList.add('active'); tabFakturBtn.classList.remove('active');
+    if(row.jurnalMode === 'otomatis') puBuildJurnalOtomatis(row);
+    refreshPuJurnalContent(row);
+    jurnalContent.style.display = ''; fakturContent.style.display = 'none';
+  };
+}
+
+function openPuSupplierPicker(mode, row){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplPuSupplierPicker(DATA.suppliers);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  overlay.querySelectorAll('[data-pick-supplier]').forEach(btn => btn.onclick = () => {
+    const s = DATA.suppliers.find(x => x.kode === btn.dataset.pickSupplier);
+    row.supplierKode = s.kode;
+    row.supplierNama = s.nama;
+    row.fakturs = puOutstandingInvoicesForSupplier(s.nama).map(puBuildFakturRow);
+    document.getElementById('fPuSupplier').value = row.supplierNama;
+    refreshPuFakturTableDOM(mode, row);
+    refreshPuTotalsDOM(row);
+    closeModal();
+  });
+}
+
+function openPuAkunBankPicker(row){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplPuAkunBankPicker(DATA.kasBank);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  overlay.querySelectorAll('[data-pick-akunbank]').forEach(btn => btn.onclick = () => {
+    const b = DATA.kasBank.find(x => x.kode === btn.dataset.pickAkunbank);
+    row.akunBankKode = b.kode;
+    document.getElementById('fPuAkunBank').value = b.kode;
+    document.getElementById('fPuNamaBank').value = b.nama;
+    document.getElementById('fPuJurnal').value = `${b.kode} - ${b.nama}`;
+    refreshPuTotalsDOM(row);
+    closeModal();
+  });
+}
+
+function openPuDecorativePicker(title, list){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplPuDecorativePicker(title, list);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+}
+
+/* Simpan: tulis/replace baris DATA.pelunasanUtang & tambahkan
+   `pembayaran` ke tiap Faktur Pembelian yang dicentang. `withPrint`
+   cuma memicu info dekoratif tambahan — logic simpannya SAMA persis
+   dengan Simpan biasa. */
+function puSave(mode, idx, row, withPrint){
+  const totals = puRecalcTotals(row);
+  row.totalPembayaran = totals.jumlahKeluarKas;
+  row.jumlahKeluarKas = totals.jumlahKeluarKas;
+  row.jumlahUtang = totals.jumlahUtang;
+  row.fakturs = (row.fakturs||[]).filter(f => f.checked);
+
+  if(mode === 'edit'){
+    const old = DATA.pelunasanUtang[idx];
+    (old.fakturs||[]).forEach(f => {
+      if(!f.fakturNo) return;
+      const p = DATA.pembelianBPB.find(x => x.no === f.fakturNo);
+      if(p) p.pembayaran = Math.round(Math.max(0, (p.pembayaran||0) - (+f.pembayaran||0)) * 100) / 100;
+    });
+  }
+
+  row.fakturs.forEach(f => {
+    if(!f.fakturNo) return;
+    const p = DATA.pembelianBPB.find(x => x.no === f.fakturNo);
+    if(p) p.pembayaran = Math.round(((p.pembayaran||0) + (+f.pembayaran||0)) * 100) / 100;
+  });
+
+  if(mode === 'add'){
+    DATA.pelunasanUtang.unshift(row);
+  } else {
+    DATA.pelunasanUtang[idx] = row;
+  }
+
+  if(withPrint){
+    openPuInfo('Cetak Pelunasan Utang', `Preview PDF Pelunasan Utang <b>${row.no}</b> akan tersedia di sini. Data sudah tersimpan.`);
+  }
+  renderPuList();
+}
+
+function openPuDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.pelunasanUtang[idx];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplPuDeleteConfirm(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    (row.fakturs||[]).forEach(f => {
+      if(!f.fakturNo) return;
+      const p = DATA.pembelianBPB.find(x => x.no === f.fakturNo);
+      if(p) p.pembayaran = Math.round(Math.max(0, (p.pembayaran||0) - (+f.pembayaran||0)) * 100) / 100;
+    });
+    DATA.pelunasanUtang.splice(idx, 1);
+    closeModal();
+    renderPuTable();
+  };
+}
+
+function openPuInfo(title, text){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplPuInfoModal(title, text);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalOk').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
 }
 
 /* =========================================================
@@ -25532,6 +28478,141 @@ function openSrInfo(title, text){
 }
 
 /* =========================================================
+   LOGIC (JS saja) — Sub-Farmakoterapi (Persediaan Barang >
+   Master & Setting > Sub-Farmakoterapi, page:'subFarmakoterapi').
+   Dimuat otomatis (lazy-load) oleh core.js saat menu ini
+   pertama kali diklik — lihat PAGE_MODULES di js/core.js.
+   Markup HTML-nya ada di file sebelah: sub-farmakoterapi.template.js.
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Pola CRUD + pencarian/pagination/sort SAMA persis dengan Zat
+   Kandungan Aktif/Farmakoterapi — lihat catatan lengkap di
+   zat-kandungan-aktif.js. Beda: default page-size 20 (bukan 10)
+   — lihat sfkPageSize().
+========================================================= */
+
+let sfkState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+
+function renderSubFarmakoterapiPage(){
+  content.innerHTML = tplSfkPage();
+  sfkState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+  document.getElementById('btnSfkAdd').onclick = () => openSfkModal('add');
+  document.getElementById('sfkPageSize').onchange = () => { sfkState.page = 1; renderSfkTable(); };
+  document.getElementById('sfkSearch').oninput = (e) => {
+    sfkState.search = e.target.value.trim().toLowerCase();
+    sfkState.page = 1;
+    renderSfkTable();
+  };
+  document.querySelectorAll('[data-sfk-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.sfkSort;
+    if(sfkState.sortField === field){
+      sfkState.sortDir = sfkState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      sfkState.sortField = field;
+      sfkState.sortDir = 'asc';
+    }
+    sfkState.page = 1;
+    renderSfkTable();
+  });
+  renderSfkTable();
+}
+
+function sfkPageSize(){
+  const sel = document.getElementById('sfkPageSize');
+  return sel ? parseInt(sel.value, 10) : 20;
+}
+
+function sfkFilteredSortedRows(){
+  const q = sfkState.search;
+  let rows = !q ? DATA.subFarmakoterapi.slice() : DATA.subFarmakoterapi.filter(r =>
+    (r.kode||'').toLowerCase().includes(q) || (r.nama||'').toLowerCase().includes(q));
+  const field = sfkState.sortField;
+  const dir = sfkState.sortDir === 'desc' ? -1 : 1;
+  rows.sort((a,b) => (a[field]||'').localeCompare(b[field]||'', 'id') * dir);
+  return rows;
+}
+
+function renderSfkTable(){
+  const perPage = sfkPageSize();
+  const filtered = sfkFilteredSortedRows();
+  const totalPages = Math.max(1, Math.ceil(filtered.length/perPage));
+  if(sfkState.page > totalPages) sfkState.page = totalPages;
+  if(sfkState.page < 1) sfkState.page = 1;
+
+  document.getElementById('sfkTbody').innerHTML = tplSfkRows(filtered, sfkState.page, perPage);
+  document.getElementById('sfkTotal').textContent = `Total Record: ${filtered.length}`;
+  document.getElementById('sfkPager').innerHTML = tplSfkPager(sfkState.page, totalPages);
+
+  ['kode','nama'].forEach(f => {
+    const el = document.getElementById(`sfkSortIcon_${f}`);
+    if(!el) return;
+    if(sfkState.sortField === f){
+      el.innerHTML = sfkState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+
+  const tbody = document.getElementById('sfkTbody');
+  tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = (e) => { e.preventDefault(); openSfkModal('edit', +b.dataset.edit); });
+  tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => openSfkDeleteConfirm(+b.dataset.del));
+
+  const pager = document.getElementById('sfkPager');
+  pager.querySelectorAll('[data-sfkpage]').forEach(b => b.onclick = () => { sfkState.page = +b.dataset.sfkpage; renderSfkTable(); });
+}
+
+function sfkNextKode(){
+  const nums = DATA.subFarmakoterapi
+    .map(r => /^SFK(\d{5})$/i.exec(r.kode))
+    .filter(Boolean)
+    .map(m => parseInt(m[1], 10));
+  const next = nums.length ? Math.max(...nums) + 1 : 0;
+  return 'SFK' + String(next).padStart(5, '0');
+}
+
+function openSfkModal(mode, idx){
+  closeModal();
+  const row = mode === 'edit' ? DATA.subFarmakoterapi[idx] : { kode: sfkNextKode(), nama: '' };
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplSfkModal(mode, row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalSave').onclick = () => {
+    const nama = document.getElementById('fSfkNama').value.trim();
+    if(!nama){ document.getElementById('fSfkNamaErr').style.display = 'block'; return; }
+    if(mode === 'add'){
+      DATA.subFarmakoterapi.push({ kode: row.kode, nama });
+    } else {
+      DATA.subFarmakoterapi[idx].nama = nama;
+    }
+    closeModal();
+    renderSfkTable();
+  };
+}
+
+function openSfkDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.subFarmakoterapi[idx];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplSfkDeleteConfirm(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.subFarmakoterapi.splice(idx, 1);
+    closeModal();
+    renderSfkTable();
+  };
+}
+
+/* =========================================================
    LOGIC (JS saja) — Supplier Group (Supplier & Pembelian) — CRUD
    sederhana: Kode Group, Nama Group, Diskon #1, Diskon #2.
    Dimuat otomatis (lazy-load) oleh core.js saat menu ini
@@ -26174,6 +29255,7 @@ const PAGE_MODULES={
   purchaseOrder:{srcs:['js/pages/purchase-order.template.js','js/pages/purchase-order.js'], fn:'renderPurchaseOrderPage'},
   terimaBarang:{srcs:['js/pages/terima-barang.template.js','js/pages/terima-barang.js'], fn:'renderTerimaBarangPage'},
   pembelianBPB:{srcs:['js/pages/pembelian-bpb.template.js','js/pages/pembelian-bpb.js'], fn:'renderPembelianBPBPage'},
+  pelunasanUtang:{srcs:['js/pages/pelunasan-utang.template.js','js/pages/pelunasan-utang.js'], fn:'renderPelunasanUtangPage'},
   kategoriBarang:{srcs:['js/pages/kategori-barang.template.js','js/pages/kategori-barang.js'], fn:'renderKategoriBarangPage'},
   customerGroup:{srcs:['js/pages/customer-group.template.js','js/pages/customer-group.js'], fn:'renderCustomerGroupPage'},
   customers:{srcs:['js/pages/master-customer.template.js','js/pages/master-customer.js'], fn:'renderMasterCustomerPage'},
@@ -26208,6 +29290,11 @@ const PAGE_MODULES={
   penerimaanSsp:{srcs:['js/pages/penerimaan-ssp.template.js','js/pages/penerimaan-ssp.js'], fn:'renderPenerimaanSspPage'},
   reorderingSheet:{srcs:['js/pages/reordering-sheet.template.js','js/pages/reordering-sheet.js'], fn:'renderReorderingSheetPage'},
   zatKandunganAktif:{srcs:['js/pages/zat-kandungan-aktif.template.js','js/pages/zat-kandungan-aktif.js'], fn:'renderZatKandunganAktifPage'},
+  farmakoterapi:{srcs:['js/pages/farmakoterapi.template.js','js/pages/farmakoterapi.js'], fn:'renderFarmakoterapiPage'},
+  subFarmakoterapi:{srcs:['js/pages/sub-farmakoterapi.template.js','js/pages/sub-farmakoterapi.js'], fn:'renderSubFarmakoterapiPage'},
+  bentukSediaan:{srcs:['js/pages/bentuk-sediaan.template.js','js/pages/bentuk-sediaan.js'], fn:'renderBentukSediaanPage'},
+  groupProduk:{srcs:['js/pages/group-produk.template.js','js/pages/group-produk.js'], fn:'renderGroupProdukPage'},
+  kategoriReorderingSheet:{srcs:['js/pages/kategori-reordering-sheet.template.js','js/pages/kategori-reordering-sheet.js'], fn:'renderKategoriReorderingSheetPage'},
 };
 const loadedModules=new Set(Object.keys(PAGE_MODULES));
 

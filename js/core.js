@@ -109,6 +109,7 @@ const PAGE_MODULES={
   purchaseOrder:{srcs:['js/pages/purchase-order.template.js','js/pages/purchase-order.js'], fn:'renderPurchaseOrderPage'},
   terimaBarang:{srcs:['js/pages/terima-barang.template.js','js/pages/terima-barang.js'], fn:'renderTerimaBarangPage'},
   pembelianBPB:{srcs:['js/pages/pembelian-bpb.template.js','js/pages/pembelian-bpb.js'], fn:'renderPembelianBPBPage'},
+  pelunasanUtang:{srcs:['js/pages/pelunasan-utang.template.js','js/pages/pelunasan-utang.js'], fn:'renderPelunasanUtangPage'},
   kategoriBarang:{srcs:['js/pages/kategori-barang.template.js','js/pages/kategori-barang.js'], fn:'renderKategoriBarangPage'},
   customerGroup:{srcs:['js/pages/customer-group.template.js','js/pages/customer-group.js'], fn:'renderCustomerGroupPage'},
   customers:{srcs:['js/pages/master-customer.template.js','js/pages/master-customer.js'], fn:'renderMasterCustomerPage'},
@@ -143,6 +144,11 @@ const PAGE_MODULES={
   penerimaanSsp:{srcs:['js/pages/penerimaan-ssp.template.js','js/pages/penerimaan-ssp.js'], fn:'renderPenerimaanSspPage'},
   reorderingSheet:{srcs:['js/pages/reordering-sheet.template.js','js/pages/reordering-sheet.js'], fn:'renderReorderingSheetPage'},
   zatKandunganAktif:{srcs:['js/pages/zat-kandungan-aktif.template.js','js/pages/zat-kandungan-aktif.js'], fn:'renderZatKandunganAktifPage'},
+  farmakoterapi:{srcs:['js/pages/farmakoterapi.template.js','js/pages/farmakoterapi.js'], fn:'renderFarmakoterapiPage'},
+  subFarmakoterapi:{srcs:['js/pages/sub-farmakoterapi.template.js','js/pages/sub-farmakoterapi.js'], fn:'renderSubFarmakoterapiPage'},
+  bentukSediaan:{srcs:['js/pages/bentuk-sediaan.template.js','js/pages/bentuk-sediaan.js'], fn:'renderBentukSediaanPage'},
+  groupProduk:{srcs:['js/pages/group-produk.template.js','js/pages/group-produk.js'], fn:'renderGroupProdukPage'},
+  kategoriReorderingSheet:{srcs:['js/pages/kategori-reordering-sheet.template.js','js/pages/kategori-reordering-sheet.js'], fn:'renderKategoriReorderingSheetPage'},
 };
 const loadedModules=new Set();
 
