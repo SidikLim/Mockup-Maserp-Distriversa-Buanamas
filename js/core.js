@@ -166,6 +166,7 @@ const PAGE_MODULES={
   transaksiPersediaan:{srcs:['js/pages/transaksi-persediaan.template.js','js/pages/transaksi-persediaan.js'], fn:'renderTransaksiPersediaanPage'},
   costCenter:{srcs:['js/pages/cost-center.template.js','js/pages/cost-center.js'], fn:'renderCostCenterPage'},
   cabang:{srcs:['js/pages/cabang.template.js','js/pages/cabang.js'], fn:'renderCabangPage'},
+  items:{srcs:['js/pages/persediaan-barang.template.js','js/pages/persediaan-barang.js'], fn:'renderPersediaanBarangPage'},
 };
 const loadedModules=new Set();
 
@@ -226,7 +227,6 @@ function renderPage(){
   const pages={
     salesman:{title:'Salesman', cols:[['nama','Nama Salesman'],['area','Area'],['target','Target',true],['realisasi','Realisasi',true]], rows:DATA.salesman},
     packing:{title:'Packing', cols:[['no','No. Packing'],['tgl','Tanggal'],['so','No. SO'],['status','Status','pill']], rows:DATA.packing},
-    items:{title:'Daftar Barang', cols:[['kode','Kode'],['nama','Nama Barang'],['kategori','Kategori'],['satuan','Satuan'],['stok','Stok','num'],['harga','Harga',true]], rows:DATA.items},
     kasMasuk:{title:'Kas Masuk', cols:[['tgl','Tanggal'],['ket','Keterangan'],['kategori','Kategori'],['jumlah','Jumlah',true]], rows:DATA.kasMasuk},
     kasKeluar:{title:'Kas Keluar', cols:[['tgl','Tanggal'],['ket','Keterangan'],['kategori','Kategori'],['jumlah','Jumlah',true]], rows:DATA.kasKeluar},
     transaksiKas:{title:'Transaksi Kas', cols:[['tgl','Tanggal'],['ket','Keterangan'],['tipe','Tipe','pill'],['kategori','Kategori'],['jumlah','Jumlah',true]], rows:DATA.transaksiKas},

@@ -1439,17 +1439,229 @@ const DATA = {
       totalPpn:0, totalPph:7837.84, jumlah:7837.84,
       keterangan:'Terima SSP PPH 26/SI/SMG/07/00033 CV MAJU TERUS'},
   ],
+  /* DATA.items — DIPERKAYA 2026-08-24 dengan puluhan field baru mengikuti
+     screenshot MASERP "+ Persediaan Barang" (menu Persediaan Barang >
+     Master & Setting > Inventory, page:'items', sebelumnya renderer
+     generik read-only kolom kode/nama/kategori/satuan/stok/harga di
+     js/core.js — field 6 lama itu SENGAJA TIDAK diubah/dihapus karena
+     sudah dipakai luas oleh modul lain [Purchase Order/Sales Order/
+     Picking List/Invoice/Faktur Penjualan SJ/Stock Request/Terima
+     Barang/Pembelian BPB/Dominasi/Promotion/Price List By Province/
+     Reordering Sheet/Transaksi Persediaan/dashboard Inventory] lewat
+     `openPersediaanPicker()` & referensi langsung — hanya DITAMBAH field
+     baru per baris, pola sama seperti pengayaan DATA.customers saat
+     modul Master Customer dibangun 2026-08-18).
+
+     Field farmasi-eksklusif pada screenshot (Kode/Nama Alkes, Kode/Nama
+     Item Farma, Farma/Sub-Farma/Bentuk Sediaan/Kekuatan Sediaan/Nama
+     Jenis Obat/NIE/Kelas/Kode Barang Pajak) SENGAJA dikosongkan ('')
+     utk 10 barang sembako DBM ini — BUKAN field yang dihapus dari
+     form/UI (tetap ditampilkan lengkap, mockup ini kan meniru screen
+     MASERP apa adanya), tapi datanya kosong konsisten dgn precedent
+     "Kode/Nama Farma & Alkes selalu kosong" yang SUDAH ADA di
+     DATA.suppliers (kodeFarma/namaFarma/kodeAlkes/namaAlkes, sejak
+     Master Supplier) & DATA.customers (Kode/Nama Customer Farma &
+     Alkes, sejak Master Customer) — distributor non-farma sepenuhnya
+     konsisten kosongkan field2 ini di semua master terkait. Dropdown
+     Farma/Sub-Farma/Bentuk Sediaan/Zat Kandungan Aktif tetap TERHUBUNG
+     ke master sungguhan yang sudah dibangun (DATA.farmakoterapi/
+     DATA.subFarmakoterapi/DATA.bentukSediaan/DATA.zatKandunganAktif,
+     2026-08-21) — kosong di data cuma berarti "belum dipilih", picker-
+     nya tetap fungsional kalau user mau demo pilih salah satu.
+
+     Field yang MASIH RELEVAN & DIISI utk distributor FMCG (bukan
+     eksklusif farmasi): `katReorderingSheetKode` diisi 'BBS' (kode
+     DATA.kategoriReorderingSheet "NON OBAT - NON ALKES" — cocok
+     persis utk sembako, lihat modul itu 2026-08-21), `kategoriKode`
+     mapping 1:1 dari field `kategori` (teks, sudah ada) ke kode
+     DATA.kategoriBarang (Sembako->CATSMB dst., sudah match persis
+     nama kategori existing), `hsCode` (kode HS Bea Cukai, relevan utk
+     barang import apa pun) diisi kode HS riil kategori komoditas
+     masing2 barang, `tipePenyimpanan` diadaptasi jadi opsi FMCG umum
+     (Suhu Ruang/Kering & Sejuk/Dingin, MENGGANTI opsi suhu farmasi
+     spesifik "Regular 25-30°C" screenshot asli — precedent adaptasi
+     farmasi->FMCG sama seperti Informasi Izin Cabang), `supplier[]`
+     menaut ke DATA.suppliers sungguhan (dipetakan berdasarkan
+     kecocokan brand/kategori barang), `groupProduk[]` HANYA barang
+     pertama (BRG-001) ditaut ke 'SMBK01' (satu-satunya baris
+     DATA.groupProduk yang ada, sekadar demo tautan) sisanya kosong.
+
+     `lokasiGudang[]` (sub-grid "Barang ini tersedia di gudang/lokasi")
+     diisi 8 baris (1 per cabang, kode gudang utama `<NN>-GUU`) dengan
+     `stock` PERSIS SAMA dengan `qtyPhysical` di DATA.persediaan utk
+     kombinasi barang+gudang yang sama (1 sumber kebenaran, bukan angka
+     baru) — sub-gudang overflow lain (`<NN>-GUU-02` dst., total 29 baris
+     di DATA.gudang) SENGAJA TIDAK di-pre-populate per barang (beda dari
+     screenshot yang menunjukkan puluhan baris sekaligus, termasuk kode
+     gudang eksotis GKR-xx/GRJ-xx/Transit yang TIDAK ADA di DATA.gudang
+     DBM — cuma 29 baris "-GUU" murni, tanpa Karantina/Reject/Transit,
+     lihat modul Gudang 2026-08-12) — didownsize demi kepraktisan, tapi
+     tombol "+ Tambah Semua Gudang" di form tetap benar2 menambahkan
+     SEMUA 29 baris DATA.gudang yang belum ada.
+
+     `satuanDetail` (tabel "Jenis Satuan dan Harga") diisi Satuan Dasar
+     (=`satuan` yang sudah ada, konversi 1) + U/M 2 (=pcs per Dus/Karung,
+     sinkron dgn `beratProduk.isiDalamKarton`), U/M 3 & 4 kosong (barang2
+     ini tidak butuh lebih dari 2 tingkat satuan). `hargaBeliPerTanggal`/
+     `hargaJualPerTanggal` masing2 1 baris (tanggal efektif 01/01/2026,
+     tanpa akhir = masih berlaku, nilai = field `harga` yang sudah ada,
+     1 sumber kebenaran). `feeDistribusi`/`budgetDiskon`/
+     `hargaSpecialSupplier`/`hargaSpecialCustomer`/`salesPriceByQuantity`
+     dibiarkan array kosong utk SEMUA barang (fitur tetap fungsional lwt
+     "+Tambah" di form, cuma tidak ada data sample bawaan — precedent
+     sama seperti banyak sub-grid opsional di modul lain yang kosong
+     default). */
   items:[
-    {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', kategori:'Sembako', satuan:'Dus', stok:1240, harga:25000},
-    {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', kategori:'Sembako', satuan:'Karung', stok:860, harga:15000},
-    {kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', kategori:'Sembako', satuan:'Karung', stok:410, harga:60000},
-    {kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', kategori:'Bahan Baku', satuan:'Karung', stok:990, harga:12000},
-    {kode:'BRG-005', nama:'Mie Instan Indomie Goreng', kategori:'Makanan', satuan:'Dus', stok:2210, harga:2500},
-    {kode:'BRG-006', nama:'Kecap Manis ABC 600ml', kategori:'Bumbu', satuan:'Dus', stok:530, harga:14000},
-    {kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', kategori:'Minuman', satuan:'Dus', stok:640, harga:16000},
-    {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', kategori:'Minuman', satuan:'Dus', stok:720, harga:10000},
-    {kode:'BRG-009', nama:'Kopi Kapal Api 165gr', kategori:'Minuman', satuan:'Dus', stok:380, harga:14000},
-    {kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', kategori:'Toiletries', satuan:'Dus', stok:990, harga:5000},
+    {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', kategori:'Sembako', kategoriKode:'CATSMB', satuan:'Dus', stok:1240, harga:25000,
+      gambarProduk:'', kodeBarangPajak:'', kodeAlkes:'', namaAlkes:'', kodeItemFarma:'', namaItemFarma:'', kodeItemPrincipal:'PRC-BRG001',
+      tipeUkuran:'2 Liter', tipeBarang:'Inventory Stock (FG)', kelas:'', katReorderingSheetKode:'BBS', farmaKode:'', subFarmaKode:'', bentukSediaanKode:'',
+      konversiSatuanDasar:1, kekuatanSediaan:'', namaJenisObat:'', memo:'Dus isi 6 botol @ 2 Liter', nie:'', tglEfektif:'01/01/2026', tglExpired:'',
+      tipePenyimpanan:'Suhu Ruang (15-30°C)', qtyKelipatanOrder:1, hsCode:'1512.19.00',
+      tampilkanMinimumMargin:false, sembunyikanNamaBarang:false, holdPembelian:false, holdPenjualan:false, holdTransaksiInventory:false, barangBonus:false,
+      statusBarang:'Aktif', zatKandunganAktif:[], groupProduk:['SMBK01'],
+      beratProduk:{isiDalamKarton:6, berat:12, panjang:30, lebar:20, tinggi:15},
+      feeDistribusi:[], budgetDiskon:[],
+      supplier:[{kodeSupplier:'5016', namaSupplier:'PT Wilmar Nabati Indonesia', pusatBisnis:'Generik', untukPembelian:true, lapPenjualan:true}],
+      konsinyasiIn:false, divisi:'None',
+      hargaBeliPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:23000}], hargaJualPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:25000}],
+      satuanDetail:{dasar:{barcode:'8991002101019', satuan:'Dus', satuanPajak:'', konversi:1}, um2:{barcode:'8991002101026', satuan:'Botol', satuanPajak:'', konversi:6}, um3:{barcode:'', satuan:'', satuanPajak:'', konversi:0}, um4:{barcode:'', satuan:'', satuanPajak:'', konversi:0}},
+      hargaSpecialSupplier:[], hargaSpecialCustomer:[], salesPriceByQuantity:[],
+      lokasiGudang:[{gudangKode:'00-GUU', stock:372, qtyMin:0, qtyMax:0}, {gudangKode:'01-GUU', stock:186, qtyMin:0, qtyMax:0}, {gudangKode:'02-GUU', stock:124, qtyMin:0, qtyMax:0}, {gudangKode:'03-GUU', stock:186, qtyMin:0, qtyMax:0}, {gudangKode:'04-GUU', stock:99, qtyMin:0, qtyMax:0}, {gudangKode:'05-GUU', stock:87, qtyMin:0, qtyMax:0}, {gudangKode:'06-GUU', stock:99, qtyMin:0, qtyMax:0}, {gudangKode:'07-GUU', stock:87, qtyMin:0, qtyMax:0}]},
+    {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', kategori:'Sembako', kategoriKode:'CATSMB', satuan:'Karung', stok:860, harga:15000,
+      gambarProduk:'', kodeBarangPajak:'', kodeAlkes:'', namaAlkes:'', kodeItemFarma:'', namaItemFarma:'', kodeItemPrincipal:'PRC-BRG002',
+      tipeUkuran:'1 Kg', tipeBarang:'Inventory Stock (FG)', kelas:'', katReorderingSheetKode:'BBS', farmaKode:'', subFarmaKode:'', bentukSediaanKode:'',
+      konversiSatuanDasar:1, kekuatanSediaan:'', namaJenisObat:'', memo:'Karung isi 20 pcs @ 1 Kg', nie:'', tglEfektif:'01/01/2026', tglExpired:'',
+      tipePenyimpanan:'Kering & Sejuk', qtyKelipatanOrder:1, hsCode:'1701.99.00',
+      tampilkanMinimumMargin:false, sembunyikanNamaBarang:false, holdPembelian:false, holdPenjualan:false, holdTransaksiInventory:false, barangBonus:false,
+      statusBarang:'Aktif', zatKandunganAktif:[], groupProduk:[],
+      beratProduk:{isiDalamKarton:20, berat:20, panjang:40, lebar:25, tinggi:10},
+      feeDistribusi:[], budgetDiskon:[],
+      supplier:[{kodeSupplier:'5015', namaSupplier:'PT Sumber Pangan Nusantara', pusatBisnis:'Generik', untukPembelian:true, lapPenjualan:true}],
+      konsinyasiIn:false, divisi:'None',
+      hargaBeliPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:13800}], hargaJualPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:15000}],
+      satuanDetail:{dasar:{barcode:'8991002102019', satuan:'Karung', satuanPajak:'', konversi:1}, um2:{barcode:'8991002102026', satuan:'Pcs', satuanPajak:'', konversi:20}, um3:{barcode:'', satuan:'', satuanPajak:'', konversi:0}, um4:{barcode:'', satuan:'', satuanPajak:'', konversi:0}},
+      hargaSpecialSupplier:[], hargaSpecialCustomer:[], salesPriceByQuantity:[],
+      lokasiGudang:[{gudangKode:'00-GUU', stock:258, qtyMin:0, qtyMax:0}, {gudangKode:'01-GUU', stock:129, qtyMin:0, qtyMax:0}, {gudangKode:'02-GUU', stock:86, qtyMin:0, qtyMax:0}, {gudangKode:'03-GUU', stock:129, qtyMin:0, qtyMax:0}, {gudangKode:'04-GUU', stock:69, qtyMin:0, qtyMax:0}, {gudangKode:'05-GUU', stock:60, qtyMin:0, qtyMax:0}, {gudangKode:'06-GUU', stock:69, qtyMin:0, qtyMax:0}, {gudangKode:'07-GUU', stock:60, qtyMin:0, qtyMax:0}]},
+    {kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', kategori:'Sembako', kategoriKode:'CATSMB', satuan:'Karung', stok:410, harga:60000,
+      gambarProduk:'', kodeBarangPajak:'', kodeAlkes:'', namaAlkes:'', kodeItemFarma:'', namaItemFarma:'', kodeItemPrincipal:'PRC-BRG003',
+      tipeUkuran:'5 Kg', tipeBarang:'Inventory Stock (FG)', kelas:'', katReorderingSheetKode:'BBS', farmaKode:'', subFarmaKode:'', bentukSediaanKode:'',
+      konversiSatuanDasar:1, kekuatanSediaan:'', namaJenisObat:'', memo:'Karung isi 1 pcs @ 5 Kg', nie:'', tglEfektif:'01/01/2026', tglExpired:'',
+      tipePenyimpanan:'Kering & Sejuk', qtyKelipatanOrder:1, hsCode:'1006.30.00',
+      tampilkanMinimumMargin:false, sembunyikanNamaBarang:false, holdPembelian:false, holdPenjualan:false, holdTransaksiInventory:false, barangBonus:false,
+      statusBarang:'Aktif', zatKandunganAktif:[], groupProduk:[],
+      beratProduk:{isiDalamKarton:1, berat:5, panjang:35, lebar:22, tinggi:8},
+      feeDistribusi:[], budgetDiskon:[],
+      supplier:[{kodeSupplier:'5021', namaSupplier:'UD Sumber Makmur', pusatBisnis:'Generik', untukPembelian:true, lapPenjualan:true}],
+      konsinyasiIn:false, divisi:'None',
+      hargaBeliPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:55000}], hargaJualPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:60000}],
+      satuanDetail:{dasar:{barcode:'8991002103019', satuan:'Karung', satuanPajak:'', konversi:1}, um2:{barcode:'', satuan:'', satuanPajak:'', konversi:0}, um3:{barcode:'', satuan:'', satuanPajak:'', konversi:0}, um4:{barcode:'', satuan:'', satuanPajak:'', konversi:0}},
+      hargaSpecialSupplier:[], hargaSpecialCustomer:[], salesPriceByQuantity:[],
+      lokasiGudang:[{gudangKode:'00-GUU', stock:121, qtyMin:0, qtyMax:0}, {gudangKode:'01-GUU', stock:62, qtyMin:0, qtyMax:0}, {gudangKode:'02-GUU', stock:41, qtyMin:0, qtyMax:0}, {gudangKode:'03-GUU', stock:62, qtyMin:0, qtyMax:0}, {gudangKode:'04-GUU', stock:33, qtyMin:0, qtyMax:0}, {gudangKode:'05-GUU', stock:29, qtyMin:0, qtyMax:0}, {gudangKode:'06-GUU', stock:33, qtyMin:0, qtyMax:0}, {gudangKode:'07-GUU', stock:29, qtyMin:0, qtyMax:0}]},
+    {kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', kategori:'Bahan Baku', kategoriKode:'CATBHB', satuan:'Karung', stok:990, harga:12000,
+      gambarProduk:'', kodeBarangPajak:'', kodeAlkes:'', namaAlkes:'', kodeItemFarma:'', namaItemFarma:'', kodeItemPrincipal:'PRC-BRG004',
+      tipeUkuran:'1 Kg', tipeBarang:'Inventory Stock (FG)', kelas:'', katReorderingSheetKode:'BBS', farmaKode:'', subFarmaKode:'', bentukSediaanKode:'',
+      konversiSatuanDasar:1, kekuatanSediaan:'', namaJenisObat:'', memo:'Karung isi 20 pcs @ 1 Kg', nie:'', tglEfektif:'01/01/2026', tglExpired:'',
+      tipePenyimpanan:'Kering & Sejuk', qtyKelipatanOrder:1, hsCode:'1101.00.00',
+      tampilkanMinimumMargin:false, sembunyikanNamaBarang:false, holdPembelian:false, holdPenjualan:false, holdTransaksiInventory:false, barangBonus:false,
+      statusBarang:'Aktif', zatKandunganAktif:[], groupProduk:[],
+      beratProduk:{isiDalamKarton:20, berat:20, panjang:40, lebar:25, tinggi:10},
+      feeDistribusi:[], budgetDiskon:[],
+      supplier:[{kodeSupplier:'5020', namaSupplier:'PT Indofood Distribusi', pusatBisnis:'Generik', untukPembelian:true, lapPenjualan:true}],
+      konsinyasiIn:false, divisi:'None',
+      hargaBeliPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:11000}], hargaJualPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:12000}],
+      satuanDetail:{dasar:{barcode:'8991002104019', satuan:'Karung', satuanPajak:'', konversi:1}, um2:{barcode:'8991002104026', satuan:'Pcs', satuanPajak:'', konversi:20}, um3:{barcode:'', satuan:'', satuanPajak:'', konversi:0}, um4:{barcode:'', satuan:'', satuanPajak:'', konversi:0}},
+      hargaSpecialSupplier:[], hargaSpecialCustomer:[], salesPriceByQuantity:[],
+      lokasiGudang:[{gudangKode:'00-GUU', stock:297, qtyMin:0, qtyMax:0}, {gudangKode:'01-GUU', stock:149, qtyMin:0, qtyMax:0}, {gudangKode:'02-GUU', stock:99, qtyMin:0, qtyMax:0}, {gudangKode:'03-GUU', stock:149, qtyMin:0, qtyMax:0}, {gudangKode:'04-GUU', stock:79, qtyMin:0, qtyMax:0}, {gudangKode:'05-GUU', stock:69, qtyMin:0, qtyMax:0}, {gudangKode:'06-GUU', stock:79, qtyMin:0, qtyMax:0}, {gudangKode:'07-GUU', stock:69, qtyMin:0, qtyMax:0}]},
+    {kode:'BRG-005', nama:'Mie Instan Indomie Goreng', kategori:'Makanan', kategoriKode:'CATMKN', satuan:'Dus', stok:2210, harga:2500,
+      gambarProduk:'', kodeBarangPajak:'', kodeAlkes:'', namaAlkes:'', kodeItemFarma:'', namaItemFarma:'', kodeItemPrincipal:'PRC-BRG005',
+      tipeUkuran:'85 Gram', tipeBarang:'Inventory Stock (FG)', kelas:'', katReorderingSheetKode:'BBS', farmaKode:'', subFarmaKode:'', bentukSediaanKode:'',
+      konversiSatuanDasar:1, kekuatanSediaan:'', namaJenisObat:'', memo:'Dus isi 40 pcs @ 85 Gram', nie:'', tglEfektif:'01/01/2026', tglExpired:'',
+      tipePenyimpanan:'Suhu Ruang (15-30°C)', qtyKelipatanOrder:1, hsCode:'1902.30.00',
+      tampilkanMinimumMargin:false, sembunyikanNamaBarang:false, holdPembelian:false, holdPenjualan:false, holdTransaksiInventory:false, barangBonus:false,
+      statusBarang:'Aktif', zatKandunganAktif:[], groupProduk:[],
+      beratProduk:{isiDalamKarton:40, berat:3.4, panjang:38, lebar:27, tinggi:20},
+      feeDistribusi:[], budgetDiskon:[],
+      supplier:[{kodeSupplier:'5020', namaSupplier:'PT Indofood Distribusi', pusatBisnis:'Generik', untukPembelian:true, lapPenjualan:true}],
+      konsinyasiIn:false, divisi:'None',
+      hargaBeliPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:2200}], hargaJualPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:2500}],
+      satuanDetail:{dasar:{barcode:'8991002105019', satuan:'Dus', satuanPajak:'', konversi:1}, um2:{barcode:'8991002105026', satuan:'Pcs', satuanPajak:'', konversi:40}, um3:{barcode:'', satuan:'', satuanPajak:'', konversi:0}, um4:{barcode:'', satuan:'', satuanPajak:'', konversi:0}},
+      hargaSpecialSupplier:[], hargaSpecialCustomer:[], salesPriceByQuantity:[],
+      lokasiGudang:[{gudangKode:'00-GUU', stock:661, qtyMin:0, qtyMax:0}, {gudangKode:'01-GUU', stock:332, qtyMin:0, qtyMax:0}, {gudangKode:'02-GUU', stock:221, qtyMin:0, qtyMax:0}, {gudangKode:'03-GUU', stock:332, qtyMin:0, qtyMax:0}, {gudangKode:'04-GUU', stock:177, qtyMin:0, qtyMax:0}, {gudangKode:'05-GUU', stock:155, qtyMin:0, qtyMax:0}, {gudangKode:'06-GUU', stock:177, qtyMin:0, qtyMax:0}, {gudangKode:'07-GUU', stock:155, qtyMin:0, qtyMax:0}]},
+    {kode:'BRG-006', nama:'Kecap Manis ABC 600ml', kategori:'Bumbu', kategoriKode:'CATBMB', satuan:'Dus', stok:530, harga:14000,
+      gambarProduk:'', kodeBarangPajak:'', kodeAlkes:'', namaAlkes:'', kodeItemFarma:'', namaItemFarma:'', kodeItemPrincipal:'PRC-BRG006',
+      tipeUkuran:'600 ml', tipeBarang:'Inventory Stock (FG)', kelas:'', katReorderingSheetKode:'BBS', farmaKode:'', subFarmaKode:'', bentukSediaanKode:'',
+      konversiSatuanDasar:1, kekuatanSediaan:'', namaJenisObat:'', memo:'Dus isi 24 botol @ 600 ml', nie:'', tglEfektif:'01/01/2026', tglExpired:'',
+      tipePenyimpanan:'Suhu Ruang (15-30°C)', qtyKelipatanOrder:1, hsCode:'2103.90.00',
+      tampilkanMinimumMargin:false, sembunyikanNamaBarang:false, holdPembelian:false, holdPenjualan:false, holdTransaksiInventory:false, barangBonus:false,
+      statusBarang:'Aktif', zatKandunganAktif:[], groupProduk:[],
+      beratProduk:{isiDalamKarton:24, berat:18, panjang:32, lebar:24, tinggi:18},
+      feeDistribusi:[], budgetDiskon:[],
+      supplier:[{kodeSupplier:'5018', namaSupplier:'CV Distribusi Sentosa', pusatBisnis:'Generik', untukPembelian:true, lapPenjualan:true}],
+      konsinyasiIn:false, divisi:'None',
+      hargaBeliPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:12800}], hargaJualPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:14000}],
+      satuanDetail:{dasar:{barcode:'8991002106019', satuan:'Dus', satuanPajak:'', konversi:1}, um2:{barcode:'8991002106026', satuan:'Botol', satuanPajak:'', konversi:24}, um3:{barcode:'', satuan:'', satuanPajak:'', konversi:0}, um4:{barcode:'', satuan:'', satuanPajak:'', konversi:0}},
+      hargaSpecialSupplier:[], hargaSpecialCustomer:[], salesPriceByQuantity:[],
+      lokasiGudang:[{gudangKode:'00-GUU', stock:159, qtyMin:0, qtyMax:0}, {gudangKode:'01-GUU', stock:80, qtyMin:0, qtyMax:0}, {gudangKode:'02-GUU', stock:53, qtyMin:0, qtyMax:0}, {gudangKode:'03-GUU', stock:80, qtyMin:0, qtyMax:0}, {gudangKode:'04-GUU', stock:42, qtyMin:0, qtyMax:0}, {gudangKode:'05-GUU', stock:37, qtyMin:0, qtyMax:0}, {gudangKode:'06-GUU', stock:42, qtyMin:0, qtyMax:0}, {gudangKode:'07-GUU', stock:37, qtyMin:0, qtyMax:0}]},
+    {kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', kategori:'Minuman', kategoriKode:'CATMNM', satuan:'Dus', stok:640, harga:16000,
+      gambarProduk:'', kodeBarangPajak:'', kodeAlkes:'', namaAlkes:'', kodeItemFarma:'', namaItemFarma:'', kodeItemPrincipal:'PRC-BRG007',
+      tipeUkuran:'380 Gram', tipeBarang:'Inventory Stock (FG)', kelas:'', katReorderingSheetKode:'BBS', farmaKode:'', subFarmaKode:'', bentukSediaanKode:'',
+      konversiSatuanDasar:1, kekuatanSediaan:'', namaJenisObat:'', memo:'Dus isi 48 kaleng @ 380 Gram', nie:'', tglEfektif:'01/01/2026', tglExpired:'',
+      tipePenyimpanan:'Suhu Ruang (15-30°C)', qtyKelipatanOrder:1, hsCode:'0402.99.00',
+      tampilkanMinimumMargin:false, sembunyikanNamaBarang:false, holdPembelian:false, holdPenjualan:false, holdTransaksiInventory:false, barangBonus:false,
+      statusBarang:'Aktif', zatKandunganAktif:[], groupProduk:[],
+      beratProduk:{isiDalamKarton:48, berat:19, panjang:34, lebar:26, tinggi:16},
+      feeDistribusi:[], budgetDiskon:[],
+      supplier:[{kodeSupplier:'5022', namaSupplier:'CV Karya Abadi', pusatBisnis:'Generik', untukPembelian:true, lapPenjualan:true}],
+      konsinyasiIn:false, divisi:'None',
+      hargaBeliPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:14700}], hargaJualPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:16000}],
+      satuanDetail:{dasar:{barcode:'8991002107019', satuan:'Dus', satuanPajak:'', konversi:1}, um2:{barcode:'8991002107026', satuan:'Kaleng', satuanPajak:'', konversi:48}, um3:{barcode:'', satuan:'', satuanPajak:'', konversi:0}, um4:{barcode:'', satuan:'', satuanPajak:'', konversi:0}},
+      hargaSpecialSupplier:[], hargaSpecialCustomer:[], salesPriceByQuantity:[],
+      lokasiGudang:[{gudangKode:'00-GUU', stock:192, qtyMin:0, qtyMax:0}, {gudangKode:'01-GUU', stock:96, qtyMin:0, qtyMax:0}, {gudangKode:'02-GUU', stock:64, qtyMin:0, qtyMax:0}, {gudangKode:'03-GUU', stock:96, qtyMin:0, qtyMax:0}, {gudangKode:'04-GUU', stock:51, qtyMin:0, qtyMax:0}, {gudangKode:'05-GUU', stock:45, qtyMin:0, qtyMax:0}, {gudangKode:'06-GUU', stock:51, qtyMin:0, qtyMax:0}, {gudangKode:'07-GUU', stock:45, qtyMin:0, qtyMax:0}]},
+    {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', kategori:'Minuman', kategoriKode:'CATMNM', satuan:'Dus', stok:720, harga:10000,
+      gambarProduk:'', kodeBarangPajak:'', kodeAlkes:'', namaAlkes:'', kodeItemFarma:'', namaItemFarma:'', kodeItemPrincipal:'PRC-BRG008',
+      tipeUkuran:'25 Sachet', tipeBarang:'Inventory Stock (FG)', kelas:'', katReorderingSheetKode:'BBS', farmaKode:'', subFarmaKode:'', bentukSediaanKode:'',
+      konversiSatuanDasar:1, kekuatanSediaan:'', namaJenisObat:'', memo:'Dus isi 24 pcs @ 25 Sachet', nie:'', tglEfektif:'01/01/2026', tglExpired:'',
+      tipePenyimpanan:'Kering & Sejuk', qtyKelipatanOrder:1, hsCode:'0902.30.00',
+      tampilkanMinimumMargin:false, sembunyikanNamaBarang:false, holdPembelian:false, holdPenjualan:false, holdTransaksiInventory:false, barangBonus:false,
+      statusBarang:'Aktif', zatKandunganAktif:[], groupProduk:[],
+      beratProduk:{isiDalamKarton:24, berat:11, panjang:30, lebar:22, tinggi:18},
+      feeDistribusi:[], budgetDiskon:[],
+      supplier:[{kodeSupplier:'5025', namaSupplier:'CV Anugerah Logistik', pusatBisnis:'Generik', untukPembelian:true, lapPenjualan:true}],
+      konsinyasiIn:false, divisi:'None',
+      hargaBeliPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:9200}], hargaJualPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:10000}],
+      satuanDetail:{dasar:{barcode:'8991002108019', satuan:'Dus', satuanPajak:'', konversi:1}, um2:{barcode:'8991002108026', satuan:'Pcs', satuanPajak:'', konversi:24}, um3:{barcode:'', satuan:'', satuanPajak:'', konversi:0}, um4:{barcode:'', satuan:'', satuanPajak:'', konversi:0}},
+      hargaSpecialSupplier:[], hargaSpecialCustomer:[], salesPriceByQuantity:[],
+      lokasiGudang:[{gudangKode:'00-GUU', stock:216, qtyMin:0, qtyMax:0}, {gudangKode:'01-GUU', stock:108, qtyMin:0, qtyMax:0}, {gudangKode:'02-GUU', stock:72, qtyMin:0, qtyMax:0}, {gudangKode:'03-GUU', stock:108, qtyMin:0, qtyMax:0}, {gudangKode:'04-GUU', stock:58, qtyMin:0, qtyMax:0}, {gudangKode:'05-GUU', stock:50, qtyMin:0, qtyMax:0}, {gudangKode:'06-GUU', stock:58, qtyMin:0, qtyMax:0}, {gudangKode:'07-GUU', stock:50, qtyMin:0, qtyMax:0}]},
+    {kode:'BRG-009', nama:'Kopi Kapal Api 165gr', kategori:'Minuman', kategoriKode:'CATMNM', satuan:'Dus', stok:380, harga:14000,
+      gambarProduk:'', kodeBarangPajak:'', kodeAlkes:'', namaAlkes:'', kodeItemFarma:'', namaItemFarma:'', kodeItemPrincipal:'PRC-BRG009',
+      tipeUkuran:'165 Gram', tipeBarang:'Inventory Stock (FG)', kelas:'', katReorderingSheetKode:'BBS', farmaKode:'', subFarmaKode:'', bentukSediaanKode:'',
+      konversiSatuanDasar:1, kekuatanSediaan:'', namaJenisObat:'', memo:'Dus isi 24 pcs @ 165 Gram', nie:'', tglEfektif:'01/01/2026', tglExpired:'',
+      tipePenyimpanan:'Kering & Sejuk', qtyKelipatanOrder:1, hsCode:'0901.21.00',
+      tampilkanMinimumMargin:false, sembunyikanNamaBarang:false, holdPembelian:false, holdPenjualan:false, holdTransaksiInventory:false, barangBonus:false,
+      statusBarang:'Aktif', zatKandunganAktif:[], groupProduk:[],
+      beratProduk:{isiDalamKarton:24, berat:9, panjang:28, lebar:20, tinggi:16},
+      feeDistribusi:[], budgetDiskon:[],
+      supplier:[{kodeSupplier:'5026', namaSupplier:'PT Roda Mas Trading', pusatBisnis:'Generik', untukPembelian:true, lapPenjualan:true}],
+      konsinyasiIn:false, divisi:'None',
+      hargaBeliPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:12900}], hargaJualPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:14000}],
+      satuanDetail:{dasar:{barcode:'8991002109019', satuan:'Dus', satuanPajak:'', konversi:1}, um2:{barcode:'8991002109026', satuan:'Pcs', satuanPajak:'', konversi:24}, um3:{barcode:'', satuan:'', satuanPajak:'', konversi:0}, um4:{barcode:'', satuan:'', satuanPajak:'', konversi:0}},
+      hargaSpecialSupplier:[], hargaSpecialCustomer:[], salesPriceByQuantity:[],
+      lokasiGudang:[{gudangKode:'00-GUU', stock:114, qtyMin:0, qtyMax:0}, {gudangKode:'01-GUU', stock:57, qtyMin:0, qtyMax:0}, {gudangKode:'02-GUU', stock:38, qtyMin:0, qtyMax:0}, {gudangKode:'03-GUU', stock:57, qtyMin:0, qtyMax:0}, {gudangKode:'04-GUU', stock:30, qtyMin:0, qtyMax:0}, {gudangKode:'05-GUU', stock:27, qtyMin:0, qtyMax:0}, {gudangKode:'06-GUU', stock:30, qtyMin:0, qtyMax:0}, {gudangKode:'07-GUU', stock:27, qtyMin:0, qtyMax:0}]},
+    {kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', kategori:'Toiletries', kategoriKode:'CATTOI', satuan:'Dus', stok:990, harga:5000,
+      gambarProduk:'', kodeBarangPajak:'', kodeAlkes:'', namaAlkes:'', kodeItemFarma:'', namaItemFarma:'', kodeItemPrincipal:'PRC-BRG010',
+      tipeUkuran:'90 Gram', tipeBarang:'Inventory Stock (FG)', kelas:'', katReorderingSheetKode:'BBS', farmaKode:'', subFarmaKode:'', bentukSediaanKode:'',
+      konversiSatuanDasar:1, kekuatanSediaan:'', namaJenisObat:'', memo:'Dus isi 72 pcs @ 90 Gram', nie:'', tglEfektif:'01/01/2026', tglExpired:'',
+      tipePenyimpanan:'Suhu Ruang (15-30°C)', qtyKelipatanOrder:1, hsCode:'3401.11.00',
+      tampilkanMinimumMargin:false, sembunyikanNamaBarang:false, holdPembelian:false, holdPenjualan:false, holdTransaksiInventory:false, barangBonus:false,
+      statusBarang:'Aktif', zatKandunganAktif:[], groupProduk:[],
+      beratProduk:{isiDalamKarton:72, berat:7, panjang:26, lebar:18, tinggi:14},
+      feeDistribusi:[], budgetDiskon:[],
+      supplier:[{kodeSupplier:'5017', namaSupplier:'PT Sinar Meadow', pusatBisnis:'Generik', untukPembelian:true, lapPenjualan:true}],
+      konsinyasiIn:false, divisi:'None',
+      hargaBeliPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:4500}], hargaJualPerTanggal:[{tglAwal:'01/01/2026', tglAkhir:'', harga:5000}],
+      satuanDetail:{dasar:{barcode:'8991002110019', satuan:'Dus', satuanPajak:'', konversi:1}, um2:{barcode:'8991002110026', satuan:'Pcs', satuanPajak:'', konversi:72}, um3:{barcode:'', satuan:'', satuanPajak:'', konversi:0}, um4:{barcode:'', satuan:'', satuanPajak:'', konversi:0}},
+      hargaSpecialSupplier:[], hargaSpecialCustomer:[], salesPriceByQuantity:[],
+      lokasiGudang:[{gudangKode:'00-GUU', stock:297, qtyMin:0, qtyMax:0}, {gudangKode:'01-GUU', stock:149, qtyMin:0, qtyMax:0}, {gudangKode:'02-GUU', stock:99, qtyMin:0, qtyMax:0}, {gudangKode:'03-GUU', stock:149, qtyMin:0, qtyMax:0}, {gudangKode:'04-GUU', stock:79, qtyMin:0, qtyMax:0}, {gudangKode:'05-GUU', stock:69, qtyMin:0, qtyMax:0}, {gudangKode:'06-GUU', stock:79, qtyMin:0, qtyMax:0}, {gudangKode:'07-GUU', stock:69, qtyMin:0, qtyMax:0}]},
   ],
   /* Daftar Persediaan — sumber data popup "Pilih Barang" versi baru
      (dipakai bersama oleh SEMUA modul transaksi yang punya picker Kode
