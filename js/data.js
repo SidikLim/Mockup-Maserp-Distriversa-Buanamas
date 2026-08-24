@@ -4495,4 +4495,198 @@ const DATA = {
     {nama:'Reject Expired Date Sales Quotation Pending', keterangan:'Proses ini akan melakukan Reject by Expired Date Sales Quotation Pending yang masih pending bulan Lalu.'},
     {nama:'Transfer batch number yang akan ED & sudah ED', keterangan:'Proses ini akan melakukan transfer stock barang batch number yang akan ED ke gudang Near ED dan Sudah ED dibulan ini ke gudang Reject'},
   ],
+  /* Master Cost Center — menu General Ledger > Master & Setting > Cost
+     Center (page:'costCenter', menggantikan entry placeholder lama —
+     lihat js/menu.js). Sesuai screenshot MASERP "Daftar Cost Center"
+     (18 baris, 3 kolom: Kode Cost Center/Nama Cost Center/Keterangan +
+     ikon sort per kolom, page-size default "1000" karena jumlah Cost
+     Center biasanya sedikit & jarang bertambah).
+
+     18 baris DIKARANG ULANG sepenuhnya (bukan terjemahan 1:1 dari
+     screenshot yang datanya generik contoh MASERP) supaya benar-benar
+     representatif struktur organisasi PT Distriversa Buanamas sebagai
+     distributor FMCG 8-cabang (GDG_CABANG_CODE): 8 Cost Center Head
+     Office per-departemen (Direksi/Finance/HR/Marketing/IT/Purchasing/
+     Gudang HO/Sales HO) + 10 Cost Center regional (Gudang & Sales
+     masing-masing utk Surabaya/Bandung/Tangerang/Semarang, plus 1
+     gabungan Gudang & Sales utk Medan, 1 gabungan lagi utk Makassar —
+     2 cabang kecil ini sengaja tidak dipecah Gudang/Sales terpisah
+     karena skala operasinya lebih kecil dari 4 cabang besar lainnya).
+     Sidoarjo TIDAK punya Cost Center sendiri — dianggap gudang satelit
+     region Jawa Timur yang berbagi Cost Center dengan Surabaya
+     (CC009/CC010), konsisten dgn Master Cabang (lihat tautan
+     costCenterKode di DATA.cabangMaster di bawah). */
+  costCenter:[
+    {kode:'CC001', nama:'Direksi & Corporate Office', keterangan:'Cost Center Kantor Direksi dan Corporate Office - Head Office'},
+    {kode:'CC002', nama:'Finance & Accounting', keterangan:'Cost Center Departemen Finance & Accounting - Head Office'},
+    {kode:'CC003', nama:'Human Resources & GA', keterangan:'Cost Center Departemen Human Resources & General Affair - Head Office'},
+    {kode:'CC004', nama:'Marketing & Trade Promotion', keterangan:'Cost Center Departemen Marketing & Trade Promotion - Head Office'},
+    {kode:'CC005', nama:'IT & System', keterangan:'Cost Center Departemen Information Technology & System - Head Office'},
+    {kode:'CC006', nama:'Purchasing / Procurement', keterangan:'Cost Center Departemen Purchasing & Procurement - Head Office'},
+    {kode:'CC007', nama:'Gudang Head Office', keterangan:'Cost Center Operasional Gudang - Head Office (Jakarta Utara)'},
+    {kode:'CC008', nama:'Sales Head Office', keterangan:'Cost Center Tim Sales & Marketing Lapangan - Head Office'},
+    {kode:'CC009', nama:'Gudang Surabaya', keterangan:'Cost Center Operasional Gudang - Cabang Surabaya (termasuk Sidoarjo)'},
+    {kode:'CC010', nama:'Sales Surabaya', keterangan:'Cost Center Tim Sales & Marketing Lapangan - Cabang Surabaya (termasuk Sidoarjo)'},
+    {kode:'CC011', nama:'Gudang Bandung', keterangan:'Cost Center Operasional Gudang - Cabang Bandung'},
+    {kode:'CC012', nama:'Sales Bandung', keterangan:'Cost Center Tim Sales & Marketing Lapangan - Cabang Bandung'},
+    {kode:'CC013', nama:'Gudang Tangerang', keterangan:'Cost Center Operasional Gudang - Cabang Tangerang'},
+    {kode:'CC014', nama:'Sales Tangerang', keterangan:'Cost Center Tim Sales & Marketing Lapangan - Cabang Tangerang'},
+    {kode:'CC015', nama:'Gudang Semarang', keterangan:'Cost Center Operasional Gudang - Cabang Semarang'},
+    {kode:'CC016', nama:'Sales Semarang', keterangan:'Cost Center Tim Sales & Marketing Lapangan - Cabang Semarang'},
+    {kode:'CC017', nama:'Gudang & Sales Medan', keterangan:'Cost Center gabungan Operasional Gudang dan Sales - Cabang Medan'},
+    {kode:'CC018', nama:'Gudang & Sales Makassar', keterangan:'Cost Center gabungan Operasional Gudang dan Sales - Cabang Makassar'},
+  ],
+  /* Master Cabang — menu General Ledger > Master & Setting > Cabang
+     (page:'cabang', menggantikan entry placeholder lama — lihat
+     js/menu.js). Sesuai 8 screenshot MASERP yang dikirim user: list
+     "Daftar Cabang" (toolbar dgn tombol "+ Cabang" dan "Update Cabang
+     ke Master Customer") + form "+ Cabang" full-page dgn header (Kode
+     Cabang/Nama Perusahaan/Nama Cabang/Alamat/Kota/Provinsi/Kode Pos/
+     Telepon/Fax/Email/NPWP Cabang/Tanggal Berdiri/Status) + 6 tab:
+     Cost Center / Rincian Jurnal Akun / Wilayah Sales / Penanggung
+     Jawab / Informasi Izin Cabang / Jurnal R/K.
+
+     Screenshot reference MASERP pakai 5 baris cabang contoh & nama
+     perusahaan generik "PT SATORIA DISTRIBUSI LESTARI" — DIGANTI total
+     jadi 8 baris memakai skema kode cabang KANONIK 00-07 yang sudah
+     established di GDG_CABANG_CODE (js/pages/gudang.template.js), dan
+     nama perusahaan diganti "PT Distriversa Buanamas" (lihat
+     company-profile.template.js) supaya konsisten dgn seluruh mockup —
+     BUKAN multi-company seperti template asli (DBM cuma 1 badan usaha
+     dgn 8 cabang, bukan multi-tenant), jadi field "Nama Perusahaan" di
+     form dibuat disabled/fixed berisi nama itu saja (bukan dropdown
+     pilih company lain seperti template asli, karena tidak relevan
+     utk DBM).
+
+     Kota/Provinsi 8 cabang memakai DATA.provinsiList yang sudah ada
+     (js/data.js baris ~826) — HO tetap DKI Jakarta konsisten dgn
+     company-profile.template.js ("Jl. Raya Industri No. 88, Jakarta
+     Utara, DKI Jakarta").
+
+     Field per-tab:
+     - costCenterKode[] (tab "Cost Center"): pola TAUTAN sama seperti
+       row.rayonKode[] di Master Wilayah — link ke DATA.costCenter yang
+       SUDAH ADA (bukan bikin Cost Center baru), sesuai region cabang.
+     - akunJurnal{} (tab "Rincian Jurnal Akun"): akun GL yang dipakai
+       transaksi internal cabang ybs — Akun Kas, Akun Piutang Usaha,
+       Akun Persediaan Barang Dagang, Akun Hutang Usaha — masing-masing
+       menyimpan KODE dari DATA.akunGL yang sudah ada (picker lokal, lihat
+       tplCbAkunPicker di cabang.template.js, disalin dari pola
+       tplJpAkunPicker di jurnal-pembelian.template.js). Tombol "Generate
+       Account" pada tab ini men-generate ulang ke-4 akun tsb dgn default
+       akun HO (1100002/1120001/1130001/2110001) — simulasi ringkas fitur
+       auto-generate akun cabang baru di MASERP asli, TANPA benar-benar
+       membuat baris akun baru di DATA.akunGL (di luar cakupan mockup).
+     - wilayahKode[] (tab "Wilayah Sales"): pola TAUTAN sama seperti
+       Cost Center, link ke DATA.area (field `gudang` di DATA.area sudah
+       memetakan tiap Area ke nama cabang — dipakai utk pre-populate
+       tautan default per cabang di bawah). Cabang Medan/Makassar/
+       Sidoarjo sengaja tautan kosong ([]) karena belum ada baris
+       DATA.area yang gudang-nya mengarah ke 3 cabang itu (area
+       penjualan region tersebut belum terbentuk di data yang ada —
+       user bisa "+Tambah" tautan manual di form kalau perlu).
+     - penanggungJawab[] (tab "Penanggung Jawab"): pola ENTITAS BARU
+       sama seperti Kecamatan di Master Rayon (BUKAN tautan) — tiap
+       baris {nama, jabatan, kategoriBarang[]}. Jabatan pakai daftar
+       FMCG (Kepala Cabang/Supply Chain Manager/Finance Manager/Sales
+       Manager/Warehouse Supervisor) — MENGGANTI daftar jabatan farmasi
+       di screenshot asli (mis. Apoteker Penanggung Jawab) karena tidak
+       relevan utk distributor sembako, sama seperti precedent modul
+       Invoice (apoteker signature dihapus). kategoriBarang[] pakai tag-
+       chip multi-select ke KODE ASLI DATA.kategoriBarang (CATSMB/CATBHB/
+       dst, bukan tag demo farmasi) — pola tag-chip disalin lokal dari
+       tplPklPickerTags di picking-list.template.js.
+     - izinCabang{} (tab "Informasi Izin Cabang"): field lisensi FMCG
+       distributor (NIB/SIUP/TDG - Tanda Daftar Gudang) MENGGANTI field
+       lisensi farmasi asli (No. Izin PBF/DAK) karena tidak relevan utk
+       distributor sembako — precedent sama seperti Invoice/kategori
+       barang di atas (adaptasi farmasi->FMCG, BUKAN dipertahankan
+       seperti kasus Zat Kandungan Aktif/Farmakoterapi yg memang
+       nomenklatur industri generik).
+     - jurnalRK{} (tab "Jurnal R/K"): 2 akun picker (Akun Piutang R/K
+       Cabang & Akun Hutang R/K Cabang) — default memakai akun yang
+       SUDAH ADA persis di DATA.akunGL (1120002 Piutang R/K Cabang &
+       2110003 Hutang R/K Cabang), jadi tiap cabang menaut ke akun R/K
+       yang sama (skema sederhana, wajar utk mockup — di MASERP asli tiap
+       cabang biasanya punya akun R/K sendiri2, tapi itu berarti harus
+       generate belasan akun GL baru yang di luar cakupan mockup ini). */
+  cabangMaster:[
+    {kode:'00', nama:'Head Office', namaPerusahaan:'PT Distriversa Buanamas', alamat:'Jl. Raya Industri No. 88, Jakarta Utara', kota:'Jakarta Utara', provinsi:'DKI Jakarta', kodePos:'14350', telepon:'(021) 555-8899', fax:'(021) 555-8898', email:'ho@distriversabuanamas.co.id', npwp:'01.234.567.8-901.000', tanggalBerdiri:'02/01/2010', status:'Aktif',
+      costCenterKode:['CC001','CC002','CC003','CC004','CC005','CC006','CC007','CC008'],
+      akunJurnal:{akunKas:'1100002', akunPiutang:'1120001', akunPersediaan:'1130001', akunHutang:'2110001'},
+      wilayahKode:['83117','AREAOFFICE','DUMMY','LN01'],
+      penanggungJawab:[
+        {nama:'HERMAWAN SUSANTO', jabatan:'Kepala Cabang', kategoriBarang:['CATSMB','CATBHB','CATMKN']},
+        {nama:'DEWI KARTIKA NINGRUM', jabatan:'Supply Chain Manager', kategoriBarang:['CATSMB','CATBHB','CATMKN','CATBMB']},
+      ],
+      izinCabang:{noNib:'0123456789012', tglNib:'02/01/2010', noSiup:'503/SIUP-B/01/2010', tglSiup:'02/01/2010', noTdg:'12/TDG/1/2010', tglTdg:'15/01/2010', berlakuSampai:'02/01/2030', statusPerizinan:'Aktif'},
+      jurnalRK:{akunPiutangRK:'1120002', akunHutangRK:'2110003'}},
+    {kode:'01', nama:'Surabaya', namaPerusahaan:'PT Distriversa Buanamas', alamat:'Jl. Rungkut Industri No. 12', kota:'Surabaya', provinsi:'Jawa Timur', kodePos:'60293', telepon:'(031) 841-2200', fax:'(031) 841-2201', email:'surabaya@distriversabuanamas.co.id', npwp:'01.234.567.8-902.000', tanggalBerdiri:'14/03/2012', status:'Aktif',
+      costCenterKode:['CC009','CC010'],
+      akunJurnal:{akunKas:'1100002', akunPiutang:'1120001', akunPersediaan:'1130001', akunHutang:'2110001'},
+      wilayahKode:['JATIM001','JATIM002'],
+      penanggungJawab:[
+        {nama:'BAMBANG PRIYONO', jabatan:'Kepala Cabang', kategoriBarang:['CATSMB','CATMKN']},
+        {nama:'RATNA WULANDARI', jabatan:'Sales Manager', kategoriBarang:['CATSMB','CATMKN','CATMNM']},
+      ],
+      izinCabang:{noNib:'0123456789013', tglNib:'14/03/2012', noSiup:'503/SIUP-B/03/2012', tglSiup:'14/03/2012', noTdg:'08/TDG/3/2012', tglTdg:'20/03/2012', berlakuSampai:'14/03/2032', statusPerizinan:'Aktif'},
+      jurnalRK:{akunPiutangRK:'1120002', akunHutangRK:'2110003'}},
+    {kode:'02', nama:'Bandung', namaPerusahaan:'PT Distriversa Buanamas', alamat:'Jl. Soekarno-Hatta No. 456', kota:'Bandung', provinsi:'Jawa Barat', kodePos:'40286', telepon:'(022) 766-5500', fax:'(022) 766-5501', email:'bandung@distriversabuanamas.co.id', npwp:'01.234.567.8-903.000', tanggalBerdiri:'20/06/2013', status:'Aktif',
+      costCenterKode:['CC011','CC012'],
+      akunJurnal:{akunKas:'1100002', akunPiutang:'1120001', akunPersediaan:'1130001', akunHutang:'2110001'},
+      wilayahKode:['JABAR001'],
+      penanggungJawab:[
+        {nama:'ADE FIRMANSYAH', jabatan:'Kepala Cabang', kategoriBarang:['CATSMB','CATBHB']},
+        {nama:'YULIA PERMATASARI', jabatan:'Warehouse Supervisor', kategoriBarang:['CATSMB','CATBHB','CATBMB']},
+      ],
+      izinCabang:{noNib:'0123456789014', tglNib:'20/06/2013', noSiup:'503/SIUP-B/06/2013', tglSiup:'20/06/2013', noTdg:'05/TDG/6/2013', tglTdg:'25/06/2013', berlakuSampai:'20/06/2033', statusPerizinan:'Aktif'},
+      jurnalRK:{akunPiutangRK:'1120002', akunHutangRK:'2110003'}},
+    {kode:'03', nama:'Tangerang', namaPerusahaan:'PT Distriversa Buanamas', alamat:'Jl. Daan Mogot Km. 19', kota:'Tangerang', provinsi:'Banten', kodePos:'15122', telepon:'(021) 552-3300', fax:'(021) 552-3301', email:'tangerang@distriversabuanamas.co.id', npwp:'01.234.567.8-904.000', tanggalBerdiri:'11/09/2014', status:'Aktif',
+      costCenterKode:['CC013','CC014'],
+      akunJurnal:{akunKas:'1100002', akunPiutang:'1120001', akunPersediaan:'1130001', akunHutang:'2110001'},
+      wilayahKode:['BANTEN01'],
+      penanggungJawab:[
+        {nama:'RUDI HARTONO', jabatan:'Kepala Cabang', kategoriBarang:['CATSMB','CATMKN','CATMNM']},
+        {nama:'SITI NURHALIZA', jabatan:'Finance Manager', kategoriBarang:['CATSMB','CATMKN']},
+      ],
+      izinCabang:{noNib:'0123456789015', tglNib:'11/09/2014', noSiup:'503/SIUP-B/09/2014', tglSiup:'11/09/2014', noTdg:'19/TDG/9/2014', tglTdg:'18/09/2014', berlakuSampai:'11/09/2034', statusPerizinan:'Aktif'},
+      jurnalRK:{akunPiutangRK:'1120002', akunHutangRK:'2110003'}},
+    {kode:'04', nama:'Medan', namaPerusahaan:'PT Distriversa Buanamas', alamat:'Jl. Gatot Subroto No. 88', kota:'Medan', provinsi:'Sumatera Utara', kodePos:'20115', telepon:'(061) 456-7700', fax:'(061) 456-7701', email:'medan@distriversabuanamas.co.id', npwp:'01.234.567.8-905.000', tanggalBerdiri:'03/02/2016', status:'Aktif',
+      costCenterKode:['CC017'],
+      akunJurnal:{akunKas:'1100002', akunPiutang:'1120001', akunPersediaan:'1130001', akunHutang:'2110001'},
+      wilayahKode:[],
+      penanggungJawab:[
+        {nama:'AGUS SALIM NASUTION', jabatan:'Kepala Cabang', kategoriBarang:['CATSMB','CATBHB','CATMKN']},
+      ],
+      izinCabang:{noNib:'0123456789016', tglNib:'03/02/2016', noSiup:'503/SIUP-B/02/2016', tglSiup:'03/02/2016', noTdg:'11/TDG/2/2016', tglTdg:'09/02/2016', berlakuSampai:'03/02/2036', statusPerizinan:'Aktif'},
+      jurnalRK:{akunPiutangRK:'1120002', akunHutangRK:'2110003'}},
+    {kode:'05', nama:'Makassar', namaPerusahaan:'PT Distriversa Buanamas', alamat:'Jl. Perintis Kemerdekaan Km. 10', kota:'Makassar', provinsi:'Sulawesi Selatan', kodePos:'90245', telepon:'(0411) 588-900', fax:'(0411) 588-901', email:'makassar@distriversabuanamas.co.id', npwp:'01.234.567.8-906.000', tanggalBerdiri:'17/05/2017', status:'Aktif',
+      costCenterKode:['CC018'],
+      akunJurnal:{akunKas:'1100002', akunPiutang:'1120001', akunPersediaan:'1130001', akunHutang:'2110001'},
+      wilayahKode:[],
+      penanggungJawab:[
+        {nama:'MUHAMMAD YUSUF DAENG', jabatan:'Kepala Cabang', kategoriBarang:['CATSMB','CATMKN']},
+      ],
+      izinCabang:{noNib:'0123456789017', tglNib:'17/05/2017', noSiup:'503/SIUP-B/05/2017', tglSiup:'17/05/2017', noTdg:'22/TDG/5/2017', tglTdg:'23/05/2017', berlakuSampai:'17/05/2037', statusPerizinan:'Aktif'},
+      jurnalRK:{akunPiutangRK:'1120002', akunHutangRK:'2110003'}},
+    {kode:'06', nama:'Semarang', namaPerusahaan:'PT Distriversa Buanamas', alamat:'Jl. Kaligawe Raya No. 200', kota:'Semarang', provinsi:'Jawa Tengah', kodePos:'50118', telepon:'(024) 658-4400', fax:'(024) 658-4401', email:'semarang@distriversabuanamas.co.id', npwp:'01.234.567.8-907.000', tanggalBerdiri:'25/08/2015', status:'Aktif',
+      costCenterKode:['CC015','CC016'],
+      akunJurnal:{akunKas:'1100002', akunPiutang:'1120001', akunPersediaan:'1130001', akunHutang:'2110001'},
+      wilayahKode:['JATENG001'],
+      penanggungJawab:[
+        {nama:'JOKO SUPRIYANTO', jabatan:'Kepala Cabang', kategoriBarang:['CATSMB','CATBHB','CATMKN']},
+        {nama:'ENDANG SUSILOWATI', jabatan:'Sales Manager', kategoriBarang:['CATSMB','CATMKN','CATMNM']},
+      ],
+      izinCabang:{noNib:'0123456789018', tglNib:'25/08/2015', noSiup:'503/SIUP-B/08/2015', tglSiup:'25/08/2015', noTdg:'14/TDG/8/2015', tglTdg:'01/09/2015', berlakuSampai:'25/08/2035', statusPerizinan:'Aktif'},
+      jurnalRK:{akunPiutangRK:'1120002', akunHutangRK:'2110003'}},
+    {kode:'07', nama:'Sidoarjo', namaPerusahaan:'PT Distriversa Buanamas', alamat:'Jl. Raya Waru No. 33', kota:'Sidoarjo', provinsi:'Jawa Timur', kodePos:'61256', telepon:'(031) 853-1100', fax:'(031) 853-1101', email:'sidoarjo@distriversabuanamas.co.id', npwp:'01.234.567.8-908.000', tanggalBerdiri:'09/11/2018', status:'Aktif',
+      costCenterKode:['CC009'],
+      akunJurnal:{akunKas:'1100002', akunPiutang:'1120001', akunPersediaan:'1130001', akunHutang:'2110001'},
+      wilayahKode:[],
+      penanggungJawab:[
+        {nama:'FAJAR NUR ROHMAN', jabatan:'Warehouse Supervisor', kategoriBarang:['CATSMB','CATMKN']},
+      ],
+      izinCabang:{noNib:'0123456789019', tglNib:'09/11/2018', noSiup:'503/SIUP-B/11/2018', tglSiup:'09/11/2018', noTdg:'27/TDG/11/2018', tglTdg:'14/11/2018', berlakuSampai:'09/11/2038', statusPerizinan:'Aktif'},
+      jurnalRK:{akunPiutangRK:'1120002', akunHutangRK:'2110003'}},
+  ],
 };

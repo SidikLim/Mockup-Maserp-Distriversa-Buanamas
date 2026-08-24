@@ -164,6 +164,8 @@ const PAGE_MODULES={
   groupProduk:{srcs:['js/pages/group-produk.template.js','js/pages/group-produk.js'], fn:'renderGroupProdukPage'},
   kategoriReorderingSheet:{srcs:['js/pages/kategori-reordering-sheet.template.js','js/pages/kategori-reordering-sheet.js'], fn:'renderKategoriReorderingSheetPage'},
   transaksiPersediaan:{srcs:['js/pages/transaksi-persediaan.template.js','js/pages/transaksi-persediaan.js'], fn:'renderTransaksiPersediaanPage'},
+  costCenter:{srcs:['js/pages/cost-center.template.js','js/pages/cost-center.js'], fn:'renderCostCenterPage'},
+  cabang:{srcs:['js/pages/cabang.template.js','js/pages/cabang.js'], fn:'renderCabangPage'},
 };
 const loadedModules=new Set();
 
