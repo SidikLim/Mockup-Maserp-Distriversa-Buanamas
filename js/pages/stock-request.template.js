@@ -69,6 +69,7 @@ function tplStockRequestListPage(){
           <th>Keterangan</th>
           <th>Status</th>
           <th>Closed Manually</th>
+          <th>Transfer Barang?</th>
           <th>Lihat</th>
           <th>Cetak</th>
           <th>Ubah</th>
@@ -81,7 +82,7 @@ function tplStockRequestListPage(){
 }
 
 function tplSrRows(rows){
-  if(!rows.length) return `<tr><td colspan="13" style="color:var(--text-light);">Tidak ada data Stock Request</td></tr>`;
+  if(!rows.length) return `<tr><td colspan="14" style="color:var(--text-light);">Tidak ada data Stock Request</td></tr>`;
   return rows.map((r,i)=>`
     <tr>
       <td>${r.no}</td>
@@ -95,6 +96,12 @@ function tplSrRows(rows){
       <td>
         <label class="toggle-switch">
           <input type="checkbox" data-toggle="closedManually" data-idx="${i}" ${r.closedManually?'checked':''}>
+          <span class="toggle-slider"></span>
+        </label>
+      </td>
+      <td>
+        <label class="toggle-switch" title="Sudah dibuat transaksi Transfer Barang? Selama belum, baris ini akan muncul di Notifikasi topbar.">
+          <input type="checkbox" data-toggle="transferOutDibuat" data-idx="${i}" ${r.transferOutDibuat?'checked':''}>
           <span class="toggle-slider"></span>
         </label>
       </td>

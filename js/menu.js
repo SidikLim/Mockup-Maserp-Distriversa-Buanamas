@@ -100,7 +100,7 @@ const MENU=[
    {header:'Daftar Transaksi'},
    {label:'Reordering Sheet', page:'reorderingSheet'},
    {label:'Stock Request', page:'stockRequest'},
-   {label:'Transaksi Persediaan', page:'placeholder', title:'Transaksi Persediaan'},
+   {label:'Transaksi Persediaan', page:'transaksiPersediaan'},
    {label:'Master Stock Opname', page:'placeholder', title:'Master Stock Opname'},
    {label:'Stock Opname', page:'placeholder', title:'Stock Opname'},
    {label:'Adjust Harga Jual', page:'placeholder', title:'Adjust Harga Jual'},

@@ -13,8 +13,19 @@
 let currentPage='mainDashboard', currentTitle=null;
 const sidebarScroll=document.getElementById('sidebarScroll');
 
+/* `pageToElement` memetakan key `page` (sama seperti dipakai
+   PAGE_MODULES/MENU) ke elemen DOM sidebar yang jadi "pintu masuk"
+   navigasi ke halaman itu — diisi ulang tiap kali buildSidebar()
+   jalan. Dipakai oleh goToPage() (lihat bagian NOTIFIKASI di bawah)
+   supaya pemanggil dari LUAR sidebar (misal notifikasi topbar) bisa
+   berpindah halaman dengan cara IDENTIK seperti user mengklik menu
+   itu sendiri (highlight current/active-parent ikut benar), tanpa
+   perlu menduplikasi logic navigasi. */
+let pageToElement={};
+
 function buildSidebar(){
   sidebarScroll.innerHTML='';
+  pageToElement={};
   MENU.forEach((top,ti)=>{
     if(top.children){
       const wrap=document.createElement('div');
@@ -39,6 +50,7 @@ function buildSidebar(){
             if(top.page) head.classList.add('active-parent');
           };
           sub.appendChild(it);
+          if(c.page) pageToElement[c.page]=it;
         }
       });
       head.onclick=()=>{
@@ -50,6 +62,7 @@ function buildSidebar(){
       };
       wrap.appendChild(head); wrap.appendChild(sub);
       sidebarScroll.appendChild(wrap);
+      if(top.page) pageToElement[top.page]=head;
     }else{
       const leaf=document.createElement('div');
       leaf.className='menu-top leaf';
@@ -60,6 +73,7 @@ function buildSidebar(){
         navigate(top.page, top.label, leaf);
       };
       sidebarScroll.appendChild(leaf);
+      if(top.page) pageToElement[top.page]=leaf;
     }
   });
 }
@@ -149,6 +163,7 @@ const PAGE_MODULES={
   bentukSediaan:{srcs:['js/pages/bentuk-sediaan.template.js','js/pages/bentuk-sediaan.js'], fn:'renderBentukSediaanPage'},
   groupProduk:{srcs:['js/pages/group-produk.template.js','js/pages/group-produk.js'], fn:'renderGroupProdukPage'},
   kategoriReorderingSheet:{srcs:['js/pages/kategori-reordering-sheet.template.js','js/pages/kategori-reordering-sheet.js'], fn:'renderKategoriReorderingSheetPage'},
+  transaksiPersediaan:{srcs:['js/pages/transaksi-persediaan.template.js','js/pages/transaksi-persediaan.js'], fn:'renderTransaksiPersediaanPage'},
 };
 const loadedModules=new Set();
 
@@ -175,6 +190,22 @@ const content=document.getElementById('content');
 let chartInstances=[];
 function destroyCharts(){ chartInstances.forEach(c=>c.destroy()); chartInstances=[]; }
 
+/* `window.__pendingPageAction` = {page, run} — dipasang oleh goToPage()
+   (bagian NOTIFIKASI di bawah) SEBELUM navigasi terjadi, lalu dieksekusi
+   sendiri oleh runPendingPageAction() begitu renderPage() untuk `page`
+   yang sama selesai me-render (baik lewat jalur module sudah ter-load
+   maupun jalur lazy-load async) — supaya pemanggil bisa "lompat ke
+   halaman X lalu jalankan Y" (mis. notifikasi buka Stock Request lalu
+   langsung buka form Lihat baris tertentu) tanpa renderPage()/navigate()
+   perlu tahu apa-apa soal kebutuhan spesifik pemanggilnya. */
+function runPendingPageAction(){
+  const action=window.__pendingPageAction;
+  if(action && action.page===currentPage){
+    window.__pendingPageAction=null;
+    action.run();
+  }
+}
+
 function renderPage(){
   destroyCharts();
   if(currentPage==='placeholder') return renderPlaceholder(currentTitle);
@@ -182,10 +213,12 @@ function renderPage(){
   const mod=PAGE_MODULES[currentPage];
   if(mod){
     if(loadedModules.has(currentPage)){
-      return window[mod.fn]();
+      window[mod.fn]();
+      runPendingPageAction();
+      return;
     }
     content.innerHTML='<div class="page-loading">Memuat halaman&hellip;</div>';
-    return loadScriptsSequential(mod.srcs, ()=>{ loadedModules.add(currentPage); window[mod.fn](); });
+    return loadScriptsSequential(mod.srcs, ()=>{ loadedModules.add(currentPage); window[mod.fn](); runPendingPageAction(); });
   }
 
   const pages={
@@ -445,6 +478,145 @@ function openPspAddInfo(){
 }
 
 /* =========================================================
+   NOTIFIKASI (topbar) — 2026-08-24
+
+   Permintaan awal: notifikasi lonceng topbar muncul untuk transaksi
+   Stock Request yang belum dibuat transaksi transfer barangnya, dan
+   begitu salah satu notifikasi diklik akan membuka Stock Request
+   tersebut. Mockup ini belum punya modul "Transfer Barang" sungguhan
+   yang terhubung ke Stock Request (beda dari rantai Purchase Order →
+   Terima Barang yang sudah nyata) — atas pilihan Sidik, status ini
+   DITANDAI LEWAT FIELD BARU `row.transferOutDibuat` (boolean) yang
+   independen dari field `status` (OPEN/CLOSED) yang sudah ada,
+   supaya bisa didemokan lewat toggle switch manual di kolom "Transfer
+   Barang?" pada Stock Request List (lihat stock-request.template.js/
+   .js) — sama seperti pola toggle "Closed Manually" yang sudah ada di
+   modul itu. Kalau nanti modul "Transfer Barang" sungguhan dibangun,
+   field ini idealnya diganti/disinkronkan ke status transaksi Transfer
+   Barang yang sebenarnya, bukan toggle manual lagi.
+
+   Arsitektur SENGAJA dibuat generik (`NOTIF_SOURCES`, bukan logic
+   Stock Request yang di-hardcode langsung di sini) supaya sumber
+   notifikasi lain di masa depan (mis. modul Transfer Barang itu
+   sendiri, atau modul lain) tinggal ditambah sebagai 1 entry baru ke
+   array ini tanpa mengubah mekanisme dropdown/badge-nya. Tiap entry
+   punya `list()` yang mengembalikan array item notifikasi
+   `{key,icon,title,sub,date,open()}` — `open()` yang tahu cara
+   berpindah & menindaklanjuti notifikasi jenisnya sendiri.
+
+   Ditaruh di core.js (bukan di js/pages/stock-request.js) karena
+   topbar & badge-nya harus selalu ada terlepas dari modul mana yang
+   lagi lazy-loaded — sama alasannya dengan openPersediaanPicker() di
+   atas. `refreshNotifBadge()` dibuat GLOBAL (bukan lewat closure)
+   supaya modul manapun (mis. stock-request.js setelah toggle/simpan/
+   hapus baris) bisa memanggilnya langsung begitu data yang memengaruhi
+   notifikasi berubah — lihat pemanggilannya di renderSrTable()/
+   openSrForm() pada stock-request.js.
+========================================================= */
+const NOTIF_SOURCES=[
+  {
+    key:'stockRequestTransferOut',
+    list(){
+      return (DATA.stockRequest||[])
+        .filter(r=>!r.transferOutDibuat)
+        .map(r=>({
+          key:'sr-'+r.no,
+          icon:'box',
+          title:`Stock Request Baru — ${r.no}`,
+          sub:`${r.cabangRequest||'-'} — belum dibuat Transfer Barang`,
+          date:r.tglRequest||'',
+          open(){
+            goToPage('stockRequest','Stock Request', ()=>{
+              const idx=DATA.stockRequest.findIndex(x=>x.no===r.no);
+              if(idx>=0 && typeof openSrForm==='function') openSrForm('view', idx);
+            });
+          },
+        }));
+    },
+  },
+];
+
+function notifAllItems(){
+  return NOTIF_SOURCES.flatMap(s=>s.list());
+}
+
+let notifOpen=false;
+
+function refreshNotifBadge(){
+  const items=notifAllItems();
+  const badge=document.getElementById('notifBadge');
+  if(badge){
+    if(items.length){ badge.textContent=items.length; badge.style.display='inline-block'; }
+    else { badge.textContent=''; badge.style.display='none'; }
+  }
+  if(notifOpen) openNotifDropdown();
+}
+
+function tplNotifItems(items){
+  if(!items.length) return `<div class="notif-empty">Tidak ada notifikasi baru.</div>`;
+  return items.map((it,i)=>`
+    <div class="notif-item" data-notif="${i}">
+      <div class="notif-title">${icon(it.icon||'alertTriangle',14)}<span>${it.title}</span></div>
+      <div class="notif-sub">${it.sub}</div>
+      ${it.date?`<div class="notif-date">${it.date}</div>`:''}
+    </div>`).join('');
+}
+
+function openNotifDropdown(){
+  const notifBtn=document.getElementById('notifBtn');
+  const old=document.getElementById('notifDropdown');
+  if(old) old.remove();
+  const items=notifAllItems();
+  const wrap=document.createElement('div');
+  wrap.className='notif-dropdown';
+  wrap.id='notifDropdown';
+  wrap.innerHTML=`<div class="notif-dropdown-header">Notifikasi${items.length?` (${items.length})`:''}</div>
+    <div class="notif-list">${tplNotifItems(items)}</div>`;
+  notifBtn.appendChild(wrap);
+  wrap.querySelectorAll('[data-notif]').forEach(el=>{
+    el.onclick=(e)=>{
+      e.stopPropagation();
+      const it=items[+el.dataset.notif];
+      closeNotifDropdown();
+      if(it && it.open) it.open();
+    };
+  });
+  notifOpen=true;
+}
+
+function closeNotifDropdown(){
+  const old=document.getElementById('notifDropdown');
+  if(old) old.remove();
+  notifOpen=false;
+}
+
+/* goToPage(page, title, run) — berpindah ke `page` PERSIS seperti
+   user mengklik menu sidebar-nya sendiri (highlight current/
+   active-parent & submenu yang terbuka tetap konsisten, lewat
+   pageToElement yang diisi buildSidebar()), lalu menjalankan `run`
+   begitu halaman itu selesai di-render (lewat runPendingPageAction()
+   di renderPage()) — dipakai open() pada NOTIF_SOURCES di atas untuk
+   "buka Stock Request lalu langsung tampilkan 1 baris tertentu",
+   tapi generik untuk kebutuhan serupa di luar notifikasi juga. */
+function goToPage(page,title,run){
+  window.__pendingPageAction = run ? {page,run} : null;
+  const el=pageToElement[page];
+  if(el){
+    const sub=el.closest && el.closest('.submenu');
+    if(sub){
+      document.querySelectorAll('.menu-top').forEach(m=>m.classList.remove('open'));
+      document.querySelectorAll('.submenu').forEach(m=>m.classList.remove('open'));
+      sub.classList.add('open');
+      const head=sub.previousElementSibling;
+      if(head && head.classList.contains('menu-top')) head.classList.add('open');
+    }
+    el.click();
+  }else{
+    navigate(page,title);
+  }
+}
+
+/* =========================================================
    INIT
 ========================================================= */
 document.getElementById('hamburgerBtn').innerHTML=icon('menu',20);
@@ -455,3 +627,14 @@ buildSidebar();
 renderPage();
 // mark Dashboard as active leaf by default
 document.querySelectorAll('.menu-top.leaf').forEach(l=>{ if(l.textContent.trim()==='Dashboard') l.classList.add('current'); });
+
+const notifBtnEl=document.getElementById('notifBtn');
+notifBtnEl.insertAdjacentHTML('afterbegin', icon('bell',20));
+notifBtnEl.addEventListener('click',(e)=>{
+  e.stopPropagation();
+  notifOpen ? closeNotifDropdown() : openNotifDropdown();
+});
+document.addEventListener('click',(e)=>{
+  if(notifOpen && !notifBtnEl.contains(e.target)) closeNotifDropdown();
+});
+refreshNotifBadge();

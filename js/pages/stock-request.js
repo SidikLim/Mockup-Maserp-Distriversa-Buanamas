@@ -39,6 +39,11 @@ function renderSrTable(){
   tbody.querySelectorAll('[data-toggle]').forEach(cb => cb.onchange = () => {
     const idx = +cb.dataset.idx;
     DATA.stockRequest[idx][cb.dataset.toggle] = cb.checked;
+    // Toggle "Transfer Barang?" ini adalah field yang dipakai Notifikasi
+    // topbar (lihat NOTIF_SOURCES di core.js) untuk menghitung Stock
+    // Request yang belum ditransfer — refresh badge-nya di sini supaya
+    // langsung sinkron begitu ditoggle manual, tanpa harus pindah menu.
+    if(typeof refreshNotifBadge === 'function') refreshNotifBadge();
   });
 }
 
@@ -57,7 +62,7 @@ function openSrForm(mode, idx){
   if(mode === 'add'){
     row = {
       no: null, noPO: '', tglRequest: '07/08/2026', userEntry: 'sidik', reorderingSheet: '', tipeTransaksi: 'Transfer Out',
-      keterangan: '', status: 'OPEN', closedManually: false, cabangRequest: SR_CABANG_LIST[0], supplier: '',
+      keterangan: '', status: 'OPEN', closedManually: false, transferOutDibuat: false, cabangRequest: SR_CABANG_LIST[0], supplier: '',
       gudangSumber: SR_GUDANG_LIST[0], gudangTarget: SR_GUDANG_LIST[0], edBulan: 0, usedInPO: false,
       items: srBuildDefaultItems(), tglInput: '', userInput: '', tglEdit: '', userEdit: '',
     };
@@ -120,6 +125,10 @@ function openSrForm(mode, idx){
       row.userEdit = 'sidik';
       DATA.stockRequest[idx] = row;
     }
+    // Baris baru/diedit ikut memengaruhi jumlah Notifikasi topbar
+    // (lihat NOTIF_SOURCES di core.js) kalau transferOutDibuat-nya
+    // masih false — refresh badge-nya di sini juga.
+    if(typeof refreshNotifBadge === 'function') refreshNotifBadge();
     renderSrList();
   };
 }
@@ -236,6 +245,7 @@ function openSrDeleteConfirm(idx){
     DATA.stockRequest.splice(idx, 1);
     closeModal();
     renderSrTable();
+    if(typeof refreshNotifBadge === 'function') refreshNotifBadge();
   };
 }
 

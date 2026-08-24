@@ -27,7 +27,25 @@ a{color:inherit;text-decoration:none;}
 .brand .full-name small{display:block;font-size:10.5px;font-weight:400;color:#b9c0d6;letter-spacing:.03em;}
 .topbar-right{display:flex;align-items:center;gap:22px;font-size:13px;}
 .icon-wrap{position:relative;cursor:pointer;opacity:.9;display:flex;}
+.icon-wrap svg{flex-shrink:0;}
 .badge{position:absolute;top:-7px;right:-9px;background:var(--red);color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;line-height:1.3;}
+/* 2026-08-24 — dropdown notifikasi topbar (fitur "Notifikasi Stock
+   Request Baru"). PERTAMA KALINYA mockup ini punya panel dropdown
+   yang benar-benar mengambang (position:absolute, bukan modal-overlay
+   di tengah layar) — dianchor ke .icon-wrap (#notifBtn) yang sudah
+   position:relative sejak awal untuk .badge, jadi cukup ditambah
+   panelnya sebagai child ke-3 elemen itu. */
+.notif-dropdown{position:absolute;top:32px;right:-14px;width:340px;max-width:88vw;background:var(--card-bg);color:var(--text);border-radius:8px;box-shadow:0 10px 28px rgba(20,20,40,.28);z-index:120;overflow:hidden;text-align:left;cursor:default;}
+.notif-dropdown-header{background:var(--navy-2);color:#fff;padding:10px 14px;font-size:12.8px;font-weight:700;}
+.notif-list{max-height:360px;overflow-y:auto;}
+.notif-item{padding:9px 14px;border-bottom:1px solid var(--border);cursor:pointer;}
+.notif-item:last-child{border-bottom:none;}
+.notif-item:hover{background:#f4f6fb;}
+.notif-item .notif-title{display:flex;align-items:center;gap:6px;font-size:12.6px;font-weight:700;color:var(--blue);}
+.notif-item .notif-title svg{flex-shrink:0;color:var(--blue);}
+.notif-item .notif-sub{font-size:11.5px;color:var(--text);margin:2px 0 0 20px;}
+.notif-item .notif-date{font-size:10.8px;color:var(--text-light);margin:2px 0 0 20px;}
+.notif-empty{padding:22px 14px;text-align:center;color:var(--text-light);font-size:12.3px;}
 .user-greet{display:flex;align-items:center;gap:8px;white-space:nowrap;}
 .user-greet .uname{font-weight:600;}
 .user-greet .udemo{color:#a9b0c8;font-size:11.5px;}

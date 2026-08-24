@@ -34,7 +34,25 @@ a{color:inherit;text-decoration:none;}
 .brand .full-name small{display:block;font-size:10.5px;font-weight:400;color:#b9c0d6;letter-spacing:.03em;}
 .topbar-right{display:flex;align-items:center;gap:22px;font-size:13px;}
 .icon-wrap{position:relative;cursor:pointer;opacity:.9;display:flex;}
+.icon-wrap svg{flex-shrink:0;}
 .badge{position:absolute;top:-7px;right:-9px;background:var(--red);color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;line-height:1.3;}
+/* 2026-08-24 — dropdown notifikasi topbar (fitur "Notifikasi Stock
+   Request Baru"). PERTAMA KALINYA mockup ini punya panel dropdown
+   yang benar-benar mengambang (position:absolute, bukan modal-overlay
+   di tengah layar) — dianchor ke .icon-wrap (#notifBtn) yang sudah
+   position:relative sejak awal untuk .badge, jadi cukup ditambah
+   panelnya sebagai child ke-3 elemen itu. */
+.notif-dropdown{position:absolute;top:32px;right:-14px;width:340px;max-width:88vw;background:var(--card-bg);color:var(--text);border-radius:8px;box-shadow:0 10px 28px rgba(20,20,40,.28);z-index:120;overflow:hidden;text-align:left;cursor:default;}
+.notif-dropdown-header{background:var(--navy-2);color:#fff;padding:10px 14px;font-size:12.8px;font-weight:700;}
+.notif-list{max-height:360px;overflow-y:auto;}
+.notif-item{padding:9px 14px;border-bottom:1px solid var(--border);cursor:pointer;}
+.notif-item:last-child{border-bottom:none;}
+.notif-item:hover{background:#f4f6fb;}
+.notif-item .notif-title{display:flex;align-items:center;gap:6px;font-size:12.6px;font-weight:700;color:var(--blue);}
+.notif-item .notif-title svg{flex-shrink:0;color:var(--blue);}
+.notif-item .notif-sub{font-size:11.5px;color:var(--text);margin:2px 0 0 20px;}
+.notif-item .notif-date{font-size:10.8px;color:var(--text-light);margin:2px 0 0 20px;}
+.notif-empty{padding:22px 14px;text-align:center;color:var(--text-light);font-size:12.3px;}
 .user-greet{display:flex;align-items:center;gap:8px;white-space:nowrap;}
 .user-greet .uname{font-weight:600;}
 .user-greet .udemo{color:#a9b0c8;font-size:11.5px;}
@@ -443,7 +461,7 @@ canvas{max-width:100%;}
     </div>
   </div>
   <div class="topbar-right">
-    <span class="icon-wrap" title="Notifikasi"><span class="badge">5</span></span>
+    <span class="icon-wrap" id="notifBtn" title="Notifikasi"><span class="badge" id="notifBadge" style="display:none;"></span></span>
     <span class="icon-wrap" title="Keamanan"></span>
     <div class="user-greet">
       <span>Halo, <span class="uname">Sidik</span></span>
@@ -524,6 +542,9 @@ const ICONS = {
   /* 2026-08-21 — dipakai tombol "Buat Stock Request" di modul
      Reordering Sheet (icon floppy-disk/save, belum ada sebelumnya). */
   save:'<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>',
+  /* 2026-08-24 — lonceng notifikasi topbar (fitur Notifikasi Stock
+     Request Baru), belum ada icon lonceng sebelumnya di mockup ini. */
+  bell:'<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
 };
 function icon(name,size=18){ return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]||ICONS.list}</svg>`; }
 
@@ -2446,23 +2467,34 @@ const DATA = {
      Request (lihat js/pages/stock-request.*). Setiap baris "items"
      adalah rincian barang yang diminta transfer dari Gudang Sumber ke
      Gudang Target, dikelompokkan per Kategori Barang (field `kategori`
-     mengacu ke DATA.items). NB: 2 baris contoh di bawah meniru screenshot
-     MASERP "Daftar Stock Request" & "Stock Request" persis pada field
-     No. Request/No. PO/Tgl/User/Status, tapi kode & nama barang serta
-     nama Supplier diganti ke data milik DBM sendiri (BRG-xxx, supplier
-     dari DATA.suppliers) karena screenshot berasal dari demo perusahaan
-     farmasi lain (kode barang 01-30003 dst, supplier "PT SATORIA ANEKA
-     INDUSTRI" tidak ada di master DBM) — pola yang sama seperti
-     penyesuaian kode akun GL di Jurnal Pembelian. */
+     mengacu ke DATA.items). NB: 2 baris contoh PALING ATAS di bawah
+     meniru screenshot MASERP "Daftar Stock Request" & "Stock Request"
+     persis pada field No. Request/No. PO/Tgl/User/Status, tapi kode &
+     nama barang serta nama Supplier diganti ke data milik DBM sendiri
+     (BRG-xxx, supplier dari DATA.suppliers) karena screenshot berasal
+     dari demo perusahaan farmasi lain (kode barang 01-30003 dst,
+     supplier "PT SATORIA ANEKA INDUSTRI" tidak ada di master DBM) —
+     pola yang sama seperti penyesuaian kode akun GL di Jurnal Pembelian.
+
+     Field `transferOutDibuat` (2026-08-24, fitur Notifikasi Stock
+     Request Baru) ditambahkan ke SEMUA baris — lihat komentar besar di
+     core.js bagian NOTIFIKASI untuk alasan field ini independen dari
+     `status`. 2 baris BARU (Bandung & Head Office) ditambahkan supaya
+     ada 3 baris `transferOutDibuat:false` sekaligus (sama seperti
+     baris TGR yang sudah ada) — meniru badge notifikasi "3" pada
+     screenshot MASERP yang dikirim user, TANPA baris ini terhubung ke
+     PO manapun (noPO:'', usedInPO:false — merepresentasikan Stock
+     Request yang baru dibuat & belum ditindaklanjuti sama sekali,
+     beda dari 2 baris lama yang sudah ada PO-nya sejak awal). */
   stockRequest:[
-    {no:'26/SR/SMG/08/00001', noPO:'26/PO/HO/08/00003', tglRequest:'06/08/2026', userEntry:'khalimatus_apja', reorderingSheet:'', tipeTransaksi:'Transfer Out', keterangan:'', status:'CLOSED', closedManually:false,
+    {no:'26/SR/SMG/08/00001', noPO:'26/PO/HO/08/00003', tglRequest:'06/08/2026', userEntry:'khalimatus_apja', reorderingSheet:'', tipeTransaksi:'Transfer Out', keterangan:'', status:'CLOSED', closedManually:false, transferOutDibuat:true,
       cabangRequest:'Semarang', supplier:'', gudangSumber:'(00-GUU) Gudang Utama-HO', gudangTarget:'(05-GSM) Gudang Semarang', edBulan:0, usedInPO:true,
       items:[
         {kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', kategori:'Minuman', qtyReordering:800, pilih:true, qty:800, um:'Dus'},
         {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', kategori:'Minuman', qtyReordering:600, pilih:true, qty:600, um:'Dus'},
       ],
       tglInput:'06/08/2026 09:12:30', userInput:'khalimatus_apja', tglEdit:'', userEdit:''},
-    {no:'26/SR/TGR/08/00001', noPO:'26/PO/HO/08/00002', tglRequest:'03/08/2026', userEntry:'sarah_scc', reorderingSheet:'26/ROS/TGR/08/00001', tipeTransaksi:'Transfer Out', keterangan:'PO PT. DAN', status:'OPEN', closedManually:false,
+    {no:'26/SR/TGR/08/00001', noPO:'26/PO/HO/08/00002', tglRequest:'03/08/2026', userEntry:'sarah_scc', reorderingSheet:'26/ROS/TGR/08/00001', tipeTransaksi:'Transfer Out', keterangan:'PO PT. DAN', status:'OPEN', closedManually:false, transferOutDibuat:false,
       cabangRequest:'Tangerang', supplier:'PT Sumber Pangan Nusantara', gudangSumber:'(00-GUU) Gudang Utama-HO', gudangTarget:'(00-GUU) Gudang Utama-HO', edBulan:0, usedInPO:true,
       items:[
         {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', kategori:'Sembako', qtyReordering:6000, pilih:true, qty:6000, um:'Dus'},
@@ -2470,6 +2502,19 @@ const DATA = {
         {kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', kategori:'Sembako', qtyReordering:2000, pilih:true, qty:2000, um:'Karung'},
       ],
       tglInput:'03/08/2026 13:00:56', userInput:'sarah_scc', tglEdit:'07/08/2026 10:42:41', userEdit:'sidik'},
+    {no:'26/SR/BDG/08/00001', noPO:'', tglRequest:'10/08/2026', userEntry:'budi_bdg', reorderingSheet:'', tipeTransaksi:'Transfer Out', keterangan:'Restock kebutuhan akhir bulan', status:'OPEN', closedManually:false, transferOutDibuat:false,
+      cabangRequest:'Bandung', supplier:'', gudangSumber:'(00-GUU) Gudang Utama-HO', gudangTarget:'(02-GBD) Gudang Bandung', edBulan:0, usedInPO:false,
+      items:[
+        {kode:'BRG-009', nama:'Kopi Kapal Api 165gr', kategori:'Minuman', qtyReordering:400, pilih:true, qty:400, um:'Dus'},
+        {kode:'BRG-005', nama:'Mie Instan Indomie Goreng', kategori:'Makanan', qtyReordering:900, pilih:true, qty:900, um:'Dus'},
+      ],
+      tglInput:'10/08/2026 08:45:12', userInput:'budi_bdg', tglEdit:'', userEdit:''},
+    {no:'26/SR/HO/08/00001', noPO:'', tglRequest:'12/08/2026', userEntry:'rina_ho', reorderingSheet:'', tipeTransaksi:'Transfer Out', keterangan:'Kebutuhan stok Gudang Utama', status:'OPEN', closedManually:false, transferOutDibuat:false,
+      cabangRequest:'Head Office', supplier:'', gudangSumber:'(00-GUU) Gudang Utama-HO', gudangTarget:'(00-GUU) Gudang Utama-HO', edBulan:0, usedInPO:false,
+      items:[
+        {kode:'BRG-006', nama:'Kecap Manis ABC 600ml', kategori:'Bumbu', qtyReordering:250, pilih:true, qty:250, um:'Dus'},
+      ],
+      tglInput:'12/08/2026 14:20:05', userInput:'rina_ho', tglEdit:'', userEdit:''},
   ],
   /* Reordering Sheet — menu Persediaan Barang > Daftar Transaksi >
      Reordering Sheet (lihat js/pages/reordering-sheet.*). Sebelumnya
@@ -2541,6 +2586,141 @@ const DATA = {
       items:[
         {kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', hist:[0,0,0,0,0,0], alpha:0, faktorial:0, average:0, forecast:0, keteranganItem:'', salesAgt:0, onHand:69, qtyBoPo:0, outstandingDR:0, qtyBoSo:0, qtyPickingList:0, available:69, maxStock:0, shouldReorder:0, qtyKelipatanOrder:0, konversiKarton:1, reorder:0, pareto:''},
       ], tglInput:'07/08/2026 09:00:00', userEntry:'sidik', stockRequest:''},
+  ],
+  /* Transaksi Persediaan — menu Persediaan Barang > Daftar Transaksi >
+     Transaksi Persediaan (lihat js/pages/transaksi-persediaan.*).
+     Sebelumnya placeholder. 16 baris (downsize dari "Total Record: 56"
+     di screenshot asli, mengikuti precedent downsize-volume Master
+     Rayon/Price List By Province/Report Center) mencakup SEMUA 6 Tipe
+     Transaksi: 4 pasang Transfer Out/In (8 baris) + 2 Transfer Stock +
+     2 Transfer Produk Bonus + 2 Pengeluaran + 2 Pemasukkan.
+
+     Pasangan pertama (26/OUT-HO/08/00001 <-> 26/IN-SMG/08/00001)
+     SENGAJA di-chain ke Stock Request `26/SR/SMG/08/00001` yang
+     SUDAH ADA (baris itu satu-satunya di DATA.stockRequest dengan
+     transferOutDibuat:true — lihat fitur Notifikasi topbar, 2026-08-24)
+     dan diberi `locked:true` — mensimulasikan bahwa transfer ini SUDAH
+     diproses lanjut jadi BPB/Terima Barang di cabang Semarang, sehingga
+     tidak boleh diubah lagi (banner "TUTUP..."). 3 pasang Out/In
+     lainnya (Bandung/Medan/Makassar) adalah alokasi ad-hoc antar
+     cabang, TIDAK terhubung ke Stock Request manapun (field
+     `stockRequest` kosong), tidak locked.
+
+     Nomor transaksi 4 baris (26/TPB-HO/08/00001, 26/TSS-HO/08/00011 →
+     disederhanakan jadi 26/TSS-HO/08/00001 karena dataset di sini
+     tidak punya 10 transaksi TSS sebelumnya seperti demo asli,
+     26/WRO-HO/08/00003, 26/PMA-HO/08/00001) mengikuti PERSIS format
+     & prefix dari 4 screenshot form acuan (TPB=Transfer Produk Bonus,
+     TSS=Transfer Stock, WRO=Pengeluaran/"Warehouse Removal Out",
+     PMA=Pemasukkan). "Delivery Request Cabang" & "No.SJ Supplier"
+     SENGAJA selalu kosong di semua baris (field dekoratif, konsisten
+     dengan tampilan placeholder abu-abu di semua screenshot acuan,
+     tidak ada modul Delivery Request Konsinyasi sungguhan di mockup
+     ini). Gudang Sumber/Target memakai kode `DATA.gudang` SUNGGUHAN
+     (00-GUU s.d. 07-GUU). */
+  transaksiPersediaan:[
+    {no:'26/OUT-HO/08/00001', noReferensi:'26/BPB/SMG/08/00012', stockRequest:'26/SR/SMG/08/00001', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'06/08/2026', tglTrnSort:20260806, tipeTransaksi:'Transfer Out', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(06-GUU) Gudang Utama-SMG', retur:false, jurnal:'', keterangan:'Pemenuhan Stock Request Semarang', userInput:'sidik', locked:true, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'26/SR/SMG/08/00001', itemRequest:'Susu Kental Manis Indomilk 380gr', kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', ket:'', kodeTarget:'', namaTarget:'', qty:800, um:'Dus', harga:0, jumlah:0, batches:[{batch:'BTH0806A', qty:800, exp:'01/02/2027'}]},
+        {noRequest:'26/SR/SMG/08/00001', itemRequest:'Teh Celup Sariwangi 25s', kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', ket:'', kodeTarget:'', namaTarget:'', qty:600, um:'Dus', harga:0, jumlah:0, batches:[{batch:'BTH0806B', qty:600, exp:'15/03/2027'}]},
+      ]},
+    {no:'26/IN-SMG/08/00001', noReferensi:'26/OUT-HO/08/00001', stockRequest:'26/SR/SMG/08/00001', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Semarang', tglTrn:'07/08/2026', tglTrnSort:20260807, tipeTransaksi:'Transfer In', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(06-GUU) Gudang Utama-SMG', retur:false, jurnal:'', keterangan:'Terima dari HO — Stock Request Semarang', userInput:'khalimatus_apja', locked:true, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'26/SR/SMG/08/00001', itemRequest:'Susu Kental Manis Indomilk 380gr', kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', ket:'', kodeTarget:'', namaTarget:'', qty:800, um:'Dus', harga:0, jumlah:0, batches:[{batch:'BTH0806A', qty:800, exp:'01/02/2027'}]},
+        {noRequest:'26/SR/SMG/08/00001', itemRequest:'Teh Celup Sariwangi 25s', kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', ket:'', kodeTarget:'', namaTarget:'', qty:600, um:'Dus', harga:0, jumlah:0, batches:[{batch:'BTH0806B', qty:600, exp:'15/03/2027'}]},
+      ]},
+    {no:'26/OUT-HO/08/00002', noReferensi:'26/BPB/HO/08/00023', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'10/08/2026', tglTrnSort:20260810, tipeTransaksi:'Transfer Out', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(02-GUU) Gudang Utama-BDG', retur:false, jurnal:'', keterangan:'Alokasi stok akhir bulan — Bandung', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', ket:'', kodeTarget:'', namaTarget:'', qty:300, um:'Dus', harga:0, jumlah:0, batches:[]},
+        {noRequest:'', itemRequest:'', kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', ket:'', kodeTarget:'', namaTarget:'', qty:150, um:'Karung', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/IN-BDG/08/00001', noReferensi:'26/OUT-HO/08/00002', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Bandung', tglTrn:'11/08/2026', tglTrnSort:20260811, tipeTransaksi:'Transfer In', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(02-GUU) Gudang Utama-BDG', retur:false, jurnal:'', keterangan:'Terima alokasi stok dari HO', userInput:'budi_bdg', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', ket:'', kodeTarget:'', namaTarget:'', qty:300, um:'Dus', harga:0, jumlah:0, batches:[]},
+        {noRequest:'', itemRequest:'', kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', ket:'', kodeTarget:'', namaTarget:'', qty:150, um:'Karung', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/OUT-HO/08/00003', noReferensi:'26/BPB/HO/08/00028', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'12/08/2026', tglTrnSort:20260812, tipeTransaksi:'Transfer Out', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(04-GUU) Gudang Utama-MDN', retur:false, jurnal:'', keterangan:'Restock Medan', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-005', nama:'Mie Instan Indomie Goreng', ket:'', kodeTarget:'', namaTarget:'', qty:400, um:'Dus', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/IN-MDN/08/00001', noReferensi:'26/OUT-HO/08/00003', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Medan', tglTrn:'13/08/2026', tglTrnSort:20260813, tipeTransaksi:'Transfer In', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(04-GUU) Gudang Utama-MDN', retur:false, jurnal:'', keterangan:'Terima restock dari HO', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-005', nama:'Mie Instan Indomie Goreng', ket:'', kodeTarget:'', namaTarget:'', qty:400, um:'Dus', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/OUT-HO/08/00004', noReferensi:'26/BPB/HO/08/00029', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'14/08/2026', tglTrnSort:20260814, tipeTransaksi:'Transfer Out', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(05-GUU) Gudang Utama-MKS', retur:false, jurnal:'', keterangan:'forecast marketing pak setiawan', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-009', nama:'Kopi Kapal Api 165gr', ket:'', kodeTarget:'', namaTarget:'', qty:250, um:'Dus', harga:0, jumlah:0, batches:[]},
+        {noRequest:'', itemRequest:'', kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', ket:'', kodeTarget:'', namaTarget:'', qty:200, um:'Dus', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/IN-MKS/08/00001', noReferensi:'26/OUT-HO/08/00004', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Makassar', tglTrn:'15/08/2026', tglTrnSort:20260815, tipeTransaksi:'Transfer In', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(05-GUU) Gudang Utama-MKS', retur:false, jurnal:'', keterangan:'Terima alokasi marketing', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-009', nama:'Kopi Kapal Api 165gr', ket:'', kodeTarget:'', namaTarget:'', qty:250, um:'Dus', harga:0, jumlah:0, batches:[]},
+        {noRequest:'', itemRequest:'', kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', ket:'', kodeTarget:'', namaTarget:'', qty:200, um:'Dus', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/TSS-HO/08/00001', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'16/08/2026', tglTrnSort:20260816, tipeTransaksi:'Transfer Stock', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(01-GUU) Gudang Utama-SBY', retur:false, jurnal:'', keterangan:'Penyeimbangan stok Surabaya', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', ket:'', kodeTarget:'', namaTarget:'', qty:120, um:'Karung', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/TSS-HO/08/00002', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'17/08/2026', tglTrnSort:20260817, tipeTransaksi:'Transfer Stock', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(07-GUU) Gudang Utama-SDA', retur:false, jurnal:'', keterangan:'Penyeimbangan stok Sidoarjo', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-006', nama:'Kecap Manis ABC 600ml', ket:'', kodeTarget:'', namaTarget:'', qty:80, um:'Dus', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/TPB-HO/08/00001', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'18/08/2026', tglTrnSort:20260818, tipeTransaksi:'Transfer Produk Bonus', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(00-GUU) Gudang Utama-HO', retur:false, jurnal:'', keterangan:'Bonus pembelian — Mie Indomie ke Kopi Kapal Api', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-005', nama:'Mie Instan Indomie Goreng', ket:'Bonus principal', kodeTarget:'BRG-009', namaTarget:'Kopi Kapal Api 165gr', qty:50, um:'Dus', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/TPB-HO/08/00002', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'19/08/2026', tglTrnSort:20260819, tipeTransaksi:'Transfer Produk Bonus', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(00-GUU) Gudang Utama-HO', retur:false, jurnal:'', keterangan:'Bonus pembelian — Gula Pasir ke Teh Celup', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', ket:'Bonus principal', kodeTarget:'BRG-008', namaTarget:'Teh Celup Sariwangi 25s', qty:30, um:'Karung', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/WRO-HO/08/00001', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'20/08/2026', tglTrnSort:20260820, tipeTransaksi:'Pengeluaran', statusPengeluaran:'Barang Rusak / Reject', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'', retur:false, jurnal:'JURNAL PENGELUARAN (HO)', keterangan:'Kemasan rusak saat bongkar muat', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', ket:'', kodeTarget:'', namaTarget:'', qty:20, um:'Karung', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/WRO-HO/08/00003', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'24/08/2026', tglTrnSort:20260824, tipeTransaksi:'Pengeluaran', statusPengeluaran:'Kadaluarsa (ED)', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'', retur:false, jurnal:'JURNAL PENGELUARAN (HO)', keterangan:'Stok mendekati tanggal kadaluarsa', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', ket:'', kodeTarget:'', namaTarget:'', qty:15, um:'Dus', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/PMA-HO/08/00001', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'21/08/2026', tglTrnSort:20260821, tipeTransaksi:'Pemasukkan', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'', retur:false, jurnal:'JURNAL PEMASUKAN (HO)', keterangan:'Penyesuaian stok hasil Stock Opname', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', ket:'', kodeTarget:'', namaTarget:'', qty:500, um:'Karung', harga:15000, jumlah:7500000, batches:[]},
+      ]},
+    {no:'26/PMA-HO/08/00002', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'22/08/2026', tglTrnSort:20260822, tipeTransaksi:'Pemasukkan', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'', retur:false, jurnal:'JURNAL PEMASUKAN (HO)', keterangan:'Penyesuaian stok hasil Stock Opname', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', ket:'', kodeTarget:'', namaTarget:'', qty:300, um:'Dus', harga:5000, jumlah:1500000, batches:[]},
+      ]},
   ],
   /* Purchase Order — menu Supplier & Pembelian > Daftar Transaksi >
      Purchase Order (lihat js/pages/purchase-order.*). 11 baris data
@@ -4973,7 +5153,7 @@ const MENU=[
    {header:'Daftar Transaksi'},
    {label:'Reordering Sheet', page:'reorderingSheet'},
    {label:'Stock Request', page:'stockRequest'},
-   {label:'Transaksi Persediaan', page:'placeholder', title:'Transaksi Persediaan'},
+   {label:'Transaksi Persediaan', page:'transaksiPersediaan'},
    {label:'Master Stock Opname', page:'placeholder', title:'Master Stock Opname'},
    {label:'Stock Opname', page:'placeholder', title:'Stock Opname'},
    {label:'Adjust Harga Jual', page:'placeholder', title:'Adjust Harga Jual'},
@@ -17012,6 +17192,7 @@ function tplStockRequestListPage(){
           <th>Keterangan</th>
           <th>Status</th>
           <th>Closed Manually</th>
+          <th>Transfer Barang?</th>
           <th>Lihat</th>
           <th>Cetak</th>
           <th>Ubah</th>
@@ -17024,7 +17205,7 @@ function tplStockRequestListPage(){
 }
 
 function tplSrRows(rows){
-  if(!rows.length) return `<tr><td colspan="13" style="color:var(--text-light);">Tidak ada data Stock Request</td></tr>`;
+  if(!rows.length) return `<tr><td colspan="14" style="color:var(--text-light);">Tidak ada data Stock Request</td></tr>`;
   return rows.map((r,i)=>`
     <tr>
       <td>${r.no}</td>
@@ -17038,6 +17219,12 @@ function tplSrRows(rows){
       <td>
         <label class="toggle-switch">
           <input type="checkbox" data-toggle="closedManually" data-idx="${i}" ${r.closedManually?'checked':''}>
+          <span class="toggle-slider"></span>
+        </label>
+      </td>
+      <td>
+        <label class="toggle-switch" title="Sudah dibuat transaksi Transfer Barang? Selama belum, baris ini akan muncul di Notifikasi topbar.">
+          <input type="checkbox" data-toggle="transferOutDibuat" data-idx="${i}" ${r.transferOutDibuat?'checked':''}>
           <span class="toggle-slider"></span>
         </label>
       </td>
@@ -17845,6 +18032,421 @@ function tplTbPoPicker(list){
         </table></div>
       </div>
       <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+/* =========================================================
+   TEMPLATE (HTML saja) — Transaksi Persediaan (Persediaan Barang >
+   Daftar Transaksi > Transaksi Persediaan, page:'transaksiPersediaan').
+   Sebelumnya placeholder murni. Dibangun 2026-08-24 sesuai 6 screenshot
+   MASERP yang dikirim user: list "Daftar Transaksi Persediaan" + 5
+   varian form "Transaksi Persediaan" tergantung field "Tipe Transaksi"
+   (Transfer Produk Bonus / Transfer Stock / Pengeluaran / Pemasukkan /
+   Transfer Out terkunci-dari-BPB/Terima Barang).
+
+   Field "Tipe Transaksi" adalah DRIVER form (persis pola Promotion
+   Category / Dominasi Tipe) — field mana yang tampil di header & kolom
+   tabel item berubah total tergantung pilihan ini. Lihat tpVisibility()
+   di bawah untuk matrix lengkap. Pola skeleton kartu/header/tab/tombol
+   disalin dari Terima Barang (dark-header + tombol merah "Tutorial",
+   .po-grid-3, .inv-tabs/.inv-tab-btn, .field-table Keterangan/Input By,
+   .form-page-actions) — bukan didesain baru, karena struktur modul ini
+   memang paling mirip Terima Barang (form transaksi persediaan + multi
+   batch number input manual).
+
+   Gudang Sumber/Target SENGAJA memakai `DATA.gudang` SUNGGUHAN (bukan
+   list lokal dekoratif seperti SR_GUDANG_LIST di Stock Request) —
+   screenshot acuan modul ini menampilkan kode gudang yang PERSIS cocok
+   dengan `DATA.gudang` (00-GUU Head Office, 03-GUU Tangerang, dst).
+
+   Kolom "Multi Batch Number" mereuse pola INPUT MANUAL dari Terima
+   Barang (`tplTbBatchAllocRows`) — disalin lokal sebagai
+   `tplTpBatchAllocRows` (bukan reference cross-file, lazy-load antar
+   modul tidak terjamin urutannya, pola yang sama seperti banyak
+   salinan lokal lain di mockup ini).
+========================================================= */
+
+const TP_TIPE_LIST = ['Transfer In','Transfer Out','Transfer Stock','Transfer Produk Bonus','Pengeluaran','Pemasukkan'];
+const TP_TIPE_PREFIX = {'Transfer In':'IN','Transfer Out':'OUT','Transfer Stock':'TSS','Transfer Produk Bonus':'TPB','Pengeluaran':'WRO','Pemasukkan':'PMA'};
+const TP_CABANG_LIST = ['Head Office','Surabaya','Bandung','Medan','Makassar','Semarang','Tangerang','Sidoarjo'];
+const TP_CABANG_CODE = {'Head Office':'HO','Surabaya':'SBY','Bandung':'BDG','Medan':'MDN','Makassar':'MKS','Semarang':'SMG','Tangerang':'TGR','Sidoarjo':'SDA'};
+const TP_STATUS_PENGELUARAN_LIST = ['-- Pilih Status --','Barang Rusak / Reject','Kadaluarsa (ED)','Sample / Testing Internal','Lainnya'];
+
+/* Matrix visibilitas field per Tipe Transaksi. */
+function tpVisibility(tipe){
+  return {
+    showStockRequestRow: tipe==='Transfer In' || tipe==='Transfer Out',
+    showGudangTransit: tipe==='Transfer Out',
+    showGudangTarget: tipe!=='Pengeluaran' && tipe!=='Pemasukkan',
+    showRetur: tipe==='Transfer Out',
+    showStatusPengeluaran: tipe==='Pengeluaran',
+    showTargetBarangCol: tipe==='Transfer Produk Bonus',
+    showHargaJumlahCol: tipe==='Pemasukkan',
+    showNoRequestCol: (tipe==='Transfer In' || tipe==='Transfer Out'),
+  };
+}
+
+function tpGudangOptions(selected){
+  return DATA.gudang.filter(g=>g.default).map(g=>{
+    const val = `(${g.kode}) ${g.nama}`;
+    return `<option value="${val}" ${selected===val?'selected':''}>${val}</option>`;
+  }).join('');
+}
+
+function tpJurnalAuto(tipe, cabang){
+  const kode = TP_CABANG_CODE[cabang] || 'HO';
+  if(tipe==='Pengeluaran') return `JURNAL PENGELUARAN (${kode})`;
+  if(tipe==='Pemasukkan') return `JURNAL PEMASUKAN (${kode})`;
+  return '';
+}
+
+function tpGudangKodeOnly(val){
+  const m = /^\(([^)]+)\)/.exec(val||'');
+  return m ? m[1] : (val||'');
+}
+
+/* =========================================================
+   LIST
+========================================================= */
+function tplTransaksiPersediaanListPage(){
+  return `
+    <div class="breadcrumb">Home / <b>Transaksi Persediaan</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('box',15)} Daftar Transaksi Persediaan</h3>
+        <div class="toolbar-actions">
+          <button class="btn-teal" id="tpFilterTipeBtn">Semua ${icon('chevronDown',12)}</button>
+          <button class="btn-teal" id="tpPeriodBtn">Agustus 2026 ${icon('chevronDown',12)}</button>
+          <button class="btn-primary" id="btnTpAdd">${icon('plus',14)} Tambah</button>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <select id="tpPageSize"><option selected>10</option><option>20</option><option>50</option></select>
+        <input type="text" id="tpSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>No. Transaksi</th>
+          <th>No Referensi</th>
+          <th>Stock Request</th>
+          <th>Delivery Request Cabang</th>
+          <th>Gudang</th>
+          <th>Gudang Target</th>
+          <th>Tipe Transaksi</th>
+          <th>Tgl. Trn.</th>
+          <th>Keterangan</th>
+          <th>Ubah</th>
+          <th>Hapus</th>
+          <th>Lihat</th>
+          <th>Cetak</th>
+        </tr></thead>
+        <tbody id="tpTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="tpPager"></div><div id="tpTotal"></div></div>
+    </div>`;
+}
+
+function tplTpRows(rows){
+  if(!rows.length) return `<tr><td colspan="13" style="color:var(--text-light);">Tidak Ada Data</td></tr>`;
+  return rows.map(r=>`
+    <tr>
+      <td><b style="color:var(--blue);cursor:pointer;" data-tp-open="${r._idx}">${r.no}</b><br>
+        ${r.approved!==false ? `<span class="status-pill status-paid">Approved</span>` : ''}
+      </td>
+      <td>${r.noReferensi||''}</td>
+      <td>${r.stockRequest||''}</td>
+      <td>${r.deliveryRequestCabang||''}</td>
+      <td>${tpGudangKodeOnly(r.gudangSumber)}</td>
+      <td>${tpGudangKodeOnly(r.gudangTarget)}</td>
+      <td>${r.tipeTransaksi}</td>
+      <td>${r.tglTrn}</td>
+      <td style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${(r.keterangan||'').replace(/"/g,'&quot;')}">${r.keterangan||''}</td>
+      <td><button class="icon-btn edit" data-tp-edit="${r._idx}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-tp-del="${r._idx}" title="Hapus">${icon('trash',15)}</button></td>
+      <td><button class="icon-btn view" data-tp-view="${r._idx}" title="Lihat">${icon('eye',15)}</button></td>
+      <td><button class="icon-btn print" data-tp-print="${r._idx}" title="Cetak">${icon('printer',15)}</button></td>
+    </tr>`).join('');
+}
+
+function tplTpPager(page, totalPages){
+  const btn = (label,p,dis,active)=>`<button class="${active?'active':''}" data-tp-page="${p}" ${dis?'disabled':''}>${label}</button>`;
+  let out = btn('First',1,page===1) + btn('Previous',Math.max(1,page-1),page===1);
+  for(let p=1;p<=totalPages;p++) out += btn(String(p),p,false,p===page);
+  out += btn('Next',Math.min(totalPages,page+1),page===totalPages) + btn('Last',totalPages,page===totalPages);
+  return out;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+function tplTpForm(mode, row){
+  const isAdd = mode==='add';
+  const isView = mode==='view';
+  const locked = !!row.locked;
+  const dis = (isView || locked) ? 'disabled' : '';
+  const v = tpVisibility(row.tipeTransaksi);
+  const titleAction = isAdd ? 'Tambah' : (isView ? 'Lihat' : 'Ubah');
+  const headerIcon = isAdd ? 'plus' : (isView ? 'eye' : 'edit');
+  return `
+    <div class="breadcrumb">Home / Transaksi Persediaan / <b>${titleAction}</b></div>
+    ${locked ? `<div class="alert-warning">TUTUP: Transaksi ini dari bpb / terima dr, Perubahan tidak diperbolehkan.</div>` : ''}
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon(headerIcon,15)} ${isAdd?'+ Transaksi Persediaan':'Transaksi Persediaan'}</h3>
+        ${(!isView && !locked) ? `<button class="btn-danger" id="btnTpTutorial" type="button">${icon('card',14)} Tutorial</button>` : ''}
+      </div>
+      <div class="card-body">
+
+        <div class="po-grid-3">
+          <div class="form-group">
+            <label>Cabang</label>
+            <select id="fTpCabang" ${(isView||!isAdd)?'disabled':''}>${TP_CABANG_LIST.map(c=>`<option ${row.cabang===c?'selected':''}>${c}</option>`).join('')}</select>
+          </div>
+          <div class="form-group">
+            <label>No. Transaksi</label>
+            <div class="input-with-btn">
+              <input type="text" id="fTpNo" value="${row.no||''}" readonly>
+              ${!dis ? `<button type="button" class="icon-btn edit" id="tpRegenBtn" title="Generate Ulang">${icon('refreshCw',13)}</button>` : ''}
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Tgl. Trn.</label>
+            <div class="input-with-btn">
+              <input type="text" id="fTpTglTrn" value="${row.tglTrn||''}" ${dis}>
+              <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',13)}</span>
+            </div>
+          </div>
+        </div>
+
+        ${v.showStockRequestRow ? `
+        <div class="po-grid-3">
+          <div class="form-group">
+            <label>No. Stock Request (Opsional)</label>
+            <div class="input-with-btn">
+              <input type="text" id="fTpStockRequest" value="${row.stockRequest||''}" placeholder="Stock Request" readonly>
+              ${!dis ? `<button type="button" class="icon-btn edit" id="tpSrPickBtn" title="Cari Stock Request">${icon('search',13)}</button>
+              <button type="button" class="icon-btn del" id="tpSrClearBtn" title="Hapus">${icon('trash',13)}</button>` : ''}
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Delivery Request Cabang</label>
+            <input type="text" value="${row.deliveryRequestCabang||''}" placeholder="Delivery Request Cabang" disabled>
+          </div>
+          <div class="form-group">
+            <label>No.SJ Supplier</label>
+            <input type="text" id="fTpNoSjSupplier" value="${row.noSjSupplier||''}" placeholder="No.SJ Supplier" ${dis}>
+          </div>
+        </div>` : ''}
+
+        <div class="po-grid-3">
+          <div class="form-group">
+            <label>Tipe Transaksi</label>
+            <select id="fTpTipe" ${dis}>${TP_TIPE_LIST.map(t=>`<option ${row.tipeTransaksi===t?'selected':''}>${t}</option>`).join('')}</select>
+          </div>
+          <div class="form-group">
+            <label>Jurnal</label>
+            <input type="text" value="${row.jurnal||''}" placeholder="Jurnal" disabled>
+          </div>
+          <div class="form-group">
+            ${v.showStatusPengeluaran ? `
+              <label>Status Pengeluaran</label>
+              <select id="fTpStatusPengeluaran" ${dis}>${TP_STATUS_PENGELUARAN_LIST.map(s=>`<option ${row.statusPengeluaran===s?'selected':''}>${s}</option>`).join('')}</select>
+            ` : v.showRetur ? `
+              <label>&nbsp;</label>
+              <label class="checkbox-row"><input type="checkbox" id="fTpRetur" ${row.retur?'checked':''} ${dis}> Retur</label>
+            ` : ''}
+          </div>
+        </div>
+
+        <div class="po-grid-3">
+          <div class="form-group">
+            <label>Gudang Sumber</label>
+            <select id="fTpGudangSumber" ${dis}>${tpGudangOptions(row.gudangSumber)}</select>
+          </div>
+          <div class="form-group">
+            ${v.showGudangTransit ? `<label>Gudang Transit</label><input type="text" value="IN TRANSIT" disabled>` : ''}
+          </div>
+          <div class="form-group">
+            ${v.showGudangTarget ? `<label>Gudang Target</label><select id="fTpGudangTarget" ${dis}>${tpGudangOptions(row.gudangTarget)}</select>` : ''}
+          </div>
+        </div>
+
+        <div class="inv-tabs">
+          <button type="button" class="inv-tab-btn active" id="tpTabItemsBtn">Rincian Transaksi Persediaan</button>
+          <button type="button" class="inv-tab-btn" id="tpTabJurnalBtn">Rincian Jurnal Akun</button>
+        </div>
+
+        <div id="tpTabItemsContent">${tplTpItemsPanel(mode,row)}</div>
+        <div id="tpTabJurnalContent" style="display:none;">${tplTpJurnalPanel(row)}</div>
+
+        <table class="field-table" style="margin-top:18px;">
+          <tr>
+            <td class="flabel">Keterangan</td>
+            <td><input type="text" id="fTpKeterangan" value="${row.keterangan||''}" ${dis}></td>
+          </tr>
+          <tr>
+            <td class="flabel">Input By</td>
+            <td><input type="text" value="${row.userInput||''}" disabled></td>
+          </tr>
+          ${v.showHargaJumlahCol ? `
+          <tr>
+            <td class="flabel">Jumlah Transaksi</td>
+            <td><input type="text" value="${num(tpTotalJumlah(row))}" disabled></td>
+          </tr>` : ''}
+        </table>
+
+        <div class="form-page-actions">
+          ${isView
+            ? `<a href="#" id="tpTutupView" class="link-add" style="margin-right:auto;">&larr; Kembali ke Daftar</a>`
+            : `<a href="#" id="tpBatalkan" class="link-add" style="margin-right:auto;">Batalkan</a>
+               ${!locked ? `<button class="btn-teal" id="tpCetakSimpan" type="button">Cetak dan Simpan</button>
+               <button class="btn-primary" id="tpSimpan">Simpan</button>` : ''}`}
+        </div>
+      </div>
+    </div>`;
+}
+
+function tpTotalJumlah(row){
+  return (row.items||[]).reduce((s,it)=>s + (Number(it.jumlah)||0), 0);
+}
+
+function tplTpItemsPanel(mode, row){
+  const dis = (mode==='view' || row.locked) ? 'disabled' : '';
+  const v = tpVisibility(row.tipeTransaksi);
+  return `
+    <div class="table-wrap" style="margin:10px 0 6px;">
+      <table class="po-item-table">
+        <thead><tr>
+          ${v.showNoRequestCol && row.stockRequest ? `<th>No. Request</th><th>Item Request</th>` : ''}
+          <th>Kode Barang</th>
+          <th>Nama Barang</th>
+          <th>Keterangan</th>
+          ${v.showTargetBarangCol ? `<th>Kode Barang Target</th><th>Nama Barang Target</th>` : ''}
+          <th>Qty</th>
+          <th>U/M</th>
+          <th>Multi Batch Number</th>
+          ${v.showHargaJumlahCol ? `<th>Harga</th><th>Jumlah</th>` : ''}
+          <th>Hapus</th>
+        </tr></thead>
+        <tbody id="tpItemsBody">${tplTpItemRows(mode,row)}</tbody>
+      </table>
+    </div>
+    ${dis ? '' : `<a href="#" id="tpAddItemRow" class="link-add">${icon('plus',13)} Tambah</a>`}`;
+}
+
+function tplTpItemRows(mode, row){
+  const dis = (mode==='view' || row.locked) ? 'disabled' : '';
+  const v = tpVisibility(row.tipeTransaksi);
+  const items = row.items||[];
+  const colspan = 4 + (v.showNoRequestCol && row.stockRequest ? 2 : 0) + (v.showTargetBarangCol ? 2 : 0) + (v.showHargaJumlahCol ? 2 : 0);
+  if(!items.length) return `<tr><td colspan="${colspan}" style="text-align:center;color:var(--text-light);">Belum ada barang</td></tr>`;
+  return items.map((it,idx)=>`
+    <tr data-tp-item-row="${idx}">
+      ${v.showNoRequestCol && row.stockRequest ? `<td>${it.noRequest||row.stockRequest}</td><td>${it.itemRequest||it.nama}</td>` : ''}
+      <td style="min-width:110px;">
+        <div class="input-with-btn">
+          <input type="text" data-tp-kode="${idx}" value="${it.kode||''}" readonly>
+          ${!dis ? `<button type="button" class="icon-btn edit" data-tp-item-search="${idx}" title="Cari Barang">${icon('search',13)}</button>` : ''}
+        </div>
+      </td>
+      <td style="min-width:160px;">${it.nama||''}</td>
+      <td style="min-width:130px;"><input type="text" data-tp-ket="${idx}" value="${it.ket||''}" ${dis}></td>
+      ${v.showTargetBarangCol ? `
+      <td style="min-width:110px;">
+        <div class="input-with-btn">
+          <input type="text" data-tp-kodetarget="${idx}" value="${it.kodeTarget||''}" readonly>
+          ${!dis ? `<button type="button" class="icon-btn edit" data-tp-target-search="${idx}" title="Cari Barang Target">${icon('search',13)}</button>` : ''}
+        </div>
+      </td>
+      <td style="min-width:160px;">${it.namaTarget||''}</td>` : ''}
+      <td style="width:90px;"><input type="number" min="0" data-tp-qty="${idx}" value="${it.qty||0}" ${dis}></td>
+      <td style="width:70px;">${it.um||''}</td>
+      <td style="min-width:200px;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:11.5px;color:var(--text-light);flex:1;">Batch</span>
+          ${!dis ? `<button type="button" class="icon-btn edit" data-tp-batch-add="${idx}" title="Tambah Batch" style="width:20px;height:20px;">${icon('plus',11)}</button>` : ''}
+        </div>
+        <div id="tpBatchList${idx}">${tplTpBatchAllocRows(it, idx, dis)}</div>
+      </td>
+      ${v.showHargaJumlahCol ? `
+      <td style="width:100px;"><input type="number" min="0" data-tp-harga="${idx}" value="${it.harga||0}" ${dis}></td>
+      <td style="width:120px;"><input type="text" value="${num(it.jumlah||0)}" disabled></td>` : ''}
+      <td style="width:34px;">${!dis ? `<button type="button" class="icon-btn del" data-tp-item-del="${idx}" title="Hapus Baris">${icon('trash',13)}</button>` : ''}</td>
+    </tr>`).join('');
+}
+
+/* Alokasi Multi Batch Number — salinan lokal dari
+   tplTbBatchAllocRows() milik Terima Barang (input manual kode
+   batch+qty+exp, bisa >1 baris per barang lewat tombol "+"). */
+function tplTpBatchAllocRows(item, idx, dis){
+  if(!item.batches || !item.batches.length) return `<div style="font-size:11px;color:var(--text-light);margin-top:4px;">Belum ada batch diisi</div>`;
+  return item.batches.map((b,bi)=>`
+    <div style="display:flex;gap:6px;align-items:center;font-size:11.5px;padding:3px 0;border-bottom:1px dashed var(--border);">
+      <input type="text" placeholder="No. Batch" value="${b.batch||''}" data-tp-batch-kode="${idx}:${bi}" style="flex:1;min-width:70px;" ${dis}>
+      <input type="number" min="0" placeholder="Qty" value="${b.qty||0}" data-tp-batch-qty="${idx}:${bi}" style="width:60px;" ${dis}>
+      <input type="text" placeholder="Exp." value="${b.exp||''}" data-tp-batch-exp="${idx}:${bi}" style="width:80px;" ${dis}>
+      ${!dis ? `<span class="icon-btn del" style="width:20px;height:20px;cursor:pointer;" data-tp-batch-del="${idx}:${bi}" title="Hapus">${icon('trash',11)}</span>` : ''}
+    </div>`).join('');
+}
+
+/* Tab "Rincian Jurnal Akun" — informasional/readonly, 2 baris auto
+   dari tpJurnalLines() (lihat transaksi-persediaan.js), reuse akun
+   Persediaan Barang Dagang Jakarta (1130001) & Persediaan Barang
+   Intransit (1130002) yang sudah ada di DATA.akunGL (akun yang sama
+   dipakai auto-jurnal tab "Rincian Jurnal Akun" Invoice). */
+function tplTpJurnalPanel(row){
+  const lines = tpJurnalLines(row);
+  return `
+    <div class="table-wrap" style="margin:10px 0 6px;">
+      <table>
+        <thead><tr><th>Kode Akun</th><th>Nama Akun</th><th>Keterangan</th><th>Jumlah Debit</th><th>Jumlah Kredit</th></tr></thead>
+        <tbody>
+          ${lines.map(l=>`<tr><td>${l.kodeAkun}</td><td>${l.namaAkun}</td><td>${l.keterangan}</td><td>${num(l.debit)}</td><td>${num(l.kredit)}</td></tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+/* Picker "Pilih Stock Request" (Transfer In/Out) — hanya menampilkan
+   Stock Request milik cabang yang sama & belum ditransfer
+   (!transferOutDibuat), konsisten dengan makna field itu di fitur
+   Notifikasi topbar (NOTIF_SOURCES, js/core.js, 2026-08-24). */
+function tplTpSrPickerModal(rows){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header">Pilih Stock Request<span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="table-wrap">
+        <table>
+          <thead><tr><th>No. Stock Request</th><th>Cabang</th><th>Tgl. Request</th><th>Keterangan</th></tr></thead>
+          <tbody>
+            ${rows.length ? rows.map((r,i)=>`<tr style="cursor:pointer;" data-tp-sr-pick="${i}"><td style="color:var(--blue);">${r.no}</td><td>${r.cabangRequest}</td><td>${r.tglRequest}</td><td>${r.keterangan||''}</td></tr>`).join('') : `<tr><td colspan="4" style="text-align:center;color:var(--text-light);">Tidak ada Stock Request yang belum ditransfer</td></tr>`}
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>`;
+}
+
+function tplTpDeleteConfirm(no){
+  return `
+    <div class="modal-box" style="max-width:420px;">
+      <div class="modal-header">Konfirmasi Hapus<span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <p>Hapus transaksi <b>${no}</b>?</p>
+        <div class="form-page-actions">
+          <button class="btn-danger" id="modalDelete">Hapus</button>
+          <a href="#" id="modalClose2" class="link-add">Batal</a>
+        </div>
+      </div>
+    </div>`;
+}
+
+function tplTpInfoModal(title, msg){
+  return `
+    <div class="modal-box" style="max-width:440px;">
+      <div class="modal-header">${title}<span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${msg}</p></div>
     </div>`;
 }
 
@@ -28266,6 +28868,11 @@ function renderSrTable(){
   tbody.querySelectorAll('[data-toggle]').forEach(cb => cb.onchange = () => {
     const idx = +cb.dataset.idx;
     DATA.stockRequest[idx][cb.dataset.toggle] = cb.checked;
+    // Toggle "Transfer Barang?" ini adalah field yang dipakai Notifikasi
+    // topbar (lihat NOTIF_SOURCES di core.js) untuk menghitung Stock
+    // Request yang belum ditransfer — refresh badge-nya di sini supaya
+    // langsung sinkron begitu ditoggle manual, tanpa harus pindah menu.
+    if(typeof refreshNotifBadge === 'function') refreshNotifBadge();
   });
 }
 
@@ -28284,7 +28891,7 @@ function openSrForm(mode, idx){
   if(mode === 'add'){
     row = {
       no: null, noPO: '', tglRequest: '07/08/2026', userEntry: 'sidik', reorderingSheet: '', tipeTransaksi: 'Transfer Out',
-      keterangan: '', status: 'OPEN', closedManually: false, cabangRequest: SR_CABANG_LIST[0], supplier: '',
+      keterangan: '', status: 'OPEN', closedManually: false, transferOutDibuat: false, cabangRequest: SR_CABANG_LIST[0], supplier: '',
       gudangSumber: SR_GUDANG_LIST[0], gudangTarget: SR_GUDANG_LIST[0], edBulan: 0, usedInPO: false,
       items: srBuildDefaultItems(), tglInput: '', userInput: '', tglEdit: '', userEdit: '',
     };
@@ -28347,6 +28954,10 @@ function openSrForm(mode, idx){
       row.userEdit = 'sidik';
       DATA.stockRequest[idx] = row;
     }
+    // Baris baru/diedit ikut memengaruhi jumlah Notifikasi topbar
+    // (lihat NOTIF_SOURCES di core.js) kalau transferOutDibuat-nya
+    // masih false — refresh badge-nya di sini juga.
+    if(typeof refreshNotifBadge === 'function') refreshNotifBadge();
     renderSrList();
   };
 }
@@ -28463,6 +29074,7 @@ function openSrDeleteConfirm(idx){
     DATA.stockRequest.splice(idx, 1);
     closeModal();
     renderSrTable();
+    if(typeof refreshNotifBadge === 'function') refreshNotifBadge();
   };
 }
 
@@ -29008,6 +29620,417 @@ function openTbInfo(title, text){
 }
 
 /* =========================================================
+   LOGIC (JS saja) — Transaksi Persediaan (Persediaan Barang >
+   Daftar Transaksi). Dimuat otomatis (lazy-load) oleh core.js saat
+   menu ini pertama kali diklik — lihat PAGE_MODULES di js/core.js.
+   Markup HTML-nya ada di file sebelah: transaksi-persediaan.template.js
+   (tplTransaksiPersediaanListPage/tplTpRows/tplTpForm/dst, plus
+   konstanta TP_TIPE_LIST/TP_CABANG_LIST/tpVisibility() yang dipakai
+   bersama di sini). NB: closeModal() & openPersediaanPicker() dipakai
+   bersama, didefinisikan di core.js.
+
+   Field "Tipe Transaksi" adalah DRIVER form (persis pola Promotion
+   Category/Dominasi Tipe): ganti dropdown ini → header field yang
+   sudah diisi disinkron dulu dari DOM (tpSyncFormFromDOM, pola sama
+   domSyncHeaderFromDOM Dominasi) sebelum badan form di-render ulang
+   total (renderTpFormBody), supaya nilai umum tidak hilang.
+========================================================= */
+
+let tpState = { page:1, pageSize:10, search:'', filterTipe:'Semua' };
+
+function renderTransaksiPersediaanPage(){
+  renderTpList();
+}
+
+function renderTpList(){
+  content.innerHTML = tplTransaksiPersediaanListPage();
+  document.getElementById('btnTpAdd').onclick = () => openTpForm('add');
+  document.getElementById('tpFilterTipeBtn').onclick = () => openTpFilterTipeMenu();
+  document.getElementById('tpPeriodBtn').onclick = () => openTpInfo('Filter Periode', 'Menampilkan transaksi untuk periode Agustus 2026. Pemilihan periode lain akan tersedia pada versi lengkap.');
+  document.getElementById('tpPageSize').onchange = (e) => { tpState.pageSize = +e.target.value; tpState.page = 1; renderTpTable(); };
+  document.getElementById('tpSearch').oninput = (e) => { tpState.search = e.target.value; tpState.page = 1; renderTpTable(); };
+  renderTpTable();
+}
+
+function tpFilteredRows(){
+  const q = tpState.search.trim().toLowerCase();
+  return DATA.transaksiPersediaan
+    .map((r,i)=>({...r, _idx:i}))
+    .filter(r => tpState.filterTipe==='Semua' || r.tipeTransaksi===tpState.filterTipe)
+    .filter(r => !q || [r.no,r.noReferensi,r.stockRequest,r.keterangan,r.tipeTransaksi].join(' ').toLowerCase().includes(q))
+    .sort((a,b)=> (b.tglTrnSort||0) - (a.tglTrnSort||0));
+}
+
+function renderTpTable(){
+  const all = tpFilteredRows();
+  const totalPages = Math.max(1, Math.ceil(all.length / tpState.pageSize));
+  if(tpState.page > totalPages) tpState.page = totalPages;
+  const start = (tpState.page-1) * tpState.pageSize;
+  const pageRows = all.slice(start, start+tpState.pageSize);
+  document.getElementById('tpTbody').innerHTML = tplTpRows(pageRows);
+  document.getElementById('tpPager').innerHTML = tplTpPager(tpState.page, totalPages);
+  document.getElementById('tpTotal').textContent = `Total Record: ${all.length}`;
+  document.querySelectorAll('#tpPager [data-tp-page]').forEach(b => b.onclick = () => { tpState.page = +b.dataset.tpPage; renderTpTable(); });
+  document.querySelectorAll('[data-tp-open],[data-tp-edit]').forEach(b => b.onclick = () => openTpForm('edit', +(b.dataset.tpOpen ?? b.dataset.tpEdit)));
+  document.querySelectorAll('[data-tp-view]').forEach(b => b.onclick = () => openTpForm('view', +b.dataset.tpView));
+  document.querySelectorAll('[data-tp-print]').forEach(b => b.onclick = () => openTpInfo('Cetak Transaksi Persediaan', `Preview cetak dokumen <b>${DATA.transaksiPersediaan[+b.dataset.tpPrint].no}</b> (PDF) akan tersedia di sini.`));
+  document.querySelectorAll('[data-tp-del]').forEach(b => b.onclick = () => openTpDeleteConfirm(+b.dataset.tpDel));
+}
+
+function openTpFilterTipeMenu(){
+  closeModal();
+  const opts = ['Semua', ...TP_TIPE_LIST];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal-box" style="max-width:340px;">
+      <div class="modal-header">Filter Tipe Transaksi<span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        ${opts.map(o=>`<div style="padding:8px 4px;cursor:pointer;font-size:13px;${o===tpState.filterTipe?'font-weight:700;color:var(--blue);':''}" data-tp-filter-pick="${o}">${o}</div>`).join('')}
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target===overlay) closeModal(); };
+  overlay.querySelectorAll('[data-tp-filter-pick]').forEach(d => d.onclick = () => {
+    tpState.filterTipe = d.dataset.tpFilterPick; tpState.page = 1; closeModal(); renderTpTable();
+  });
+}
+
+/* Format: <tipe-prefix>-<KODECABANG> — 26/OUT-HO/08/00001,
+   26/TSS-HO/08/00011, 26/TPB-HO/08/00001, 26/WRO-HO/08/00003,
+   26/PMA-HO/08/00001 (persis contoh di 4 screenshot form acuan). */
+function tpGenerateNumber(tipe, cabang){
+  const prefix = TP_TIPE_PREFIX[tipe] || 'TRX';
+  const kode = TP_CABANG_CODE[cabang] || 'HO';
+  const seq = DATA.transaksiPersediaan.filter(r => r.tipeTransaksi===tipe && r.cabang===cabang).length + 1;
+  return `26/${prefix}-${kode}/08/${String(seq).padStart(5,'0')}`;
+}
+
+function tpEmptyRow(){
+  const cabang = TP_CABANG_LIST[0];
+  const gudangHO = `(${DATA.gudang[0].kode}) ${DATA.gudang[0].nama}`;
+  return {
+    cabang, no:'', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+    tglTrn:'24/08/2026', tipeTransaksi:'Transfer Stock', statusPengeluaran:TP_STATUS_PENGELUARAN_LIST[0],
+    gudangSumber:gudangHO, gudangTarget:gudangHO, retur:false, jurnal:'', keterangan:'',
+    userInput:'sidik', locked:false, approved:true, cetakanKe:0, items:[],
+  };
+}
+
+function tpEmptyItem(){
+  return { noRequest:'', itemRequest:'', kode:'', nama:'', ket:'', kodeTarget:'', namaTarget:'', qty:0, um:'', harga:0, jumlah:0, batches:[] };
+}
+
+function tpRecalcItem(it){
+  it.jumlah = (Number(it.harga)||0) * (Number(it.qty)||0);
+}
+
+function openTpForm(mode, idx){
+  const row = mode==='add' ? tpEmptyRow() : {...DATA.transaksiPersediaan[idx]};
+  if(mode==='add') row.no = tpGenerateNumber(row.tipeTransaksi, row.cabang);
+  row._idx = idx;
+  renderTpFormFull(mode, row);
+}
+
+function renderTpFormFull(mode, row){
+  content.innerHTML = tplTpForm(mode, row);
+  wireTpTabs();
+  document.getElementById('tpBatalkan') && (document.getElementById('tpBatalkan').onclick = (e) => { e.preventDefault(); renderTpList(); });
+  document.getElementById('tpTutupView') && (document.getElementById('tpTutupView').onclick = (e) => { e.preventDefault(); renderTpList(); });
+  if(mode==='view' || row.locked){
+    return; // semua field sudah disabled lewat template, tidak ada handler edit lagi
+  }
+  const btnTutorial = document.getElementById('btnTpTutorial');
+  if(btnTutorial) btnTutorial.onclick = () => openTpInfo('Tutorial', 'Video tutorial pengisian Transaksi Persediaan akan tersedia di sini.');
+
+  document.getElementById('fTpCabang').onchange = (e) => {
+    row.cabang = e.target.value;
+    if(mode==='add') { row.no = tpGenerateNumber(row.tipeTransaksi, row.cabang); document.getElementById('fTpNo').value = row.no; }
+  };
+  document.getElementById('tpRegenBtn') && (document.getElementById('tpRegenBtn').onclick = () => {
+    row.no = tpGenerateNumber(row.tipeTransaksi, row.cabang);
+    document.getElementById('fTpNo').value = row.no;
+  });
+  document.getElementById('fTpTglTrn').onchange = (e) => row.tglTrn = e.target.value;
+  document.getElementById('fTpKeterangan').onchange = (e) => row.keterangan = e.target.value;
+
+  document.getElementById('fTpTipe').onchange = (e) => {
+    tpSyncFormFromDOM(row, mode);
+    row.tipeTransaksi = e.target.value;
+    row.no = tpGenerateNumber(row.tipeTransaksi, row.cabang);
+    row.jurnal = tpJurnalAuto(row.tipeTransaksi, row.cabang);
+    if(row.tipeTransaksi!=='Transfer In' && row.tipeTransaksi!=='Transfer Out'){ row.stockRequest=''; }
+    renderTpFormFull(mode, row);
+  };
+
+  wireTpStockRequestRow(row, mode);
+  wireTpGudangFields(row, mode);
+  wireTpItemsPanel(row, mode);
+
+  document.getElementById('tpSimpan').onclick = () => tpSave(row, mode, false);
+  document.getElementById('tpCetakSimpan') && (document.getElementById('tpCetakSimpan').onclick = () => tpSave(row, mode, true));
+}
+
+function tpSyncFormFromDOM(row, mode){
+  const g = (id) => document.getElementById(id);
+  if(g('fTpKeterangan')) row.keterangan = g('fTpKeterangan').value;
+  if(g('fTpTglTrn')) row.tglTrn = g('fTpTglTrn').value;
+  if(g('fTpNoSjSupplier')) row.noSjSupplier = g('fTpNoSjSupplier').value;
+  if(g('fTpGudangSumber')) row.gudangSumber = g('fTpGudangSumber').value;
+  if(g('fTpGudangTarget')) row.gudangTarget = g('fTpGudangTarget').value;
+  if(g('fTpRetur')) row.retur = g('fTpRetur').checked;
+  if(g('fTpStatusPengeluaran')) row.statusPengeluaran = g('fTpStatusPengeluaran').value;
+}
+
+function wireTpStockRequestRow(row, mode){
+  const btnPick = document.getElementById('tpSrPickBtn');
+  const btnClear = document.getElementById('tpSrClearBtn');
+  const noSj = document.getElementById('fTpNoSjSupplier');
+  if(noSj) noSj.onchange = (e) => row.noSjSupplier = e.target.value;
+  if(btnPick) btnPick.onclick = () => openTpSrPicker(row, mode);
+  if(btnClear) btnClear.onclick = () => {
+    row.stockRequest = ''; row.items = row.items.filter(it=>!it.noRequest);
+    renderTpFormFull(mode, row);
+  };
+}
+
+function openTpSrPicker(row, mode){
+  closeModal();
+  const rows = DATA.stockRequest.filter(r => r.cabangRequest===row.cabang && !r.transferOutDibuat);
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplTpSrPickerModal(rows);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target===overlay) closeModal(); };
+  overlay.querySelectorAll('[data-tp-sr-pick]').forEach(tr => tr.onclick = () => {
+    tpApplyStockRequest(row, rows[+tr.dataset.tpSrPick]);
+    closeModal();
+    renderTpFormFull(mode, row);
+  });
+}
+
+function tpApplyStockRequest(row, sr){
+  row.stockRequest = sr.no;
+  const gudangHO = `(${DATA.gudang[0].kode}) ${DATA.gudang[0].nama}`;
+  const gTarget = DATA.gudang.find(g => g.default && g.cabang===sr.cabangRequest);
+  row.gudangSumber = gudangHO;
+  row.gudangTarget = gTarget ? `(${gTarget.kode}) ${gTarget.nama}` : gudangHO;
+  row.items = sr.items.map(it => ({
+    noRequest: sr.no, itemRequest: it.nama, kode: it.kode, nama: it.nama, ket:'',
+    kodeTarget:'', namaTarget:'', qty: it.qty, um: it.um, harga:0, jumlah:0, batches:[],
+  }));
+}
+
+function wireTpGudangFields(row, mode){
+  const gs = document.getElementById('fTpGudangSumber');
+  const gt = document.getElementById('fTpGudangTarget');
+  const ret = document.getElementById('fTpRetur');
+  const stp = document.getElementById('fTpStatusPengeluaran');
+  if(gs) gs.onchange = (e) => row.gudangSumber = e.target.value;
+  if(gt) gt.onchange = (e) => row.gudangTarget = e.target.value;
+  if(ret) ret.onchange = (e) => row.retur = e.target.checked;
+  if(stp) stp.onchange = (e) => row.statusPengeluaran = e.target.value;
+}
+
+function wireTpTabs(){
+  const btnItems = document.getElementById('tpTabItemsBtn');
+  const btnJurnal = document.getElementById('tpTabJurnalBtn');
+  const contentItems = document.getElementById('tpTabItemsContent');
+  const contentJurnal = document.getElementById('tpTabJurnalContent');
+  btnItems.onclick = () => {
+    btnItems.classList.add('active'); btnJurnal.classList.remove('active');
+    contentItems.style.display=''; contentJurnal.style.display='none';
+  };
+  btnJurnal.onclick = () => {
+    btnJurnal.classList.add('active'); btnItems.classList.remove('active');
+    contentJurnal.style.display=''; contentItems.style.display='none';
+  };
+}
+
+/* Rincian Jurnal Akun — 2 baris auto per Tipe Transaksi, reuse akun
+   Persediaan Barang Dagang Jakarta (1130001)/Persediaan Barang
+   Intransit (1130002) yang sudah ada di DATA.akunGL (sama akun yang
+   dipakai auto-jurnal Invoice). Informasional/readonly saja — mockup
+   ini tidak memvalidasi balance jurnal transaksi persediaan. */
+function tpJurnalLines(row){
+  const nilai = tpTotalJumlah(row) || 0;
+  const dagang = { kodeAkun:'1130001', namaAkun:'Persediaan Barang Dagang Jakarta' };
+  const intransit = { kodeAkun:'1130002', namaAkun:'Persediaan Barang Intransit' };
+  const ket = row.no || '(belum disimpan)';
+  switch(row.tipeTransaksi){
+    case 'Transfer Out':
+      return [
+        {...intransit, keterangan:ket, debit: nilai||0, kredit:0},
+        {...dagang, keterangan:ket, debit:0, kredit: nilai||0},
+      ];
+    case 'Transfer In':
+      return [
+        {...dagang, keterangan:ket, debit: nilai||0, kredit:0},
+        {...intransit, keterangan:ket, debit:0, kredit: nilai||0},
+      ];
+    case 'Pemasukkan':
+      return [
+        {...dagang, keterangan:ket, debit: tpTotalJumlah(row), kredit:0},
+        {kodeAkun:'6510003', namaAkun:'Selisih Debit Kredit', keterangan:ket, debit:0, kredit: tpTotalJumlah(row)},
+      ];
+    case 'Pengeluaran':
+      return [
+        {kodeAkun:'6510003', namaAkun:'Selisih Debit Kredit', keterangan:ket, debit:0, kredit:0},
+        {...dagang, keterangan:ket, debit:0, kredit:0},
+      ];
+    default:
+      return [
+        {...dagang, keterangan:ket, debit:0, kredit:0},
+        {...dagang, keterangan:ket, debit:0, kredit:0},
+      ];
+  }
+}
+
+/* =========================================================
+   TABEL ITEM
+========================================================= */
+function wireTpItemsPanel(row, mode){
+  wireTpItemRows(row, mode);
+  const addBtn = document.getElementById('tpAddItemRow');
+  if(addBtn) addBtn.onclick = (e) => {
+    e.preventDefault();
+    row.items.push(tpEmptyItem());
+    refreshTpItemsPanel(row, mode);
+  };
+}
+
+function refreshTpItemsPanel(row, mode){
+  document.getElementById('tpTabItemsContent').innerHTML = tplTpItemsPanel(mode, row);
+  wireTpItemsPanel(row, mode);
+  refreshTpJurnalPanel(row);
+  const jt = document.getElementById('fTpJumlahTransaksi');
+  // (Jumlah Transaksi field, kalau ada, sudah ikut ter-render ulang lewat field-table di luar panel item —
+  // di-refresh lewat renderTpFormFull kalau perlu; untuk update ringan cukup lewat items panel saja.)
+}
+
+function refreshTpJurnalPanel(row){
+  const el = document.getElementById('tpTabJurnalContent');
+  if(el) el.innerHTML = tplTpJurnalPanel(row);
+}
+
+function wireTpItemRows(row, mode){
+  const dis = mode==='view' || row.locked;
+  if(dis) return;
+  const v = tpVisibility(row.tipeTransaksi);
+  document.querySelectorAll('[data-tp-ket]').forEach(inp => inp.onchange = (e) => { row.items[+inp.dataset.tpKet].ket = e.target.value; });
+  document.querySelectorAll('[data-tp-qty]').forEach(inp => inp.onchange = (e) => {
+    const it = row.items[+inp.dataset.tpQty];
+    it.qty = +e.target.value || 0;
+    if(v.showHargaJumlahCol){ tpRecalcItem(it); refreshTpItemsPanel(row, mode); }
+  });
+  document.querySelectorAll('[data-tp-harga]').forEach(inp => inp.onchange = (e) => {
+    const it = row.items[+inp.dataset.tpHarga];
+    it.harga = +e.target.value || 0;
+    tpRecalcItem(it);
+    refreshTpItemsPanel(row, mode);
+  });
+  document.querySelectorAll('[data-tp-item-search]').forEach(b => b.onclick = () => {
+    const idx = +b.dataset.tpItemSearch;
+    openPersediaanPicker(row.cabang, (p) => {
+      const it = row.items[idx];
+      it.kode = p.kodeBarang; it.nama = p.namaBarang; it.um = p.satuan;
+      const master = DATA.items.find(m=>m.kode===p.kodeBarang);
+      if(v.showHargaJumlahCol){ it.harga = master ? master.harga : 0; tpRecalcItem(it); }
+      closeModal();
+      refreshTpItemsPanel(row, mode);
+    });
+  });
+  document.querySelectorAll('[data-tp-target-search]').forEach(b => b.onclick = () => {
+    const idx = +b.dataset.tpTargetSearch;
+    openPersediaanPicker(row.cabang, (p) => {
+      const it = row.items[idx];
+      it.kodeTarget = p.kodeBarang; it.namaTarget = p.namaBarang;
+      closeModal();
+      refreshTpItemsPanel(row, mode);
+    });
+  });
+  document.querySelectorAll('[data-tp-item-del]').forEach(b => b.onclick = () => {
+    row.items.splice(+b.dataset.tpItemDel, 1);
+    refreshTpItemsPanel(row, mode);
+  });
+  document.querySelectorAll('[data-tp-batch-add]').forEach(b => b.onclick = () => {
+    const idx = +b.dataset.tpBatchAdd;
+    row.items[idx].batches = row.items[idx].batches || [];
+    row.items[idx].batches.push({batch:'', qty:0, exp:''});
+    document.getElementById(`tpBatchList${idx}`).innerHTML = tplTpBatchAllocRows(row.items[idx], idx, '');
+    wireTpBatchRowEvents(row, mode);
+  });
+  wireTpBatchRowEvents(row, mode);
+}
+
+function wireTpBatchRowEvents(row, mode){
+  document.querySelectorAll('[data-tp-batch-kode]').forEach(inp => inp.onchange = (e) => {
+    const [idx,bi] = inp.dataset.tpBatchKode.split(':').map(Number);
+    row.items[idx].batches[bi].batch = e.target.value;
+  });
+  document.querySelectorAll('[data-tp-batch-qty]').forEach(inp => inp.onchange = (e) => {
+    const [idx,bi] = inp.dataset.tpBatchQty.split(':').map(Number);
+    row.items[idx].batches[bi].qty = +e.target.value || 0;
+  });
+  document.querySelectorAll('[data-tp-batch-exp]').forEach(inp => inp.onchange = (e) => {
+    const [idx,bi] = inp.dataset.tpBatchExp.split(':').map(Number);
+    row.items[idx].batches[bi].exp = e.target.value;
+  });
+  document.querySelectorAll('[data-tp-batch-del]').forEach(b => b.onclick = () => {
+    const [idx,bi] = b.dataset.tpBatchDel.split(':').map(Number);
+    row.items[idx].batches.splice(bi,1);
+    document.getElementById(`tpBatchList${idx}`).innerHTML = tplTpBatchAllocRows(row.items[idx], idx, '');
+    wireTpBatchRowEvents(row, mode);
+  });
+}
+
+/* =========================================================
+   SIMPAN / HAPUS
+========================================================= */
+function tpSave(row, mode, alsoPrint){
+  tpSyncFormFromDOM(row, mode);
+  row.jurnal = tpJurnalAuto(row.tipeTransaksi, row.cabang);
+  if(!row.items.length){ openTpInfo('Validasi', 'Isi minimal 1 baris barang sebelum menyimpan.'); return; }
+  const idx = row._idx;
+  const saved = {...row};
+  delete saved._idx;
+  if(mode==='add'){ DATA.transaksiPersediaan.unshift(saved); }
+  else { DATA.transaksiPersediaan[idx] = saved; }
+  if(alsoPrint) openTpInfo('Cetak dan Simpan', `Transaksi <b>${saved.no}</b> berhasil disimpan. Preview cetak (PDF) akan tersedia di sini.`);
+  renderTpList();
+}
+
+function openTpDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.transaksiPersediaan[idx];
+  if(row.locked){ openTpInfo('Tidak Bisa Dihapus', `Transaksi <b>${row.no}</b> terkunci (berasal dari BPB/Terima Barang), tidak bisa dihapus.`); return; }
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplTpDeleteConfirm(row.no);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalClose2').onclick = (e) => { e.preventDefault(); closeModal(); };
+  overlay.onclick = (e) => { if(e.target===overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.transaksiPersediaan.splice(idx,1);
+    closeModal();
+    renderTpList();
+  };
+}
+
+function openTpInfo(title, msg){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplTpInfoModal(title, msg);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target===overlay) closeModal(); };
+}
+
+/* =========================================================
    LOGIC (JS saja) — Zat Kandungan Aktif (Persediaan Barang >
    Master & Setting > Zat Kandungan Aktif, page:'zatKandunganAktif').
    Dimuat otomatis (lazy-load) oleh core.js saat menu ini pertama
@@ -29159,8 +30182,19 @@ function openZkaDeleteConfirm(idx){
 let currentPage='mainDashboard', currentTitle=null;
 const sidebarScroll=document.getElementById('sidebarScroll');
 
+/* `pageToElement` memetakan key `page` (sama seperti dipakai
+   PAGE_MODULES/MENU) ke elemen DOM sidebar yang jadi "pintu masuk"
+   navigasi ke halaman itu — diisi ulang tiap kali buildSidebar()
+   jalan. Dipakai oleh goToPage() (lihat bagian NOTIFIKASI di bawah)
+   supaya pemanggil dari LUAR sidebar (misal notifikasi topbar) bisa
+   berpindah halaman dengan cara IDENTIK seperti user mengklik menu
+   itu sendiri (highlight current/active-parent ikut benar), tanpa
+   perlu menduplikasi logic navigasi. */
+let pageToElement={};
+
 function buildSidebar(){
   sidebarScroll.innerHTML='';
+  pageToElement={};
   MENU.forEach((top,ti)=>{
     if(top.children){
       const wrap=document.createElement('div');
@@ -29185,6 +30219,7 @@ function buildSidebar(){
             if(top.page) head.classList.add('active-parent');
           };
           sub.appendChild(it);
+          if(c.page) pageToElement[c.page]=it;
         }
       });
       head.onclick=()=>{
@@ -29196,6 +30231,7 @@ function buildSidebar(){
       };
       wrap.appendChild(head); wrap.appendChild(sub);
       sidebarScroll.appendChild(wrap);
+      if(top.page) pageToElement[top.page]=head;
     }else{
       const leaf=document.createElement('div');
       leaf.className='menu-top leaf';
@@ -29206,6 +30242,7 @@ function buildSidebar(){
         navigate(top.page, top.label, leaf);
       };
       sidebarScroll.appendChild(leaf);
+      if(top.page) pageToElement[top.page]=leaf;
     }
   });
 }
@@ -29295,6 +30332,7 @@ const PAGE_MODULES={
   bentukSediaan:{srcs:['js/pages/bentuk-sediaan.template.js','js/pages/bentuk-sediaan.js'], fn:'renderBentukSediaanPage'},
   groupProduk:{srcs:['js/pages/group-produk.template.js','js/pages/group-produk.js'], fn:'renderGroupProdukPage'},
   kategoriReorderingSheet:{srcs:['js/pages/kategori-reordering-sheet.template.js','js/pages/kategori-reordering-sheet.js'], fn:'renderKategoriReorderingSheetPage'},
+  transaksiPersediaan:{srcs:['js/pages/transaksi-persediaan.template.js','js/pages/transaksi-persediaan.js'], fn:'renderTransaksiPersediaanPage'},
 };
 const loadedModules=new Set(Object.keys(PAGE_MODULES));
 
@@ -29321,6 +30359,22 @@ const content=document.getElementById('content');
 let chartInstances=[];
 function destroyCharts(){ chartInstances.forEach(c=>c.destroy()); chartInstances=[]; }
 
+/* `window.__pendingPageAction` = {page, run} — dipasang oleh goToPage()
+   (bagian NOTIFIKASI di bawah) SEBELUM navigasi terjadi, lalu dieksekusi
+   sendiri oleh runPendingPageAction() begitu renderPage() untuk `page`
+   yang sama selesai me-render (baik lewat jalur module sudah ter-load
+   maupun jalur lazy-load async) — supaya pemanggil bisa "lompat ke
+   halaman X lalu jalankan Y" (mis. notifikasi buka Stock Request lalu
+   langsung buka form Lihat baris tertentu) tanpa renderPage()/navigate()
+   perlu tahu apa-apa soal kebutuhan spesifik pemanggilnya. */
+function runPendingPageAction(){
+  const action=window.__pendingPageAction;
+  if(action && action.page===currentPage){
+    window.__pendingPageAction=null;
+    action.run();
+  }
+}
+
 function renderPage(){
   destroyCharts();
   if(currentPage==='placeholder') return renderPlaceholder(currentTitle);
@@ -29328,10 +30382,12 @@ function renderPage(){
   const mod=PAGE_MODULES[currentPage];
   if(mod){
     if(loadedModules.has(currentPage)){
-      return window[mod.fn]();
+      window[mod.fn]();
+      runPendingPageAction();
+      return;
     }
     content.innerHTML='<div class="page-loading">Memuat halaman&hellip;</div>';
-    return loadScriptsSequential(mod.srcs, ()=>{ loadedModules.add(currentPage); window[mod.fn](); });
+    return loadScriptsSequential(mod.srcs, ()=>{ loadedModules.add(currentPage); window[mod.fn](); runPendingPageAction(); });
   }
 
   const pages={
@@ -29591,6 +30647,145 @@ function openPspAddInfo(){
 }
 
 /* =========================================================
+   NOTIFIKASI (topbar) — 2026-08-24
+
+   Permintaan awal: notifikasi lonceng topbar muncul untuk transaksi
+   Stock Request yang belum dibuat transaksi transfer barangnya, dan
+   begitu salah satu notifikasi diklik akan membuka Stock Request
+   tersebut. Mockup ini belum punya modul "Transfer Barang" sungguhan
+   yang terhubung ke Stock Request (beda dari rantai Purchase Order →
+   Terima Barang yang sudah nyata) — atas pilihan Sidik, status ini
+   DITANDAI LEWAT FIELD BARU `row.transferOutDibuat` (boolean) yang
+   independen dari field `status` (OPEN/CLOSED) yang sudah ada,
+   supaya bisa didemokan lewat toggle switch manual di kolom "Transfer
+   Barang?" pada Stock Request List (lihat stock-request.template.js/
+   .js) — sama seperti pola toggle "Closed Manually" yang sudah ada di
+   modul itu. Kalau nanti modul "Transfer Barang" sungguhan dibangun,
+   field ini idealnya diganti/disinkronkan ke status transaksi Transfer
+   Barang yang sebenarnya, bukan toggle manual lagi.
+
+   Arsitektur SENGAJA dibuat generik (`NOTIF_SOURCES`, bukan logic
+   Stock Request yang di-hardcode langsung di sini) supaya sumber
+   notifikasi lain di masa depan (mis. modul Transfer Barang itu
+   sendiri, atau modul lain) tinggal ditambah sebagai 1 entry baru ke
+   array ini tanpa mengubah mekanisme dropdown/badge-nya. Tiap entry
+   punya `list()` yang mengembalikan array item notifikasi
+   `{key,icon,title,sub,date,open()}` — `open()` yang tahu cara
+   berpindah & menindaklanjuti notifikasi jenisnya sendiri.
+
+   Ditaruh di core.js (bukan di js/pages/stock-request.js) karena
+   topbar & badge-nya harus selalu ada terlepas dari modul mana yang
+   lagi lazy-loaded — sama alasannya dengan openPersediaanPicker() di
+   atas. `refreshNotifBadge()` dibuat GLOBAL (bukan lewat closure)
+   supaya modul manapun (mis. stock-request.js setelah toggle/simpan/
+   hapus baris) bisa memanggilnya langsung begitu data yang memengaruhi
+   notifikasi berubah — lihat pemanggilannya di renderSrTable()/
+   openSrForm() pada stock-request.js.
+========================================================= */
+const NOTIF_SOURCES=[
+  {
+    key:'stockRequestTransferOut',
+    list(){
+      return (DATA.stockRequest||[])
+        .filter(r=>!r.transferOutDibuat)
+        .map(r=>({
+          key:'sr-'+r.no,
+          icon:'box',
+          title:`Stock Request Baru — ${r.no}`,
+          sub:`${r.cabangRequest||'-'} — belum dibuat Transfer Barang`,
+          date:r.tglRequest||'',
+          open(){
+            goToPage('stockRequest','Stock Request', ()=>{
+              const idx=DATA.stockRequest.findIndex(x=>x.no===r.no);
+              if(idx>=0 && typeof openSrForm==='function') openSrForm('view', idx);
+            });
+          },
+        }));
+    },
+  },
+];
+
+function notifAllItems(){
+  return NOTIF_SOURCES.flatMap(s=>s.list());
+}
+
+let notifOpen=false;
+
+function refreshNotifBadge(){
+  const items=notifAllItems();
+  const badge=document.getElementById('notifBadge');
+  if(badge){
+    if(items.length){ badge.textContent=items.length; badge.style.display='inline-block'; }
+    else { badge.textContent=''; badge.style.display='none'; }
+  }
+  if(notifOpen) openNotifDropdown();
+}
+
+function tplNotifItems(items){
+  if(!items.length) return `<div class="notif-empty">Tidak ada notifikasi baru.</div>`;
+  return items.map((it,i)=>`
+    <div class="notif-item" data-notif="${i}">
+      <div class="notif-title">${icon(it.icon||'alertTriangle',14)}<span>${it.title}</span></div>
+      <div class="notif-sub">${it.sub}</div>
+      ${it.date?`<div class="notif-date">${it.date}</div>`:''}
+    </div>`).join('');
+}
+
+function openNotifDropdown(){
+  const notifBtn=document.getElementById('notifBtn');
+  const old=document.getElementById('notifDropdown');
+  if(old) old.remove();
+  const items=notifAllItems();
+  const wrap=document.createElement('div');
+  wrap.className='notif-dropdown';
+  wrap.id='notifDropdown';
+  wrap.innerHTML=`<div class="notif-dropdown-header">Notifikasi${items.length?` (${items.length})`:''}</div>
+    <div class="notif-list">${tplNotifItems(items)}</div>`;
+  notifBtn.appendChild(wrap);
+  wrap.querySelectorAll('[data-notif]').forEach(el=>{
+    el.onclick=(e)=>{
+      e.stopPropagation();
+      const it=items[+el.dataset.notif];
+      closeNotifDropdown();
+      if(it && it.open) it.open();
+    };
+  });
+  notifOpen=true;
+}
+
+function closeNotifDropdown(){
+  const old=document.getElementById('notifDropdown');
+  if(old) old.remove();
+  notifOpen=false;
+}
+
+/* goToPage(page, title, run) — berpindah ke `page` PERSIS seperti
+   user mengklik menu sidebar-nya sendiri (highlight current/
+   active-parent & submenu yang terbuka tetap konsisten, lewat
+   pageToElement yang diisi buildSidebar()), lalu menjalankan `run`
+   begitu halaman itu selesai di-render (lewat runPendingPageAction()
+   di renderPage()) — dipakai open() pada NOTIF_SOURCES di atas untuk
+   "buka Stock Request lalu langsung tampilkan 1 baris tertentu",
+   tapi generik untuk kebutuhan serupa di luar notifikasi juga. */
+function goToPage(page,title,run){
+  window.__pendingPageAction = run ? {page,run} : null;
+  const el=pageToElement[page];
+  if(el){
+    const sub=el.closest && el.closest('.submenu');
+    if(sub){
+      document.querySelectorAll('.menu-top').forEach(m=>m.classList.remove('open'));
+      document.querySelectorAll('.submenu').forEach(m=>m.classList.remove('open'));
+      sub.classList.add('open');
+      const head=sub.previousElementSibling;
+      if(head && head.classList.contains('menu-top')) head.classList.add('open');
+    }
+    el.click();
+  }else{
+    navigate(page,title);
+  }
+}
+
+/* =========================================================
    INIT
 ========================================================= */
 document.getElementById('hamburgerBtn').innerHTML=icon('menu',20);
@@ -29601,6 +30796,17 @@ buildSidebar();
 renderPage();
 // mark Dashboard as active leaf by default
 document.querySelectorAll('.menu-top.leaf').forEach(l=>{ if(l.textContent.trim()==='Dashboard') l.classList.add('current'); });
+
+const notifBtnEl=document.getElementById('notifBtn');
+notifBtnEl.insertAdjacentHTML('afterbegin', icon('bell',20));
+notifBtnEl.addEventListener('click',(e)=>{
+  e.stopPropagation();
+  notifOpen ? closeNotifDropdown() : openNotifDropdown();
+});
+document.addEventListener('click',(e)=>{
+  if(notifOpen && !notifBtnEl.contains(e.target)) closeNotifDropdown();
+});
+refreshNotifBadge();
 
 </script>
 </body>

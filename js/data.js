@@ -1915,23 +1915,34 @@ const DATA = {
      Request (lihat js/pages/stock-request.*). Setiap baris "items"
      adalah rincian barang yang diminta transfer dari Gudang Sumber ke
      Gudang Target, dikelompokkan per Kategori Barang (field `kategori`
-     mengacu ke DATA.items). NB: 2 baris contoh di bawah meniru screenshot
-     MASERP "Daftar Stock Request" & "Stock Request" persis pada field
-     No. Request/No. PO/Tgl/User/Status, tapi kode & nama barang serta
-     nama Supplier diganti ke data milik DBM sendiri (BRG-xxx, supplier
-     dari DATA.suppliers) karena screenshot berasal dari demo perusahaan
-     farmasi lain (kode barang 01-30003 dst, supplier "PT SATORIA ANEKA
-     INDUSTRI" tidak ada di master DBM) — pola yang sama seperti
-     penyesuaian kode akun GL di Jurnal Pembelian. */
+     mengacu ke DATA.items). NB: 2 baris contoh PALING ATAS di bawah
+     meniru screenshot MASERP "Daftar Stock Request" & "Stock Request"
+     persis pada field No. Request/No. PO/Tgl/User/Status, tapi kode &
+     nama barang serta nama Supplier diganti ke data milik DBM sendiri
+     (BRG-xxx, supplier dari DATA.suppliers) karena screenshot berasal
+     dari demo perusahaan farmasi lain (kode barang 01-30003 dst,
+     supplier "PT SATORIA ANEKA INDUSTRI" tidak ada di master DBM) —
+     pola yang sama seperti penyesuaian kode akun GL di Jurnal Pembelian.
+
+     Field `transferOutDibuat` (2026-08-24, fitur Notifikasi Stock
+     Request Baru) ditambahkan ke SEMUA baris — lihat komentar besar di
+     core.js bagian NOTIFIKASI untuk alasan field ini independen dari
+     `status`. 2 baris BARU (Bandung & Head Office) ditambahkan supaya
+     ada 3 baris `transferOutDibuat:false` sekaligus (sama seperti
+     baris TGR yang sudah ada) — meniru badge notifikasi "3" pada
+     screenshot MASERP yang dikirim user, TANPA baris ini terhubung ke
+     PO manapun (noPO:'', usedInPO:false — merepresentasikan Stock
+     Request yang baru dibuat & belum ditindaklanjuti sama sekali,
+     beda dari 2 baris lama yang sudah ada PO-nya sejak awal). */
   stockRequest:[
-    {no:'26/SR/SMG/08/00001', noPO:'26/PO/HO/08/00003', tglRequest:'06/08/2026', userEntry:'khalimatus_apja', reorderingSheet:'', tipeTransaksi:'Transfer Out', keterangan:'', status:'CLOSED', closedManually:false,
+    {no:'26/SR/SMG/08/00001', noPO:'26/PO/HO/08/00003', tglRequest:'06/08/2026', userEntry:'khalimatus_apja', reorderingSheet:'', tipeTransaksi:'Transfer Out', keterangan:'', status:'CLOSED', closedManually:false, transferOutDibuat:true,
       cabangRequest:'Semarang', supplier:'', gudangSumber:'(00-GUU) Gudang Utama-HO', gudangTarget:'(05-GSM) Gudang Semarang', edBulan:0, usedInPO:true,
       items:[
         {kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', kategori:'Minuman', qtyReordering:800, pilih:true, qty:800, um:'Dus'},
         {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', kategori:'Minuman', qtyReordering:600, pilih:true, qty:600, um:'Dus'},
       ],
       tglInput:'06/08/2026 09:12:30', userInput:'khalimatus_apja', tglEdit:'', userEdit:''},
-    {no:'26/SR/TGR/08/00001', noPO:'26/PO/HO/08/00002', tglRequest:'03/08/2026', userEntry:'sarah_scc', reorderingSheet:'26/ROS/TGR/08/00001', tipeTransaksi:'Transfer Out', keterangan:'PO PT. DAN', status:'OPEN', closedManually:false,
+    {no:'26/SR/TGR/08/00001', noPO:'26/PO/HO/08/00002', tglRequest:'03/08/2026', userEntry:'sarah_scc', reorderingSheet:'26/ROS/TGR/08/00001', tipeTransaksi:'Transfer Out', keterangan:'PO PT. DAN', status:'OPEN', closedManually:false, transferOutDibuat:false,
       cabangRequest:'Tangerang', supplier:'PT Sumber Pangan Nusantara', gudangSumber:'(00-GUU) Gudang Utama-HO', gudangTarget:'(00-GUU) Gudang Utama-HO', edBulan:0, usedInPO:true,
       items:[
         {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', kategori:'Sembako', qtyReordering:6000, pilih:true, qty:6000, um:'Dus'},
@@ -1939,6 +1950,19 @@ const DATA = {
         {kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', kategori:'Sembako', qtyReordering:2000, pilih:true, qty:2000, um:'Karung'},
       ],
       tglInput:'03/08/2026 13:00:56', userInput:'sarah_scc', tglEdit:'07/08/2026 10:42:41', userEdit:'sidik'},
+    {no:'26/SR/BDG/08/00001', noPO:'', tglRequest:'10/08/2026', userEntry:'budi_bdg', reorderingSheet:'', tipeTransaksi:'Transfer Out', keterangan:'Restock kebutuhan akhir bulan', status:'OPEN', closedManually:false, transferOutDibuat:false,
+      cabangRequest:'Bandung', supplier:'', gudangSumber:'(00-GUU) Gudang Utama-HO', gudangTarget:'(02-GBD) Gudang Bandung', edBulan:0, usedInPO:false,
+      items:[
+        {kode:'BRG-009', nama:'Kopi Kapal Api 165gr', kategori:'Minuman', qtyReordering:400, pilih:true, qty:400, um:'Dus'},
+        {kode:'BRG-005', nama:'Mie Instan Indomie Goreng', kategori:'Makanan', qtyReordering:900, pilih:true, qty:900, um:'Dus'},
+      ],
+      tglInput:'10/08/2026 08:45:12', userInput:'budi_bdg', tglEdit:'', userEdit:''},
+    {no:'26/SR/HO/08/00001', noPO:'', tglRequest:'12/08/2026', userEntry:'rina_ho', reorderingSheet:'', tipeTransaksi:'Transfer Out', keterangan:'Kebutuhan stok Gudang Utama', status:'OPEN', closedManually:false, transferOutDibuat:false,
+      cabangRequest:'Head Office', supplier:'', gudangSumber:'(00-GUU) Gudang Utama-HO', gudangTarget:'(00-GUU) Gudang Utama-HO', edBulan:0, usedInPO:false,
+      items:[
+        {kode:'BRG-006', nama:'Kecap Manis ABC 600ml', kategori:'Bumbu', qtyReordering:250, pilih:true, qty:250, um:'Dus'},
+      ],
+      tglInput:'12/08/2026 14:20:05', userInput:'rina_ho', tglEdit:'', userEdit:''},
   ],
   /* Reordering Sheet — menu Persediaan Barang > Daftar Transaksi >
      Reordering Sheet (lihat js/pages/reordering-sheet.*). Sebelumnya
@@ -2010,6 +2034,141 @@ const DATA = {
       items:[
         {kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', hist:[0,0,0,0,0,0], alpha:0, faktorial:0, average:0, forecast:0, keteranganItem:'', salesAgt:0, onHand:69, qtyBoPo:0, outstandingDR:0, qtyBoSo:0, qtyPickingList:0, available:69, maxStock:0, shouldReorder:0, qtyKelipatanOrder:0, konversiKarton:1, reorder:0, pareto:''},
       ], tglInput:'07/08/2026 09:00:00', userEntry:'sidik', stockRequest:''},
+  ],
+  /* Transaksi Persediaan — menu Persediaan Barang > Daftar Transaksi >
+     Transaksi Persediaan (lihat js/pages/transaksi-persediaan.*).
+     Sebelumnya placeholder. 16 baris (downsize dari "Total Record: 56"
+     di screenshot asli, mengikuti precedent downsize-volume Master
+     Rayon/Price List By Province/Report Center) mencakup SEMUA 6 Tipe
+     Transaksi: 4 pasang Transfer Out/In (8 baris) + 2 Transfer Stock +
+     2 Transfer Produk Bonus + 2 Pengeluaran + 2 Pemasukkan.
+
+     Pasangan pertama (26/OUT-HO/08/00001 <-> 26/IN-SMG/08/00001)
+     SENGAJA di-chain ke Stock Request `26/SR/SMG/08/00001` yang
+     SUDAH ADA (baris itu satu-satunya di DATA.stockRequest dengan
+     transferOutDibuat:true — lihat fitur Notifikasi topbar, 2026-08-24)
+     dan diberi `locked:true` — mensimulasikan bahwa transfer ini SUDAH
+     diproses lanjut jadi BPB/Terima Barang di cabang Semarang, sehingga
+     tidak boleh diubah lagi (banner "TUTUP..."). 3 pasang Out/In
+     lainnya (Bandung/Medan/Makassar) adalah alokasi ad-hoc antar
+     cabang, TIDAK terhubung ke Stock Request manapun (field
+     `stockRequest` kosong), tidak locked.
+
+     Nomor transaksi 4 baris (26/TPB-HO/08/00001, 26/TSS-HO/08/00011 →
+     disederhanakan jadi 26/TSS-HO/08/00001 karena dataset di sini
+     tidak punya 10 transaksi TSS sebelumnya seperti demo asli,
+     26/WRO-HO/08/00003, 26/PMA-HO/08/00001) mengikuti PERSIS format
+     & prefix dari 4 screenshot form acuan (TPB=Transfer Produk Bonus,
+     TSS=Transfer Stock, WRO=Pengeluaran/"Warehouse Removal Out",
+     PMA=Pemasukkan). "Delivery Request Cabang" & "No.SJ Supplier"
+     SENGAJA selalu kosong di semua baris (field dekoratif, konsisten
+     dengan tampilan placeholder abu-abu di semua screenshot acuan,
+     tidak ada modul Delivery Request Konsinyasi sungguhan di mockup
+     ini). Gudang Sumber/Target memakai kode `DATA.gudang` SUNGGUHAN
+     (00-GUU s.d. 07-GUU). */
+  transaksiPersediaan:[
+    {no:'26/OUT-HO/08/00001', noReferensi:'26/BPB/SMG/08/00012', stockRequest:'26/SR/SMG/08/00001', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'06/08/2026', tglTrnSort:20260806, tipeTransaksi:'Transfer Out', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(06-GUU) Gudang Utama-SMG', retur:false, jurnal:'', keterangan:'Pemenuhan Stock Request Semarang', userInput:'sidik', locked:true, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'26/SR/SMG/08/00001', itemRequest:'Susu Kental Manis Indomilk 380gr', kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', ket:'', kodeTarget:'', namaTarget:'', qty:800, um:'Dus', harga:0, jumlah:0, batches:[{batch:'BTH0806A', qty:800, exp:'01/02/2027'}]},
+        {noRequest:'26/SR/SMG/08/00001', itemRequest:'Teh Celup Sariwangi 25s', kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', ket:'', kodeTarget:'', namaTarget:'', qty:600, um:'Dus', harga:0, jumlah:0, batches:[{batch:'BTH0806B', qty:600, exp:'15/03/2027'}]},
+      ]},
+    {no:'26/IN-SMG/08/00001', noReferensi:'26/OUT-HO/08/00001', stockRequest:'26/SR/SMG/08/00001', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Semarang', tglTrn:'07/08/2026', tglTrnSort:20260807, tipeTransaksi:'Transfer In', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(06-GUU) Gudang Utama-SMG', retur:false, jurnal:'', keterangan:'Terima dari HO — Stock Request Semarang', userInput:'khalimatus_apja', locked:true, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'26/SR/SMG/08/00001', itemRequest:'Susu Kental Manis Indomilk 380gr', kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', ket:'', kodeTarget:'', namaTarget:'', qty:800, um:'Dus', harga:0, jumlah:0, batches:[{batch:'BTH0806A', qty:800, exp:'01/02/2027'}]},
+        {noRequest:'26/SR/SMG/08/00001', itemRequest:'Teh Celup Sariwangi 25s', kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', ket:'', kodeTarget:'', namaTarget:'', qty:600, um:'Dus', harga:0, jumlah:0, batches:[{batch:'BTH0806B', qty:600, exp:'15/03/2027'}]},
+      ]},
+    {no:'26/OUT-HO/08/00002', noReferensi:'26/BPB/HO/08/00023', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'10/08/2026', tglTrnSort:20260810, tipeTransaksi:'Transfer Out', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(02-GUU) Gudang Utama-BDG', retur:false, jurnal:'', keterangan:'Alokasi stok akhir bulan — Bandung', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', ket:'', kodeTarget:'', namaTarget:'', qty:300, um:'Dus', harga:0, jumlah:0, batches:[]},
+        {noRequest:'', itemRequest:'', kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', ket:'', kodeTarget:'', namaTarget:'', qty:150, um:'Karung', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/IN-BDG/08/00001', noReferensi:'26/OUT-HO/08/00002', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Bandung', tglTrn:'11/08/2026', tglTrnSort:20260811, tipeTransaksi:'Transfer In', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(02-GUU) Gudang Utama-BDG', retur:false, jurnal:'', keterangan:'Terima alokasi stok dari HO', userInput:'budi_bdg', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', ket:'', kodeTarget:'', namaTarget:'', qty:300, um:'Dus', harga:0, jumlah:0, batches:[]},
+        {noRequest:'', itemRequest:'', kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', ket:'', kodeTarget:'', namaTarget:'', qty:150, um:'Karung', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/OUT-HO/08/00003', noReferensi:'26/BPB/HO/08/00028', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'12/08/2026', tglTrnSort:20260812, tipeTransaksi:'Transfer Out', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(04-GUU) Gudang Utama-MDN', retur:false, jurnal:'', keterangan:'Restock Medan', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-005', nama:'Mie Instan Indomie Goreng', ket:'', kodeTarget:'', namaTarget:'', qty:400, um:'Dus', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/IN-MDN/08/00001', noReferensi:'26/OUT-HO/08/00003', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Medan', tglTrn:'13/08/2026', tglTrnSort:20260813, tipeTransaksi:'Transfer In', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(04-GUU) Gudang Utama-MDN', retur:false, jurnal:'', keterangan:'Terima restock dari HO', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-005', nama:'Mie Instan Indomie Goreng', ket:'', kodeTarget:'', namaTarget:'', qty:400, um:'Dus', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/OUT-HO/08/00004', noReferensi:'26/BPB/HO/08/00029', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'14/08/2026', tglTrnSort:20260814, tipeTransaksi:'Transfer Out', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(05-GUU) Gudang Utama-MKS', retur:false, jurnal:'', keterangan:'forecast marketing pak setiawan', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-009', nama:'Kopi Kapal Api 165gr', ket:'', kodeTarget:'', namaTarget:'', qty:250, um:'Dus', harga:0, jumlah:0, batches:[]},
+        {noRequest:'', itemRequest:'', kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', ket:'', kodeTarget:'', namaTarget:'', qty:200, um:'Dus', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/IN-MKS/08/00001', noReferensi:'26/OUT-HO/08/00004', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Makassar', tglTrn:'15/08/2026', tglTrnSort:20260815, tipeTransaksi:'Transfer In', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(05-GUU) Gudang Utama-MKS', retur:false, jurnal:'', keterangan:'Terima alokasi marketing', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-009', nama:'Kopi Kapal Api 165gr', ket:'', kodeTarget:'', namaTarget:'', qty:250, um:'Dus', harga:0, jumlah:0, batches:[]},
+        {noRequest:'', itemRequest:'', kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', ket:'', kodeTarget:'', namaTarget:'', qty:200, um:'Dus', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/TSS-HO/08/00001', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'16/08/2026', tglTrnSort:20260816, tipeTransaksi:'Transfer Stock', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(01-GUU) Gudang Utama-SBY', retur:false, jurnal:'', keterangan:'Penyeimbangan stok Surabaya', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', ket:'', kodeTarget:'', namaTarget:'', qty:120, um:'Karung', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/TSS-HO/08/00002', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'17/08/2026', tglTrnSort:20260817, tipeTransaksi:'Transfer Stock', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(07-GUU) Gudang Utama-SDA', retur:false, jurnal:'', keterangan:'Penyeimbangan stok Sidoarjo', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-006', nama:'Kecap Manis ABC 600ml', ket:'', kodeTarget:'', namaTarget:'', qty:80, um:'Dus', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/TPB-HO/08/00001', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'18/08/2026', tglTrnSort:20260818, tipeTransaksi:'Transfer Produk Bonus', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(00-GUU) Gudang Utama-HO', retur:false, jurnal:'', keterangan:'Bonus pembelian — Mie Indomie ke Kopi Kapal Api', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-005', nama:'Mie Instan Indomie Goreng', ket:'Bonus principal', kodeTarget:'BRG-009', namaTarget:'Kopi Kapal Api 165gr', qty:50, um:'Dus', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/TPB-HO/08/00002', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'19/08/2026', tglTrnSort:20260819, tipeTransaksi:'Transfer Produk Bonus', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'(00-GUU) Gudang Utama-HO', retur:false, jurnal:'', keterangan:'Bonus pembelian — Gula Pasir ke Teh Celup', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', ket:'Bonus principal', kodeTarget:'BRG-008', namaTarget:'Teh Celup Sariwangi 25s', qty:30, um:'Karung', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/WRO-HO/08/00001', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'20/08/2026', tglTrnSort:20260820, tipeTransaksi:'Pengeluaran', statusPengeluaran:'Barang Rusak / Reject', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'', retur:false, jurnal:'JURNAL PENGELUARAN (HO)', keterangan:'Kemasan rusak saat bongkar muat', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', ket:'', kodeTarget:'', namaTarget:'', qty:20, um:'Karung', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/WRO-HO/08/00003', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'24/08/2026', tglTrnSort:20260824, tipeTransaksi:'Pengeluaran', statusPengeluaran:'Kadaluarsa (ED)', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'', retur:false, jurnal:'JURNAL PENGELUARAN (HO)', keterangan:'Stok mendekati tanggal kadaluarsa', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', ket:'', kodeTarget:'', namaTarget:'', qty:15, um:'Dus', harga:0, jumlah:0, batches:[]},
+      ]},
+    {no:'26/PMA-HO/08/00001', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'21/08/2026', tglTrnSort:20260821, tipeTransaksi:'Pemasukkan', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'', retur:false, jurnal:'JURNAL PEMASUKAN (HO)', keterangan:'Penyesuaian stok hasil Stock Opname', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', ket:'', kodeTarget:'', namaTarget:'', qty:500, um:'Karung', harga:15000, jumlah:7500000, batches:[]},
+      ]},
+    {no:'26/PMA-HO/08/00002', noReferensi:'', stockRequest:'', deliveryRequestCabang:'', noSjSupplier:'',
+      cabang:'Head Office', tglTrn:'22/08/2026', tglTrnSort:20260822, tipeTransaksi:'Pemasukkan', statusPengeluaran:'', gudangSumber:'(00-GUU) Gudang Utama-HO',
+      gudangTarget:'', retur:false, jurnal:'JURNAL PEMASUKAN (HO)', keterangan:'Penyesuaian stok hasil Stock Opname', userInput:'sidik', locked:false, approved:true, cetakanKe:0,
+      items:[
+        {noRequest:'', itemRequest:'', kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', ket:'', kodeTarget:'', namaTarget:'', qty:300, um:'Dus', harga:5000, jumlah:1500000, batches:[]},
+      ]},
   ],
   /* Purchase Order — menu Supplier & Pembelian > Daftar Transaksi >
      Purchase Order (lihat js/pages/purchase-order.*). 11 baris data
