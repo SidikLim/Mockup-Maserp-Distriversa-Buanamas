@@ -1112,6 +1112,75 @@ const DATA = {
       ],
       jumlah:350000, posted:true, ts:'Invoice Selesai', dibayar:150000,
       tglInput:'11/08/2026 14:10', userInput:'sidik', tglEdit:'11/08/2026 16:45', userEdit:'sidik'},
+    /* 2026-08-26 — 2 baris BARU (bukan mengedit 8 baris di atas yang
+       sudah terverifikasi) ditambahkan khusus untuk mendemokan laporan
+       Report Center baru "Laporan Daftar Transaksi Barang Bonus"
+       (Penjualan > grup BONUS, permission code PrintTransactionInventoryBonus
+       — lihat js/pages/reports.js/.template.js). Screenshot contoh PDF
+       laporan itu ("LAPORAN PENJUALAN BARANG BONUS") berisi data rumah
+       sakit farmasi instalasi MASERP lain (customer "MITRA KELUARGA
+       TEGAL", barang infus) — TIDAK direplikasi (bukan data DBM/tidak
+       relevan), diganti transaksi yang genuinely konsisten dengan data
+       DBM yang sudah ada. Setiap baris di bawah membawa 1 item tambahan
+       bertanda `bonus:true` di array `items[]` — field BARU ini di-
+       skip dari kalkulasi `jumlah` (lihat +1 baris di invRecalcJumlah(),
+       invoice.js: item bonus dianggap harga 0/gratis, konsisten sifat
+       "barang bonus") dan ditampilkan dengan label kecil "Bonus" di
+       tabel Produk form Invoice (lihat tplInvItemRow(), invoice.template.js).
+       Baris bonus ini SENGAJA di-CHAIN ke 2 baris DATA.promotion yang
+       SUDAH ADA sejak modul Promotion dibangun 2026-08-11 (field
+       ratioBarangBonus/barangBonusKode di tiap tier `ketentuan[]` —
+       sebelumnya cuma metadata deskriptif, belum pernah benar2
+       dikonsumsi transaksi mana pun sampai laporan ini):
+       - Invoice ke-1 (Head Office/Toko Sumber Rejeki) chained ke PRO01
+         "Promo Diskon Bertingkat Sembako" (26/PM-HO/08/00001): tier
+         kategori Sembako qtyAwal 50-999999 -> ratioBarangBonus 20 ->
+         barangBonusKode BRG-002. Baris ini beli 2 barang kategori
+         Sembako (BRG-004 Tepung Terigu 30 + BRG-002 Gula Pasir 25 = 55
+         >= 50) sehingga dapat bonus Gula Pasir 20% x 55 = 11 (dibulatkan
+         ke bawah), persis barangBonusKode tier itu.
+       - Invoice ke-2 (Surabaya/UD Makmur Jaya) chained ke PRO02 "Promo
+         Beli Minyak Goreng Dapat Bonus" (26/PM-SBY/08/00001): tier
+         BRG-001 Minyak Goreng Sunco 2L qtyAwal 100-999999 ->
+         ratioBarangBonus 10 -> barangBonusKode BRG-001 (SKU sama,
+         "beli 120 dapat bonus 12"). Baris ini beli Minyak Goreng 120
+         (>=100) sehingga dapat bonus 10% x 120 = 12 unit SKU yang sama.
+       Kedua baris TIDAK mengubah/menimpa `jumlah` baris manapun yang
+       sudah ada — noSO/noPL/noSP di baris baru ini murni deskriptif
+       (mengikuti pola nomor urut per-cabang yang sudah ada) seperti
+       field serupa di banyak baris Invoice existing, tidak divalidasi
+       silang ke DATA.salesOrders/DATA.pickingList (konsisten precedent
+       "referensi deskriptif, bukan foreign-key wajib" yang sudah dipakai
+       banyak field serupa di modul lain). */
+    {no:'26/SI/HO/08/00003', noSJ:'26/SJ/HO/08/00003', tglBuat:'20/08/2026 10:00', tgl:'20/08/2026',
+      cabang:'Head Office', gudang:'(00-GUU) Gudang Utama-HO', area:'JABODETABEK BANTEN',
+      customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', customerAlamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat',
+      noSO:'26/SO/HO/08/00014', noPL:'26/PKL/HO/08/00079', noSP:'SP/HO/08/00014', noDSC:'', principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara', tglSP:'19/08/2026',
+      spAsli:true, skEd:false, cito:false, citoTgl:'20/08/2026',
+      syaratBayar:'Kredit 30 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat',
+      shipVia:'Driver', noResi:'', driver:'Maulana Sidik - L 8753 GE (CDE)',
+      keterangan:'Invoice sesuai Picking List 26/PKL/HO/08/00079. Termasuk bonus barang dari Promotion 26/PM-HO/08/00001 (PRO01) — beli Sembako 55 pcs (Tepung 30 + Gula 25, >=50) mendapat bonus Gula Pasir Gulaku 1kg 20% x 55 = 11 pcs gratis.',
+      items:[
+        {kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', satuan:'Karung', qtyPesan:30, qtyKirim:30, batch:'BT-260815-15', ed:'2027-02-28'},
+        {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', satuan:'Karung', qtyPesan:25, qtyKirim:25, batch:'BT-260816-16', ed:'2027-06-15'},
+        {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', satuan:'Karung', qtyPesan:11, qtyKirim:11, batch:'BT-260816-16', ed:'2027-06-15', bonus:true, bonusKeterangan:'Bonus Promo PRO01 (26/PM-HO/08/00001) — 20% x 55'},
+      ],
+      jumlah:735000, posted:false, ts:'Create Invoice',
+      tglInput:'20/08/2026 10:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/SI/SBY/08/00003', noSJ:'26/SJ/SBY/08/00003', tglBuat:'21/08/2026 09:45', tgl:'21/08/2026',
+      cabang:'Surabaya', gudang:'(01-GUU) Gudang Utama-SBY', area:'JAWA TIMUR',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya', customerAlamat:'Jl. Raya Darmo No. 45, Surabaya',
+      noSO:'26/SO/SBY/08/00008', noPL:'26/PKL/SBY/08/00044', noSP:'SP/SBY/08/00008', noDSC:'', principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia', tglSP:'20/08/2026',
+      spAsli:true, skEd:false, cito:false, citoTgl:'21/08/2026',
+      syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
+      shipVia:'Driver', noResi:'', driver:'Bambang Wijaya - B 9012 XYZ (ABC)',
+      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00044. Termasuk bonus barang dari Promotion 26/PM-SBY/08/00001 (PRO02) — beli Minyak Goreng Sunco 2L 120 dus (>=100) mendapat bonus 10% x 120 = 12 dus gratis (SKU sama).',
+      items:[
+        {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', satuan:'Dus', qtyPesan:120, qtyKirim:120, batch:'BT-260817-17', ed:'2027-07-31'},
+        {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', satuan:'Dus', qtyPesan:12, qtyKirim:12, batch:'BT-260817-17', ed:'2027-07-31', bonus:true, bonusKeterangan:'Bonus Promo PRO02 (26/PM-SBY/08/00001) — 10% x 120'},
+      ],
+      jumlah:3000000, posted:false, ts:'Create Invoice',
+      tglInput:'21/08/2026 09:45', userInput:'sidik', tglEdit:'', userEdit:''},
   ],
   /* Daftar Driver (dipakai field "Driver" di form Invoice, picker
      dekoratif sederhana — tidak ada modul Master Driver tersendiri di
@@ -1843,11 +1912,190 @@ const DATA = {
     {tgl:'2026-08-02', no:'JU-0003', akun:'Persediaan Barang Dagang', debit:12500000, kredit:0},
     {tgl:'2026-08-02', no:'JU-0004', akun:'Hutang Usaha', debit:0, kredit:12500000},
   ],
+  /* Fixed Asset (menu Aktiva Tetap > Master & Setting > Fixed Asset,
+     page:'aktivaTetap') — sebelumnya renderer generik read-only 4 baris
+     (kode/nama/tahun/nilai/akumulasi/buku sederhana, lihat versi lama
+     baris ini di git history), kini dibangun CRUD PENUH sesuai 2
+     screenshot MASERP 2026-08-26: list "Daftar Aktiva Tetap" (Total
+     Record: 244, kolom Kode Asset/Nama Aset/Cabang/Tgl Mulai Susut/
+     Lokasi/Nilai/Status[toggle Active/Non Active]/Ubah/Hapus/Delete
+     Generate Fixed Asset, toolbar Generate Fixed Asset/Tambah/Impor
+     Fixed Asset) & form "Master Fixed Asset" (checkbox "Aset Ini Tidak
+     Memiliki Penyusutan", field kiri Cabang/Kode Aset/Nama Aset/
+     Spesifikasi/Merek/Tgl.Beli/Tgl Mulai Susut/Harga Beli Aset/Barcode/
+     Status+Ubah Status, field kanan Metode Penyusutan radio Straight
+     Line/Declining Balance + Kelompok Aktiva radio Fiskal/Komersial +
+     Kode Golongan + picker Aturan Penyusutan + Nilai Susut/Masa Susut
+     [readonly, diturunkan dari Aturan Penyusutan yang dipilih — lihat
+     DATA.aktivaTetapDeprRule] + Nilai Residu, sub-section "Lokasi Aset"
+     [Tgl.Perpindahan/Lokasi Aset/Penanggung Jawab/Pemakai Asset+Update]
+     & "Jurnal" [Kode G.L. Biaya Susut/Akm. Susut, keduanya picker ke
+     DATA.akunGL]).
+
+     DOWNSIZE VOLUME (konsisten precedent Zat Kandungan Aktif dkk.):
+     "Total Record: 244" di screenshot asli TIDAK direproduksi utuh —
+     diturunkan ke 24 baris. 10 baris PERTAMA (`00-KDR001`-`00-KDR010`)
+     PERSIS data halaman 1 screenshot list (nama kendaraan/tanggal/nilai,
+     semua Head Office/Active) — termasuk `00-KDR001` "Grand Max Blin Van
+     1.3" yang JUGA jadi contoh persis di screenshot form "Master Fixed
+     Asset" (Aturan Penyusutan "Kelompok Kendaraan Bermotor Masa Manfaat 8
+     Thn" = kodeKelompok `KENDARAAN BERMOTOR 2` di DATA.aktivaTetapDeprRule,
+     Nilai Susut 12,50% cocok formula 100/8). 14 baris TAMBAHAN disusun
+     sendiri lintas cabang Semarang/Tangerang/Bandung (SENGAJA hanya 4
+     cabang ini + Head Office, cocok dgn 4 lokasi yang ada di
+     DATA.lokasiAset — bukan 8 cabang standar app ini, supaya field
+     Lokasi selalu bisa diresolve) & lintas kelompok aktiva lain (Peralatan
+     Kantor/Peralatan IT/Mesin & Peralatan Gudang/Bangunan/Software/
+     Kendaraan Bermotor gol. 4th) untuk mendemokan variasi Aturan
+     Penyusutan & pasangan akun G.L. Biaya/Akum. Susut baru (lihat
+     komentar di atas 12 akun baru di DATA.akunGL).
+
+     Field "Nilai Susut %"/"Masa Susut (Tahun)" TIDAK disimpan redundan
+     per baris — selalu dihitung live dari `aturanKode` (lookup ke
+     DATA.aktivaTetapDeprRule + formula SL=100/masaSusut, DB=200/masaSusut,
+     lihat atDeprTarif() di fixed-asset.js) supaya 1 sumber kebenaran.
+     Semua baris: metodePenyusutan 'Straight Line' (satu-satunya varian
+     yang datanya diperlihatkan discreenshot), nilaiResidu 0, status
+     'Active', tidakPenyusutan false, tglPerpindahan default "01/01/0001"
+     (persis placeholder kosong di screenshot form — Lokasi Aset belum
+     pernah dipindah). "Perabotan Kantor" & "Peralatan Kantor" (2 golongan
+     terpisah di DATA.aktivaTetapDeprRule) SENGAJA disatukan ke 1 pasang
+     akun GL yang sama (5210007/1590003) — disederhanakan, didokumentasikan. */
   aktivaTetap:[
-    {kode:'AT-001', nama:'Truk Box Isuzu Elf', tahun:2023, nilai:350000000, akumulasi:70000000, buku:280000000},
-    {kode:'AT-002', nama:'Forklift Gudang', tahun:2022, nilai:180000000, akumulasi:54000000, buku:126000000},
-    {kode:'AT-003', nama:'Rak Gudang Besi (Set)', tahun:2024, nilai:45000000, akumulasi:4500000, buku:40500000},
-    {kode:'AT-004', nama:'Komputer Kantor (5 unit)', tahun:2024, nilai:35000000, akumulasi:7000000, buku:28000000},
+    {kode:'00-KDR001', nama:'Grand Max Blin Van 1.3', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'02/07/2018', tglMulaiSusut:'02/07/2018', hargaBeli:75000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002'},
+    {kode:'00-KDR002', nama:'Suzuki Ertiga th 2013', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'02/07/2018', tglMulaiSusut:'02/07/2018', hargaBeli:70000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002'},
+    {kode:'00-KDR003', nama:'Mitsubishi L 300 + Box, th 2013', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'02/07/2018', tglMulaiSusut:'02/07/2018', hargaBeli:67500000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002'},
+    {kode:'00-KDR004', nama:'Mitsubishi L 300 + Box, th 2013', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'02/07/2018', tglMulaiSusut:'02/07/2018', hargaBeli:67500000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002'},
+    {kode:'00-KDR005', nama:'Mitsubishi L 300 + Box, th 2015', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'02/07/2018', tglMulaiSusut:'02/07/2018', hargaBeli:115000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002'},
+    {kode:'00-KDR006', nama:'Mitsubishi Colt Diesel FE 71 L + Box, th 2014', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'02/07/2018', tglMulaiSusut:'02/07/2018', hargaBeli:130000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002'},
+    {kode:'00-KDR007', nama:'Mitsubishi L 300 + Box, th 2016', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'02/07/2018', tglMulaiSusut:'02/07/2018', hargaBeli:134500000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002'},
+    {kode:'00-KDR008', nama:'Isuzu Traga 2,5 Box Alm, Th 2023', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'01/12/2023', tglMulaiSusut:'01/12/2023', hargaBeli:275000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002'},
+    {kode:'00-KDR009', nama:'Isuzu Traga 2,5 Box Alm, Th 2023', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'01/12/2023', tglMulaiSusut:'01/12/2023', hargaBeli:275000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002'},
+    {kode:'00-KDR010', nama:'Isuzu Traga 2,5 Box Alm, Th 2023', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'01/06/2024', tglMulaiSusut:'01/06/2024', hargaBeli:270000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002'},
+    {kode:'02-PRK001', nama:'AC Split Daikin 1.5 PK (Kantor Semarang)', spesifikasi:'', merek:'Daikin', cabang:'Semarang', lokasiKode:'02', tglBeli:'15/03/2021', tglMulaiSusut:'15/03/2021', hargaBeli:8500000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'PERALATAN KANTOR 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210007', glAkmSusut:'1590003'},
+    {kode:'02-PRK002', nama:'Meja & Kursi Kantor (Set 10)', spesifikasi:'', merek:'', cabang:'Semarang', lokasiKode:'02', tglBeli:'15/03/2021', tglMulaiSusut:'15/03/2021', hargaBeli:15000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'PERABOTAN KANTOR 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210007', glAkmSusut:'1590003'},
+    {kode:'03-ITK001', nama:'Laptop Dell Latitude 5420', spesifikasi:'', merek:'Dell', cabang:'Tangerang', lokasiKode:'03', tglBeli:'10/01/2023', tglMulaiSusut:'10/01/2023', hargaBeli:12000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'PERALATAN IT 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210008', glAkmSusut:'1590004'},
+    {kode:'03-ITK002', nama:'Server Rack HP ProLiant', spesifikasi:'', merek:'HP', cabang:'Tangerang', lokasiKode:'03', tglBeli:'10/01/2023', tglMulaiSusut:'10/01/2023', hargaBeli:45000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'PERALATAN IT 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210008', glAkmSusut:'1590004'},
+    {kode:'04-MSN001', nama:'Forklift Toyota 2.5 Ton', spesifikasi:'', merek:'Toyota', cabang:'Bandung', lokasiKode:'04', tglBeli:'20/06/2019', tglMulaiSusut:'20/06/2019', hargaBeli:180000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'MESIN DAN PERALATAN GUDANG 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210009', glAkmSusut:'1590005'},
+    {kode:'04-MSN002', nama:'Rak Gudang Besi Bertingkat (Set)', spesifikasi:'', merek:'', cabang:'Bandung', lokasiKode:'04', tglBeli:'20/06/2019', tglMulaiSusut:'20/06/2019', hargaBeli:45000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'MESIN DAN PERALATAN GUDANG 1', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210009', glAkmSusut:'1590005'},
+    {kode:'00-GDG001', nama:'Gedung Kantor & Gudang Head Office', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'01/01/2015', tglMulaiSusut:'01/01/2015', hargaBeli:1200000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'BANGUNAN PERMANEN', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210010', glAkmSusut:'1590006'},
+    {kode:'00-GDG002', nama:'Gudang Cabang Head Office (Semi Permanen)', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'01/01/2015', tglMulaiSusut:'01/01/2015', hargaBeli:250000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'BANGUNAN SEMI PERMANEN', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210010', glAkmSusut:'1590006'},
+    {kode:'00-SFT001', nama:'Lisensi Software Akuntansi MASERP', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'01/08/2024', tglMulaiSusut:'01/08/2024', hargaBeli:60000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'SOFTWARE 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210011', glAkmSusut:'1590007'},
+    {kode:'00-SFT002', nama:'Lisensi Microsoft Office 365 (25 user)', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'01/08/2024', tglMulaiSusut:'01/08/2024', hargaBeli:15000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'SOFTWARE 1', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210011', glAkmSusut:'1590007'},
+    {kode:'00-KDR011', nama:'Motor Honda Vario 125 (Kurir Head Office)', spesifikasi:'', merek:'Honda', cabang:'Head Office', lokasiKode:'00', tglBeli:'05/09/2022', tglMulaiSusut:'05/09/2022', hargaBeli:22000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 1', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002'},
+    {kode:'02-KDR012', nama:'Motor Honda Vario 125 (Kurir Semarang)', spesifikasi:'', merek:'Honda', cabang:'Semarang', lokasiKode:'02', tglBeli:'05/09/2022', tglMulaiSusut:'05/09/2022', hargaBeli:22000000, barcode:'', status:'Non Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 1', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002'},
+    {kode:'03-PRK003', nama:'Lemari Arsip Kantor Tangerang', spesifikasi:'', merek:'', cabang:'Tangerang', lokasiKode:'03', tglBeli:'12/11/2023', tglMulaiSusut:'12/11/2023', hargaBeli:6500000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'PERALATAN KANTOR 1', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210007', glAkmSusut:'1590003'},
+    {kode:'04-ITK003', nama:'Printer Epson L3210 (Kantor Bandung)', spesifikasi:'', merek:'Epson', cabang:'Bandung', lokasiKode:'04', tglBeli:'12/11/2023', tglMulaiSusut:'12/11/2023', hargaBeli:2800000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'PERALATAN IT 1', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210008', glAkmSusut:'1590004'},
+  ],
+  /* Lokasi Aset (menu Aktiva Tetap > Master & Setting > Lokasi,
+     page:'lokasiAset') — sebelumnya tidak ada menunya sama sekali,
+     dibangun sesuai screenshot MASERP "Daftar Lokasi Aset" (+Tambah,
+     kolom Kode Lokasi/Nama Lokasi/Ubah/Hapus). 4 baris PERSIS
+     screenshot — kode "00"/"02"/"03"/"04" (LOMPAT dari "01", quirk data
+     asli direproduksi apa adanya, bukan salah ketik). Kode dientri
+     MANUAL, wajib unik, readonly di mode Ubah (pola sama Master Divisi/
+     Kategori Reordering Sheet). Dipakai sebagai referensi field "Lokasi
+     Aset" di form Master Fixed Asset (lihat DATA.aktivaTetap). */
+  lokasiAset:[
+    {kode:'00', nama:'Head Office'},
+    {kode:'02', nama:'Semarang'},
+    {kode:'03', nama:'Tangerang'},
+    {kode:'04', nama:'Bandung'},
+  ],
+  /* Aktiva Tetap Depr Rule (menu Aktiva Tetap > Master & Setting >
+     Rumus Penyusutan, page:'aktivaTetapDeprRule') — sebelumnya tidak ada
+     menunya sama sekali, dibangun sesuai 2 screenshot MASERP: list
+     "Daftar Master Aktiva Tetap Dept Rule" (24 baris, kolom Kode
+     Kelompok/Golongan/Keterangan/Kelompok Aktiva[Fiskal/Komersial]/
+     Ubah/Hapus) & form "Aktiva Tetap Depr Rule" (Kode Golongan/Tarif
+     Susut Straight Line %/Tarif Susut Declining Balance %/Kode
+     Kelompok/Masa Susut (Tahun)/Keterangan).
+
+     24 baris PERSIS screenshot list (8 Fiskal kode "1"-"7"+"P", 16
+     Komersial kode nama seperti "KENDARAAN BERMOTOR 1/2" dst.) — TIDAK
+     didownsize karena datasetnya sudah kecil (konsisten precedent
+     Group Produk/Kategori Reordering Sheet). "Masa Susut (Tahun)"
+     diparse dari teks Keterangan tiap baris screenshot ("...Masa
+     Manfaat N Thn"). Field "Tarif Susut Straight Line %"/"Declining
+     Balance %" TIDAK disimpan di sini — dihitung live pakai formula
+     SL=100/masaSusut, DB=200/masaSusut (lihat atDeprTarif() di
+     aktiva-tetap-depr-rule.js), DIVERIFIKASI cocok 100% dengan 2 baris
+     contoh nyata di screenshot form ("KENDARAAN BERMOTOR 1" masa 4 Thn
+     → SL 25,00%/DB 50,00%; "KENDARAAN BERMOTOR 2" masa 8 Thn dipakai
+     sbg Aturan Penyusutan contoh di form Master Fixed Asset → Nilai
+     Susut 12,50% = SL 100/8). "Kode Golongan" (dropdown, screenshot
+     cuma menampilkan 1 opsi "Bukan bangunan" utk baris golongan "1")
+     dipetakan: golongan "1" → "Bukan bangunan", golongan "2"/"P" →
+     "Bangunan Permanen" — opsi ke-3 "Bangunan Tidak Permanen"
+     ditambahkan di dropdown form utk kelengkapan kategori fiskal real
+     tapi tidak dipakai baris manapun di sini (asumsi desain).
+
+     Field "Kelompok Aktiva" (Fiskal/Komersial) ADA di kolom list tapi
+     TIDAK terlihat di screenshot form "Aktiva Tetap Depr Rule" (crop
+     screenshot cuma menampilkan sampai Keterangan) — DITAMBAHKAN
+     sebagai radio button di form (inferred/asumsi, didokumentasikan)
+     supaya kolom list ini tetap bisa diisi lewat Tambah/Ubah. */
+  aktivaTetapDeprRule:[
+    {kodeKelompok:'1', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:4, kelompokAktiva:'Fiskal', keterangan:'Kelompok Peralatan & Perabotan Adm Kantor Masa Manfaat 4 Thn'},
+    {kodeKelompok:'2', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:4, kelompokAktiva:'Fiskal', keterangan:'Kelompok Peralatan & Perabotan Adm Produksi Masa Manfaat 4Th'},
+    {kodeKelompok:'3', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:8, kelompokAktiva:'Fiskal', keterangan:'Kelompok Kendaraan Kantor Masa Manfaat 8 Thn'},
+    {kodeKelompok:'4', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:8, kelompokAktiva:'Fiskal', keterangan:'Kelompok Kendaraan Lapangan Masa Manfaat 8 Thn'},
+    {kodeKelompok:'5', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:8, kelompokAktiva:'Fiskal', keterangan:'Kelompok Mesin & Peralatan Kerja Lapangan Masa Manfaat 8 Thn'},
+    {kodeKelompok:'6', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:8, kelompokAktiva:'Fiskal', keterangan:'Kelompok Peralatan & Perabotan Adm Produksi Masa Manfaat 8Th'},
+    {kodeKelompok:'7', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:16, kelompokAktiva:'Fiskal', keterangan:'Kelompok Mesin & Peralatan Kerja Lapangan Masa Manfaat 16Thn'},
+    {kodeKelompok:'P', golongan:'2', kodeGolongan:'Bangunan Permanen', masaSusut:20, kelompokAktiva:'Fiskal', keterangan:'Kelompok Bangunan Permanen Masa Manfaat 20 Thn'},
+    {kodeKelompok:'SOFTWARE 2', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:8, kelompokAktiva:'Komersial', keterangan:'Kelompok Software Masa Manfaat 8 Thn'},
+    {kodeKelompok:'KENDARAAN BERMOTOR 1', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:4, kelompokAktiva:'Komersial', keterangan:'Kelompok Kendaraan Bermotor Masa Manfaat 4 Thn'},
+    {kodeKelompok:'PERALATAN KANTOR 2', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:8, kelompokAktiva:'Komersial', keterangan:'Kelompok Peralatan Kantor Masa Manfaat 8 Thn'},
+    {kodeKelompok:'PERABOTAN KANTOR 2', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:8, kelompokAktiva:'Komersial', keterangan:'Kelompok Perabotan Kantor Masa Manfaat 8 Thn'},
+    {kodeKelompok:'KENDARAAN BERMOTOR 2', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:8, kelompokAktiva:'Komersial', keterangan:'Kelompok Kendaraan Bermotor Masa Manfaat 8 Thn'},
+    {kodeKelompok:'PERALATAN IT 2', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:8, kelompokAktiva:'Komersial', keterangan:'Kelompok Peralatan IT Masa Manfaat 8 Thn'},
+    {kodeKelompok:'MESIN DAN PERALATAN GUDANG 2', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:8, kelompokAktiva:'Komersial', keterangan:'Kelompok Mesin & Peralatan Masa Manfaat 8 Thn'},
+    {kodeKelompok:'BANGUNAN PERMANEN', golongan:'2', kodeGolongan:'Bangunan Permanen', masaSusut:20, kelompokAktiva:'Komersial', keterangan:'Kelompok Bangunan Permanen Masa Manfaat 20 Thn'},
+    {kodeKelompok:'BANGUNAN PERMANEN 30 TH', golongan:'2', kodeGolongan:'Bangunan Permanen', masaSusut:30, kelompokAktiva:'Komersial', keterangan:'Kelompok Bangunan Permanen Masa Manfaat 30 Thn'},
+    {kodeKelompok:'SOFTWARE 1', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:4, kelompokAktiva:'Komersial', keterangan:'Kelompok Software Masa Manfaat 4 Thn'},
+    {kodeKelompok:'PERABOTAN KANTOR 1', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:4, kelompokAktiva:'Komersial', keterangan:'Kelompok Perabotan Kantor Masa Manfaat 4 Thn'},
+    {kodeKelompok:'PERALATAN IT 1', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:4, kelompokAktiva:'Komersial', keterangan:'Kelompok Peralatan IT Masa Manfaat 4 Thn'},
+    {kodeKelompok:'BANGUNAN SEMI PERMANEN', golongan:'2', kodeGolongan:'Bangunan Permanen', masaSusut:10, kelompokAktiva:'Komersial', keterangan:'Kelompok Bangunan Permanen Masa Manfaat 10 Thn'},
+    {kodeKelompok:'MESIN DAN PERALATAN GUDANG 3', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:16, kelompokAktiva:'Komersial', keterangan:'Kelompok Mesin & Peralatan Masa Manfaat 16 Thn'},
+    {kodeKelompok:'MESIN DAN PERALATAN GUDANG 1', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:4, kelompokAktiva:'Komersial', keterangan:'Kelompok Mesin & Peralatan Masa Manfaat 4 Thn'},
+    {kodeKelompok:'PERALATAN KANTOR 1', golongan:'1', kodeGolongan:'Bukan bangunan', masaSusut:4, kelompokAktiva:'Komersial', keterangan:'Kelompok Peralatan Kantor Masa Manfaat 4 Thn'},
+  ],
+  /* Jurnal Fixed Asset (menu Aktiva Tetap > Master & Setting > Jurnal
+     Aktiva Tetap, page:'jurnalFixedAsset') — sebelumnya tidak ada
+     menunya sama sekali, dibangun sesuai screenshot MASERP "Daftar
+     Jurnal Fixed Asset" (toolbar 6 tombol +Jurnal Saldo Awal/+Jurnal
+     Pembelian/+Jurnal Penjualan/+Jurnal Biaya/+Jurnal Disposal/+Jurnal
+     Revaluasi, kolom Kode Jurnal/Keterangan Jurnal/Edit/Delete).
+
+     13 baris PERSIS screenshot (Kode Jurnal LOMPAT 1-4 lalu 9-17 —
+     quirk data asli direproduksi apa adanya, kode 5-8 diasumsikan sudah
+     terhapus di instalasi sumber screenshot, bukan salah ketik). Field
+     `tipe` per baris diparse dari teks parentheses Keterangan (Saldo
+     Awal/Pembelian Kredit/Penjualan/Disposal) — dipakai utk grouping
+     & konsistensi dgn tombol toolbar mana yang akan membuat baris
+     serupa. `golDebit`/`golKredit` (akun G.L.) SENGAJA dibiarkan kosong
+     utk 13 baris legacy ini (screenshot list tidak pernah menampilkan
+     kolom akun, jadi tidak direka-reka) — field ini hanya terisi utk
+     baris BARU yang dibuat lewat salah satu 6 tombol Tambah (lihat
+     jurnal-fixed-asset.js), yang mewajibkan pilih Kode G.L. Debit/
+     Kredit dari DATA.akunGL. Tidak ada baris sample utk tipe "Biaya"/
+     "Revaluasi" (screenshot tidak menunjukkan baris jenis itu), tapi
+     ke-2 tombol toolbar-nya tetap fungsional utk Tambah baru. */
+  jurnalFixedAsset:[
+    {kode:1, keterangan:'Jurnal Gedung (Saldo Awal)', tipe:'Saldo Awal', golongan:'Gedung', glDebit:'', glKredit:''},
+    {kode:2, keterangan:'Jurnal Perabotan Kantor (Saldo Awal)', tipe:'Saldo Awal', golongan:'Perabotan Kantor', glDebit:'', glKredit:''},
+    {kode:3, keterangan:'Jurnal Mesin Peralatan (Saldo Awal)', tipe:'Saldo Awal', golongan:'Mesin Peralatan', glDebit:'', glKredit:''},
+    {kode:4, keterangan:'Jurnal Kendaraan Bermotor (Saldo Awal)', tipe:'Saldo Awal', golongan:'Kendaraan Bermotor', glDebit:'', glKredit:''},
+    {kode:9, keterangan:'Jurnal Kendaraan Bermotor (Disposal)', tipe:'Disposal', golongan:'Kendaraan Bermotor', glDebit:'', glKredit:''},
+    {kode:10, keterangan:'Jurnal Peralatan IT (Saldo Awal)', tipe:'Saldo Awal', golongan:'Peralatan IT', glDebit:'', glKredit:''},
+    {kode:11, keterangan:'Jurnal Peralatan Kantor (Saldo Awal)', tipe:'Saldo Awal', golongan:'Peralatan Kantor', glDebit:'', glKredit:''},
+    {kode:12, keterangan:'Jurnal Kendaraan (Pembelian Kredit)', tipe:'Pembelian Kredit', golongan:'Kendaraan', glDebit:'', glKredit:''},
+    {kode:13, keterangan:'Jurnal Gedung (Pembelian Kredit)', tipe:'Pembelian Kredit', golongan:'Gedung', glDebit:'', glKredit:''},
+    {kode:14, keterangan:'Jurnal Peralatan Kantor (Pembelian Kredit)', tipe:'Pembelian Kredit', golongan:'Peralatan Kantor', glDebit:'', glKredit:''},
+    {kode:15, keterangan:'Jurnal Peralatan IT (Pembelian Kredit)', tipe:'Pembelian Kredit', golongan:'Peralatan IT', glDebit:'', glKredit:''},
+    {kode:16, keterangan:'Jurnal Perabotan Kantor (Pembelian Kredit)', tipe:'Pembelian Kredit', golongan:'Perabotan Kantor', glDebit:'', glKredit:''},
+    {kode:17, keterangan:'Jurnal Kendaraan Bermotor (Penjualan)', tipe:'Penjualan', golongan:'Kendaraan Bermotor', glDebit:'', glKredit:''},
   ],
   /* Master User — menu User Security > Master User (page:'users', sebelumnya
      renderer generik lewat objek `pages` di js/core.js dgn field lama nama/
@@ -2069,6 +2317,27 @@ const DATA = {
     {kode:'1120004', nama:'Piutang SSP PPH', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'2120003', nama:'PPN Pemungut', kategori:'B', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'1140003', nama:'Uang Muka PPH 22', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    /* 12 akun baru (6 pasang Biaya Susut/Akum. Susut) — menu Aktiva
+       Tetap (2026-08-26), lihat catatan besar di atas DATA.aktivaTetap
+       & js/pages/fixed-asset.template.js. Screenshot MASERP contoh
+       form "Master Fixed Asset" menampilkan kode akun "601603"/"120703"
+       (skema instalasi lain, 6-digit) — dipetakan ke akun 7-digit DBM
+       baru di sini, satu pasang per kelompok golongan aktiva (Kendaraan
+       Bermotor/Peralatan Kantor/Peralatan IT/Mesin & Peralatan/Bangunan/
+       Software), reuse header AKTIVA TETAP (1500000, kontra-akun akum.
+       susut) & BIAYA OPERASI (5200000, akun biaya susut) yang sudah ada. */
+    {kode:'5210006', nama:'Biaya Peny. Kendaraan Bermotor', kategori:'F', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'5210007', nama:'Biaya Peny. Peralatan Kantor', kategori:'F', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'5210008', nama:'Biaya Peny. Peralatan IT', kategori:'F', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'5210009', nama:'Biaya Peny. Mesin & Peralatan', kategori:'F', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'5210010', nama:'Biaya Peny. Bangunan', kategori:'F', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'5210011', nama:'Biaya Peny. Software', kategori:'F', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'1590002', nama:'Akum. Peny. Kendaraan Bermotor', kategori:'A', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'1590003', nama:'Akum. Peny. Peralatan Kantor', kategori:'A', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'1590004', nama:'Akum. Peny. Peralatan IT', kategori:'A', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'1590005', nama:'Akum. Peny. Mesin & Peralatan', kategori:'A', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'1590006', nama:'Akum. Peny. Bangunan', kategori:'A', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'1590007', nama:'Akum. Peny. Software', kategori:'A', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
   ],
   jurnalPembelian:[
     {kode:1, nama:'JURNAL PEMBELIAN KREDIT (IDR)', tipeJurnal:'Kredit', mataUang:'', cabang:'Head Office', konsinyasi:false, nonAktif:false,

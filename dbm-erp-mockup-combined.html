@@ -1664,6 +1664,75 @@ const DATA = {
       ],
       jumlah:350000, posted:true, ts:'Invoice Selesai', dibayar:150000,
       tglInput:'11/08/2026 14:10', userInput:'sidik', tglEdit:'11/08/2026 16:45', userEdit:'sidik'},
+    /* 2026-08-26 — 2 baris BARU (bukan mengedit 8 baris di atas yang
+       sudah terverifikasi) ditambahkan khusus untuk mendemokan laporan
+       Report Center baru "Laporan Daftar Transaksi Barang Bonus"
+       (Penjualan > grup BONUS, permission code PrintTransactionInventoryBonus
+       — lihat js/pages/reports.js/.template.js). Screenshot contoh PDF
+       laporan itu ("LAPORAN PENJUALAN BARANG BONUS") berisi data rumah
+       sakit farmasi instalasi MASERP lain (customer "MITRA KELUARGA
+       TEGAL", barang infus) — TIDAK direplikasi (bukan data DBM/tidak
+       relevan), diganti transaksi yang genuinely konsisten dengan data
+       DBM yang sudah ada. Setiap baris di bawah membawa 1 item tambahan
+       bertanda `bonus:true` di array `items[]` — field BARU ini di-
+       skip dari kalkulasi `jumlah` (lihat +1 baris di invRecalcJumlah(),
+       invoice.js: item bonus dianggap harga 0/gratis, konsisten sifat
+       "barang bonus") dan ditampilkan dengan label kecil "Bonus" di
+       tabel Produk form Invoice (lihat tplInvItemRow(), invoice.template.js).
+       Baris bonus ini SENGAJA di-CHAIN ke 2 baris DATA.promotion yang
+       SUDAH ADA sejak modul Promotion dibangun 2026-08-11 (field
+       ratioBarangBonus/barangBonusKode di tiap tier `ketentuan[]` —
+       sebelumnya cuma metadata deskriptif, belum pernah benar2
+       dikonsumsi transaksi mana pun sampai laporan ini):
+       - Invoice ke-1 (Head Office/Toko Sumber Rejeki) chained ke PRO01
+         "Promo Diskon Bertingkat Sembako" (26/PM-HO/08/00001): tier
+         kategori Sembako qtyAwal 50-999999 -> ratioBarangBonus 20 ->
+         barangBonusKode BRG-002. Baris ini beli 2 barang kategori
+         Sembako (BRG-004 Tepung Terigu 30 + BRG-002 Gula Pasir 25 = 55
+         >= 50) sehingga dapat bonus Gula Pasir 20% x 55 = 11 (dibulatkan
+         ke bawah), persis barangBonusKode tier itu.
+       - Invoice ke-2 (Surabaya/UD Makmur Jaya) chained ke PRO02 "Promo
+         Beli Minyak Goreng Dapat Bonus" (26/PM-SBY/08/00001): tier
+         BRG-001 Minyak Goreng Sunco 2L qtyAwal 100-999999 ->
+         ratioBarangBonus 10 -> barangBonusKode BRG-001 (SKU sama,
+         "beli 120 dapat bonus 12"). Baris ini beli Minyak Goreng 120
+         (>=100) sehingga dapat bonus 10% x 120 = 12 unit SKU yang sama.
+       Kedua baris TIDAK mengubah/menimpa `jumlah` baris manapun yang
+       sudah ada — noSO/noPL/noSP di baris baru ini murni deskriptif
+       (mengikuti pola nomor urut per-cabang yang sudah ada) seperti
+       field serupa di banyak baris Invoice existing, tidak divalidasi
+       silang ke DATA.salesOrders/DATA.pickingList (konsisten precedent
+       "referensi deskriptif, bukan foreign-key wajib" yang sudah dipakai
+       banyak field serupa di modul lain). */
+    {no:'26/SI/HO/08/00003', noSJ:'26/SJ/HO/08/00003', tglBuat:'20/08/2026 10:00', tgl:'20/08/2026',
+      cabang:'Head Office', gudang:'(00-GUU) Gudang Utama-HO', area:'JABODETABEK BANTEN',
+      customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', customerAlamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat',
+      noSO:'26/SO/HO/08/00014', noPL:'26/PKL/HO/08/00079', noSP:'SP/HO/08/00014', noDSC:'', principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara', tglSP:'19/08/2026',
+      spAsli:true, skEd:false, cito:false, citoTgl:'20/08/2026',
+      syaratBayar:'Kredit 30 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat',
+      shipVia:'Driver', noResi:'', driver:'Maulana Sidik - L 8753 GE (CDE)',
+      keterangan:'Invoice sesuai Picking List 26/PKL/HO/08/00079. Termasuk bonus barang dari Promotion 26/PM-HO/08/00001 (PRO01) — beli Sembako 55 pcs (Tepung 30 + Gula 25, >=50) mendapat bonus Gula Pasir Gulaku 1kg 20% x 55 = 11 pcs gratis.',
+      items:[
+        {kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', satuan:'Karung', qtyPesan:30, qtyKirim:30, batch:'BT-260815-15', ed:'2027-02-28'},
+        {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', satuan:'Karung', qtyPesan:25, qtyKirim:25, batch:'BT-260816-16', ed:'2027-06-15'},
+        {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', satuan:'Karung', qtyPesan:11, qtyKirim:11, batch:'BT-260816-16', ed:'2027-06-15', bonus:true, bonusKeterangan:'Bonus Promo PRO01 (26/PM-HO/08/00001) — 20% x 55'},
+      ],
+      jumlah:735000, posted:false, ts:'Create Invoice',
+      tglInput:'20/08/2026 10:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/SI/SBY/08/00003', noSJ:'26/SJ/SBY/08/00003', tglBuat:'21/08/2026 09:45', tgl:'21/08/2026',
+      cabang:'Surabaya', gudang:'(01-GUU) Gudang Utama-SBY', area:'JAWA TIMUR',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya', customerAlamat:'Jl. Raya Darmo No. 45, Surabaya',
+      noSO:'26/SO/SBY/08/00008', noPL:'26/PKL/SBY/08/00044', noSP:'SP/SBY/08/00008', noDSC:'', principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia', tglSP:'20/08/2026',
+      spAsli:true, skEd:false, cito:false, citoTgl:'21/08/2026',
+      syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
+      shipVia:'Driver', noResi:'', driver:'Bambang Wijaya - B 9012 XYZ (ABC)',
+      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00044. Termasuk bonus barang dari Promotion 26/PM-SBY/08/00001 (PRO02) — beli Minyak Goreng Sunco 2L 120 dus (>=100) mendapat bonus 10% x 120 = 12 dus gratis (SKU sama).',
+      items:[
+        {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', satuan:'Dus', qtyPesan:120, qtyKirim:120, batch:'BT-260817-17', ed:'2027-07-31'},
+        {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', satuan:'Dus', qtyPesan:12, qtyKirim:12, batch:'BT-260817-17', ed:'2027-07-31', bonus:true, bonusKeterangan:'Bonus Promo PRO02 (26/PM-SBY/08/00001) — 10% x 120'},
+      ],
+      jumlah:3000000, posted:false, ts:'Create Invoice',
+      tglInput:'21/08/2026 09:45', userInput:'sidik', tglEdit:'', userEdit:''},
   ],
   /* Daftar Driver (dipakai field "Driver" di form Invoice, picker
      dekoratif sederhana — tidak ada modul Master Driver tersendiri di
@@ -9150,13 +9219,17 @@ function tplInvCetakDropdown(row){
    Qty Kirim, seluruhnya diturunkan dari Picking List yang dipilih
    (lihat invApplyPickingList() di invoice.js). Tidak ada tombol
    tambah/hapus baris (berbeda dari Picking List/Purchase Order) karena
-   daftar barang di sini murni salinan dari 1 Picking List sumber. ===== */
+   daftar barang di sini murni salinan dari 1 Picking List sumber.
+   2026-08-26: baris bertanda `item.bonus` (barang bonus dari Promotion,
+   lihat catatan di atas DATA.invoices & invRecalcJumlah() di invoice.js)
+   ditandai kecil dengan chip "Bonus" di sebelah Nama Barang — murni
+   visual, tidak ada kolom/field baru ditambahkan ke tabel ini. ===== */
 function tplInvItemRow(item, idx){
   return `
     <tr data-inv-item-row="${idx}">
       <td style="width:32px;">${idx+1}</td>
       <td style="min-width:100px;">${item.kode||''}</td>
-      <td style="min-width:170px;">${item.nama||''}</td>
+      <td style="min-width:170px;">${item.nama||''}${item.bonus ? ' <span class="chip" style="font-size:9.5px;padding:1px 7px;">Bonus</span>' : ''}</td>
       <td style="width:70px;">${item.satuan||''}</td>
       <td style="width:90px;"><input type="number" data-inv-qtypesan="${idx}" value="${item.qtyPesan||0}" disabled></td>
       <td style="width:100px;"><input type="number" min="0" data-inv-qtykirim="${idx}" value="${item.qtyKirim||0}"></td>
@@ -17453,6 +17526,261 @@ function tplRcSspReportDoc(periodeAkhir, rows, totals, printedBy, printedAt){
 }
 
 /* =========================================================
+   2026-08-26 — Report SUNGGUHAN kedua di Report Center:
+   "Laporan Daftar Transaksi Barang Bonus" (Penjualan > grup BONUS,
+   permission code PrintTransactionInventoryBonus), dibangun sesuai
+   screenshot filter "+ Laporan Penjualan Barang Bonus" (Inventory/
+   Customer/Cabang/Lokasi Gudang/Periode dari-S/D/Close/Show Report/
+   Show Report Pdf) + 1 contoh PDF "LAPORAN PENJUALAN BARANG BONUS"
+   (No./No. Faktur/Tgl. Faktur/Customer/Kode Barang/Nama Barang/Qty +
+   Grand Total) yang dikirim user. Mengikuti precedent FA-08 di atas:
+   data customer/barang pada PDF contoh (rumah sakit "MITRA KELUARGA
+   TEGAL", barang infus) adalah data instalasi MASERP lain — TIDAK
+   direplikasi, diganti data yang genuinely diambil LIVE dari
+   DATA.invoices (field baru `bonus:true` per baris item, lihat catatan
+   besar di atas DATA.invoices di js/data.js — 2 baris Invoice BARU yang
+   di-CHAIN ke 2 Promotion nyata yang sudah ada sejak 2026-08-11).
+   Beda dari filter FA-08 (Cabang/Area/Rayon/Customer semua lewat picker
+   modal), field "Lokasi Gudang" di sini SENGAJA dibuat dropdown
+   `<select>` polos (bukan picker+tombol kaca pembesar) meniru persis
+   screenshot acuan yang tidak menampilkan tombol pencarian di field
+   itu (beda dari 3 field lain yang jelas ada tombolnya). */
+function tplRcBonusUniqueGudang(){
+  const seen = {}; const out = [];
+  (DATA.invoices || []).forEach(inv => { if(inv.gudang && !seen[inv.gudang]){ seen[inv.gudang] = true; out.push(inv.gudang); } });
+  return out;
+}
+
+function tplRcBonusFilterModal(){
+  const todayPeriodeAwal = '01/08/2026', todayPeriodeAkhir = '31/08/2026';
+  const gudangList = tplRcBonusUniqueGudang();
+  return `
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header"><span>+ Laporan Penjualan Barang Bonus</span><span class="close" id="rcBonusFilterClose">&times;</span></div>
+      <div class="modal-body">
+        ${tplRcFieldWithBtn('Inventory', 'rcbInventory', 'Cari barang')}
+        ${tplRcFieldWithBtn('Customer', 'rcbCustomer', 'Pilih Customer')}
+        ${tplRcFieldWithBtn('Cabang', 'rcbCabang', 'Pilih Cabang')}
+        <div class="form-group">
+          <label>Lokasi Gudang</label>
+          <select id="rcbGudang">
+            <option value="">Pilih Gudang...</option>
+            ${gudangList.map(g => `<option value="${g}">${g}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Periode</label>
+          <div class="field-pair">
+            <input type="text" id="rcbPeriodeAwal" value="${todayPeriodeAwal}">
+            <span style="align-self:center;color:var(--text-light);">S/D</span>
+            <input type="text" id="rcbPeriodeAkhir" value="${todayPeriodeAkhir}">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="rcBonusFilterCancel">Close</button>
+        <button class="btn-primary" id="rcBonusShowReport">Show Report</button>
+        <button class="btn-primary" id="rcBonusShowReportPdf">Show Report Pdf</button>
+      </div>
+    </div>`;
+}
+
+/* Dokumen cetak — layout meniru contoh PDF "LAPORAN PENJUALAN BARANG
+   BONUS" (header nama perusahaan + "1/1" pojok kanan, baris Telp/Fax,
+   judul digarisbawahi, tabel 7 kolom, baris Grand Total, tanda tangan).
+   Nama perusahaan/telp DISALIN LOKAL dari pola INV_PRINT_COMPANY
+   (invoice.template.js, modul lazy-load lain yang lazy-load-nya tidak
+   terjamin urutan muatnya) sebagai fungsi (bukan const) mengikuti
+   aturan top-level file ini. Fax tidak diisi (kosong) — screenshot
+   acuan sendiri menunjukkan "Telp : / Fax :" kosong, DBM juga belum
+   punya nomor fax terdokumentasi di modul manapun di mockup ini. */
+/* 2026-08-26 (lanjutan) — filter modal "+ Print Laporan Produk Bonus"
+   (Laporan Transfer Produk Bonus, Persediaan Barang) sesuai screenshot
+   acuan: Gudang/Inventory/No. Bukti (3 picker via tplRcFieldWithBtn,
+   sama pola bonus penjualan di atas) + radio Sortir Bulan/Tanggal +
+   dropdown Pilih Bulan (default "Agustus 2026", value YYYYMM dipakai
+   rcTpbBuildRows() di reports.js). Lihat komentar besar di reports.js
+   (dekat rcTpbBuildRows) untuk penjelasan lengkap keputusan data. */
+function tplRcTpbFilterModal(){
+  const months = rcTpbMonthList();
+  const defaultYm = '202608';
+  return `
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header"><span>+ Print Laporan Produk Bonus</span><span class="close" id="rcTpbFilterClose">&times;</span></div>
+      <div class="modal-body">
+        ${tplRcFieldWithBtn('Gudang', 'rctGudang', 'Cari gudang')}
+        ${tplRcFieldWithBtn('Inventory', 'rctInventory', 'Cari barang')}
+        ${tplRcFieldWithBtn('No. Bukti', 'rctNoBukti', 'Pilih No. Bukti')}
+        <div class="form-group">
+          <label>Sortir Bulan / Tanggal</label>
+          <div class="radio-inline">
+            <label><input type="radio" name="rctSortir" value="month" checked> Month</label>
+            <label><input type="radio" name="rctSortir" value="date"> Date</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Pilih Bulan</label>
+          <select id="rctBulan">
+            ${months.map((m,i) => {
+              const ym = '2026' + String(i+1).padStart(2,'0');
+              return `<option value="${ym}"${ym===defaultYm?' selected':''}>${m} 2026</option>`;
+            }).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="rcTpbFilterCancel">Close</button>
+        <button class="btn-primary" id="rcTpbShowReport">Show Report</button>
+        <button class="btn-primary" id="rcTpbShowReportPdf">Show Report Pdf</button>
+      </div>
+    </div>`;
+}
+
+/* Dokumen cetak — layout meniru contoh PDF "Laporan Barang Bonus"
+   PERSIS (termasuk TIDAK adanya header nama perusahaan/logo — beda
+   dari tplRcBonusReportDoc() di atas yang punya letterhead SDL/DBM;
+   PDF acuan laporan ini murni "Tgl : dd/mm/yyyy" pojok kiri atas +
+   judul ditengah + baris Periode, tanpa letterhead, jadi diikuti apa
+   adanya, bukan kelalaian). 11 kolom sesuai PDF: No./No Bukti/Tanggal/
+   Kode Barang Sumber/Nama Barang Sumber/Kode Barang Target/Nama Barang
+   Target/Qty/Satuan/Harga Pokok/Jumlah. */
+function tplRcTpbReportDoc(periodeAwal, periodeAkhir, rows, grandTotal, printedAt){
+  const bodyRows = !rows.length
+    ? `<tr><td colspan="11" style="text-align:center;color:#777;padding:14px;">Tidak ada transaksi Transfer Produk Bonus untuk filter ini.</td></tr>`
+    : rows.map((r,i) => `
+      <tr>
+        <td style="text-align:center;">${i+1}</td>
+        <td>${r.noBukti}</td>
+        <td>${r.tanggal}</td>
+        <td>${r.kodeSumber}</td>
+        <td>${r.namaSumber}</td>
+        <td>${r.kodeTarget}</td>
+        <td>${r.namaTarget}</td>
+        <td style="text-align:center;">${num(r.qty)}</td>
+        <td>${r.satuan}</td>
+        <td style="text-align:right;">${rp(r.hargaPokok)}</td>
+        <td style="text-align:right;">${rp(r.jumlah)}</td>
+      </tr>`).join('');
+  return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Laporan Barang Bonus</title>
+<style>
+  body{font-family:Arial, Helvetica, sans-serif;font-size:11px;color:#111;margin:20px;}
+  .rc-doc-toolbar{margin-bottom:10px;}
+  .rc-doc-toolbar button{padding:7px 16px;border:none;border-radius:5px;font-size:12.5px;font-weight:600;cursor:pointer;margin-right:8px;}
+  .rc-doc-toolbar .btn-print{background:#4472c4;color:#fff;}
+  .rc-doc-toolbar .btn-close{background:#eef1f7;color:#333;}
+  .rc-doc-tgl{font-size:10.5px;color:#333;}
+  h1{font-size:13.5px;text-align:center;margin:2px 0 2px;}
+  .rc-doc-periode{font-size:10.5px;text-align:center;margin-bottom:10px;}
+  table{width:100%;border-collapse:collapse;}
+  th,td{border:1px solid #999;padding:3px 6px;font-size:10.5px;}
+  thead th{background:#f0f0f0;text-align:center;font-weight:700;}
+  tfoot td{font-weight:700;background:#f7f7f7;}
+  @media print{ .rc-doc-toolbar{display:none;} body{margin:0;} }
+</style></head>
+<body>
+  <div class="rc-doc-toolbar">
+    <button class="btn-print" onclick="window.print()">Cetak</button>
+    <button class="btn-close" onclick="window.close()">Tutup</button>
+  </div>
+  <div class="rc-doc-tgl">Tgl : ${printedAt}</div>
+  <h1>Laporan Barang Bonus</h1>
+  <div class="rc-doc-periode">Periode: ${periodeAwal || ''} s/d ${periodeAkhir || ''}</div>
+  <table>
+    <thead><tr>
+      <th style="width:28px;">No.</th>
+      <th>No Bukti</th>
+      <th style="width:66px;">Tanggal</th>
+      <th>Kode Barang Sumber</th>
+      <th>Nama Barang Sumber</th>
+      <th>Kode Barang Target</th>
+      <th>Nama Barang Target</th>
+      <th style="width:48px;">Qty</th>
+      <th style="width:52px;">Satuan</th>
+      <th style="width:76px;">Harga Pokok</th>
+      <th style="width:86px;">Jumlah</th>
+    </tr></thead>
+    <tbody>${bodyRows}</tbody>
+    <tfoot><tr>
+      <td colspan="10" style="text-align:right;">Grand Total :</td>
+      <td style="text-align:right;">${rp(grandTotal)}</td>
+    </tr></tfoot>
+  </table>
+</body></html>`;
+}
+
+function tplRcBonusCompany(){
+  return { nama: 'PT Distriversa Buanamas', telp: '(021) 555-8899', fax: '' };
+}
+
+function tplRcBonusReportDoc(periodeAwal, periodeAkhir, rows, grandTotalQty, printedBy, printedAt){
+  const co = tplRcBonusCompany();
+  const bodyRows = !rows.length
+    ? `<tr><td colspan="7" style="text-align:center;color:#777;padding:14px;">Tidak ada transaksi barang bonus untuk filter ini.</td></tr>`
+    : rows.map((r,i) => `
+      <tr>
+        <td style="text-align:center;">${i+1}</td>
+        <td>${r.noFaktur}</td>
+        <td>${r.tglFaktur}</td>
+        <td>${r.customerNama}</td>
+        <td>${r.kodeBarang}</td>
+        <td>${r.namaBarang}</td>
+        <td style="text-align:center;">${num(r.qty)}</td>
+      </tr>`).join('');
+  return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Laporan Penjualan Barang Bonus</title>
+<style>
+  body{font-family:Arial, Helvetica, sans-serif;font-size:11px;color:#111;margin:20px;}
+  .rc-doc-toolbar{margin-bottom:10px;}
+  .rc-doc-toolbar button{padding:7px 16px;border:none;border-radius:5px;font-size:12.5px;font-weight:600;cursor:pointer;margin-right:8px;}
+  .rc-doc-toolbar .btn-print{background:#4472c4;color:#fff;}
+  .rc-doc-toolbar .btn-close{background:#eef1f7;color:#333;}
+  .rc-doc-head{display:flex;justify-content:space-between;align-items:baseline;}
+  .rc-doc-company{font-weight:700;font-size:13.5px;}
+  .rc-doc-page{font-size:11px;color:#333;}
+  .rc-doc-contact{font-size:10.5px;color:#333;margin:8px 0 10px;}
+  h1{font-size:13.5px;text-align:center;margin:4px 0 12px;text-decoration:underline;}
+  .rc-doc-periode{font-size:10.5px;margin-bottom:6px;}
+  table{width:100%;border-collapse:collapse;}
+  th,td{border:1px solid #999;padding:3px 6px;font-size:10.5px;}
+  thead th{background:#f0f0f0;text-align:center;font-weight:700;}
+  tfoot td{font-weight:700;background:#f7f7f7;}
+  .rc-doc-sign{margin-top:26px;font-size:11px;}
+  @media print{ .rc-doc-toolbar{display:none;} body{margin:0;} }
+</style></head>
+<body>
+  <div class="rc-doc-toolbar">
+    <button class="btn-print" onclick="window.print()">Cetak</button>
+    <button class="btn-close" onclick="window.close()">Tutup</button>
+  </div>
+  <div class="rc-doc-head">
+    <div class="rc-doc-company">${co.nama}</div>
+    <div class="rc-doc-page">1/1</div>
+  </div>
+  <div class="rc-doc-contact">Telp : ${co.telp} &nbsp;/&nbsp; Fax : ${co.fax || '-'}</div>
+  <h1>LAPORAN PENJUALAN BARANG BONUS</h1>
+  <div class="rc-doc-periode">Periode: ${periodeAwal} s/d ${periodeAkhir}</div>
+  <table>
+    <thead><tr>
+      <th style="width:32px;">No.</th>
+      <th>No. Faktur</th>
+      <th style="width:76px;">Tgl. Faktur</th>
+      <th>Customer</th>
+      <th style="width:90px;">Kode Barang</th>
+      <th>Nama Barang</th>
+      <th style="width:56px;">Qty</th>
+    </tr></thead>
+    <tbody>${bodyRows}</tbody>
+    <tfoot><tr>
+      <td colspan="6" style="text-align:right;">Grand Total :</td>
+      <td style="text-align:center;">${num(grandTotalQty)}</td>
+    </tr></tfoot>
+  </table>
+  <div class="rc-doc-sign">${printedBy}<br>${printedAt}</div>
+</body></html>`;
+}
+
+/* =========================================================
    TEMPLATE (HTML saja) — Master Sales Office (menu Customer & Penjualan >
    Master & Setting > Sales Office, page:'salesOffice' — SEBELUMNYA
    placeholder murni `{label:'Sales Office', page:'placeholder', title:
@@ -23076,9 +23404,17 @@ function invApplyPickingList(row, plRow){
    Picking List sumbernya). Field ini TIDAK ditampilkan sebagai total
    reaktif di form (tidak ada di 2 screenshot form), hanya dipakai untuk
    kolom "@Rp." di list — beda dari Sales Order/Purchase Order yang
-   memang menampilkan Total DPP/PPN/Jumlah Akhir reaktif di form-nya. */
+   memang menampilkan Total DPP/PPN/Jumlah Akhir reaktif di form-nya.
+   2026-08-26: +1 baris — baris item bertanda `it.bonus` (barang bonus
+   dari Promotion, lihat catatan di atas DATA.invoices & laporan baru
+   "Laporan Daftar Transaksi Barang Bonus" di Report Center) SENGAJA
+   di-skip dari kalkulasi ini (dianggap harga 0/gratis), supaya Jumlah
+   Invoice tidak ikut naik akibat barang yang sebenarnya tidak ditagih
+   ke Customer. Baris lama (tanpa field `bonus`) tidak terpengaruh sama
+   sekali karena `it.bonus` bernilai undefined/falsy untuknya. */
 function invRecalcJumlah(row){
   row.jumlah = (row.items || []).reduce((sum, it) => {
+    if(it.bonus) return sum;
     const master = DATA.items.find(x => x.kode === it.kode);
     const harga = master ? (+master.harga || 0) : 0;
     return sum + harga * (+it.qtyKirim || 0);
@@ -30048,6 +30384,8 @@ function wireRcRowActions(){
     a.onclick = () => {
       const handler = rcReportHandlerFor(a.dataset.rcReport);
       if(handler === 'sspBelumDiterima'){ openRcSspFilter(); }
+      else if(handler === 'bonusTransaksi'){ openRcBonusFilter(); }
+      else if(handler === 'transferProdukBonus'){ openRcTpbFilter(); }
     };
   });
   document.querySelectorAll('[data-rc-action]').forEach(btn => {
@@ -30056,6 +30394,8 @@ function wireRcRowActions(){
       if(action === 'print'){
         const handler = rcReportHandlerFor(btn.dataset.rcReport);
         if(handler === 'sspBelumDiterima'){ openRcSspFilter(); return; }
+        if(handler === 'bonusTransaksi'){ openRcBonusFilter(); return; }
+        if(handler === 'transferProdukBonus'){ openRcTpbFilter(); return; }
       }
       const msg = action === 'print'
         ? 'Preview/cetak laporan ini akan tersedia setelah format report-nya dirancang — mockup ini baru mencakup daftar laporannya.'
@@ -30068,11 +30408,15 @@ function wireRcRowActions(){
 }
 
 /* 2026-08-21 (lanjutan) — peta perm-code -> handler laporan
-   SUNGGUHAN. Sejauh ini cuma 1 entry (FA-08). Baris lain yang
-   perm-code-nya tidak ada di sini tetap murni dekoratif seperti
-   semula (lihat tplRcRows() di reports.template.js). */
+   SUNGGUHAN. 2026-08-26: entry ke-2 ditambahkan (Laporan Daftar
+   Transaksi Barang Bonus). 2026-08-26 (lanjutan): entry ke-3
+   ditambahkan (Laporan Transfer Produk Bonus, Persediaan Barang).
+   Baris lain yang perm-code-nya tidak ada di sini tetap murni
+   dekoratif seperti semula (lihat tplRcRows() di reports.template.js). */
 function rcReportHandlerFor(perm){
   if(perm === 'PrintReportSspListNotReceived') return 'sspBelumDiterima';
+  if(perm === 'PrintTransactionInventoryBonus') return 'bonusTransaksi';
+  if(perm === 'PrintLaporanTransferProdukBonus') return 'transferProdukBonus';
   return null;
 }
 
@@ -30270,6 +30614,272 @@ function renderReportGL(){ renderReportCenterPage('gl'); }
 function renderReportPersediaan(){ renderReportCenterPage('persediaan'); }
 function renderReportPenjualan(){ renderReportCenterPage('penjualan'); }
 function renderReportCetakanTransaksi(){ renderReportCenterPage('cetakanTransaksi'); }
+
+/* =========================================================
+   2026-08-26 — "Laporan Daftar Transaksi Barang Bonus" (Penjualan >
+   grup BONUS, permission code PrintTransactionInventoryBonus): report
+   SUNGGUHAN ke-2 di Report Center setelah FA-08 di atas, sesuai
+   screenshot filter "+ Laporan Penjualan Barang Bonus" + 1 contoh PDF
+   "LAPORAN PENJUALAN BARANG BONUS" yang dikirim user. Datanya diambil
+   LIVE dari DATA.invoices (field baru `it.bonus` per baris item — lihat
+   catatan besar di atas DATA.invoices, js/data.js) — BUKAN data rumah
+   sakit/barang infus dari PDF contoh (itu data instalasi MASERP lain).
+   rcBonusFieldOptions()/openRcBonusPicker() adalah SALINAN LOKAL pola
+   rcSspFieldOptions()/openRcFilterPicker() di atas (bukan reuse
+   langsung) supaya field id ('rcbXxx') & sumber datanya (termasuk
+   Inventory ke DATA.items, belum pernah dipakai filter Report Center
+   manapun) tidak bercampur dengan filter FA-08. rcSspParseDMY()/
+   rcSspInPeriode()/rcUniqueVals()/rcTodayLabel() DI ATAS di-reuse
+   langsung (bukan disalin) karena murni generik/tidak spesifik SSP,
+   dan berada di FILE YANG SAMA (bukan cross-file lazy-load lain). */
+function rcBonusFieldOptions(targetId){
+  if(targetId === 'rcbInventory'){
+    return (DATA.items || []).map(b => ({kode:b.kode, label:b.kode + ' - ' + b.nama}));
+  }
+  if(targetId === 'rcbCustomer'){
+    return (DATA.customers || []).map(c => ({kode:c.kode, label:c.kode + ' - ' + c.nama}));
+  }
+  if(targetId === 'rcbCabang'){
+    return rcUniqueVals((DATA.customers || []).map(c => c.cabang)).map(v => ({kode:v, label:v}));
+  }
+  return [];
+}
+
+function openRcBonusPicker(targetId){
+  const titles = {rcbInventory:'Cari Barang', rcbCustomer:'Pilih Customer', rcbCabang:'Pilih Cabang'};
+  const rows = rcBonusFieldOptions(targetId);
+  const picker = document.createElement('div');
+  picker.className = 'modal-overlay';
+  picker.innerHTML = tplRcFilterPickerModal(titles[targetId] || 'Pilih', rows);
+  document.body.appendChild(picker);
+  document.getElementById('rcPickClose').onclick = () => picker.remove();
+  document.getElementById('rcPickCancel').onclick = () => picker.remove();
+  picker.onclick = (e) => { if(e.target === picker) picker.remove(); };
+  picker.querySelectorAll('.rc-pick-row').forEach(row => {
+    row.onclick = () => {
+      const input = document.getElementById(targetId);
+      if(input){ input.value = row.dataset.label; input.dataset.kode = row.dataset.kode; }
+      picker.remove();
+    };
+  });
+}
+
+function openRcBonusFilter(){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplRcBonusFilterModal();
+  document.body.appendChild(overlay);
+  document.getElementById('rcBonusFilterClose').onclick = () => overlay.remove();
+  document.getElementById('rcBonusFilterCancel').onclick = () => overlay.remove();
+  overlay.onclick = (e) => { if(e.target === overlay) overlay.remove(); };
+  overlay.querySelectorAll('[data-rc-pick]').forEach(btn => {
+    btn.onclick = () => openRcBonusPicker(btn.dataset.rcPick);
+  });
+  document.getElementById('rcBonusShowReport').onclick = () => openRcBonusReportFromFilter(overlay);
+  document.getElementById('rcBonusShowReportPdf').onclick = () => openRcBonusReportFromFilter(overlay);
+}
+
+/* Baris laporan = 1 baris per (Invoice, item bertanda bonus:true) yang
+   lolos filter Inventory (kode barang)/Customer/Cabang/Lokasi Gudang/
+   Periode (Tgl. Faktur = row.tgl Invoice). */
+function rcBonusBuildRows(filter){
+  const out = [];
+  (DATA.invoices || []).forEach(inv => {
+    if(filter.cabang && inv.cabang !== filter.cabang) return;
+    if(filter.customer && inv.customerKode !== filter.customer) return;
+    if(filter.gudang && inv.gudang !== filter.gudang) return;
+    if(!rcSspInPeriode(inv.tgl, filter.periodeAwal, filter.periodeAkhir)) return;
+    (inv.items || []).forEach(it => {
+      if(!it.bonus) return;
+      if(filter.inventory && it.kode !== filter.inventory) return;
+      out.push({
+        noFaktur: inv.no,
+        tglFaktur: inv.tgl,
+        customerNama: inv.customerNama,
+        kodeBarang: it.kode,
+        namaBarang: it.nama,
+        qty: +it.qtyKirim || 0
+      });
+    });
+  });
+  return out;
+}
+
+function openRcBonusReportFromFilter(overlay){
+  const invEl = document.getElementById('rcbInventory');
+  const custEl = document.getElementById('rcbCustomer');
+  const cabangEl = document.getElementById('rcbCabang');
+  const gudangEl = document.getElementById('rcbGudang');
+  const filter = {
+    inventory: (invEl && invEl.dataset.kode) || '',
+    customer: (custEl && custEl.dataset.kode) || '',
+    cabang: (cabangEl && cabangEl.dataset.kode) || '',
+    gudang: (gudangEl && gudangEl.value) || '',
+    periodeAwal: document.getElementById('rcbPeriodeAwal').value,
+    periodeAkhir: document.getElementById('rcbPeriodeAkhir').value
+  };
+  const rows = rcBonusBuildRows(filter);
+  const grandTotalQty = rows.reduce((sum, r) => sum + (r.qty || 0), 0);
+  const html = tplRcBonusReportDoc(filter.periodeAwal || rcTodayLabel(), filter.periodeAkhir || rcTodayLabel(), rows, grandTotalQty, 'Sidik', rcTodayLabel());
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  if(overlay) overlay.remove();
+}
+
+/* =========================================================
+   2026-08-26 (lanjutan) — "Laporan Transfer Produk Bonus"
+   (Persediaan Barang > grup LAPORAN TRANSAKSI INVENTORY, permission
+   code PrintLaporanTransferProdukBonus): report SUNGGUHAN ke-3 di
+   Report Center, sesuai screenshot filter "+ Print Laporan Produk
+   Bonus" (Gudang/Inventory/No. Bukti/radio Sortir Bulan-Tanggal +
+   dropdown Pilih Bulan) + 1 contoh PDF "Laporan Barang Bonus" (kosong
+   — 0 baris, "-" placeholder — export live dari instalasi MASERP
+   Sidik sendiri yang saat itu memang belum punya transaksi jenis ini
+   di rentang tanggal yang di-generate, BUKAN berarti kolomnya salah).
+   Datanya diambil LIVE dari DATA.transaksiPersediaan yang SUDAH ADA
+   (modul "Transaksi Persediaan", dibangun sesi lain sebelum sesi ini —
+   lihat komentar besar di atas array itu di js/data.js) — baris dengan
+   tipeTransaksi==='Transfer Produk Bonus' (2 baris sample:
+   26/TPB-HO/08/00001 Mie Instan Indomie Goreng -> Kopi Kapal Api,
+   26/TPB-HO/08/00002 Gula Pasir Gulaku -> Teh Celup Sariwangi, keduanya
+   Head Office Agustus 2026) — BUKAN data baru yang diciptakan khusus
+   untuk laporan ini. "Harga Pokok" per baris diambil dari
+   DATA.items[kodeSumber].hargaBeliPerTanggal[0].harga (harga beli/cost
+   basis, satu-satunya field cost yang ada di master barang mockup ini
+   — DATA.transaksiPersediaan sendiri menyimpan harga:0/jumlah:0 utk
+   baris TPB karena transfer internal ini tidak dicatat berharga di
+   modulnya sendiri), Jumlah = Qty x Harga Pokok (dihitung di sini,
+   bukan field siap pakai). Radio "Sortir Bulan / Tanggal" DIBUAT
+   FUNGSIONAL untuk pilihan "Month" (beda dari radio dekoratif di
+   filter FA-08/Bonus Penjualan) karena screenshot acuan MEMANG hanya
+   menunjukkan varian Month (dropdown "Pilih Bulan" terisi "Agustus
+   2026") — opsi "Date" dibiarkan dekoratif/tidak switch UI (tidak ada
+   varian Date di screenshot untuk direplikasi), didokumentasikan
+   sebagai simplifikasi yang sama seperti radio Sortir Bulan/Tanggal
+   FA-08. rcTpbFieldOptions()/openRcTpbPicker() SALINAN LOKAL pola
+   rcBonusFieldOptions()/openRcBonusPicker() di atas (id field & sumber
+   data beda: Gudang ke DATA.gudang, No. Bukti ke No Bukti TPB yang
+   ada, bukan disatukan supaya tidak bercampur). rcTodayLabel()/
+   rcUniqueVals() di atas di-reuse langsung (generik, file yang sama). */
+function rcTpbMonthList(){
+  return ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+}
+
+function rcTpbFieldOptions(targetId){
+  if(targetId === 'rctGudang'){
+    return (DATA.gudang || []).map(g => ({kode:g.kode, label:'(' + g.kode + ') ' + g.nama}));
+  }
+  if(targetId === 'rctInventory'){
+    return (DATA.items || []).map(b => ({kode:b.kode, label:b.kode + ' - ' + b.nama}));
+  }
+  if(targetId === 'rctNoBukti'){
+    return (DATA.transaksiPersediaan || [])
+      .filter(t => t.tipeTransaksi === 'Transfer Produk Bonus')
+      .map(t => ({kode:t.no, label:t.no}));
+  }
+  return [];
+}
+
+function openRcTpbPicker(targetId){
+  const titles = {rctGudang:'Cari Gudang', rctInventory:'Cari Barang', rctNoBukti:'Pilih No. Bukti'};
+  const rows = rcTpbFieldOptions(targetId);
+  const picker = document.createElement('div');
+  picker.className = 'modal-overlay';
+  picker.innerHTML = tplRcFilterPickerModal(titles[targetId] || 'Pilih', rows);
+  document.body.appendChild(picker);
+  document.getElementById('rcPickClose').onclick = () => picker.remove();
+  document.getElementById('rcPickCancel').onclick = () => picker.remove();
+  picker.onclick = (e) => { if(e.target === picker) picker.remove(); };
+  picker.querySelectorAll('.rc-pick-row').forEach(row => {
+    row.onclick = () => {
+      const input = document.getElementById(targetId);
+      if(input){ input.value = row.dataset.label; input.dataset.kode = row.dataset.kode; }
+      picker.remove();
+    };
+  });
+}
+
+function openRcTpbFilter(){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplRcTpbFilterModal();
+  document.body.appendChild(overlay);
+  document.getElementById('rcTpbFilterClose').onclick = () => overlay.remove();
+  document.getElementById('rcTpbFilterCancel').onclick = () => overlay.remove();
+  overlay.onclick = (e) => { if(e.target === overlay) overlay.remove(); };
+  overlay.querySelectorAll('[data-rc-pick]').forEach(btn => {
+    btn.onclick = () => openRcTpbPicker(btn.dataset.rcPick);
+  });
+  document.getElementById('rcTpbShowReport').onclick = () => openRcTpbReportFromFilter(overlay);
+  document.getElementById('rcTpbShowReportPdf').onclick = () => openRcTpbReportFromFilter(overlay);
+}
+
+function rcTpbHargaPokok(kode){
+  const item = (DATA.items || []).find(x => x.kode === kode);
+  if(!item || !item.hargaBeliPerTanggal || !item.hargaBeliPerTanggal.length) return 0;
+  return +item.hargaBeliPerTanggal[0].harga || 0;
+}
+
+/* Baris laporan = 1 baris per (Transaksi Persediaan bertipe "Transfer
+   Produk Bonus", item) yang lolos filter Gudang (gudangSumber)/
+   Inventory (kode ATAU kodeTarget)/No. Bukti/Bulan (via tglTrnSort). */
+function rcTpbBuildRows(filter){
+  const out = [];
+  (DATA.transaksiPersediaan || []).forEach(t => {
+    if(t.tipeTransaksi !== 'Transfer Produk Bonus') return;
+    if(filter.gudang && t.gudangSumber.indexOf('(' + filter.gudang + ')') !== 0) return;
+    if(filter.noBukti && t.no !== filter.noBukti) return;
+    if(filter.bulan && String(t.tglTrnSort).slice(0,6) !== filter.bulan) return;
+    (t.items || []).forEach(it => {
+      if(filter.inventory && it.kode !== filter.inventory && it.kodeTarget !== filter.inventory) return;
+      const hpp = rcTpbHargaPokok(it.kode);
+      out.push({
+        noBukti: t.no,
+        tanggal: t.tglTrn,
+        kodeSumber: it.kode,
+        namaSumber: it.nama,
+        kodeTarget: it.kodeTarget || '-',
+        namaTarget: it.namaTarget || '-',
+        qty: +it.qty || 0,
+        satuan: it.um || '',
+        hargaPokok: hpp,
+        jumlah: (+it.qty || 0) * hpp
+      });
+    });
+  });
+  return out;
+}
+
+function openRcTpbReportFromFilter(overlay){
+  const gudangEl = document.getElementById('rctGudang');
+  const invEl = document.getElementById('rctInventory');
+  const noBuktiEl = document.getElementById('rctNoBukti');
+  const bulanEl = document.getElementById('rctBulan');
+  const bulanVal = bulanEl ? bulanEl.value : '';
+  const filter = {
+    gudang: (gudangEl && gudangEl.dataset.kode) || '',
+    inventory: (invEl && invEl.dataset.kode) || '',
+    noBukti: (noBuktiEl && noBuktiEl.dataset.kode) || '',
+    bulan: bulanVal
+  };
+  const rows = rcTpbBuildRows(filter);
+  const grandTotal = rows.reduce((sum, r) => sum + (r.jumlah || 0), 0);
+  let periodeAwal = '', periodeAkhir = '';
+  if(bulanVal && bulanVal.length === 6){
+    const year = +bulanVal.slice(0,4), month = +bulanVal.slice(4,6);
+    const lastDay = new Date(year, month, 0).getDate();
+    periodeAwal = '01/' + String(month).padStart(2,'0') + '/' + year;
+    periodeAkhir = String(lastDay).padStart(2,'0') + '/' + String(month).padStart(2,'0') + '/' + year;
+  }
+  const html = tplRcTpbReportDoc(periodeAwal, periodeAkhir, rows, grandTotal, rcTodayLabel());
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  if(overlay) overlay.remove();
+}
 
 /* =========================================================
    LOGIC (JS saja) — Master Sales Office (menu Customer & Penjualan >

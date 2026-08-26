@@ -122,9 +122,17 @@ function invApplyPickingList(row, plRow){
    Picking List sumbernya). Field ini TIDAK ditampilkan sebagai total
    reaktif di form (tidak ada di 2 screenshot form), hanya dipakai untuk
    kolom "@Rp." di list — beda dari Sales Order/Purchase Order yang
-   memang menampilkan Total DPP/PPN/Jumlah Akhir reaktif di form-nya. */
+   memang menampilkan Total DPP/PPN/Jumlah Akhir reaktif di form-nya.
+   2026-08-26: +1 baris — baris item bertanda `it.bonus` (barang bonus
+   dari Promotion, lihat catatan di atas DATA.invoices & laporan baru
+   "Laporan Daftar Transaksi Barang Bonus" di Report Center) SENGAJA
+   di-skip dari kalkulasi ini (dianggap harga 0/gratis), supaya Jumlah
+   Invoice tidak ikut naik akibat barang yang sebenarnya tidak ditagih
+   ke Customer. Baris lama (tanpa field `bonus`) tidak terpengaruh sama
+   sekali karena `it.bonus` bernilai undefined/falsy untuknya. */
 function invRecalcJumlah(row){
   row.jumlah = (row.items || []).reduce((sum, it) => {
+    if(it.bonus) return sum;
     const master = DATA.items.find(x => x.kode === it.kode);
     const harga = master ? (+master.harga || 0) : 0;
     return sum + harga * (+it.qtyKirim || 0);

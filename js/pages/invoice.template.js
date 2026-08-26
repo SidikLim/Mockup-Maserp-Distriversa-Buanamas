@@ -164,13 +164,17 @@ function tplInvCetakDropdown(row){
    Qty Kirim, seluruhnya diturunkan dari Picking List yang dipilih
    (lihat invApplyPickingList() di invoice.js). Tidak ada tombol
    tambah/hapus baris (berbeda dari Picking List/Purchase Order) karena
-   daftar barang di sini murni salinan dari 1 Picking List sumber. ===== */
+   daftar barang di sini murni salinan dari 1 Picking List sumber.
+   2026-08-26: baris bertanda `item.bonus` (barang bonus dari Promotion,
+   lihat catatan di atas DATA.invoices & invRecalcJumlah() di invoice.js)
+   ditandai kecil dengan chip "Bonus" di sebelah Nama Barang — murni
+   visual, tidak ada kolom/field baru ditambahkan ke tabel ini. ===== */
 function tplInvItemRow(item, idx){
   return `
     <tr data-inv-item-row="${idx}">
       <td style="width:32px;">${idx+1}</td>
       <td style="min-width:100px;">${item.kode||''}</td>
-      <td style="min-width:170px;">${item.nama||''}</td>
+      <td style="min-width:170px;">${item.nama||''}${item.bonus ? ' <span class="chip" style="font-size:9.5px;padding:1px 7px;">Bonus</span>' : ''}</td>
       <td style="width:70px;">${item.satuan||''}</td>
       <td style="width:90px;"><input type="number" data-inv-qtypesan="${idx}" value="${item.qtyPesan||0}" disabled></td>
       <td style="width:100px;"><input type="number" min="0" data-inv-qtykirim="${idx}" value="${item.qtyKirim||0}"></td>

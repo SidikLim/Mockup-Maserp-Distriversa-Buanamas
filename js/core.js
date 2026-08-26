@@ -167,6 +167,10 @@ const PAGE_MODULES={
   costCenter:{srcs:['js/pages/cost-center.template.js','js/pages/cost-center.js'], fn:'renderCostCenterPage'},
   cabang:{srcs:['js/pages/cabang.template.js','js/pages/cabang.js'], fn:'renderCabangPage'},
   items:{srcs:['js/pages/persediaan-barang.template.js','js/pages/persediaan-barang.js'], fn:'renderPersediaanBarangPage'},
+  aktivaTetap:{srcs:['js/pages/fixed-asset.template.js','js/pages/fixed-asset.js'], fn:'renderFixedAssetPage'},
+  lokasiAset:{srcs:['js/pages/lokasi-aset.template.js','js/pages/lokasi-aset.js'], fn:'renderLokasiAsetPage'},
+  aktivaTetapDeprRule:{srcs:['js/pages/aktiva-tetap-depr-rule.template.js','js/pages/aktiva-tetap-depr-rule.js'], fn:'renderAktivaTetapDeprRulePage'},
+  jurnalFixedAsset:{srcs:['js/pages/jurnal-fixed-asset.template.js','js/pages/jurnal-fixed-asset.js'], fn:'renderJurnalFixedAssetPage'},
 };
 const loadedModules=new Set();
 
@@ -231,7 +235,6 @@ function renderPage(){
     kasKeluar:{title:'Kas Keluar', cols:[['tgl','Tanggal'],['ket','Keterangan'],['kategori','Kategori'],['jumlah','Jumlah',true]], rows:DATA.kasKeluar},
     transaksiKas:{title:'Transaksi Kas', cols:[['tgl','Tanggal'],['ket','Keterangan'],['tipe','Tipe','pill'],['kategori','Kategori'],['jumlah','Jumlah',true]], rows:DATA.transaksiKas},
     jurnalUmum:{title:'Jurnal Umum', cols:[['tgl','Tanggal'],['no','No. Jurnal'],['akun','Akun'],['debit','Debit',true],['kredit','Kredit',true]], rows:DATA.jurnalUmum},
-    aktivaTetap:{title:'Daftar Aktiva Tetap', cols:[['kode','Kode'],['nama','Nama Aktiva'],['tahun','Tahun'],['nilai','Nilai Perolehan',true],['akumulasi','Akum. Penyusutan',true],['buku','Nilai Buku',true]], rows:DATA.aktivaTetap},
   };
   const cfg=pages[currentPage];
   if(cfg) return renderListPage(cfg);

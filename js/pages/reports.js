@@ -58,6 +58,8 @@ function wireRcRowActions(){
     a.onclick = () => {
       const handler = rcReportHandlerFor(a.dataset.rcReport);
       if(handler === 'sspBelumDiterima'){ openRcSspFilter(); }
+      else if(handler === 'bonusTransaksi'){ openRcBonusFilter(); }
+      else if(handler === 'transferProdukBonus'){ openRcTpbFilter(); }
     };
   });
   document.querySelectorAll('[data-rc-action]').forEach(btn => {
@@ -66,6 +68,8 @@ function wireRcRowActions(){
       if(action === 'print'){
         const handler = rcReportHandlerFor(btn.dataset.rcReport);
         if(handler === 'sspBelumDiterima'){ openRcSspFilter(); return; }
+        if(handler === 'bonusTransaksi'){ openRcBonusFilter(); return; }
+        if(handler === 'transferProdukBonus'){ openRcTpbFilter(); return; }
       }
       const msg = action === 'print'
         ? 'Preview/cetak laporan ini akan tersedia setelah format report-nya dirancang — mockup ini baru mencakup daftar laporannya.'
@@ -78,11 +82,15 @@ function wireRcRowActions(){
 }
 
 /* 2026-08-21 (lanjutan) — peta perm-code -> handler laporan
-   SUNGGUHAN. Sejauh ini cuma 1 entry (FA-08). Baris lain yang
-   perm-code-nya tidak ada di sini tetap murni dekoratif seperti
-   semula (lihat tplRcRows() di reports.template.js). */
+   SUNGGUHAN. 2026-08-26: entry ke-2 ditambahkan (Laporan Daftar
+   Transaksi Barang Bonus). 2026-08-26 (lanjutan): entry ke-3
+   ditambahkan (Laporan Transfer Produk Bonus, Persediaan Barang).
+   Baris lain yang perm-code-nya tidak ada di sini tetap murni
+   dekoratif seperti semula (lihat tplRcRows() di reports.template.js). */
 function rcReportHandlerFor(perm){
   if(perm === 'PrintReportSspListNotReceived') return 'sspBelumDiterima';
+  if(perm === 'PrintTransactionInventoryBonus') return 'bonusTransaksi';
+  if(perm === 'PrintLaporanTransferProdukBonus') return 'transferProdukBonus';
   return null;
 }
 
@@ -280,3 +288,269 @@ function renderReportGL(){ renderReportCenterPage('gl'); }
 function renderReportPersediaan(){ renderReportCenterPage('persediaan'); }
 function renderReportPenjualan(){ renderReportCenterPage('penjualan'); }
 function renderReportCetakanTransaksi(){ renderReportCenterPage('cetakanTransaksi'); }
+
+/* =========================================================
+   2026-08-26 — "Laporan Daftar Transaksi Barang Bonus" (Penjualan >
+   grup BONUS, permission code PrintTransactionInventoryBonus): report
+   SUNGGUHAN ke-2 di Report Center setelah FA-08 di atas, sesuai
+   screenshot filter "+ Laporan Penjualan Barang Bonus" + 1 contoh PDF
+   "LAPORAN PENJUALAN BARANG BONUS" yang dikirim user. Datanya diambil
+   LIVE dari DATA.invoices (field baru `it.bonus` per baris item — lihat
+   catatan besar di atas DATA.invoices, js/data.js) — BUKAN data rumah
+   sakit/barang infus dari PDF contoh (itu data instalasi MASERP lain).
+   rcBonusFieldOptions()/openRcBonusPicker() adalah SALINAN LOKAL pola
+   rcSspFieldOptions()/openRcFilterPicker() di atas (bukan reuse
+   langsung) supaya field id ('rcbXxx') & sumber datanya (termasuk
+   Inventory ke DATA.items, belum pernah dipakai filter Report Center
+   manapun) tidak bercampur dengan filter FA-08. rcSspParseDMY()/
+   rcSspInPeriode()/rcUniqueVals()/rcTodayLabel() DI ATAS di-reuse
+   langsung (bukan disalin) karena murni generik/tidak spesifik SSP,
+   dan berada di FILE YANG SAMA (bukan cross-file lazy-load lain). */
+function rcBonusFieldOptions(targetId){
+  if(targetId === 'rcbInventory'){
+    return (DATA.items || []).map(b => ({kode:b.kode, label:b.kode + ' - ' + b.nama}));
+  }
+  if(targetId === 'rcbCustomer'){
+    return (DATA.customers || []).map(c => ({kode:c.kode, label:c.kode + ' - ' + c.nama}));
+  }
+  if(targetId === 'rcbCabang'){
+    return rcUniqueVals((DATA.customers || []).map(c => c.cabang)).map(v => ({kode:v, label:v}));
+  }
+  return [];
+}
+
+function openRcBonusPicker(targetId){
+  const titles = {rcbInventory:'Cari Barang', rcbCustomer:'Pilih Customer', rcbCabang:'Pilih Cabang'};
+  const rows = rcBonusFieldOptions(targetId);
+  const picker = document.createElement('div');
+  picker.className = 'modal-overlay';
+  picker.innerHTML = tplRcFilterPickerModal(titles[targetId] || 'Pilih', rows);
+  document.body.appendChild(picker);
+  document.getElementById('rcPickClose').onclick = () => picker.remove();
+  document.getElementById('rcPickCancel').onclick = () => picker.remove();
+  picker.onclick = (e) => { if(e.target === picker) picker.remove(); };
+  picker.querySelectorAll('.rc-pick-row').forEach(row => {
+    row.onclick = () => {
+      const input = document.getElementById(targetId);
+      if(input){ input.value = row.dataset.label; input.dataset.kode = row.dataset.kode; }
+      picker.remove();
+    };
+  });
+}
+
+function openRcBonusFilter(){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplRcBonusFilterModal();
+  document.body.appendChild(overlay);
+  document.getElementById('rcBonusFilterClose').onclick = () => overlay.remove();
+  document.getElementById('rcBonusFilterCancel').onclick = () => overlay.remove();
+  overlay.onclick = (e) => { if(e.target === overlay) overlay.remove(); };
+  overlay.querySelectorAll('[data-rc-pick]').forEach(btn => {
+    btn.onclick = () => openRcBonusPicker(btn.dataset.rcPick);
+  });
+  document.getElementById('rcBonusShowReport').onclick = () => openRcBonusReportFromFilter(overlay);
+  document.getElementById('rcBonusShowReportPdf').onclick = () => openRcBonusReportFromFilter(overlay);
+}
+
+/* Baris laporan = 1 baris per (Invoice, item bertanda bonus:true) yang
+   lolos filter Inventory (kode barang)/Customer/Cabang/Lokasi Gudang/
+   Periode (Tgl. Faktur = row.tgl Invoice). */
+function rcBonusBuildRows(filter){
+  const out = [];
+  (DATA.invoices || []).forEach(inv => {
+    if(filter.cabang && inv.cabang !== filter.cabang) return;
+    if(filter.customer && inv.customerKode !== filter.customer) return;
+    if(filter.gudang && inv.gudang !== filter.gudang) return;
+    if(!rcSspInPeriode(inv.tgl, filter.periodeAwal, filter.periodeAkhir)) return;
+    (inv.items || []).forEach(it => {
+      if(!it.bonus) return;
+      if(filter.inventory && it.kode !== filter.inventory) return;
+      out.push({
+        noFaktur: inv.no,
+        tglFaktur: inv.tgl,
+        customerNama: inv.customerNama,
+        kodeBarang: it.kode,
+        namaBarang: it.nama,
+        qty: +it.qtyKirim || 0
+      });
+    });
+  });
+  return out;
+}
+
+function openRcBonusReportFromFilter(overlay){
+  const invEl = document.getElementById('rcbInventory');
+  const custEl = document.getElementById('rcbCustomer');
+  const cabangEl = document.getElementById('rcbCabang');
+  const gudangEl = document.getElementById('rcbGudang');
+  const filter = {
+    inventory: (invEl && invEl.dataset.kode) || '',
+    customer: (custEl && custEl.dataset.kode) || '',
+    cabang: (cabangEl && cabangEl.dataset.kode) || '',
+    gudang: (gudangEl && gudangEl.value) || '',
+    periodeAwal: document.getElementById('rcbPeriodeAwal').value,
+    periodeAkhir: document.getElementById('rcbPeriodeAkhir').value
+  };
+  const rows = rcBonusBuildRows(filter);
+  const grandTotalQty = rows.reduce((sum, r) => sum + (r.qty || 0), 0);
+  const html = tplRcBonusReportDoc(filter.periodeAwal || rcTodayLabel(), filter.periodeAkhir || rcTodayLabel(), rows, grandTotalQty, 'Sidik', rcTodayLabel());
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  if(overlay) overlay.remove();
+}
+
+/* =========================================================
+   2026-08-26 (lanjutan) — "Laporan Transfer Produk Bonus"
+   (Persediaan Barang > grup LAPORAN TRANSAKSI INVENTORY, permission
+   code PrintLaporanTransferProdukBonus): report SUNGGUHAN ke-3 di
+   Report Center, sesuai screenshot filter "+ Print Laporan Produk
+   Bonus" (Gudang/Inventory/No. Bukti/radio Sortir Bulan-Tanggal +
+   dropdown Pilih Bulan) + 1 contoh PDF "Laporan Barang Bonus" (kosong
+   — 0 baris, "-" placeholder — export live dari instalasi MASERP
+   Sidik sendiri yang saat itu memang belum punya transaksi jenis ini
+   di rentang tanggal yang di-generate, BUKAN berarti kolomnya salah).
+   Datanya diambil LIVE dari DATA.transaksiPersediaan yang SUDAH ADA
+   (modul "Transaksi Persediaan", dibangun sesi lain sebelum sesi ini —
+   lihat komentar besar di atas array itu di js/data.js) — baris dengan
+   tipeTransaksi==='Transfer Produk Bonus' (2 baris sample:
+   26/TPB-HO/08/00001 Mie Instan Indomie Goreng -> Kopi Kapal Api,
+   26/TPB-HO/08/00002 Gula Pasir Gulaku -> Teh Celup Sariwangi, keduanya
+   Head Office Agustus 2026) — BUKAN data baru yang diciptakan khusus
+   untuk laporan ini. "Harga Pokok" per baris diambil dari
+   DATA.items[kodeSumber].hargaBeliPerTanggal[0].harga (harga beli/cost
+   basis, satu-satunya field cost yang ada di master barang mockup ini
+   — DATA.transaksiPersediaan sendiri menyimpan harga:0/jumlah:0 utk
+   baris TPB karena transfer internal ini tidak dicatat berharga di
+   modulnya sendiri), Jumlah = Qty x Harga Pokok (dihitung di sini,
+   bukan field siap pakai). Radio "Sortir Bulan / Tanggal" DIBUAT
+   FUNGSIONAL untuk pilihan "Month" (beda dari radio dekoratif di
+   filter FA-08/Bonus Penjualan) karena screenshot acuan MEMANG hanya
+   menunjukkan varian Month (dropdown "Pilih Bulan" terisi "Agustus
+   2026") — opsi "Date" dibiarkan dekoratif/tidak switch UI (tidak ada
+   varian Date di screenshot untuk direplikasi), didokumentasikan
+   sebagai simplifikasi yang sama seperti radio Sortir Bulan/Tanggal
+   FA-08. rcTpbFieldOptions()/openRcTpbPicker() SALINAN LOKAL pola
+   rcBonusFieldOptions()/openRcBonusPicker() di atas (id field & sumber
+   data beda: Gudang ke DATA.gudang, No. Bukti ke No Bukti TPB yang
+   ada, bukan disatukan supaya tidak bercampur). rcTodayLabel()/
+   rcUniqueVals() di atas di-reuse langsung (generik, file yang sama). */
+function rcTpbMonthList(){
+  return ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+}
+
+function rcTpbFieldOptions(targetId){
+  if(targetId === 'rctGudang'){
+    return (DATA.gudang || []).map(g => ({kode:g.kode, label:'(' + g.kode + ') ' + g.nama}));
+  }
+  if(targetId === 'rctInventory'){
+    return (DATA.items || []).map(b => ({kode:b.kode, label:b.kode + ' - ' + b.nama}));
+  }
+  if(targetId === 'rctNoBukti'){
+    return (DATA.transaksiPersediaan || [])
+      .filter(t => t.tipeTransaksi === 'Transfer Produk Bonus')
+      .map(t => ({kode:t.no, label:t.no}));
+  }
+  return [];
+}
+
+function openRcTpbPicker(targetId){
+  const titles = {rctGudang:'Cari Gudang', rctInventory:'Cari Barang', rctNoBukti:'Pilih No. Bukti'};
+  const rows = rcTpbFieldOptions(targetId);
+  const picker = document.createElement('div');
+  picker.className = 'modal-overlay';
+  picker.innerHTML = tplRcFilterPickerModal(titles[targetId] || 'Pilih', rows);
+  document.body.appendChild(picker);
+  document.getElementById('rcPickClose').onclick = () => picker.remove();
+  document.getElementById('rcPickCancel').onclick = () => picker.remove();
+  picker.onclick = (e) => { if(e.target === picker) picker.remove(); };
+  picker.querySelectorAll('.rc-pick-row').forEach(row => {
+    row.onclick = () => {
+      const input = document.getElementById(targetId);
+      if(input){ input.value = row.dataset.label; input.dataset.kode = row.dataset.kode; }
+      picker.remove();
+    };
+  });
+}
+
+function openRcTpbFilter(){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplRcTpbFilterModal();
+  document.body.appendChild(overlay);
+  document.getElementById('rcTpbFilterClose').onclick = () => overlay.remove();
+  document.getElementById('rcTpbFilterCancel').onclick = () => overlay.remove();
+  overlay.onclick = (e) => { if(e.target === overlay) overlay.remove(); };
+  overlay.querySelectorAll('[data-rc-pick]').forEach(btn => {
+    btn.onclick = () => openRcTpbPicker(btn.dataset.rcPick);
+  });
+  document.getElementById('rcTpbShowReport').onclick = () => openRcTpbReportFromFilter(overlay);
+  document.getElementById('rcTpbShowReportPdf').onclick = () => openRcTpbReportFromFilter(overlay);
+}
+
+function rcTpbHargaPokok(kode){
+  const item = (DATA.items || []).find(x => x.kode === kode);
+  if(!item || !item.hargaBeliPerTanggal || !item.hargaBeliPerTanggal.length) return 0;
+  return +item.hargaBeliPerTanggal[0].harga || 0;
+}
+
+/* Baris laporan = 1 baris per (Transaksi Persediaan bertipe "Transfer
+   Produk Bonus", item) yang lolos filter Gudang (gudangSumber)/
+   Inventory (kode ATAU kodeTarget)/No. Bukti/Bulan (via tglTrnSort). */
+function rcTpbBuildRows(filter){
+  const out = [];
+  (DATA.transaksiPersediaan || []).forEach(t => {
+    if(t.tipeTransaksi !== 'Transfer Produk Bonus') return;
+    if(filter.gudang && t.gudangSumber.indexOf('(' + filter.gudang + ')') !== 0) return;
+    if(filter.noBukti && t.no !== filter.noBukti) return;
+    if(filter.bulan && String(t.tglTrnSort).slice(0,6) !== filter.bulan) return;
+    (t.items || []).forEach(it => {
+      if(filter.inventory && it.kode !== filter.inventory && it.kodeTarget !== filter.inventory) return;
+      const hpp = rcTpbHargaPokok(it.kode);
+      out.push({
+        noBukti: t.no,
+        tanggal: t.tglTrn,
+        kodeSumber: it.kode,
+        namaSumber: it.nama,
+        kodeTarget: it.kodeTarget || '-',
+        namaTarget: it.namaTarget || '-',
+        qty: +it.qty || 0,
+        satuan: it.um || '',
+        hargaPokok: hpp,
+        jumlah: (+it.qty || 0) * hpp
+      });
+    });
+  });
+  return out;
+}
+
+function openRcTpbReportFromFilter(overlay){
+  const gudangEl = document.getElementById('rctGudang');
+  const invEl = document.getElementById('rctInventory');
+  const noBuktiEl = document.getElementById('rctNoBukti');
+  const bulanEl = document.getElementById('rctBulan');
+  const bulanVal = bulanEl ? bulanEl.value : '';
+  const filter = {
+    gudang: (gudangEl && gudangEl.dataset.kode) || '',
+    inventory: (invEl && invEl.dataset.kode) || '',
+    noBukti: (noBuktiEl && noBuktiEl.dataset.kode) || '',
+    bulan: bulanVal
+  };
+  const rows = rcTpbBuildRows(filter);
+  const grandTotal = rows.reduce((sum, r) => sum + (r.jumlah || 0), 0);
+  let periodeAwal = '', periodeAkhir = '';
+  if(bulanVal && bulanVal.length === 6){
+    const year = +bulanVal.slice(0,4), month = +bulanVal.slice(4,6);
+    const lastDay = new Date(year, month, 0).getDate();
+    periodeAwal = '01/' + String(month).padStart(2,'0') + '/' + year;
+    periodeAkhir = String(lastDay).padStart(2,'0') + '/' + String(month).padStart(2,'0') + '/' + year;
+  }
+  const html = tplRcTpbReportDoc(periodeAwal, periodeAkhir, rows, grandTotal, rcTodayLabel());
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  if(overlay) overlay.remove();
+}

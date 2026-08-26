@@ -305,6 +305,17 @@ canvas{max-width:100%;}
 .btn-outline{background:#fff;color:var(--blue);border:1px solid var(--blue);padding:8px 14px;border-radius:6px;font-size:12.3px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
 .btn-outline:hover{background:#eaf1fb;}
 
+/* Tombol toggle Status (Active/Non Active) — kolom Status di list
+   Daftar Aktiva Tetap & tombol "Ubah Status" di form Master Fixed
+   Asset (js/pages/fixed-asset.*, 2026-08-26). ".active" = aset
+   sedang Active (tombol biru, aksi klik = nonaktifkan); ".nonactive"
+   = aset sedang Non Active (tombol abu-abu, aksi klik = aktifkan). */
+.btn-status-toggle{border:none;padding:6px 12px;border-radius:6px;font-size:11.8px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.btn-status-toggle.active{background:var(--blue);color:#fff;}
+.btn-status-toggle.active:hover{background:#3a63ac;}
+.btn-status-toggle.nonactive{background:#e2e5ec;color:var(--text-light);}
+.btn-status-toggle.nonactive:hover{background:#d3d7e0;}
+
 /* Tombol "Batalkan" gaya teks-polos (tanpa border/background) — dipakai
    pertama kali di form Master Sales Office (screenshot MASERP 2026-08-18
    menunjukkan "Batalkan" sebagai teks biru polos, BEDA dari .btn-outline
