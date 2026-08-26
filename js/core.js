@@ -171,6 +171,9 @@ const PAGE_MODULES={
   lokasiAset:{srcs:['js/pages/lokasi-aset.template.js','js/pages/lokasi-aset.js'], fn:'renderLokasiAsetPage'},
   aktivaTetapDeprRule:{srcs:['js/pages/aktiva-tetap-depr-rule.template.js','js/pages/aktiva-tetap-depr-rule.js'], fn:'renderAktivaTetapDeprRulePage'},
   jurnalFixedAsset:{srcs:['js/pages/jurnal-fixed-asset.template.js','js/pages/jurnal-fixed-asset.js'], fn:'renderJurnalFixedAssetPage'},
+  disposalAsset:{srcs:['js/pages/disposal-asset.template.js','js/pages/disposal-asset.js'], fn:'renderDisposalAssetPage'},
+  revaluasiAsset:{srcs:['js/pages/revaluasi-asset.template.js','js/pages/revaluasi-asset.js'], fn:'renderRevaluasiAssetPage'},
+  monitoringControlDelivery:{srcs:['js/pages/monitoring-control-delivery.template.js','js/pages/monitoring-control-delivery.js'], fn:'renderMonitoringControlDeliveryPage'},
 };
 const loadedModules=new Set();
 

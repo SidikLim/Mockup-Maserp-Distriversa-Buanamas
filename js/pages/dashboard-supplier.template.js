@@ -20,19 +20,19 @@ function tplSupplierDashboard(){
       <div class="card-header"><h3>Purchase Transaction Flow</h3></div>
       <div class="card-body">
         <div class="flow-grid">
-          <div class="flow-step" style="grid-column:1;grid-row:1;"><div class="flow-box">${icon('file',28)}</div><div class="flow-label">Purchase Order</div></div>
+          <div class="flow-step" data-nav="purchaseOrder" data-title="Purchase Order" style="grid-column:1;grid-row:1;"><div class="flow-box quick">${icon('file',28)}</div><div class="flow-label">Purchase Order</div></div>
           <div class="flow-arrow" style="grid-column:2;grid-row:1;">&#8594;</div>
-          <div class="flow-step" style="grid-column:3;grid-row:1;"><div class="flow-box">${icon('truck',28)}</div><div class="flow-label">Terima Barang</div></div>
+          <div class="flow-step" data-nav="terimaBarang" data-title="Terima Barang" style="grid-column:3;grid-row:1;"><div class="flow-box quick">${icon('truck',28)}</div><div class="flow-label">Terima Barang</div></div>
           <div class="flow-arrow" style="grid-column:4;grid-row:1;">&#8594;</div>
-          <div class="flow-step" style="grid-column:5;grid-row:1;"><div class="flow-box">${icon('card',28)}</div><div class="flow-label">Faktur Pembelian</div></div>
+          <div class="flow-step" data-nav="pembelianBPB" data-title="Pembelian Melalui BPB" style="grid-column:5;grid-row:1;"><div class="flow-box quick">${icon('card',28)}</div><div class="flow-label">Faktur Pembelian</div></div>
 
-          <div class="flow-step" style="grid-column:5;grid-row:2;"><div class="flow-box">${icon('cart',28)}</div><div class="flow-label">Pembelian dari PO</div></div>
+          <div class="flow-step" data-nav="placeholder" data-title="Pembelian dari PO" style="grid-column:5;grid-row:2;"><div class="flow-box quick">${icon('cart',28)}</div><div class="flow-label">Pembelian dari PO</div></div>
           <div class="flow-arrow" style="grid-column:6;grid-row:2;">&#8594;</div>
-          <div class="flow-step" style="grid-column:7;grid-row:2;"><div class="flow-box">${icon('cash',28)}</div><div class="flow-label">Pelunasan Utang</div></div>
+          <div class="flow-step" data-nav="pelunasanUtang" data-title="Pelunasan Utang" style="grid-column:7;grid-row:2;"><div class="flow-box quick">${icon('cash',28)}</div><div class="flow-label">Pelunasan Utang</div></div>
 
-          <div class="flow-step" style="grid-column:5;grid-row:3;"><div class="flow-box">${icon('cart',28)}</div><div class="flow-label">Pembelian Langsung</div></div>
+          <div class="flow-step" data-nav="placeholder" data-title="Pembelian Langsung" style="grid-column:5;grid-row:3;"><div class="flow-box quick">${icon('cart',28)}</div><div class="flow-label">Pembelian Langsung</div></div>
 
-          <div class="flow-step" data-nav="suppliers" style="grid-column:1;grid-row:3;cursor:pointer;"><div class="flow-box quick">${icon('users',28)}</div><div class="flow-label">Daftar Supplier</div></div>
+          <div class="flow-step" data-nav="masterSupplier" data-title="Supplier" style="grid-column:1;grid-row:3;"><div class="flow-box quick">${icon('users',28)}</div><div class="flow-label">Daftar Supplier</div></div>
         </div>
       </div>
     </div>

@@ -451,4 +451,33 @@ canvas{max-width:100%;}
    tab. Dibuat minimal (2 tombol toggle underline biru), tanpa animasi. ===== */
 .inv-tabs{display:flex;gap:4px;margin:18px 0 14px;border-bottom:1px solid var(--border);}
 .inv-tab-btn{background:none;border:none;padding:10px 16px;font-size:13px;font-weight:600;color:var(--text-light);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}
+
+/* ===== Monitoring Control Delivery (2026-08-26) =====
+   .btn-mcd-teal — tombol "Diterima Customer" pada kolom Update Status.
+   Class BARU (bukan reuse .btn-teal yang sudah ada) karena .btn-teal
+   ternyata memakai var(--blue-light) (cyan-biru), BUKAN var(--teal)
+   asli (#17c3c3, sudah dipakai .icon-btn.check/.icon-btn.print) — warna
+   turquoise di screenshot cocok dgn var(--teal) asli, bukan .btn-teal
+   yang namanya menyesatkan. */
+.btn-mcd-teal{background:var(--teal);color:#fff;border:none;padding:7px 12px;border-radius:5px 0 0 5px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+.btn-mcd-teal:hover{background:#12a3a3;}
+.mcd-action-wrap{display:inline-flex;gap:1px;align-items:center;}
+.mcd-action-wrap .icon-btn.refresh{border-radius:0 5px 5px 0;}
+
+/* Tombol refresh (dekoratif) di sebelah .btn-mcd-teal — kuning, belum
+   ada variant .icon-btn ini sebelumnya (.btn-warning yang ada berupa
+   tombol teks penuh, bukan icon-btn bujur sangkar). */
+.icon-btn.refresh{background:var(--yellow);}
+.icon-btn.refresh:hover{background:#d99a1f;}
+
+/* Menu kecil position:fixed (dropdown filter status "All" & dropdown
+   aksi "Diterima Customer"/"Sudah Tukar Faktur / Pemberkasan") — pola
+   BARU, beda dari .notif-dropdown topbar yang di-append sbg child
+   tombolnya sendiri (position:absolute) — di sini di-append ke
+   document.body & posisinya dihitung manual dari getBoundingClientRect()
+   tombol pemicu (lihat mcdOpenMenu() di monitoring-control-delivery.js),
+   supaya aman dari potensi ke-clip oleh .table-wrap{overflow-x:auto}. */
+.mcd-menu{background:#fff;border:1px solid var(--border);border-radius:6px;box-shadow:0 6px 18px rgba(20,20,40,.14);min-width:190px;padding:4px;display:flex;flex-direction:column;}
+.mcd-menu button{background:none;border:none;text-align:left;padding:8px 10px;font-size:12.5px;color:var(--text);cursor:pointer;border-radius:4px;white-space:nowrap;}
+.mcd-menu button:hover{background:#f2f5fb;color:var(--blue);}
 .inv-tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}

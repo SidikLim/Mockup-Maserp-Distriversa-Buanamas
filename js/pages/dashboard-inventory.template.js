@@ -20,12 +20,12 @@ function tplInventoryDashboard(){
       <div class="card-header"><h3>Inventory Dashboard</h3></div>
       <div class="card-body">
         <div class="flow-row">
-          <div class="flow-step" data-nav="placeholder" data-title="Kategori Barang"><div class="flow-box quick">${icon('list',28)}</div><div class="flow-label">Kategori Barang</div></div>
-          <div class="flow-step" data-nav="placeholder" data-title="Lokasi Gudang"><div class="flow-box quick">${icon('building',28)}</div><div class="flow-label">Lokasi Gudang</div></div>
+          <div class="flow-step" data-nav="kategoriBarang" data-title="Kategori Barang"><div class="flow-box quick">${icon('list',28)}</div><div class="flow-label">Kategori Barang</div></div>
+          <div class="flow-step" data-nav="gudang" data-title="Gudang"><div class="flow-box quick">${icon('building',28)}</div><div class="flow-label">Lokasi Gudang</div></div>
           <div class="flow-arrow">&#8594;</div>
-          <div class="flow-step" data-nav="items"><div class="flow-box quick">${icon('file',28)}</div><div class="flow-label">Daftar Barang</div></div>
+          <div class="flow-step" data-nav="items" data-title="Inventory"><div class="flow-box quick">${icon('file',28)}</div><div class="flow-label">Daftar Barang</div></div>
           <div class="flow-arrow">&#8594;</div>
-          <div class="flow-step"><div class="flow-box">${icon('invoice',28)}</div><div class="flow-label">Transaksi Barang</div></div>
+          <div class="flow-step" data-nav="transaksiPersediaan" data-title="Transaksi Persediaan"><div class="flow-box quick">${icon('invoice',28)}</div><div class="flow-label">Transaksi Barang</div></div>
         </div>
       </div>
     </div>

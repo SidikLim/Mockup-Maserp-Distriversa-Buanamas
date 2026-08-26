@@ -33,12 +33,11 @@ function tplSalesDashboard(){
           <div class="flow-step" data-nav="penerimaanPiutang" data-title="Penerimaan Piutang"><div class="flow-box quick">${icon('dollar',28)}</div><div class="flow-label">Penerimaan Piutang</div></div>
         </div>
         <div class="flow-extra">
-          <div class="flow-step"><div class="flow-box">${icon('file',28)}</div><div class="flow-label">MCD</div></div>
+          <div class="flow-step" data-nav="monitoringControlDelivery" data-title="Monitoring Control Delivery"><div class="flow-box quick">${icon('target',28)}</div><div class="flow-label">Monitoring Delivery</div></div>
         </div>
         <div class="quick-links">
           <div class="quick-link" data-nav="customers">${icon('users',22)}Daftar Customer</div>
           <div class="quick-link" data-nav="salesman">${icon('users',22)}Daftar Salesman</div>
-          <div class="quick-link" data-nav="placeholder" data-title="Tracking Status">${icon('target',22)}Tracking Status</div>
         </div>
       </div>
     </div>

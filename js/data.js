@@ -1003,7 +1003,22 @@ const DATA = {
      4, 7 di bawah -- sumber Picking List yang sudah 'Terkirim') ditandai
      posted:true/ts:'Invoice Selesai' dari awal supaya perilaku tombol
      Ubah/Hapus/Posting yang disabled langsung terlihat tanpa perlu
-     mengklik apa pun lebih dulu. */
+     mengklik apa pun lebih dulu.
+
+     2026-08-26 — field BARU `mcdHistory` (array riwayat status
+     pengiriman: {tanggal, username, status, keterangan, printBadge?})
+     ditambahkan ke SETIAP baris di bawah utk modul baru "Monitoring
+     Control Delivery" (menggantikan submenu placeholder "Tracking
+     Status" — lihat js/pages/monitoring-control-delivery.template.js
+     utk penjelasan lengkap 8 status alur & rute Direct/via-SO). Status
+     "saat ini" tiap baris TIDAK disimpan di sini — selalu computed dari
+     entri TERAKHIR mcdHistory (mcdCurrentStatus() di
+     monitoring-control-delivery.js). Rute Direct (shipVia:'Driver'/
+     'Diambil Sendiri') vs rute relay lewat Sales Office (shipVia:
+     'Ekspedisi'/'Dikirim Supplier') dicerminkan lewat pilihan status mana
+     yang muncul di history masing-masing baris (BUKAN field baru
+     terpisah). Tahap "Faktur" hanya di-seed pada baris yang sudah
+     posted:true, konsisten field `posted` yang sudah ada. */
   invoices:[
     {no:'26/SI/TGR/08/00001', noSJ:'26/SJ/TGR/08/00001', tglBuat:'11/08/2026 10:30', tgl:'11/08/2026',
       cabang:'Tangerang', gudang:'(03-GUU) Gudang Utama-TGR', area:'JABODETABEK BANTEN',
@@ -1018,7 +1033,13 @@ const DATA = {
         {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', satuan:'Karung', qtyPesan:80, qtyKirim:80, batch:'BT-260702-02', ed:'2027-05-15'},
       ],
       jumlah:1700000, posted:false, ts:'Create Invoice',
-      tglInput:'11/08/2026 10:30', userInput:'sidik', tglEdit:'', userEdit:''},
+      tglInput:'11/08/2026 10:30', userInput:'sidik', tglEdit:'', userEdit:'',
+      mcdHistory:[
+        {tanggal:'11/08/2026 10:30', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/TGR/08/00168.'},
+        {tanggal:'11/08/2026 10:35', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'11/08/2026 11:15', username:'setia_adg', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Maulana Sidik - L 8753 GE (CDE).'},
+        {tanggal:'11/08/2026 15:20', username:'setia_adg', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh Toko Family Mart Jaya.'},
+      ]},
     {no:'26/SI/SBY/08/00001', noSJ:'26/SJ/SBY/08/00001', tglBuat:'08/08/2026 15:20', tgl:'08/08/2026',
       cabang:'Surabaya', gudang:'(01-GUU) Gudang Utama-SBY', area:'JAWA TIMUR',
       customerKode:'CUST-002', customerNama:'UD Makmur Jaya', customerAlamat:'Jl. Raya Darmo No. 45, Surabaya',
@@ -1032,7 +1053,14 @@ const DATA = {
         {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', satuan:'Dus', qtyPesan:40, qtyKirim:40, batch:'BT-260708-08', ed:'2027-08-31'},
       ],
       jumlah:880000, posted:true, ts:'Invoice Selesai', dibayar:0,
-      tglInput:'08/08/2026 15:20', userInput:'sidik', tglEdit:'09/08/2026 09:15', userEdit:'sidik'},
+      tglInput:'08/08/2026 15:20', userInput:'sidik', tglEdit:'09/08/2026 09:15', userEdit:'sidik',
+      mcdHistory:[
+        {tanggal:'08/08/2026 15:20', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SBY/08/00042.'},
+        {tanggal:'08/08/2026 15:25', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'08/08/2026 16:00', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
+        {tanggal:'08/08/2026 19:30', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh UD Makmur Jaya.'},
+        {tanggal:'09/08/2026 09:15', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
+      ]},
     {no:'26/SI/MDN/08/00001', noSJ:'26/SJ/MDN/08/00001', tglBuat:'06/08/2026 11:00', tgl:'06/08/2026',
       cabang:'Medan', gudang:'(04-GUU) Gudang Utama-MDN', area:'SUMATERA UTARA',
       customerKode:'CUST-004', customerNama:'Toko Anugrah', customerAlamat:'Jl. Gatot Subroto No. 21, Medan',
@@ -1045,7 +1073,13 @@ const DATA = {
         {kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', satuan:'Karung', qtyPesan:50, qtyKirim:50, batch:'BT-260704-04', ed:'2027-01-31'},
       ],
       jumlah:600000, posted:false, ts:'Create Invoice',
-      tglInput:'06/08/2026 11:00', userInput:'sidik', tglEdit:'', userEdit:''},
+      tglInput:'06/08/2026 11:00', userInput:'sidik', tglEdit:'', userEdit:'',
+      mcdHistory:[
+        {tanggal:'06/08/2026 11:00', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/MDN/08/00015.'},
+        {tanggal:'06/08/2026 11:10', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.'},
+        {tanggal:'07/08/2026 08:00', username:'setia_adg', status:'Diterima Sales Office (SO)', keterangan:'Barang tiba di Sales Office cabang tujuan via Ekspedisi JNE (No. Resi JNE-88213345).'},
+        {tanggal:'07/08/2026 09:30', username:'setia_adg', status:'Serah Terima ke Tim Pengantar (SO)', keterangan:'Diserahterimakan ke tim pengantar lokal Sales Office untuk diteruskan ke Toko Anugrah.'},
+      ]},
     {no:'26/SI/MKS/08/00001', noSJ:'26/SJ/MKS/08/00001', tglBuat:'07/08/2026 13:15', tgl:'07/08/2026',
       cabang:'Makassar', gudang:'(05-GUU) Gudang Utama-MKS', area:'SULAWESI SELATAN',
       customerKode:'CUST-005', customerNama:'UD Sinar Harapan', customerAlamat:'Jl. Perintis Kemerdekaan No. 5, Makassar',
@@ -1058,7 +1092,11 @@ const DATA = {
         {kode:'BRG-005', nama:'Mie Instan Indomie Goreng', satuan:'Dus', qtyPesan:100, qtyKirim:100, batch:'', ed:''},
       ],
       jumlah:250000, posted:false, ts:'Create Invoice',
-      tglInput:'07/08/2026 13:15', userInput:'sidik', tglEdit:'', userEdit:''},
+      tglInput:'07/08/2026 13:15', userInput:'sidik', tglEdit:'', userEdit:'',
+      mcdHistory:[
+        {tanggal:'07/08/2026 13:15', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/MKS/08/00009.'},
+        {tanggal:'07/08/2026 13:20', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+      ]},
     {no:'26/SI/HO/08/00001', noSJ:'26/SJ/HO/08/00001', tglBuat:'07/08/2026 16:00', tgl:'07/08/2026',
       cabang:'Head Office', gudang:'(00-GUU) Gudang Utama-HO', area:'JABODETABEK BANTEN',
       customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', customerAlamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat',
@@ -1072,7 +1110,14 @@ const DATA = {
         {kode:'BRG-009', nama:'Kopi Kapal Api 165gr', satuan:'Dus', qtyPesan:20, qtyKirim:20, batch:'BT-260709-09', ed:'2027-09-30'},
       ],
       jumlah:1120000, posted:true, ts:'Invoice Selesai', dibayar:1120000,
-      tglInput:'07/08/2026 16:00', userInput:'sidik', tglEdit:'07/08/2026 17:20', userEdit:'sidik'},
+      tglInput:'07/08/2026 16:00', userInput:'sidik', tglEdit:'07/08/2026 17:20', userEdit:'sidik',
+      mcdHistory:[
+        {tanggal:'07/08/2026 16:00', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/HO/08/00077.'},
+        {tanggal:'07/08/2026 16:05', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.'},
+        {tanggal:'07/08/2026 16:30', username:'sidik', status:'Diterima Customer', keterangan:'Barang diambil langsung oleh Toko Sumber Rejeki (Diambil Sendiri), tidak melalui tim pengantar.'},
+        {tanggal:'07/08/2026 17:20', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
+        {tanggal:'08/08/2026 10:00', username:'setia_adg', status:'Sudah Tukar Faktur / Pemberkasan', keterangan:'Faktur asli sudah ditukar & berkas lengkap.'},
+      ]},
     {no:'26/SI/SMG/08/00001', noSJ:'26/SJ/SMG/08/00001', tglBuat:'05/08/2026 15:30', tgl:'05/08/2026',
       cabang:'Semarang', gudang:'(06-GUU) Gudang Utama-SMG', area:'JAWA TENGAH',
       customerKode:'CUST-007', customerNama:'CV Maju Terus', customerAlamat:'Jl. Pandanaran No. 33, Semarang',
@@ -1085,7 +1130,14 @@ const DATA = {
         {kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', satuan:'Dus', qtyPesan:25, qtyKirim:25, batch:'', ed:''},
       ],
       jumlah:400000, posted:false, ts:'Create Invoice',
-      tglInput:'05/08/2026 15:30', userInput:'sidik', tglEdit:'', userEdit:''},
+      tglInput:'05/08/2026 15:30', userInput:'sidik', tglEdit:'', userEdit:'',
+      mcdHistory:[
+        {tanggal:'05/08/2026 15:30', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SMG/08/00013.'},
+        {tanggal:'05/08/2026 15:35', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.'},
+        {tanggal:'05/08/2026 16:10', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Yusuf Setiawan - B 7788 KLM (HIJ).'},
+        {tanggal:'06/08/2026 09:00', username:'nazwaa_iks', status:'Diterima Sales Office (SO)', keterangan:'Barang direlay lewat Sales Office sebelum diteruskan ke CV Maju Terus.'},
+        {tanggal:'06/08/2026 10:15', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (SO)', keterangan:'Diserahterimakan ke tim pengantar Sales Office untuk pengantaran terakhir.'},
+      ]},
     {no:'26/SI/SBY/08/00002', noSJ:'26/SJ/SBY/08/00002', tglBuat:'09/08/2026 12:40', tgl:'09/08/2026',
       cabang:'Surabaya', gudang:'(01-GUU) Gudang Utama-SBY', area:'JAWA TIMUR',
       customerKode:'CUST-008', customerNama:'Toko Sejahtera', customerAlamat:'Jl. Kertajaya No. 67, Surabaya',
@@ -1098,7 +1150,10 @@ const DATA = {
         {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', satuan:'Dus', qtyPesan:35, qtyKirim:35, batch:'', ed:''},
       ],
       jumlah:350000, posted:false, ts:'Create Invoice',
-      tglInput:'09/08/2026 12:40', userInput:'sidik', tglEdit:'', userEdit:''},
+      tglInput:'09/08/2026 12:40', userInput:'sidik', tglEdit:'', userEdit:'',
+      mcdHistory:[
+        {tanggal:'09/08/2026 12:40', username:'sidik', status:'Create Invoice', keterangan:'Invoice baru dibuat, menunggu proses cetak.'},
+      ]},
     {no:'26/SI/HO/08/00002', noSJ:'26/SJ/HO/08/00002', tglBuat:'11/08/2026 14:10', tgl:'11/08/2026',
       cabang:'Head Office', gudang:'(00-GUU) Gudang Utama-HO', area:'JABODETABEK BANTEN',
       customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya', customerAlamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
@@ -1111,7 +1166,15 @@ const DATA = {
         {kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', satuan:'Dus', qtyPesan:70, qtyKirim:70, batch:'BT-260710-10', ed:'2027-10-31'},
       ],
       jumlah:350000, posted:true, ts:'Invoice Selesai', dibayar:150000,
-      tglInput:'11/08/2026 14:10', userInput:'sidik', tglEdit:'11/08/2026 16:45', userEdit:'sidik'},
+      tglInput:'11/08/2026 14:10', userInput:'sidik', tglEdit:'11/08/2026 16:45', userEdit:'sidik',
+      mcdHistory:[
+        {tanggal:'11/08/2026 14:10', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/HO/08/00078.'},
+        {tanggal:'11/08/2026 14:15', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'11/08/2026 14:45', username:'setia_adg', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Agus Salim - F 3344 AB (KLM).'},
+        {tanggal:'11/08/2026 16:30', username:'setia_adg', status:'Diterima Customer', keterangan:'Diterima sebagian oleh Toko Family Mart Jaya (Ditolak Sebagian) — sebagian retur, lihat catatan pembayaran sebagian di Invoice terkait.'},
+        {tanggal:'11/08/2026 17:20', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
+        {tanggal:'12/08/2026 09:40', username:'setia_adg', status:'Sudah Tukar Faktur / Pemberkasan', keterangan:'Faktur asli sudah ditukar & berkas lengkap.'},
+      ]},
     /* 2026-08-26 — 2 baris BARU (bukan mengedit 8 baris di atas yang
        sudah terverifikasi) ditambahkan khusus untuk mendemokan laporan
        Report Center baru "Laporan Daftar Transaksi Barang Bonus"
@@ -1166,7 +1229,13 @@ const DATA = {
         {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', satuan:'Karung', qtyPesan:11, qtyKirim:11, batch:'BT-260816-16', ed:'2027-06-15', bonus:true, bonusKeterangan:'Bonus Promo PRO01 (26/PM-HO/08/00001) — 20% x 55'},
       ],
       jumlah:735000, posted:false, ts:'Create Invoice',
-      tglInput:'20/08/2026 10:00', userInput:'sidik', tglEdit:'', userEdit:''},
+      tglInput:'20/08/2026 10:00', userInput:'sidik', tglEdit:'', userEdit:'',
+      mcdHistory:[
+        {tanggal:'20/08/2026 10:00', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/HO/08/00079.'},
+        {tanggal:'20/08/2026 10:05', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.'},
+        {tanggal:'20/08/2026 10:40', username:'setia_adg', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Maulana Sidik - L 8753 GE (CDE).'},
+        {tanggal:'20/08/2026 14:00', username:'setia_adg', status:'Diterima Sales Office (SO)', keterangan:'Barang direlay lewat Sales Office karena Toko Sumber Rejeki pindah titik terima sementara.'},
+      ]},
     {no:'26/SI/SBY/08/00003', noSJ:'26/SJ/SBY/08/00003', tglBuat:'21/08/2026 09:45', tgl:'21/08/2026',
       cabang:'Surabaya', gudang:'(01-GUU) Gudang Utama-SBY', area:'JAWA TIMUR',
       customerKode:'CUST-002', customerNama:'UD Makmur Jaya', customerAlamat:'Jl. Raya Darmo No. 45, Surabaya',
@@ -1180,7 +1249,13 @@ const DATA = {
         {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', satuan:'Dus', qtyPesan:12, qtyKirim:12, batch:'BT-260817-17', ed:'2027-07-31', bonus:true, bonusKeterangan:'Bonus Promo PRO02 (26/PM-SBY/08/00001) — 10% x 120'},
       ],
       jumlah:3000000, posted:false, ts:'Create Invoice',
-      tglInput:'21/08/2026 09:45', userInput:'sidik', tglEdit:'', userEdit:''},
+      tglInput:'21/08/2026 09:45', userInput:'sidik', tglEdit:'', userEdit:'',
+      mcdHistory:[
+        {tanggal:'21/08/2026 09:45', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SBY/08/00044.'},
+        {tanggal:'21/08/2026 09:50', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'21/08/2026 10:20', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
+        {tanggal:'21/08/2026 13:10', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh UD Makmur Jaya.'},
+      ]},
   ],
   /* Daftar Driver (dipakai field "Driver" di form Invoice, picker
      dekoratif sederhana — tidak ada modul Master Driver tersendiri di
@@ -1982,8 +2057,21 @@ const DATA = {
     {kode:'00-GDG002', nama:'Gudang Cabang Head Office (Semi Permanen)', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'01/01/2015', tglMulaiSusut:'01/01/2015', hargaBeli:250000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'BANGUNAN SEMI PERMANEN', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210010', glAkmSusut:'1590006'},
     {kode:'00-SFT001', nama:'Lisensi Software Akuntansi MASERP', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'01/08/2024', tglMulaiSusut:'01/08/2024', hargaBeli:60000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'SOFTWARE 2', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210011', glAkmSusut:'1590007'},
     {kode:'00-SFT002', nama:'Lisensi Microsoft Office 365 (25 user)', spesifikasi:'', merek:'', cabang:'Head Office', lokasiKode:'00', tglBeli:'01/08/2024', tglMulaiSusut:'01/08/2024', hargaBeli:15000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'SOFTWARE 1', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210011', glAkmSusut:'1590007'},
-    {kode:'00-KDR011', nama:'Motor Honda Vario 125 (Kurir Head Office)', spesifikasi:'', merek:'Honda', cabang:'Head Office', lokasiKode:'00', tglBeli:'05/09/2022', tglMulaiSusut:'05/09/2022', hargaBeli:22000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 1', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002'},
-    {kode:'02-KDR012', nama:'Motor Honda Vario 125 (Kurir Semarang)', spesifikasi:'', merek:'Honda', cabang:'Semarang', lokasiKode:'02', tglBeli:'05/09/2022', tglMulaiSusut:'05/09/2022', hargaBeli:22000000, barcode:'', status:'Non Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 1', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002'},
+    /* hargaBeli 00-KDR011 diupdate 2026-08-26 (lanjutan lagi) dari
+       22.000.000 → 25.000.000: sudah "dinaikkan" via 1 contoh
+       transaksi Revaluasi Asset (Nominal +3.000.000), lihat
+       DATA.revaluasiAsset. hargaBeli TETAP field yg sama, hanya
+       nilainya sudah mencerminkan revaluasi tsb — konsisten pola
+       "computed live", bukan disimpan snapshot terpisah. */
+    {kode:'00-KDR011', nama:'Motor Honda Vario 125 (Kurir Head Office)', spesifikasi:'', merek:'Honda', cabang:'Head Office', lokasiKode:'00', tglBeli:'05/09/2022', tglMulaiSusut:'05/09/2022', hargaBeli:25000000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 1', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002'},
+    /* disposalNo diisi 2026-08-26 (lanjutan lagi): aset ini sudah
+       "dikunci" via 1 contoh transaksi Disposal Asset, lihat
+       DATA.disposalAsset — field disposalNo dicocokkan di picker
+       "Pilih Fixed Asset" pada disposal-asset.js/revaluasi-asset.js
+       (`!a.disposalNo`) supaya aset yg sudah di-disposal tidak bisa
+       dipilih lagi. status:'Non Active' sudah ada dari sebelumnya
+       (konsisten — aset yg didisposal seharusnya non-aktif). */
+    {kode:'02-KDR012', nama:'Motor Honda Vario 125 (Kurir Semarang)', spesifikasi:'', merek:'Honda', cabang:'Semarang', lokasiKode:'02', tglBeli:'05/09/2022', tglMulaiSusut:'05/09/2022', hargaBeli:22000000, barcode:'', status:'Non Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'KENDARAAN BERMOTOR 1', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210006', glAkmSusut:'1590002', disposalNo:'26/DIS/SMG/08/00001'},
     {kode:'03-PRK003', nama:'Lemari Arsip Kantor Tangerang', spesifikasi:'', merek:'', cabang:'Tangerang', lokasiKode:'03', tglBeli:'12/11/2023', tglMulaiSusut:'12/11/2023', hargaBeli:6500000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'PERALATAN KANTOR 1', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210007', glAkmSusut:'1590003'},
     {kode:'04-ITK003', nama:'Printer Epson L3210 (Kantor Bandung)', spesifikasi:'', merek:'Epson', cabang:'Bandung', lokasiKode:'04', tglBeli:'12/11/2023', tglMulaiSusut:'12/11/2023', hargaBeli:2800000, barcode:'', status:'Active', tidakPenyusutan:false, metodePenyusutan:'Straight Line', kelompokAktiva:'Komersial', aturanKode:'PERALATAN IT 1', nilaiResidu:0, tglPerpindahan:'01/01/0001', penanggungJawab:'', pemakaiAsset:'', glBiayaSusut:'5210008', glAkmSusut:'1590004'},
   ],
@@ -2081,13 +2169,25 @@ const DATA = {
      jurnal-fixed-asset.js), yang mewajibkan pilih Kode G.L. Debit/
      Kredit dari DATA.akunGL. Tidak ada baris sample utk tipe "Biaya"/
      "Revaluasi" (screenshot tidak menunjukkan baris jenis itu), tapi
-     ke-2 tombol toolbar-nya tetap fungsional utk Tambah baru. */
+     ke-2 tombol toolbar-nya tetap fungsional utk Tambah baru.
+
+     UPDATE 2026-08-26 (lanjutan lagi) — dibangun menu Disposal Asset
+     & Revaluasi Asset (Aktiva Tetap > Daftar Transaksi), lihat
+     disposal-asset.js/.template.js & revaluasi-asset.js/.template.js.
+     Baris kode:9 (Disposal) yg sebelumnya glDebit/glKredit kosong
+     kini DIISI (dipakai contoh transaksi Disposal), REUSE akun
+     Aktiva Tetap EXISTING '1510003' Kendaraan (bukan akun baru) utk
+     sisi Kredit + akun BARU '6510004' Kerugian Pelepasan utk sisi
+     Debit. Baris BARU kode:18 (Revaluasi) ditambahkan — sebelumnya
+     tidak ada contoh baris tipe ini sama sekali — dgn glDebit REUSE
+     akun EXISTING '1510003' Kendaraan (sisi Aktiva Tetap) & glKredit
+     akun BARU '3110002' Selisih Revaluasi. */
   jurnalFixedAsset:[
     {kode:1, keterangan:'Jurnal Gedung (Saldo Awal)', tipe:'Saldo Awal', golongan:'Gedung', glDebit:'', glKredit:''},
     {kode:2, keterangan:'Jurnal Perabotan Kantor (Saldo Awal)', tipe:'Saldo Awal', golongan:'Perabotan Kantor', glDebit:'', glKredit:''},
     {kode:3, keterangan:'Jurnal Mesin Peralatan (Saldo Awal)', tipe:'Saldo Awal', golongan:'Mesin Peralatan', glDebit:'', glKredit:''},
     {kode:4, keterangan:'Jurnal Kendaraan Bermotor (Saldo Awal)', tipe:'Saldo Awal', golongan:'Kendaraan Bermotor', glDebit:'', glKredit:''},
-    {kode:9, keterangan:'Jurnal Kendaraan Bermotor (Disposal)', tipe:'Disposal', golongan:'Kendaraan Bermotor', glDebit:'', glKredit:''},
+    {kode:9, keterangan:'Jurnal Kendaraan Bermotor (Disposal)', tipe:'Disposal', golongan:'Kendaraan Bermotor', glDebit:'6510004', glKredit:'1510003'},
     {kode:10, keterangan:'Jurnal Peralatan IT (Saldo Awal)', tipe:'Saldo Awal', golongan:'Peralatan IT', glDebit:'', glKredit:''},
     {kode:11, keterangan:'Jurnal Peralatan Kantor (Saldo Awal)', tipe:'Saldo Awal', golongan:'Peralatan Kantor', glDebit:'', glKredit:''},
     {kode:12, keterangan:'Jurnal Kendaraan (Pembelian Kredit)', tipe:'Pembelian Kredit', golongan:'Kendaraan', glDebit:'', glKredit:''},
@@ -2096,6 +2196,33 @@ const DATA = {
     {kode:15, keterangan:'Jurnal Peralatan IT (Pembelian Kredit)', tipe:'Pembelian Kredit', golongan:'Peralatan IT', glDebit:'', glKredit:''},
     {kode:16, keterangan:'Jurnal Perabotan Kantor (Pembelian Kredit)', tipe:'Pembelian Kredit', golongan:'Perabotan Kantor', glDebit:'', glKredit:''},
     {kode:17, keterangan:'Jurnal Kendaraan Bermotor (Penjualan)', tipe:'Penjualan', golongan:'Kendaraan Bermotor', glDebit:'', glKredit:''},
+    {kode:18, keterangan:'Jurnal Kendaraan Bermotor (Revaluasi)', tipe:'Revaluasi', golongan:'Kendaraan Bermotor', glDebit:'1510003', glKredit:'3110002'},
+  ],
+  /* Disposal Asset (Aktiva Tetap > Daftar Transaksi > Disposal Asset,
+     page:'disposalAsset') — BARU 2026-08-26 (lanjutan lagi), sebelumnya
+     placeholder. 1 baris sample: motor 02-KDR012 (Kurir Semarang) yg
+     sebelumnya sudah status Non Active dihapusbukukan tgl 20/08/2026,
+     Jurnal dipilih kode:9 (Disposal). Akumulasi
+     Penyusutan & Nilai Buku Bersih TIDAK disimpan di sini — selalu
+     computed live via disHitungSusut() di disposal-asset.js dari data
+     asli aset (hargaBeli/tglMulaiSusut/aturanKode) + tglTransaksi. */
+  disposalAsset:[
+    {noTransaksi:'26/DIS/SMG/08/00001', tglTransaksi:'20/08/2026', cabang:'Semarang', keterangan:'Motor sering mogok, kondisi rusak berat, sudah tidak layak pakai — dihapusbukukan.', items:[
+      {kode:'02-KDR012', jurnalKode:9},
+    ]},
+  ],
+  /* Revaluasi Asset (Aktiva Tetap > Daftar Transaksi > Revaluasi Asset,
+     page:'revaluasiAsset') — BARU 2026-08-26 (lanjutan lagi), sebelumnya
+     placeholder. 1 baris sample: motor 00-KDR011 (Kurir Head Office)
+     direvaluasi NAIK (Nominal +3.000.000) tgl 15/08/2026 setelah overhaul
+     mesin — hargaBeli aset di DATA.aktivaTetap SUDAH mencerminkan
+     kenaikan ini (22.000.000 → 25.000.000, lihat catatan di baris
+     00-KDR011 di atas). Tahun/Bulan hanya informasional (lihat catatan
+     besar di revaluasi-asset.js kenapa tidak genuinely dipakai). */
+  revaluasiAsset:[
+    {noTransaksi:'26/REV/HO/08/00001', tglTrn:'15/08/2026', tglMulaiSusut:'05/09/2022', cabang:'Head Office', keterangan:'Overhaul mesin & ganti komponen utama — menaikkan nilai wajar aset.', items:[
+      {kode:'00-KDR011', jurnalKode:18, tahun:0, bulan:6, nominal:3000000},
+    ]},
   ],
   /* Master User — menu User Security > Master User (page:'users', sebelumnya
      renderer generik lewat objek `pages` di js/core.js dgn field lama nama/
@@ -2280,6 +2407,10 @@ const DATA = {
     {kode:'2140001', nama:'Uang Muka Penjualan', kategori:'B', tipe:'K', jenis:'Detail', saldoAwal:18000000, debet:6000000, kredit:9000000, saldoAkhir:21000000},
     {kode:'3100000', nama:'MODAL', kategori:'C', tipe:'K', jenis:'Header', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'3110001', nama:'Modal Disetor', kategori:'C', tipe:'K', jenis:'Detail', saldoAwal:2000000000, debet:0, kredit:0, saldoAkhir:2000000000},
+    /* Akun BARU 2026-08-26 (lanjutan lagi) — dipakai sisi Kredit
+       jurnal Revaluasi Asset saat Nominal positif (nilai aset
+       naik), lihat DATA.jurnalFixedAsset kode:18 & revaluasi-asset.js. */
+    {kode:'3110002', nama:'Selisih Revaluasi Aktiva Tetap', kategori:'C', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'3200001', nama:'Laba Ditahan', kategori:'K', tipe:'K', jenis:'Detail', saldoAwal:850000000, debet:0, kredit:120000000, saldoAkhir:970000000},
     {kode:'3400001', nama:'Laba Berjalan', kategori:'M', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:450000000, saldoAkhir:450000000},
     {kode:'4100000', nama:'PENJUALAN', kategori:'D', tipe:'K', jenis:'Header', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
@@ -2303,6 +2434,12 @@ const DATA = {
     {kode:'2110002', nama:'Hutang Pembelian Belum Terfaktur', kategori:'B', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'1140002', nama:'PPN Masukan', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'6510003', nama:'Selisih Pembulatan / Pembayaran', kategori:'H', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    /* Akun BARU 2026-08-26 (lanjutan lagi) — dipakai sisi Debit
+       jurnal Disposal Asset (Nilai Buku Bersih aset yg dihapus-
+       bukukan) & sisi Kredit jurnal Revaluasi Asset saat Nominal
+       negatif (nilai aset turun), lihat DATA.jurnalFixedAsset
+       kode:9 & kode:18, disposal-asset.js & revaluasi-asset.js. */
+    {kode:'6510004', nama:'Kerugian Pelepasan Aktiva Tetap', kategori:'H', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'5110002', nama:'HPP Konsinyasi', kategori:'E', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'2110003', nama:'Hutang R/K Cabang', kategori:'B', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'1120002', nama:'Piutang R/K Cabang', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
