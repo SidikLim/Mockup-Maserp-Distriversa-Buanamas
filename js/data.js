@@ -2788,6 +2788,91 @@ const DATA = {
         {noRequest:'', itemRequest:'', kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', ket:'', kodeTarget:'', namaTarget:'', qty:300, um:'Dus', harga:5000, jumlah:1500000, batches:[]},
       ]},
   ],
+
+  /* Master Stock Opname — menu Persediaan Barang > Daftar Transaksi >
+     Master Stock Opname (lihat js/pages/master-stock-opname.*), dibangun
+     2026-08-27 sesuai screenshot MASERP "Master Stock Opname List" +
+     "Master Stock Opname" (form) yang dikirim user. 1 baris sample,
+     PERSIS meniru header dokumen di screenshot (No. Bukti "26/MSO/
+     SMG/08/00001", Cabang Semarang, Tgl. Transaksi "08/08/2026
+     12:03:40", Periode 08/08/2026 - 08/08/2026) — hanya kata "SDL"
+     pada Keterangan diganti "DBM" (nama singkat perusahaan demo lain
+     -> DBM). `items[]` HANYA 10 baris (seluruh katalog `DATA.items`
+     mockup ini, bukan 125 seperti "Total: 125" di screenshot asli —
+     downsize-volume, precedent sama seperti modul2 lain), difilter ke
+     gudang "06-GUU" (Gudang Utama-SMG) — `sistem` tiap baris = PERSIS
+     `qtyPhysical` baris `DATA.persediaan` gudang+barang yang sama (1
+     sumber kebenaran, bukan angka baru, precedent sama seperti
+     `lokasiGudang[].stock` di DATA.items). `hna` = `DATA.items[].harga`
+     (harga jual, sama seperti field HNA di modul lain mis. Reordering
+     Sheet/Dominasi). 8 dari 10 baris `qtyCounted` SAMA dengan `sistem`
+     (Selisih 0, persis kondisi semua baris yang terlihat di screenshot
+     halaman 1) — 2 baris SENGAJA dibuat beda (BRG-002 Gula Pasir
+     qtyCounted 65 vs sistem 69 = selisih -4 "susut", BRG-009 Kopi
+     Kapal Api qtyCounted 32 vs sistem 30 = selisih +2 "lebih") sekadar
+     mendemokan kalkulasi Selisih/Total reaktif & pewarnaan
+     merah/teal-nya, tidak mengubah kesan "screenshot semua nol" krn
+     baris itu ADA di halaman berikutnya pada data 125-baris asli,
+     bukan halaman 1 yang terlihat di screenshot. `batch`/`exp` semua
+     baris "-" (mockup ini tidak memodelkan data batch/expiry per lot
+     di level DATA.persediaan, lihat catatan lengkap di header
+     master-stock-opname.template.js). CATATAN: `DATA.transaksiPersediaan`
+     (array persis di atas) SUDAH punya 1 baris 'Pemasukkan' Head
+     Office/BRG-010 berketerangan "Penyesuaian stok hasil Stock
+     Opname" sejak sebelum modul ini dibangun — itu adalah ADJUSTMENT
+     JURNAL yang TIDAK ditautkan ke baris Master Stock Opname manapun
+     di sini (beda cabang & dibuat sesi lain sebelum modul source-nya
+     ada) — dicatat di sini demi transparansi, bukan bug, dan bisa
+     ditautkan sungguhan ke depan kalau diperlukan. */
+  masterStockOpname:[
+    {no:'26/MSO/SMG/08/00001', cabang:'Semarang', tglTransaksi:'08/08/2026 12:03:40', periodeAwal:'08/08/2026', periodeAkhir:'08/08/2026',
+      keterangan:'STOK OPNAME DBM SEMARANG PERIODE AGUSTUS 2026', filterGudangKode:'06-GUU', filterGudangNama:'Gudang Utama-SMG',
+      filterItemKode:'', filterItemNama:'', userEntry:'sidik',
+      items:[
+        {kodeGudang:'06-GUU', kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', batch:'-', exp:'-', ketArea:'', sistem:99, qtyCounted:99, hna:25000, verified:false},
+        {kodeGudang:'06-GUU', kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', batch:'-', exp:'-', ketArea:'', sistem:69, qtyCounted:65, hna:15000, verified:true},
+        {kodeGudang:'06-GUU', kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', batch:'-', exp:'-', ketArea:'', sistem:33, qtyCounted:33, hna:60000, verified:false},
+        {kodeGudang:'06-GUU', kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', batch:'-', exp:'-', ketArea:'', sistem:79, qtyCounted:79, hna:12000, verified:false},
+        {kodeGudang:'06-GUU', kode:'BRG-005', nama:'Mie Instan Indomie Goreng', batch:'-', exp:'-', ketArea:'', sistem:177, qtyCounted:177, hna:2500, verified:false},
+        {kodeGudang:'06-GUU', kode:'BRG-006', nama:'Kecap Manis ABC 600ml', batch:'-', exp:'-', ketArea:'', sistem:42, qtyCounted:42, hna:14000, verified:false},
+        {kodeGudang:'06-GUU', kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', batch:'-', exp:'-', ketArea:'', sistem:51, qtyCounted:51, hna:16000, verified:false},
+        {kodeGudang:'06-GUU', kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', batch:'-', exp:'-', ketArea:'', sistem:58, qtyCounted:58, hna:10000, verified:false},
+        {kodeGudang:'06-GUU', kode:'BRG-009', nama:'Kopi Kapal Api 165gr', batch:'-', exp:'-', ketArea:'', sistem:30, qtyCounted:32, hna:14000, verified:true},
+        {kodeGudang:'06-GUU', kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', batch:'-', exp:'-', ketArea:'', sistem:79, qtyCounted:79, hna:5000, verified:false},
+      ]},
+  ],
+
+  /* Stock Opname (Persediaan Barang > Daftar Transaksi > Stock
+     Opname, page:'stockOpname') — DIBANGUN 2026-08-27, lanjutan dari
+     Master Stock Opname di atas. 1 baris sample yang merujuk MSO
+     '26/MSO/SMG/08/00001' di atas (masterStockOpnameNo), memecah 10
+     barangnya jadi rincian per-batch (Batch Number/Qty Batch/Tgl.
+     Expired — field yang di Master Stock Opname SENGAJA "-", di sini
+     JUSTRU diisi krn itu fungsi utama modul ini). Qty Batch tiap
+     baris SENGAJA disamakan manual dgn Qty Counted barang yg sama
+     persis di MSO '26/MSO/SMG/08/00001' (BUKAN dihitung otomatis —
+     modul ini TIDAK cross-mutate balik ke DATA.masterStockOpname,
+     lihat catatan desain lengkap di header stock-opname.template.js).
+     Format Batch Number "BT-YYMMDD-NN" mengikuti pola field noBatch
+     yang sudah ada di DATA.salesOrder[].items. */
+  stockOpname:[
+    {no:'26/OPN-SMG/08/00001', cabang:'Semarang', tglTransaksi:'08/08/2026 12:15:22',
+      masterStockOpnameNo:'26/MSO/SMG/08/00001', gudangKode:'06-GUU', gudangNama:'Gudang Utama-SMG',
+      keterangan:'STOK OPNAME DBM SEMARANG PERIODE AGUSTUS 2026', userEntry:'sidik',
+      items:[
+        {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', batch:'BT-260801-01', qtyBatch:99, exp:'30/06/2027'},
+        {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', batch:'BT-260801-02', qtyBatch:65, exp:'15/05/2027'},
+        {kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', batch:'BT-260801-03', qtyBatch:33, exp:'28/02/2027'},
+        {kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', batch:'BT-260801-04', qtyBatch:79, exp:'10/03/2027'},
+        {kode:'BRG-005', nama:'Mie Instan Indomie Goreng', batch:'BT-260801-05', qtyBatch:177, exp:'01/12/2026'},
+        {kode:'BRG-006', nama:'Kecap Manis ABC 600ml', batch:'BT-260801-06', qtyBatch:42, exp:'20/01/2027'},
+        {kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', batch:'BT-260801-07', qtyBatch:51, exp:'05/11/2026'},
+        {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', batch:'BT-260801-08', qtyBatch:58, exp:'18/09/2027'},
+        {kode:'BRG-009', nama:'Kopi Kapal Api 165gr', batch:'BT-260801-09', qtyBatch:32, exp:'22/07/2027'},
+        {kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', batch:'BT-260801-10', qtyBatch:79, exp:'14/08/2028'},
+      ]},
+  ],
+
   /* Purchase Order — menu Supplier & Pembelian > Daftar Transaksi >
      Purchase Order (lihat js/pages/purchase-order.*). 11 baris data
      sample meniru struktur & alur screenshot MASERP "Daftar Purchase
@@ -3536,6 +3621,60 @@ const DATA = {
      relevan untuk bisnis DBM (distributor sembako/FMCG). */
   groupProduk:[
     {kode:'SMBK01', nama:'KELOMPOK PRODUK SEMBAKO UTAMA', keterangan:''},
+  ],
+
+  /* Satuan (Persediaan Barang > Master & Setting > Satuan,
+     page:'satuan'), sesuai screenshot MASERP "Daftar Satuan"
+     yang dikirim user 2026-08-27 (Total Record: 15, kolom Kode
+     Satuan/Nama Satuan dengan ikon sort di kedua header,
+     page-size 10 default, pager First/Previous/1/2/Next/Last).
+     CRUD sederhana pola Group Produk/Zat Kandungan Aktif — kode
+     MANUAL (bukan auto-generate, karena kode aslinya singkatan
+     bermakna seperti "BOX"/"BTL", bukan nomor urut), wajib unik,
+     readonly di mode Ubah.
+
+     10 baris PALING ATAS persis screenshot (AMP/BKS/BOX/BTL/
+     KRT/M/MBX/PAC/PCH/PCS — nama satuan generik universal ERP,
+     bukan data rahasia perusahaan demo lain, status sama seperti
+     nama laporan Report Center/nama Zat Kandungan Aktif yang
+     juga dipertahankan apa adanya). +5 baris tambahan (DUS/KRG/
+     KLG/LSN/RIM) supaya Total Record 15 sesuai screenshot,
+     SEKALIGUS SENGAJA dipilih supaya Nama Satuan-nya mencakup
+     LIMA nilai `satuan`/`satuanDetail[...].satuan` yang SUDAH
+     DIPAKAI di seluruh `DATA.items` sejak awal mockup ini (Dus/
+     Karung/Kaleng/Botol/Pcs) — supaya begitu field "Satuan" di
+     form Master Barang diubah dari input teks bebas jadi
+     dropdown ke master ini (lihat persediaan-barang.template.js/
+     .js), ke-10 baris sample barang yang sudah ada tetap
+     menampilkan pilihan yang benar ter-select saat dibuka Ubah,
+     bukan jatuh ke opsi kosong/tidak match.
+
+     Nama Satuan baris BTL & PCS SEDIKIT DISESUAIKAN dari huruf
+     besar semua di screenshot ("BTL"/"PCS") jadi "Botol"/"Pcs" —
+     BUKAN salah ketik, melainkan penyesuaian sengaja supaya
+     persis sama dengan string yang SUDAH ADA di `DATA.items`
+     (mis. `satuan:'Dus'`, `satuanDetail.um2.satuan:'Botol'`)
+     sehingga dropdown baru ini match dengan data existing tanpa
+     perlu mengedit satu pun baris `DATA.items` yang sudah ada
+     (konsisten prinsip "1 sumber kebenaran, tidak ada data
+     redundan yang bisa saling berbeda" yang dipakai banyak modul
+     lain di mockup ini, mis. Rumus Penyusutan Aktiva Tetap). */
+  satuan:[
+    {kode:'AMP', nama:'AMP'},
+    {kode:'BKS', nama:'BKS'},
+    {kode:'BOX', nama:'BOX'},
+    {kode:'BTL', nama:'Botol'},
+    {kode:'KRT', nama:'KRT'},
+    {kode:'M', nama:'meter'},
+    {kode:'MBX', nama:'MED BOX'},
+    {kode:'PAC', nama:'PAC'},
+    {kode:'PCH', nama:'PCH'},
+    {kode:'PCS', nama:'Pcs'},
+    {kode:'DUS', nama:'Dus'},
+    {kode:'KRG', nama:'Karung'},
+    {kode:'KLG', nama:'Kaleng'},
+    {kode:'LSN', nama:'Lusin'},
+    {kode:'RIM', nama:'Rim'},
   ],
 
   /* Bentuk Sediaan (Persediaan Barang > Master & Setting > Bentuk

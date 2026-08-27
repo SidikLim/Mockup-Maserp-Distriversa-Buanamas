@@ -174,6 +174,9 @@ const PAGE_MODULES={
   disposalAsset:{srcs:['js/pages/disposal-asset.template.js','js/pages/disposal-asset.js'], fn:'renderDisposalAssetPage'},
   revaluasiAsset:{srcs:['js/pages/revaluasi-asset.template.js','js/pages/revaluasi-asset.js'], fn:'renderRevaluasiAssetPage'},
   monitoringControlDelivery:{srcs:['js/pages/monitoring-control-delivery.template.js','js/pages/monitoring-control-delivery.js'], fn:'renderMonitoringControlDeliveryPage'},
+  satuan:{srcs:['js/pages/satuan.template.js','js/pages/satuan.js'], fn:'renderSatuanPage'},
+  masterStockOpname:{srcs:['js/pages/master-stock-opname.template.js','js/pages/master-stock-opname.js'], fn:'renderMasterStockOpnamePage'},
+  stockOpname:{srcs:['js/pages/stock-opname.template.js','js/pages/stock-opname.js'], fn:'renderStockOpnamePage'},
 };
 const loadedModules=new Set();
 

@@ -309,7 +309,12 @@ function wirePsbHargaTab(row, key, prefix){
 /* ===== Jenis Satuan dan Harga (fixed 4 baris) ===== */
 function wirePsbSatuanTab(row){
   document.querySelectorAll('[data-sat-barcode]').forEach(inp => { inp.oninput = (e) => { row.satuanDetail[e.target.dataset.satBarcode].barcode = e.target.value; }; });
-  document.querySelectorAll('[data-sat-satuan]').forEach(inp => { inp.oninput = (e) => { row.satuanDetail[e.target.dataset.satSatuan].satuan = e.target.value; }; });
+  /* 2026-08-27: kolom "Satuan" sekarang <select> (picker ke master
+     DATA.satuan, lihat psbSatuanOptions() di persediaan-barang.template.js)
+     — dipakai 'onchange' (bukan 'oninput' seperti field teks lain
+     di fungsi ini) karena elemen ini sekarang <select>, konsisten
+     dengan wiring <select> lain di modul ini (mis. data-hss-supplier). */
+  document.querySelectorAll('[data-sat-satuan]').forEach(sel => { sel.onchange = (e) => { row.satuanDetail[e.target.dataset.satSatuan].satuan = e.target.value; }; });
   document.querySelectorAll('[data-sat-pajak]').forEach(inp => { inp.oninput = (e) => { row.satuanDetail[e.target.dataset.satPajak].satuanPajak = e.target.value; }; });
   document.querySelectorAll('[data-sat-konversi]').forEach(inp => { inp.oninput = (e) => { row.satuanDetail[e.target.dataset.satKonversi].konversi = Number(e.target.value)||0; }; });
 }

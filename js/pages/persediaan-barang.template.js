@@ -41,6 +41,37 @@ function psbSelectOptions(list, selected, emptyLabel){
   return empty + list.map(o=>`<option value="${o.kode}" ${selected===o.kode?'selected':''}>${o.kode} - ${o.nama}</option>`).join('');
 }
 
+/* Opsi dropdown "Satuan" pada tabel "Jenis Satuan dan Harga" —
+   2026-08-27, sebelumnya <input type="text"> bebas, sekarang
+   picker dari master Satuan (Persediaan Barang > Master &
+   Setting > Satuan, DATA.satuan, page:'satuan') sesuai permintaan
+   user "Saat pemasukan Jenis Satuan, dapat memilih dari master".
+   BEDA dari psbSelectOptions() di atas: value opsi di sini adalah
+   NAMA Satuan (bukan kode) karena field ini (satuanDetail[x].satuan,
+   yang lalu disalin ke row.satuan) dibaca sebagai TEKS TAMPILAN
+   ("Dus"/"Karung"/dst.) oleh PULUHAN modul lain lintas mockup ini
+   (Purchase Order/Sales Order/Picking List/Invoice/Stock Request/
+   dst. semua menampilkan `it.satuan` apa adanya) — kalau value-nya
+   kode master (mis. "DUS"), pilihan lama di modul lain yang sudah
+   menyimpan "Dus" tidak akan pernah match, DAN barang yang baru
+   disimpan lewat mockup ini akan menampilkan teks berbeda dari
+   barang lama. Menyimpan NAMA (bukan kode) menjaga 1 konvensi teks
+   yang sama persis di seluruh mockup tanpa perlu menyentuh satu pun
+   modul lain yang sudah membaca `it.satuan`.
+   Fallback: kalau satuan yang tersimpan TIDAK match nama mana pun
+   di master (data lama sebelum master ini ada, atau nilai custom),
+   tetap ditambahkan sebagai opsi tambahan supaya nilainya tidak
+   diam-diam berubah begitu form dibuka. */
+function psbSatuanOptions(selected){
+  const val = selected || '';
+  let opts = `<option value="" ${!val?'selected':''}>- Pilih Satuan -</option>`;
+  opts += DATA.satuan.map(s=>`<option value="${s.nama}" ${val===s.nama?'selected':''}>${s.kode} - ${s.nama}</option>`).join('');
+  if(val && !DATA.satuan.some(s=>s.nama===val)){
+    opts += `<option value="${val}" selected>${val} (belum ada di master)</option>`;
+  }
+  return opts;
+}
+
 /* ===== LIST "Daftar Persediaan" ===== */
 function tplPersediaanListPage(state){
   return `
@@ -438,7 +469,7 @@ function tplPsbSatuanRows(sd){
     <tr>
       <td><b>${label}</b></td>
       <td><input type="text" data-sat-barcode="${key}" value="${d.barcode||''}"></td>
-      <td><input type="text" data-sat-satuan="${key}" value="${d.satuan||''}"></td>
+      <td><select data-sat-satuan="${key}">${psbSatuanOptions(d.satuan)}</select></td>
       <td><input type="text" data-sat-pajak="${key}" value="${d.satuanPajak||''}"></td>
       <td><input type="number" data-sat-konversi="${key}" value="${d.konversi??0}" style="width:90px;text-align:right;"></td>
     </tr>`;

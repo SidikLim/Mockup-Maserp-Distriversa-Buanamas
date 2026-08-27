@@ -3380,6 +3380,91 @@ const DATA = {
         {noRequest:'', itemRequest:'', kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', ket:'', kodeTarget:'', namaTarget:'', qty:300, um:'Dus', harga:5000, jumlah:1500000, batches:[]},
       ]},
   ],
+
+  /* Master Stock Opname — menu Persediaan Barang > Daftar Transaksi >
+     Master Stock Opname (lihat js/pages/master-stock-opname.*), dibangun
+     2026-08-27 sesuai screenshot MASERP "Master Stock Opname List" +
+     "Master Stock Opname" (form) yang dikirim user. 1 baris sample,
+     PERSIS meniru header dokumen di screenshot (No. Bukti "26/MSO/
+     SMG/08/00001", Cabang Semarang, Tgl. Transaksi "08/08/2026
+     12:03:40", Periode 08/08/2026 - 08/08/2026) — hanya kata "SDL"
+     pada Keterangan diganti "DBM" (nama singkat perusahaan demo lain
+     -> DBM). `items[]` HANYA 10 baris (seluruh katalog `DATA.items`
+     mockup ini, bukan 125 seperti "Total: 125" di screenshot asli —
+     downsize-volume, precedent sama seperti modul2 lain), difilter ke
+     gudang "06-GUU" (Gudang Utama-SMG) — `sistem` tiap baris = PERSIS
+     `qtyPhysical` baris `DATA.persediaan` gudang+barang yang sama (1
+     sumber kebenaran, bukan angka baru, precedent sama seperti
+     `lokasiGudang[].stock` di DATA.items). `hna` = `DATA.items[].harga`
+     (harga jual, sama seperti field HNA di modul lain mis. Reordering
+     Sheet/Dominasi). 8 dari 10 baris `qtyCounted` SAMA dengan `sistem`
+     (Selisih 0, persis kondisi semua baris yang terlihat di screenshot
+     halaman 1) — 2 baris SENGAJA dibuat beda (BRG-002 Gula Pasir
+     qtyCounted 65 vs sistem 69 = selisih -4 "susut", BRG-009 Kopi
+     Kapal Api qtyCounted 32 vs sistem 30 = selisih +2 "lebih") sekadar
+     mendemokan kalkulasi Selisih/Total reaktif & pewarnaan
+     merah/teal-nya, tidak mengubah kesan "screenshot semua nol" krn
+     baris itu ADA di halaman berikutnya pada data 125-baris asli,
+     bukan halaman 1 yang terlihat di screenshot. `batch`/`exp` semua
+     baris "-" (mockup ini tidak memodelkan data batch/expiry per lot
+     di level DATA.persediaan, lihat catatan lengkap di header
+     master-stock-opname.template.js). CATATAN: `DATA.transaksiPersediaan`
+     (array persis di atas) SUDAH punya 1 baris 'Pemasukkan' Head
+     Office/BRG-010 berketerangan "Penyesuaian stok hasil Stock
+     Opname" sejak sebelum modul ini dibangun — itu adalah ADJUSTMENT
+     JURNAL yang TIDAK ditautkan ke baris Master Stock Opname manapun
+     di sini (beda cabang & dibuat sesi lain sebelum modul source-nya
+     ada) — dicatat di sini demi transparansi, bukan bug, dan bisa
+     ditautkan sungguhan ke depan kalau diperlukan. */
+  masterStockOpname:[
+    {no:'26/MSO/SMG/08/00001', cabang:'Semarang', tglTransaksi:'08/08/2026 12:03:40', periodeAwal:'08/08/2026', periodeAkhir:'08/08/2026',
+      keterangan:'STOK OPNAME DBM SEMARANG PERIODE AGUSTUS 2026', filterGudangKode:'06-GUU', filterGudangNama:'Gudang Utama-SMG',
+      filterItemKode:'', filterItemNama:'', userEntry:'sidik',
+      items:[
+        {kodeGudang:'06-GUU', kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', batch:'-', exp:'-', ketArea:'', sistem:99, qtyCounted:99, hna:25000, verified:false},
+        {kodeGudang:'06-GUU', kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', batch:'-', exp:'-', ketArea:'', sistem:69, qtyCounted:65, hna:15000, verified:true},
+        {kodeGudang:'06-GUU', kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', batch:'-', exp:'-', ketArea:'', sistem:33, qtyCounted:33, hna:60000, verified:false},
+        {kodeGudang:'06-GUU', kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', batch:'-', exp:'-', ketArea:'', sistem:79, qtyCounted:79, hna:12000, verified:false},
+        {kodeGudang:'06-GUU', kode:'BRG-005', nama:'Mie Instan Indomie Goreng', batch:'-', exp:'-', ketArea:'', sistem:177, qtyCounted:177, hna:2500, verified:false},
+        {kodeGudang:'06-GUU', kode:'BRG-006', nama:'Kecap Manis ABC 600ml', batch:'-', exp:'-', ketArea:'', sistem:42, qtyCounted:42, hna:14000, verified:false},
+        {kodeGudang:'06-GUU', kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', batch:'-', exp:'-', ketArea:'', sistem:51, qtyCounted:51, hna:16000, verified:false},
+        {kodeGudang:'06-GUU', kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', batch:'-', exp:'-', ketArea:'', sistem:58, qtyCounted:58, hna:10000, verified:false},
+        {kodeGudang:'06-GUU', kode:'BRG-009', nama:'Kopi Kapal Api 165gr', batch:'-', exp:'-', ketArea:'', sistem:30, qtyCounted:32, hna:14000, verified:true},
+        {kodeGudang:'06-GUU', kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', batch:'-', exp:'-', ketArea:'', sistem:79, qtyCounted:79, hna:5000, verified:false},
+      ]},
+  ],
+
+  /* Stock Opname (Persediaan Barang > Daftar Transaksi > Stock
+     Opname, page:'stockOpname') — DIBANGUN 2026-08-27, lanjutan dari
+     Master Stock Opname di atas. 1 baris sample yang merujuk MSO
+     '26/MSO/SMG/08/00001' di atas (masterStockOpnameNo), memecah 10
+     barangnya jadi rincian per-batch (Batch Number/Qty Batch/Tgl.
+     Expired — field yang di Master Stock Opname SENGAJA "-", di sini
+     JUSTRU diisi krn itu fungsi utama modul ini). Qty Batch tiap
+     baris SENGAJA disamakan manual dgn Qty Counted barang yg sama
+     persis di MSO '26/MSO/SMG/08/00001' (BUKAN dihitung otomatis —
+     modul ini TIDAK cross-mutate balik ke DATA.masterStockOpname,
+     lihat catatan desain lengkap di header stock-opname.template.js).
+     Format Batch Number "BT-YYMMDD-NN" mengikuti pola field noBatch
+     yang sudah ada di DATA.salesOrder[].items. */
+  stockOpname:[
+    {no:'26/OPN-SMG/08/00001', cabang:'Semarang', tglTransaksi:'08/08/2026 12:15:22',
+      masterStockOpnameNo:'26/MSO/SMG/08/00001', gudangKode:'06-GUU', gudangNama:'Gudang Utama-SMG',
+      keterangan:'STOK OPNAME DBM SEMARANG PERIODE AGUSTUS 2026', userEntry:'sidik',
+      items:[
+        {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', batch:'BT-260801-01', qtyBatch:99, exp:'30/06/2027'},
+        {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', batch:'BT-260801-02', qtyBatch:65, exp:'15/05/2027'},
+        {kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', batch:'BT-260801-03', qtyBatch:33, exp:'28/02/2027'},
+        {kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', batch:'BT-260801-04', qtyBatch:79, exp:'10/03/2027'},
+        {kode:'BRG-005', nama:'Mie Instan Indomie Goreng', batch:'BT-260801-05', qtyBatch:177, exp:'01/12/2026'},
+        {kode:'BRG-006', nama:'Kecap Manis ABC 600ml', batch:'BT-260801-06', qtyBatch:42, exp:'20/01/2027'},
+        {kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', batch:'BT-260801-07', qtyBatch:51, exp:'05/11/2026'},
+        {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', batch:'BT-260801-08', qtyBatch:58, exp:'18/09/2027'},
+        {kode:'BRG-009', nama:'Kopi Kapal Api 165gr', batch:'BT-260801-09', qtyBatch:32, exp:'22/07/2027'},
+        {kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', batch:'BT-260801-10', qtyBatch:79, exp:'14/08/2028'},
+      ]},
+  ],
+
   /* Purchase Order — menu Supplier & Pembelian > Daftar Transaksi >
      Purchase Order (lihat js/pages/purchase-order.*). 11 baris data
      sample meniru struktur & alur screenshot MASERP "Daftar Purchase
@@ -4128,6 +4213,60 @@ const DATA = {
      relevan untuk bisnis DBM (distributor sembako/FMCG). */
   groupProduk:[
     {kode:'SMBK01', nama:'KELOMPOK PRODUK SEMBAKO UTAMA', keterangan:''},
+  ],
+
+  /* Satuan (Persediaan Barang > Master & Setting > Satuan,
+     page:'satuan'), sesuai screenshot MASERP "Daftar Satuan"
+     yang dikirim user 2026-08-27 (Total Record: 15, kolom Kode
+     Satuan/Nama Satuan dengan ikon sort di kedua header,
+     page-size 10 default, pager First/Previous/1/2/Next/Last).
+     CRUD sederhana pola Group Produk/Zat Kandungan Aktif — kode
+     MANUAL (bukan auto-generate, karena kode aslinya singkatan
+     bermakna seperti "BOX"/"BTL", bukan nomor urut), wajib unik,
+     readonly di mode Ubah.
+
+     10 baris PALING ATAS persis screenshot (AMP/BKS/BOX/BTL/
+     KRT/M/MBX/PAC/PCH/PCS — nama satuan generik universal ERP,
+     bukan data rahasia perusahaan demo lain, status sama seperti
+     nama laporan Report Center/nama Zat Kandungan Aktif yang
+     juga dipertahankan apa adanya). +5 baris tambahan (DUS/KRG/
+     KLG/LSN/RIM) supaya Total Record 15 sesuai screenshot,
+     SEKALIGUS SENGAJA dipilih supaya Nama Satuan-nya mencakup
+     LIMA nilai `satuan`/`satuanDetail[...].satuan` yang SUDAH
+     DIPAKAI di seluruh `DATA.items` sejak awal mockup ini (Dus/
+     Karung/Kaleng/Botol/Pcs) — supaya begitu field "Satuan" di
+     form Master Barang diubah dari input teks bebas jadi
+     dropdown ke master ini (lihat persediaan-barang.template.js/
+     .js), ke-10 baris sample barang yang sudah ada tetap
+     menampilkan pilihan yang benar ter-select saat dibuka Ubah,
+     bukan jatuh ke opsi kosong/tidak match.
+
+     Nama Satuan baris BTL & PCS SEDIKIT DISESUAIKAN dari huruf
+     besar semua di screenshot ("BTL"/"PCS") jadi "Botol"/"Pcs" —
+     BUKAN salah ketik, melainkan penyesuaian sengaja supaya
+     persis sama dengan string yang SUDAH ADA di `DATA.items`
+     (mis. `satuan:'Dus'`, `satuanDetail.um2.satuan:'Botol'`)
+     sehingga dropdown baru ini match dengan data existing tanpa
+     perlu mengedit satu pun baris `DATA.items` yang sudah ada
+     (konsisten prinsip "1 sumber kebenaran, tidak ada data
+     redundan yang bisa saling berbeda" yang dipakai banyak modul
+     lain di mockup ini, mis. Rumus Penyusutan Aktiva Tetap). */
+  satuan:[
+    {kode:'AMP', nama:'AMP'},
+    {kode:'BKS', nama:'BKS'},
+    {kode:'BOX', nama:'BOX'},
+    {kode:'BTL', nama:'Botol'},
+    {kode:'KRT', nama:'KRT'},
+    {kode:'M', nama:'meter'},
+    {kode:'MBX', nama:'MED BOX'},
+    {kode:'PAC', nama:'PAC'},
+    {kode:'PCH', nama:'PCH'},
+    {kode:'PCS', nama:'Pcs'},
+    {kode:'DUS', nama:'Dus'},
+    {kode:'KRG', nama:'Karung'},
+    {kode:'KLG', nama:'Kaleng'},
+    {kode:'LSN', nama:'Lusin'},
+    {kode:'RIM', nama:'Rim'},
   ],
 
   /* Bentuk Sediaan (Persediaan Barang > Master & Setting > Bentuk
@@ -6001,13 +6140,13 @@ const MENU=[
    {label:'Area Limit Sales', page:'placeholder', title:'Area Limit Sales'},
    {label:'Price List By Province', page:'priceListProvince'},
    {label:'HS Code', page:'placeholder', title:'HS Code'},
-   {label:'Satuan', page:'placeholder', title:'Satuan'},
+   {label:'Satuan', page:'satuan'},
    {header:'Daftar Transaksi'},
    {label:'Reordering Sheet', page:'reorderingSheet'},
    {label:'Stock Request', page:'stockRequest'},
    {label:'Transaksi Persediaan', page:'transaksiPersediaan'},
-   {label:'Master Stock Opname', page:'placeholder', title:'Master Stock Opname'},
-   {label:'Stock Opname', page:'placeholder', title:'Stock Opname'},
+   {label:'Master Stock Opname', page:'masterStockOpname'},
+   {label:'Stock Opname', page:'stockOpname'},
    {label:'Adjust Harga Jual', page:'placeholder', title:'Adjust Harga Jual'},
    {label:'Klaim Bonus Item', page:'placeholder', title:'Klaim Bonus Item'},
    {label:'Terima Klaim Bonus Item', page:'placeholder', title:'Terima Klaim Bonus Item'},
@@ -13256,6 +13395,511 @@ function tplRyDeleteConfirm(row){
 }
 
 /* =========================================================
+   TEMPLATE (HTML saja) — Master Stock Opname (Persediaan Barang >
+   Daftar Transaksi > Master Stock Opname, page:'masterStockOpname').
+   Logic-nya ada di file sebelah: master-stock-opname.js
+
+   Sebelumnya placeholder murni. Dibangun 2026-08-27 sesuai 4
+   screenshot MASERP yang dikirim user ("Master Stock Opname List",
+   form "Master Stock Opname" dengan tabel rincian barang lebar,
+   modal "Daftar Fisik Inventory" yang dibuka dari tombol header
+   "Laporan Pembantu Stock Opname") + 1 PDF contoh "CEK FISIK
+   INVENTORY" (dokumen kosong utk dibawa fisik ke gudang, per
+   Gudang > per Kategori, kolom Hasil Hitung kosong utk diisi
+   tangan). PERMINTAAN EKSPLISIT user: form Tambah ditambah 2 filter
+   BARU sebelum tombol "Generate" — Filter Gudang (opsi mengikuti
+   Cabang yang dipilih, dari DATA.gudang) & Filter Item Barang
+   (opsional, reuse openPersediaanPicker() shared) — supaya barang
+   yang bisa di-stock-opname-kan benar2 dibatasi oleh kedua filter
+   itu (BUKAN dekoratif). Filter Gudang ini TIDAK ADA secara eksplisit
+   di screenshot form aslinya (screenshot cuma punya Cabang), jadi
+   field ini murni tambahan atas permintaan user, ditempatkan
+   persis sebelum tombol Generate — pola sama seperti "Filter
+   Persediaan Barang" di Reordering Sheet.
+
+   SUMBER DATA rincian barang: "Generate" membaca DATA.persediaan
+   (BUKAN DATA.items) — difilter kodeGudang (WAJIB, dari Filter
+   Gudang) + kodeBarang (opsional, dari Filter Item Barang) — kolom
+   Sistem = qtyPhysical, HNA = harga jual barang (DATA.items[].harga),
+   Qty Counted diinisialisasi = Sistem (persis kondisi screenshot,
+   semua Selisih 0 sebelum benar2 dihitung ulang fisik), Selisih &
+   Total (=Selisih x HNA) dihitung LIVE (computed, bukan disimpan)
+   setiap Qty Counted diubah — pola sama seperti banyak field
+   computed lain di mockup ini (Nilai Susut Fixed Asset, dst.).
+
+   Batch Number & Exp Date SENGAJA selalu "-" — mockup ini (katalog
+   FMCG kering DBM) tidak memodelkan data batch/tanggal kadaluarsa
+   per lot di level DATA.persediaan/DATA.items (beda dari PDF contoh
+   yang datanya dari instalasi farmasi lain yang genuinely melacak
+   batch per infus/obat) — konsisten precedent field2 lain yang
+   SELALU "-" krn tidak ada sumber datanya (Kemasan di cetak Invoice,
+   Dimensi di Reordering Sheet).
+
+   Tombol "Laporan Pembantu Stock Opname" (header list) membuka modal
+   "Daftar Fisik Inventory" (Gudang/Kode Kategori/Inventory/Stock
+   Per-Tanggal/checkbox "Cetak Transaksi Bernilai Nol") -> Show
+   Report / Show Report Pdf SAMA2 membuka tab cetak dokumen KOSONG
+   "CEK FISIK INVENTORY" (kolom Hasil Hitung kosong, utk dibawa fisik
+   ke gudang SEBELUM data-nya dientri ke form Master Stock Opname di
+   atas) — dikelompokkan per Gudang lalu per Kategori, pola window.open
+   +document.write persis fitur cetak Invoice/FA-08/dst. */
+
+const MSO_CABANG_LIST = ['Head Office','Surabaya','Bandung','Tangerang','Medan','Makassar','Semarang','Sidoarjo'];
+const MSO_CABANG_CODE = {'Head Office':'HO','Surabaya':'SBY','Bandung':'BDG','Tangerang':'TGR','Medan':'MDN','Makassar':'MKS','Semarang':'SMG','Sidoarjo':'SDA'};
+
+function tplMsoListPage(){
+  return `
+    <div class="breadcrumb">Home / <b>Master Stock Opname</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('clipboard',15)} Master Stock Opname List</h3>
+        <div class="toolbar-actions">
+          <button class="btn-teal" id="btnMsoLaporanBantu">Laporan Pembantu Stock Opname</button>
+          <select id="msoPeriodeChip" style="max-width:150px;">
+            <option>Juni 2026</option><option>Juli 2026</option><option selected>Agustus 2026</option>
+          </select>
+          <button class="btn-primary" id="btnMsoAdd">${icon('plus',14)} Tambah</button>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <select id="msoPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="msoSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>No. Bukti</th>
+          <th>Tgl Transaksi</th>
+          <th>Periode</th>
+          <th>Keterangan</th>
+          <th>Lihat</th>
+          <th>Cetak</th>
+          <th>Ubah</th>
+          <th>Hapus</th>
+        </tr></thead>
+        <tbody id="msoTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="msoPager"></div><div id="msoTotal"></div></div>
+    </div>`;
+}
+
+function tplMsoRows(rows, page, pageSize){
+  if(!rows.length) return `<tr><td colspan="8" style="color:var(--text-light);">Tidak ada data Master Stock Opname</td></tr>`;
+  const start = (page-1)*pageSize;
+  return rows.slice(start, start+pageSize).map((r) => {
+    const idx = DATA.masterStockOpname.indexOf(r);
+    return `
+    <tr>
+      <td><a href="#" class="row-link" data-view="${idx}">${r.no}</a></td>
+      <td>${(r.tglTransaksi||'').split(' ')[0]||''}</td>
+      <td>${r.periodeAwal||''} - ${r.periodeAkhir||''}</td>
+      <td>${r.keterangan||''}</td>
+      <td><button class="icon-btn view" data-view="${idx}" title="Lihat">${icon('eye',15)}</button></td>
+      <td><button class="icon-btn print" data-print="${idx}" title="Cetak">${icon('printer',15)}</button></td>
+      <td><button class="icon-btn edit" data-edit="${idx}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function tplMsoPager(page, totalPages){
+  if(totalPages <= 1) return '';
+  let btns = `<button data-msopage="1">First</button><button data-msopage="${Math.max(1,page-1)}">Previous</button>`;
+  for(let p=1;p<=totalPages;p++){ btns += `<button data-msopage="${p}" class="${p===page?'active':''}">${p}</button>`; }
+  btns += `<button data-msopage="${Math.min(totalPages,page+1)}">Next</button><button data-msopage="${totalPages}">Last</button>`;
+  return btns;
+}
+
+/* Pager windowed (maks. 7 nomor tampil), pola sama tplZkaPager()/
+   tplGuPager() — dipakai utk tabel rincian barang, karena screenshot
+   MASERP asli menampilkan gaya pager ini persis di sana (First
+   Previous 1 2 3 4 5 6 7 Next Last). */
+function tplMsoItemPager(page, totalPages){
+  if(totalPages <= 1) return '';
+  const windowSize = 7;
+  let startP = Math.max(1, page - Math.floor(windowSize/2));
+  let endP = Math.min(totalPages, startP + windowSize - 1);
+  startP = Math.max(1, endP - windowSize + 1);
+  let btns = `<button data-msoitempage="1">First</button><button data-msoitempage="${Math.max(1,page-1)}">Previous</button>`;
+  for(let p=startP;p<=endP;p++){ btns += `<button data-msoitempage="${p}" class="${p===page?'active':''}">${p}</button>`; }
+  btns += `<button data-msoitempage="${Math.min(totalPages,page+1)}">Next</button><button data-msoitempage="${totalPages}">Last</button>`;
+  return btns;
+}
+
+function tplMsoItemRow(it, ii, dis){
+  const selisih = (it.qtyCounted||0) - (it.sistem||0);
+  const total = selisih * (it.hna||0);
+  const selisihColor = selisih > 0 ? 'var(--teal)' : (selisih < 0 ? 'var(--red)' : 'inherit');
+  return `
+    <tr style="${it.verified?'background:#f2fbf6;':''}">
+      <td>${ii+1}${it.verified?` <span title="Sudah diverifikasi" style="color:var(--teal);">${icon('check',12)}</span>`:''}</td>
+      <td>${it.kodeGudang}</td>
+      <td>${it.kode}</td>
+      <td>${it.nama}</td>
+      <td>${it.batch||'-'}</td>
+      <td>${it.exp||'-'}</td>
+      <td><input type="number" min="0" step="1" data-mso-qty="${ii}" value="${it.qtyCounted}" ${dis} style="width:85px;"></td>
+      <td><input type="text" data-mso-ketarea="${ii}" value="${it.ketArea||''}" ${dis} style="width:90px;" placeholder="Area"></td>
+      <td style="text-align:right;">${num(it.sistem)}</td>
+      <td style="text-align:right;color:${selisihColor};font-weight:${selisih!==0?'700':'400'};">${num(selisih)}</td>
+      <td style="text-align:right;">${num(it.hna)}</td>
+      <td style="text-align:right;color:${selisihColor};font-weight:${selisih!==0?'700':'400'};">${num(total)}</td>
+      ${dis ? '' : `
+      <td><button type="button" class="icon-btn edit" data-mso-verif="${ii}" title="Verifikasi Hasil Hitung">${icon('edit',14)}</button></td>
+      <td><button type="button" class="icon-btn del" data-mso-hapus="${ii}" title="Hapus dari Stock Opname">${icon('trash',14)}</button></td>`}
+    </tr>`;
+}
+
+function tplMsoItemsTable(items, page, pageSize, dis){
+  const totalPages = Math.max(1, Math.ceil(items.length/pageSize));
+  const p = Math.min(page, totalPages);
+  const start = (p-1)*pageSize;
+  const pageItems = items.slice(start, start+pageSize);
+  const grandTotal = items.reduce((s,it) => s + (((it.qtyCounted||0)-(it.sistem||0)) * (it.hna||0)), 0);
+  return `
+    <table class="mso-item-table">
+      <thead>
+        <tr>
+          <th rowspan="2">No.</th>
+          <th rowspan="2">Gudang</th>
+          <th colspan="2">Produk</th>
+          <th rowspan="2">Batch<br>Number</th>
+          <th rowspan="2">Exp Date</th>
+          <th colspan="4">Qty</th>
+          <th rowspan="2">HNA</th>
+          <th rowspan="2">Total</th>
+          ${dis ? '' : `<th colspan="2">Verifikasi</th>`}
+        </tr>
+        <tr>
+          <th>Kode</th><th>Nama</th>
+          <th>Qty. Counted</th><th>Ket. Area</th><th>Sistem</th><th>Selisih</th>
+        </tr>
+      </thead>
+      <tbody id="msoItemsBody">
+        ${pageItems.length ? pageItems.map((it,ii)=>tplMsoItemRow(it,start+ii,dis)).join('') : `<tr><td colspan="13" style="color:var(--text-light);padding:14px;">Belum ada barang — pilih Filter Gudang lalu klik "Generate".</td></tr>`}
+      </tbody>
+      ${items.length ? `<tfoot><tr>
+        <td colspan="10" style="text-align:right;font-weight:700;">Total Selisih (Rp)</td>
+        <td style="text-align:right;font-weight:700;color:${grandTotal<0?'var(--red)':(grandTotal>0?'var(--teal)':'inherit')};">${num(grandTotal)}</td>
+        ${dis?'':'<td colspan="2"></td>'}
+      </tr></tfoot>` : ''}
+    </table>
+    <div class="table-footer"><div class="pager" id="msoItemPager">${tplMsoItemPager(p, totalPages)}</div><div>Total: ${items.length}</div></div>`;
+}
+
+function tplMsoForm(mode, row){
+  const isAdd = mode === 'add';
+  const isView = mode === 'view';
+  const dis = isView ? 'disabled' : '';
+  const titleAction = isAdd ? '+ Master Stock Opname' : (isView ? 'Lihat Master Stock Opname' : 'Ubah Master Stock Opname');
+  return `
+    <div class="breadcrumb">Home / Master Stock Opname / <b>${isAdd?'Tambah':(isView?'Lihat':'Ubah')}</b></div>
+    <div class="card">
+      <div class="card-header dark-header"><h3>${icon('clipboard',15)} ${titleAction}</h3></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Cabang</label>
+            <select id="fMsoCabang" ${(!isAdd)?'disabled':''}>
+              ${MSO_CABANG_LIST.map(c=>`<option ${row.cabang===c?'selected':''}>${c}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>No. Bukti</label>
+            <input type="text" id="fMsoNo" value="${row.no||''}" placeholder="Otomatis" readonly>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Tgl. Transaksi (Stock per Tgl)</label>
+            <div class="input-with-btn">
+              <input type="text" id="fMsoTglTransaksi" value="${row.tglTransaksi||''}" ${dis}>
+              <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',14)}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Periode</label>
+            <div class="field-pair">
+              <input type="text" id="fMsoPeriodeAwal" value="${row.periodeAwal||''}" ${dis}>
+              <span style="align-self:center;color:var(--text-light);">-</span>
+              <input type="text" id="fMsoPeriodeAkhir" value="${row.periodeAkhir||''}" ${dis}>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Keterangan</label>
+          <input type="text" id="fMsoKeterangan" value="${row.keterangan||''}" placeholder="Keterangan" ${dis}>
+        </div>
+
+        ${!isView ? `
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Filter Gudang</label>
+            <select id="fMsoGudang">
+              <option value="">- Pilih Gudang -</option>
+              ${msoGudangOptionsForCabang(row.cabang, row.filterGudangKode)}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Filter Item Barang</label>
+            <div class="input-with-btn">
+              <input type="text" id="fMsoItem" value="${row.filterItemNama||''}" placeholder="Semua barang di gudang terpilih (kosongkan utk semua)" readonly>
+              <button type="button" class="icon-btn edit" id="msoItemSearch" title="Cari Barang">${icon('search',14)}</button>
+              ${row.filterItemKode ? `<button type="button" class="icon-btn del" id="msoItemClear" title="Hapus Filter">${icon('trash',14)}</button>` : ''}
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:16px;">
+          <button class="btn-primary" id="msoGenerate">Generate</button>
+        </div>` : ''}
+
+        <div class="table-wrap" style="overflow-x:auto;">
+          <div id="msoItemsWrap">${tplMsoItemsTable(row.items, 1, 10, isView)}</div>
+        </div>
+
+        <div class="form-page-actions">
+          ${isView
+            ? `<a href="#" id="msoTutup" class="link-add" style="margin-right:auto;">&larr; Kembali ke Daftar</a>`
+            : `<a href="#" id="msoBatalkan" class="link-add" style="margin-right:auto;">Batalkan</a>
+               <button class="btn-primary" id="msoSimpan">Simpan</button>`}
+        </div>
+      </div>
+    </div>`;
+}
+
+/* Opsi <option> Gudang yang mengikuti Cabang terpilih (dari
+   DATA.gudang, difilter g.cabang===cabang) — INI FIELD BARU yang
+   diminta user, tidak ada di screenshot asli. */
+function msoGudangOptionsForCabang(cabang, selectedKode){
+  return DATA.gudang.filter(g => g.cabang === cabang)
+    .map(g => `<option value="${g.kode}" ${g.kode===selectedKode?'selected':''}>${g.kode} - ${g.nama}</option>`).join('');
+}
+
+function tplMsoDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Master Stock Opname</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Master Stock Opname <b>${row.no}</b>?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+function tplMsoItemDeleteConfirm(it){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Barang dari Stock Opname</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus barang <b>${it.kode} - ${it.nama}</b> dari daftar stock opname ini?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+function tplMsoVerifModal(it, ii){
+  return `
+    <div class="modal-box" style="max-width:420px;">
+      <div class="modal-header"><span>Verifikasi Hasil Hitung</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <p style="margin-top:0;"><b>${it.kode}</b> - ${it.nama} <span style="color:var(--text-light);">(${it.kodeGudang})</span></p>
+        <div class="form-group">
+          <label>Qty. Counted</label>
+          <input type="number" min="0" step="1" id="mvQty" value="${it.qtyCounted}">
+        </div>
+        <div class="form-group">
+          <label>Ket. Area</label>
+          <input type="text" id="mvKetArea" value="${it.ketArea||''}" placeholder="Area">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-primary" id="modalVerifSave">Simpan &amp; Tandai Terverifikasi</button>
+      </div>
+    </div>`;
+}
+
+function tplMsoInfoModal(title, text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer"><button class="btn-primary" id="modalOk">Mengerti</button></div>
+    </div>`;
+}
+
+/* Modal "Daftar Fisik Inventory" (dibuka dari tombol header list
+   "Laporan Pembantu Stock Opname") — sesuai screenshot MASERP: Gudang
+   (picker)/Kode Kategori (select)/Inventory (picker)/Stock Per-Tanggal
+   (tanggal)/checkbox "Cetak Transaksi Bernilai Nol"/tombol Close-Show
+   Report-Show Report Pdf. */
+function tplMsoLaporanBantuModal(f){
+  return `
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header"><span>${icon('box',15)} Daftar Fisik Inventory</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Gudang</label>
+          <div class="input-with-btn">
+            <input type="text" id="mlbGudang" value="${f.gudangNama||''}" placeholder="Cari gudang" readonly>
+            <button type="button" class="icon-btn edit" id="mlbGudangSearch" title="Cari Gudang">${icon('search',14)}</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Kode Kategori</label>
+          <select id="mlbKategori">
+            <option value="">Pilih Kategori...</option>
+            ${DATA.kategoriBarang.map(k=>`<option value="${k.kode}" ${f.kategoriKode===k.kode?'selected':''}>${k.nama}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Inventory</label>
+          <div class="input-with-btn">
+            <input type="text" id="mlbItem" value="${f.itemNama||''}" placeholder="Cari barang" readonly>
+            <button type="button" class="icon-btn edit" id="mlbItemSearch" title="Cari Barang">${icon('search',14)}</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Stock Per-Tanggal</label>
+          <div class="input-with-btn">
+            <input type="text" id="mlbTanggal" value="${f.tanggal||''}">
+            <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',14)}</span>
+          </div>
+        </div>
+        <div class="checkbox-row">
+          <label><input type="checkbox" id="mlbBernilaiNol" ${f.bernilaiNol?'checked':''}> Cetak Transaksi Bernilai Nol</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="mlbClose">Close</button>
+        <button class="btn-primary" id="mlbShowReport">Show Report</button>
+        <button class="btn-primary" id="mlbShowReportPdf">Show Report Pdf</button>
+      </div>
+    </div>`;
+}
+
+function tplMsoSimplePicker(title, rows){
+  return `
+    <div class="modal-box" style="max-width:460px;">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body" style="max-height:360px;overflow-y:auto;">
+        <table><tbody>
+          ${rows.length ? rows.map(r=>`<tr class="mso-pick-row" data-kode="${r.kode}" data-label="${r.label}" style="cursor:pointer;"><td style="padding:8px 10px;border-bottom:1px solid var(--border);">${r.label}</td></tr>`).join('') : `<tr><td style="color:var(--text-light);padding:10px;">Tidak ada data.</td></tr>`}
+        </tbody></table>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+/* Dokumen cetak "CEK FISIK INVENTORY" — KOSONG (kolom Hasil Hitung
+   selalu kosong, ini form fisik utk dibawa ke gudang, BUKAN hasil
+   Master Stock Opname yang sudah dientri — lihat tplMsoResultDoc()
+   utk yang itu), dikelompokkan per Gudang lalu per Kategori, persis
+   struktur PDF contoh "Contoh Cek Fisik Inventory.pdf" yang dikirim
+   user (minus kolom Batch Number/Exp Date yang selalu "-" di mockup
+   ini, lihat catatan header file ini). */
+function tplMsoCekFisikDoc(tanggal, groups){
+  const groupsHtml = !groups.length
+    ? `<p style="text-align:center;color:#777;">Tidak ada data Persediaan yang cocok dengan filter ini.</p>`
+    : groups.map(g => `
+      <p style="font-weight:700;margin:14px 0 2px;">Nama Gudang:&nbsp;&nbsp;${g.namaGudang}</p>
+      ${g.kategoris.map(k => `
+        <table>
+          <thead>
+            <tr><th style="width:34px;">No.</th><th>Kode Item</th><th>Nama Barang</th><th style="width:60px;">Satuan</th><th>Batch Number</th><th>Exp date</th><th style="width:110px;">Hasil Hitung</th></tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="7" style="font-weight:700;background:#f5f5f5;">Kategori:&nbsp;&nbsp;${k.namaKategori}</td></tr>
+            ${k.rows.map((r,i) => `<tr><td style="text-align:center;">${i+1}</td><td>${r.kodeBarang}</td><td>${r.namaBarang}</td><td>${r.satuan}</td><td>-</td><td>-</td><td></td></tr>`).join('')}
+          </tbody>
+        </table>`).join('')}`).join('');
+  return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Cek Fisik Inventory</title>
+<style>
+  body{font-family:Arial, Helvetica, sans-serif;font-size:11px;color:#111;margin:20px;}
+  .mso-doc-toolbar{margin-bottom:10px;}
+  .mso-doc-toolbar button{padding:7px 16px;border:none;border-radius:5px;font-size:12.5px;font-weight:600;cursor:pointer;margin-right:8px;}
+  .mso-doc-toolbar .btn-print{background:#4472c4;color:#fff;}
+  .mso-doc-toolbar .btn-close{background:#eef1f7;color:#333;}
+  h1{font-size:15px;text-align:center;margin:2px 0;}
+  .sub{font-size:11px;text-align:center;margin:0 0 12px;}
+  table{width:100%;border-collapse:collapse;margin-bottom:8px;}
+  th,td{border:1px solid #999;padding:3px 6px;font-size:10.5px;}
+  thead th{background:#f0f0f0;text-align:left;font-weight:700;}
+  @media print{ .mso-doc-toolbar{display:none;} body{margin:0;} }
+</style></head>
+<body>
+  <div class="mso-doc-toolbar">
+    <button class="btn-print" onclick="window.print()">Cetak</button>
+    <button class="btn-close" onclick="window.close()">Tutup</button>
+  </div>
+  <div style="text-align:right;font-size:11px;">${(new Date()).toLocaleDateString?'':''}</div>
+  <h1>PT Distriversa Buanamas</h1>
+  <div class="sub" style="font-weight:700;font-size:13px;">CEK FISIK INVENTORY</div>
+  <div class="sub">Stock Per Tanggal : ${tanggal}</div>
+  ${groupsHtml}
+</body></html>`;
+}
+
+/* Dokumen cetak hasil Master Stock Opname yang SUDAH dientri (tombol
+   Cetak di list) — beda dari tplMsoCekFisikDoc() di atas yang isinya
+   kosong/blank form. Ini menampilkan Qty Counted/Sistem/Selisih/Total
+   yang sudah tersimpan di baris DATA.masterStockOpname. */
+function tplMsoResultDoc(row){
+  const fmt = n => Number(n||0).toLocaleString('id-ID');
+  const grandTotal = row.items.reduce((s,it) => s + (((it.qtyCounted||0)-(it.sistem||0)) * (it.hna||0)), 0);
+  const bodyRows = !row.items.length
+    ? `<tr><td colspan="9" style="text-align:center;color:#777;padding:14px;">Tidak ada barang.</td></tr>`
+    : row.items.map((it,i) => {
+      const selisih = (it.qtyCounted||0) - (it.sistem||0);
+      const total = selisih * (it.hna||0);
+      return `<tr>
+        <td style="text-align:center;">${i+1}</td>
+        <td>${it.kodeGudang}</td>
+        <td>${it.kode}</td>
+        <td>${it.nama}</td>
+        <td style="text-align:right;">${fmt(it.sistem)}</td>
+        <td style="text-align:right;">${fmt(it.qtyCounted)}</td>
+        <td style="text-align:right;">${fmt(selisih)}</td>
+        <td style="text-align:right;">${fmt(it.hna)}</td>
+        <td style="text-align:right;">${fmt(total)}</td>
+      </tr>`;
+    }).join('');
+  return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Master Stock Opname ${row.no}</title>
+<style>
+  body{font-family:Arial, Helvetica, sans-serif;font-size:11px;color:#111;margin:20px;}
+  .mso-doc-toolbar{margin-bottom:10px;}
+  .mso-doc-toolbar button{padding:7px 16px;border:none;border-radius:5px;font-size:12.5px;font-weight:600;cursor:pointer;margin-right:8px;}
+  .mso-doc-toolbar .btn-print{background:#4472c4;color:#fff;}
+  .mso-doc-toolbar .btn-close{background:#eef1f7;color:#333;}
+  h1{font-size:15px;text-align:center;margin:2px 0;}
+  .sub{font-size:11px;text-align:center;margin:0 0 4px;}
+  table{width:100%;border-collapse:collapse;}
+  th,td{border:1px solid #999;padding:3px 6px;font-size:10.5px;}
+  thead th{background:#f0f0f0;text-align:left;font-weight:700;}
+  tfoot td{font-weight:700;background:#f7f7f7;}
+  @media print{ .mso-doc-toolbar{display:none;} body{margin:0;} }
+</style></head>
+<body>
+  <div class="mso-doc-toolbar">
+    <button class="btn-print" onclick="window.print()">Cetak</button>
+    <button class="btn-close" onclick="window.close()">Tutup</button>
+  </div>
+  <h1>PT Distriversa Buanamas</h1>
+  <div class="sub" style="font-weight:700;font-size:13px;">MASTER STOCK OPNAME</div>
+  <div class="sub">No. Bukti: ${row.no} &nbsp;|&nbsp; Periode: ${row.periodeAwal} - ${row.periodeAkhir}</div>
+  <div class="sub">${row.keterangan||''}</div>
+  <table>
+    <thead><tr><th>No.</th><th>Gudang</th><th>Kode</th><th>Nama Barang</th><th>Sistem</th><th>Qty Counted</th><th>Selisih</th><th>HNA</th><th>Total</th></tr></thead>
+    <tbody>${bodyRows}</tbody>
+    <tfoot><tr><td colspan="8" style="text-align:right;">Total Selisih (Rp)</td><td style="text-align:right;">${fmt(grandTotal)}</td></tr></tfoot>
+  </table>
+</body></html>`;
+}
+
+/* =========================================================
    TEMPLATE (HTML saja) — Master Supplier (Supplier & Pembelian)
    Semua fungsi di file ini HANYA menyusun & mengembalikan
    markup HTML (string), TIDAK ada logic/DOM-binding/data
@@ -16400,6 +17044,37 @@ function psbSelectOptions(list, selected, emptyLabel){
   return empty + list.map(o=>`<option value="${o.kode}" ${selected===o.kode?'selected':''}>${o.kode} - ${o.nama}</option>`).join('');
 }
 
+/* Opsi dropdown "Satuan" pada tabel "Jenis Satuan dan Harga" —
+   2026-08-27, sebelumnya <input type="text"> bebas, sekarang
+   picker dari master Satuan (Persediaan Barang > Master &
+   Setting > Satuan, DATA.satuan, page:'satuan') sesuai permintaan
+   user "Saat pemasukan Jenis Satuan, dapat memilih dari master".
+   BEDA dari psbSelectOptions() di atas: value opsi di sini adalah
+   NAMA Satuan (bukan kode) karena field ini (satuanDetail[x].satuan,
+   yang lalu disalin ke row.satuan) dibaca sebagai TEKS TAMPILAN
+   ("Dus"/"Karung"/dst.) oleh PULUHAN modul lain lintas mockup ini
+   (Purchase Order/Sales Order/Picking List/Invoice/Stock Request/
+   dst. semua menampilkan `it.satuan` apa adanya) — kalau value-nya
+   kode master (mis. "DUS"), pilihan lama di modul lain yang sudah
+   menyimpan "Dus" tidak akan pernah match, DAN barang yang baru
+   disimpan lewat mockup ini akan menampilkan teks berbeda dari
+   barang lama. Menyimpan NAMA (bukan kode) menjaga 1 konvensi teks
+   yang sama persis di seluruh mockup tanpa perlu menyentuh satu pun
+   modul lain yang sudah membaca `it.satuan`.
+   Fallback: kalau satuan yang tersimpan TIDAK match nama mana pun
+   di master (data lama sebelum master ini ada, atau nilai custom),
+   tetap ditambahkan sebagai opsi tambahan supaya nilainya tidak
+   diam-diam berubah begitu form dibuka. */
+function psbSatuanOptions(selected){
+  const val = selected || '';
+  let opts = `<option value="" ${!val?'selected':''}>- Pilih Satuan -</option>`;
+  opts += DATA.satuan.map(s=>`<option value="${s.nama}" ${val===s.nama?'selected':''}>${s.kode} - ${s.nama}</option>`).join('');
+  if(val && !DATA.satuan.some(s=>s.nama===val)){
+    opts += `<option value="${val}" selected>${val} (belum ada di master)</option>`;
+  }
+  return opts;
+}
+
 /* ===== LIST "Daftar Persediaan" ===== */
 function tplPersediaanListPage(state){
   return `
@@ -16797,7 +17472,7 @@ function tplPsbSatuanRows(sd){
     <tr>
       <td><b>${label}</b></td>
       <td><input type="text" data-sat-barcode="${key}" value="${d.barcode||''}"></td>
-      <td><input type="text" data-sat-satuan="${key}" value="${d.satuan||''}"></td>
+      <td><select data-sat-satuan="${key}">${psbSatuanOptions(d.satuan)}</select></td>
       <td><input type="text" data-sat-pajak="${key}" value="${d.satuanPajak||''}"></td>
       <td><input type="number" data-sat-konversi="${key}" value="${d.konversi??0}" style="width:90px;text-align:right;"></td>
     </tr>`;
@@ -20803,6 +21478,467 @@ function tplSqDecorativePicker(title, list, pickAttr){
         </table></div>
       </div>
       <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+/* =========================================================
+   TEMPLATE (HTML saja) — Satuan (Persediaan Barang > Master &
+   Setting > Satuan, page:'satuan'). Semua fungsi di file ini
+   HANYA menyusun & mengembalikan markup HTML (string), TIDAK
+   ada logic/DOM-binding di sini. Logic-nya ada di file sebelah:
+   satuan.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Sebelumnya placeholder murni. Dibangun 2026-08-27 sesuai
+   screenshot MASERP "Daftar Satuan" yang dikirim user (Total
+   Record: 15, kolom Kode Satuan/Nama Satuan dengan ikon sort di
+   kedua header, page-size 10 default + Pencarian Global, pager
+   First/Previous/1/2/Next/Last, tombol "+Tambah"/Ubah/Hapus).
+   CRUD sederhana pola Group Produk/Zat Kandungan Aktif (kode
+   MANUAL — bukan auto-generate, karena kode aslinya singkatan
+   bermakna seperti "BOX"/"BTL"/"PCS", bukan nomor urut — wajib
+   unik, readonly di mode Ubah) + sort kolom & pager windowed
+   SUNGGUHAN fungsional (pola sama Zat Kandungan Aktif/Group
+   Produk/Kategori Reordering Sheet dkk).
+
+   DATA: 10 baris PALING ATAS persis screenshot (AMP/BKS/BOX/
+   BTL/KRT/M/MBX/PAC/PCH/PCS — satuan generik universal ERP,
+   bukan data rahasia perusahaan demo lain, aman dipakai apa
+   adanya, status sama seperti nama laporan Report Center/nama
+   zat aktif Zat Kandungan Aktif), + 5 baris tambahan (DUS/KRG/
+   KLG/LSN/RIM) supaya Total Record 15 sekaligus SENGAJA
+   mencakup 5 nilai `satuan` yang SUDAH DIPAKAI di seluruh
+   `DATA.items`/`satuanDetail` sejak awal mockup ini (Dus/
+   Karung/Kaleng/Botol/Pcs) — lihat komentar lengkap di atas
+   array `DATA.satuan` di js/data.js untuk penjelasan kenapa 2
+   Nama Satuan (BTL/PCS) sedikit disesuaikan casing-nya dari
+   screenshot demi konsistensi dengan data yang sudah ada.
+
+   PENTING — konsumen lintas-modul: field ini dikonsumsi oleh
+   Master Barang (Persediaan Barang > Master & Setting >
+   Inventory, page:'items', file persediaan-barang.template.js/
+   .js) — kolom "Satuan" pada tabel "Jenis Satuan dan Harga" di
+   form Barang SEKARANG jadi dropdown ke-sini (`psbSatuanOptions()`
+   di persediaan-barang.template.js), bukan input teks bebas
+   lagi, lihat komentar di file itu.
+========================================================= */
+
+function tplSatPage(){
+  return `
+    <div class="breadcrumb">Home / <b>Satuan</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('box',15)} Daftar Satuan</h3>
+        <button class="btn-primary" id="btnSatAdd">${icon('plus',14)} Tambah</button>
+      </div>
+      <div class="table-toolbar">
+        <select id="satPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="satSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>${tplSatSortHeader('Kode Satuan','kode')}</th>
+          <th>${tplSatSortHeader('Nama Satuan','nama')}</th>
+          <th style="width:70px;">Ubah</th>
+          <th style="width:70px;">Hapus</th>
+        </tr></thead>
+        <tbody id="satTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="satPager"></div><div id="satTotal"></div></div>
+    </div>`;
+}
+
+function tplSatSortHeader(label, field){
+  return `<span class="sat-sort-header" data-sat-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="satSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplSatRows(rows, page, pageSize){
+  if(!rows.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada data Satuan</td></tr>`;
+  const start = (page-1)*pageSize;
+  return rows.slice(start, start+pageSize).map((r) => {
+    const idx = DATA.satuan.indexOf(r);
+    return `
+    <tr>
+      <td><a href="#" class="row-link" data-edit="${idx}" style="color:var(--blue);font-weight:600;">${r.kode}</a></td>
+      <td>${r.nama || 'Non'}</td>
+      <td><button class="icon-btn edit" data-edit="${idx}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function tplSatPager(page, totalPages){
+  if(totalPages <= 1) return '';
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+  let nums = '';
+  for(let p = start; p <= end; p++){
+    nums += `<button class="${p===page?'active':''}" data-satpage="${p}">${p}</button>`;
+  }
+  return `
+    <button data-satpage="1" ${page<=1?'disabled':''}>First</button>
+    <button data-satpage="${Math.max(1,page-1)}" ${page<=1?'disabled':''}>Previous</button>
+    ${nums}
+    <button data-satpage="${Math.min(totalPages,page+1)}" ${page>=totalPages?'disabled':''}>Next</button>
+    <button data-satpage="${totalPages}" ${page>=totalPages?'disabled':''}>Last</button>`;
+}
+
+function tplSatModal(mode, row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${mode==='edit'?'Ubah Satuan':'Tambah Satuan'}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Kode Satuan</label>
+          <input type="text" id="fSatKode" value="${row.kode}" ${mode==='edit'?'readonly style="background:#f2f3f6;color:var(--text-light);"':'placeholder="Contoh: DUS"'}>
+          <div class="form-error" id="fSatKodeErr">Kode Satuan wajib diisi</div>
+        </div>
+        <div class="form-group">
+          <label>Nama Satuan</label>
+          <input type="text" id="fSatNama" value="${row.nama||''}" placeholder="Contoh: Dus">
+          <div class="form-error" id="fSatNamaErr">Nama Satuan wajib diisi</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-primary" id="modalSave">Simpan</button>
+      </div>
+    </div>`;
+}
+
+function tplSatDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Satuan</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Satuan <b>${row.kode}</b> — ${row.nama||'Non'}?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
+   TEMPLATE (HTML saja) — Stock Opname (Persediaan Barang >
+   Daftar Transaksi > Stock Opname, page:'stockOpname'). Logic-nya
+   ada di file sebelah: stock-opname.js
+
+   Sebelumnya placeholder murni. Dibangun 2026-08-27, LANJUTAN
+   LANGSUNG dari modul Master Stock Opname (lihat header komentar
+   master-stock-opname.template.js dulu utk konteks modul itu) sesuai
+   permintaan eksplisit user: "lanjut buatkan mockup Stock Opnamenya,
+   lanjutan dari master stock opname yang sebelumnya" + 2 screenshot
+   MASERP yang dikirim ("Daftar Stok Opname" list & form "+Stock
+   Opname").
+
+   BEDA PERAN dengan Master Stock Opname: Master Stock Opname adalah
+   dokumen RENCANA/HASIL HITUNG per-barang (Qty Counted vs Sistem,
+   Selisih, Verifikasi) — sudah dibangun sebelumnya. Stock Opname
+   (modul ini) adalah dokumen TURUNAN yang me-RUJUK 1 Master Stock
+   Opname lalu memecah tiap barangnya jadi RINCIAN PER BATCH (Batch
+   Number/Qty Batch/Tgl. Expired) — karena di dunia nyata 1 kode
+   barang bisa punya banyak batch/lot dengan tanggal kadaluarsa
+   beda-beda (persis terlihat di screenshot form MASERP: kode barang
+   "01-30001" muncul 5x berturut-turut dengan Batch Number & Tgl.
+   Expired berbeda tiap baris, dikelompokkan dgn warna latar beda).
+
+   Screenshot form REFERENSI (`ee0608b9-image.png`) berasal dari
+   instalasi MASERP customer lain (farmasi/alkes — item "SATORIA
+   MEDIKA", "Infus Ringer Lactate" dst., kolom Batch Number dari data
+   customer itu) — BUKAN data DBM. Field & alur kerjanya (Cabang/No.
+   Bukti/Tgl. Transaksi/Master Stock Opname/Gudang/Keterangan lalu
+   tabel Rincian Batch Number/Qty Batch/Tgl. Expired) DIPERTAHANKAN
+   sesuai referensi, tapi SELURUH data barangnya diganti katalog FMCG
+   DBM (10 barang yang sama dipakai modul-modul lain) — kode gudang
+   Semarang DBM sendiri adalah 06-GUU (BUKAN 02-GUU seperti contoh di
+   screenshot, itu kode instalasi customer lain), konsisten dgn
+   DATA.masterStockOpname yang sudah ada.
+
+   PRESEDEN Batch Number/Tgl Expired: BEDA dari Master Stock Opname
+   (yang field Batch/Exp-nya SENGAJA selalu "-" krn modul itu cuma
+   soal Qty Counted vs Sistem, bukan soal batch) — modul Stock Opname
+   ini JUSTRU FUNGSI UTAMANYA adalah mengisi Batch Number/Qty
+   Batch/Tgl. Expired per barang, jadi field2 itu di sini WAJIB
+   diisi/editable, bukan "-". Format Batch Number ("BT-YYMMDD-NN")
+   mengikuti pola yang SUDAH ADA di field noBatch pada baris
+   DATA.salesOrder[].items (satu2nya tempat lain di mockup ini yang
+   sudah punya nomor batch), Tgl. Expired pakai format dd/mm/yyyy
+   (konsisten format tanggal mockup ini, BUKAN format yyyy-mm-dd yang
+   dipakai field tglKadaluarsa Sales Order).
+
+   ALUR "Generate": pilih Cabang -> pilih dokumen "Master Stock
+   Opname" (dropdown, hanya menampilkan MSO milik Cabang terpilih,
+   dari DATA.masterStockOpname) -> Gudang & Keterangan otomatis
+   terisi dari MSO terpilih (field Gudang tetap berupa <select> yang
+   bisa diganti manual selama masih di Cabang yang sama, BUKAN
+   dikunci total) -> klik "Generate" -> Rincian diisi 1 baris per
+   barang di MSO tsb (Kode/Nama Barang dari MSO, Qty Batch
+   DIINISIALISASI = Qty Counted barang itu di MSO sebagai TITIK AWAL
+   yang masuk akal utk 1 batch, Batch Number/Tgl. Expired kosong utk
+   diisi user) + banner kuning "Master Stock Opname sudah digenerate"
+   muncul (pola .alert-warning yang SUDAH ADA, dipakai persis sama
+   spt di Reordering Sheet/Sales Order/Stock Request utk banner
+   status). "+Tambah Item" menambah baris kosong baru (kode barang
+   dicari lewat picker, DIVALIDASI harus di Gudang yang sama spt
+   Filter Gudang di form ini — pola cross-check sama persis MSO).
+   "+Tambah Batch Number" MENDUPLIKASI baris TERAKHIR (kode & nama
+   barang yang sama) dengan Batch Number/Qty Batch/Tgl. Expired
+   kosong — merepresentasikan "barang yang sama, batch/lot lain" —
+   baris2 dengan kode barang sama dgn baris sebelumnya diberi
+   highlight latar peach (persis pola visual grouping di screenshot).
+
+   PENTING — TIDAK ADA sinkronisasi otomatis balik ke Qty Counted
+   Master Stock Opname (mis. sum semua Qty Batch per kode barang
+   TIDAK menimpa row.items[].qtyCounted di DATA.masterStockOpname).
+   Ini KEPUTUSAN DESAIN SENGAJA, konsisten dgn precedent modul lain
+   (row "Penyesuaian stok hasil Stock Opname" di DATA.transaksiPersediaan
+   yang JUGA sengaja tidak di-cross-link otomatis ke Master Stock
+   Opname) — 2 modul ini merujuk satu sama lain scr VISUAL/naratif
+   (nomor dokumen ditampilkan) tapi TIDAK saling memutasi data secara
+   live, supaya tidak menambah kerapuhan lintas-modul. Angka Qty
+   Batch di data sample SUDAH disusun manual supaya konsisten dgn
+   Qty Counted MSO terkait (bukan dihitung otomatis).
+
+   List page TIDAK punya kolom Lihat/Cetak terpisah (beda dari Master
+   Stock Opname) — persis screenshot "Daftar Stok Opname" yang cuma
+   py kolom Ubah/Hapus, No. Bukti-nya sendiri jadi link yang membuka
+   mode edit (pola sama persis modul CRUD sederhana lain spt Satuan/
+   Group Produk, BUKAN pola Lihat-terpisah Master Stock Opname). */
+
+const OPN_CABANG_LIST = ['Head Office','Surabaya','Bandung','Tangerang','Medan','Makassar','Semarang','Sidoarjo'];
+const OPN_CABANG_CODE = {'Head Office':'HO','Surabaya':'SBY','Bandung':'BDG','Tangerang':'TGR','Medan':'MDN','Makassar':'MKS','Semarang':'SMG','Sidoarjo':'SDA'};
+
+function tplOpnListPage(){
+  return `
+    <div class="breadcrumb">Home / <b>Stock Opname</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('clipboard',15)} Daftar Stok Opname</h3>
+        <div class="toolbar-actions">
+          <select id="opnPeriodeChip" style="max-width:150px;">
+            <option>Juni 2026</option><option>Juli 2026</option><option selected>Agustus 2026</option>
+          </select>
+          <button class="btn-primary" id="btnOpnAdd">${icon('plus',14)} Tambah</button>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <select id="opnPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="opnSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>No. Bukti</th>
+          <th>Tgl Transaksi</th>
+          <th>Cabang</th>
+          <th>Master Stock Opname</th>
+          <th>Keterangan</th>
+          <th>Ubah</th>
+          <th>Hapus</th>
+        </tr></thead>
+        <tbody id="opnTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="opnPager"></div><div id="opnTotal"></div></div>
+    </div>`;
+}
+
+function tplOpnRows(rows, page, pageSize){
+  if(!rows.length) return `<tr><td colspan="7" style="color:var(--text-light);">Tidak ada data Stock Opname</td></tr>`;
+  const start = (page-1)*pageSize;
+  return rows.slice(start, start+pageSize).map((r) => {
+    const idx = DATA.stockOpname.indexOf(r);
+    return `
+    <tr>
+      <td><a href="#" class="row-link" data-edit="${idx}" style="color:var(--blue);font-weight:600;">${r.no}</a></td>
+      <td>${(r.tglTransaksi||'').split(' ')[0]||''}</td>
+      <td>${r.cabang}</td>
+      <td>${r.masterStockOpnameNo||'-'}</td>
+      <td>${r.keterangan||''}</td>
+      <td><button class="icon-btn edit" data-edit="${idx}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function tplOpnPager(page, totalPages){
+  if(totalPages <= 1) return '';
+  let btns = `<button data-opnpage="1">First</button><button data-opnpage="${Math.max(1,page-1)}">Previous</button>`;
+  for(let p=1;p<=totalPages;p++){ btns += `<button data-opnpage="${p}" class="${p===page?'active':''}">${p}</button>`; }
+  btns += `<button data-opnpage="${Math.min(totalPages,page+1)}">Next</button><button data-opnpage="${totalPages}">Last</button>`;
+  return btns;
+}
+
+/* Pager windowed (maks. 7 nomor), pola sama tplMsoItemPager() —
+   dipakai utk tabel Rincian, walau data sample DBM cuma 10 baris
+   (tidak butuh pagination sungguhan), infrastrukturnya dipertahankan
+   konsisten dgn modul lain utk jaga-jaga Rincian yang lebih besar. */
+function tplOpnItemPager(page, totalPages){
+  if(totalPages <= 1) return '';
+  const windowSize = 7;
+  let startP = Math.max(1, page - Math.floor(windowSize/2));
+  let endP = Math.min(totalPages, startP + windowSize - 1);
+  startP = Math.max(1, endP - windowSize + 1);
+  let btns = `<button data-opnitempage="1">First</button><button data-opnitempage="${Math.max(1,page-1)}">Previous</button>`;
+  for(let p=startP;p<=endP;p++){ btns += `<button data-opnitempage="${p}" class="${p===page?'active':''}">${p}</button>`; }
+  btns += `<button data-opnitempage="${Math.min(totalPages,page+1)}">Next</button><button data-opnitempage="${totalPages}">Last</button>`;
+  return btns;
+}
+
+function tplOpnItemRow(it, ii, sameAsPrev){
+  return `
+    <tr style="${sameAsPrev?'background:#fdf1cf;':''}">
+      <td>
+        <div class="input-with-btn">
+          <input type="text" data-opn-kode="${ii}" value="${it.kode}" readonly placeholder="Cari barang...">
+          <button type="button" class="icon-btn edit" data-opn-kodesearch="${ii}" title="Cari Barang">${icon('search',14)}</button>
+        </div>
+      </td>
+      <td>${it.nama||'-'}</td>
+      <td><input type="text" data-opn-batch="${ii}" value="${it.batch||''}" placeholder="Batch Number" style="width:130px;"></td>
+      <td><input type="number" min="0" step="1" data-opn-qtybatch="${ii}" value="${it.qtyBatch||0}" style="width:90px;"></td>
+      <td>
+        <div class="input-with-btn">
+          <input type="text" data-opn-exp="${ii}" value="${it.exp||''}" placeholder="dd/mm/yyyy" style="width:110px;">
+          <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',14)}</span>
+        </div>
+      </td>
+      <td><button type="button" class="icon-btn del" data-opn-hapus="${ii}" title="Hapus Baris">${icon('trash',14)}</button></td>
+    </tr>`;
+}
+
+function tplOpnItemsTable(items, page, pageSize){
+  const totalPages = Math.max(1, Math.ceil(items.length/pageSize));
+  const p = Math.min(page, totalPages);
+  const start = (p-1)*pageSize;
+  const pageItems = items.slice(start, start+pageSize);
+  return `
+    <table class="opn-item-table">
+      <thead>
+        <tr>
+          <th>Kode Barang</th>
+          <th>Nama Barang</th>
+          <th>Batch Number</th>
+          <th>Qty Batch</th>
+          <th>Tgl. Expired</th>
+          <th>Hapus</th>
+        </tr>
+      </thead>
+      <tbody id="opnItemsBody">
+        ${pageItems.length ? pageItems.map((it,ii)=>{
+          const realIdx = start+ii;
+          const prev = items[realIdx-1];
+          return tplOpnItemRow(it, realIdx, !!(prev && prev.kode && prev.kode===it.kode));
+        }).join('') : `<tr><td colspan="6" style="color:var(--text-light);padding:14px;">Belum ada barang — pilih Master Stock Opname lalu klik "Generate", atau klik "+Tambah Item".</td></tr>`}
+      </tbody>
+    </table>
+    <a href="#" id="opnAddItem" class="link-add">${icon('plus',13)} Tambah Item</a>
+    <a href="#" id="opnAddBatch" class="link-add" style="margin-left:16px;">${icon('plus',13)} Tambah Batch Number</a>
+    <div class="table-footer"><div class="pager" id="opnItemPager">${tplOpnItemPager(p, totalPages)}</div><div>Total: ${items.length}</div></div>`;
+}
+
+/* Opsi <option> Master Stock Opname milik Cabang terpilih saja
+   (dari DATA.masterStockOpname, difilter m.cabang===cabang). */
+function opnMsoOptionsForCabang(cabang, selectedNo){
+  return DATA.masterStockOpname.filter(m => m.cabang === cabang)
+    .map(m => `<option value="${m.no}" ${m.no===selectedNo?'selected':''}>${m.no} — ${m.keterangan}</option>`).join('');
+}
+
+/* Opsi <option> Gudang mengikuti Cabang terpilih (dari DATA.gudang),
+   pola sama persis msoGudangOptionsForCabang() — salinan lokal krn
+   urutan lazy-load antar modul tidak terjamin. */
+function opnGudangOptionsForCabang(cabang, selectedKode){
+  return DATA.gudang.filter(g => g.cabang === cabang)
+    .map(g => `<option value="${g.kode}" ${g.kode===selectedKode?'selected':''}>${g.kode} - ${g.nama}</option>`).join('');
+}
+
+function tplOpnForm(mode, row){
+  const isAdd = mode === 'add';
+  const titleAction = isAdd ? '+ Stock Opname' : 'Ubah Stock Opname';
+  return `
+    <div class="breadcrumb">Home / Stock Opname / <b>${isAdd?'Tambah':'Ubah'}</b></div>
+    <div class="card">
+      <div class="card-header dark-header"><h3>${icon('clipboard',15)} ${titleAction}</h3></div>
+      <div class="card-body">
+        ${row.items.length ? `<div class="alert-warning" id="opnGeneratedBanner">Master Stock Opname sudah digenerate</div>` : ''}
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Cabang</label>
+            <select id="fOpnCabang" ${(!isAdd)?'disabled':''}>
+              ${OPN_CABANG_LIST.map(c=>`<option ${row.cabang===c?'selected':''}>${c}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>No. Bukti</label>
+            <div class="input-with-btn">
+              <input type="text" id="fOpnNo" value="${row.no||''}" placeholder="Otomatis" readonly>
+              ${isAdd ? `<button type="button" class="icon-btn edit" id="opnRefreshNo" title="Generate Ulang Nomor">${icon('refreshCw',13)}</button>` : ''}
+            </div>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Tgl. Transaksi</label>
+            <div class="input-with-btn">
+              <input type="text" id="fOpnTglTransaksi" value="${row.tglTransaksi||''}">
+              <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',14)}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Master Stock Opname</label>
+            <select id="fOpnMso">
+              <option value="">- Pilih Master Stock Opname -</option>
+              ${opnMsoOptionsForCabang(row.cabang, row.masterStockOpnameNo)}
+            </select>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Gudang</label>
+            <select id="fOpnGudang">
+              <option value="">- Pilih Gudang -</option>
+              ${opnGudangOptionsForCabang(row.cabang, row.gudangKode)}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Keterangan</label>
+            <input type="text" id="fOpnKeterangan" value="${row.keterangan||''}" placeholder="Keterangan">
+          </div>
+        </div>
+        <div style="margin-bottom:16px;">
+          <button class="btn-primary" id="opnGenerate">Generate</button>
+        </div>
+
+        <div class="table-wrap" style="overflow-x:auto;">
+          <div id="opnItemsWrap">${tplOpnItemsTable(row.items, 1, 10)}</div>
+        </div>
+
+        <div class="form-page-actions">
+          <a href="#" id="opnBatalkan" class="link-add" style="margin-right:auto;">Batalkan</a>
+          <button class="btn-primary" id="opnSimpan">Simpan</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function tplOpnDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Stock Opname</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Stock Opname <b>${row.no}</b>?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+function tplOpnInfoModal(title, text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer"><button class="btn-primary" id="modalOk">Mengerti</button></div>
     </div>`;
 }
 
@@ -28255,6 +29391,423 @@ function openRyDeleteConfirm(idx){
 }
 
 /* =========================================================
+   LOGIC (JS saja) — Master Stock Opname (Persediaan Barang >
+   Daftar Transaksi > Master Stock Opname, page:'masterStockOpname').
+   Dimuat otomatis (lazy-load) oleh core.js saat menu ini pertama
+   kali diklik — lihat PAGE_MODULES di js/core.js. Markup HTML-nya
+   ada di file sebelah: master-stock-opname.template.js (baca
+   komentar header di sana dulu utk konteks lengkap keputusan desain).
+   NB: closeModal() & openPersediaanPicker() dipakai bersama,
+   didefinisikan di core.js.
+========================================================= */
+
+let msoListState = { page:1, search:'' };
+let msoItemPage = 1;
+
+function renderMasterStockOpnamePage(){
+  renderMsoList();
+}
+
+function renderMsoList(){
+  content.innerHTML = tplMsoListPage();
+  msoListState = { page:1, search:'' };
+  document.getElementById('btnMsoAdd').onclick = () => openMsoForm('add');
+  document.getElementById('btnMsoLaporanBantu').onclick = () => openMsoLaporanBantu();
+  document.getElementById('msoPageSize').onchange = () => { msoListState.page = 1; renderMsoTable(); };
+  document.getElementById('msoSearch').oninput = (e) => {
+    msoListState.search = e.target.value.trim().toLowerCase();
+    msoListState.page = 1;
+    renderMsoTable();
+  };
+  renderMsoTable();
+}
+
+function msoPageSize(){
+  const sel = document.getElementById('msoPageSize');
+  return sel ? parseInt(sel.value, 10) : 10;
+}
+
+function msoFilteredRows(){
+  const q = msoListState.search;
+  if(!q) return DATA.masterStockOpname;
+  return DATA.masterStockOpname.filter(r =>
+    (r.no||'').toLowerCase().includes(q) ||
+    (r.keterangan||'').toLowerCase().includes(q) ||
+    (r.cabang||'').toLowerCase().includes(q));
+}
+
+function renderMsoTable(){
+  const perPage = msoPageSize();
+  const filtered = msoFilteredRows();
+  const totalPages = Math.max(1, Math.ceil(filtered.length/perPage));
+  if(msoListState.page > totalPages) msoListState.page = totalPages;
+  if(msoListState.page < 1) msoListState.page = 1;
+
+  document.getElementById('msoTbody').innerHTML = tplMsoRows(filtered, msoListState.page, perPage);
+  document.getElementById('msoTotal').textContent = `Total: ${filtered.length}`;
+  document.getElementById('msoPager').innerHTML = tplMsoPager(msoListState.page, totalPages);
+
+  const tbody = document.getElementById('msoTbody');
+  tbody.querySelectorAll('[data-view]').forEach(b => b.onclick = () => openMsoForm('view', +b.dataset.view));
+  tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openMsoForm('edit', +b.dataset.edit));
+  tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => openMsoDeleteConfirm(+b.dataset.del));
+  tbody.querySelectorAll('[data-print]').forEach(b => b.onclick = () => openMsoPrintResult(+b.dataset.print));
+
+  const pager = document.getElementById('msoPager');
+  pager.querySelectorAll('[data-msopage]').forEach(b => b.onclick = () => { msoListState.page = +b.dataset.msopage; renderMsoTable(); });
+}
+
+function msoGenerateNumber(cabang){
+  const kode = MSO_CABANG_CODE[cabang] || 'XXX';
+  const seq = DATA.masterStockOpname.filter(r => r.cabang === cabang).length + 1;
+  return `26/MSO/${kode}/08/${String(seq).padStart(5,'0')}`;
+}
+
+function msoEmptyRow(){
+  const cabang = MSO_CABANG_LIST[0];
+  return {
+    no: msoGenerateNumber(cabang), cabang,
+    tglTransaksi: '27/08/2026 00:00:00', periodeAwal: '27/08/2026', periodeAkhir: '27/08/2026',
+    keterangan: '', filterGudangKode: '', filterGudangNama: '', filterItemKode: '', filterItemNama: '',
+    items: [], userEntry: 'sidik',
+  };
+}
+
+function openMsoForm(mode, idx){
+  let row;
+  if(mode === 'add'){
+    row = msoEmptyRow();
+  } else {
+    const src = DATA.masterStockOpname[idx];
+    row = { ...src, items: src.items.map(it => ({ ...it })) };
+  }
+  msoItemPage = 1;
+
+  content.innerHTML = tplMsoForm(mode, row);
+
+  if(mode === 'view'){
+    document.getElementById('msoTutup').onclick = (e) => { e.preventDefault(); renderMsoList(); };
+    return;
+  }
+
+  msoWireItemInputs(row, false);
+
+  if(mode === 'add'){
+    document.getElementById('fMsoCabang').onchange = (e) => {
+      row.cabang = e.target.value;
+      row.no = msoGenerateNumber(row.cabang);
+      document.getElementById('fMsoNo').value = row.no;
+      row.filterGudangKode = ''; row.filterGudangNama = '';
+      document.getElementById('fMsoGudang').innerHTML = `<option value="">- Pilih Gudang -</option>${msoGudangOptionsForCabang(row.cabang, '')}`;
+    };
+  }
+
+  document.getElementById('fMsoGudang').onchange = (e) => {
+    const g = DATA.gudang.find(x => x.kode === e.target.value);
+    row.filterGudangKode = g ? g.kode : '';
+    row.filterGudangNama = g ? g.nama : '';
+    // ganti Gudang membuat filter Item Barang yang sudah dipilih (kalau ada, dari gudang lain) tidak relevan lagi
+    row.filterItemKode = ''; row.filterItemNama = '';
+    document.getElementById('fMsoItem').value = '';
+  };
+
+  document.getElementById('msoItemSearch').onclick = () => {
+    if(!row.filterGudangKode){
+      openMsoInfo('Pilih Gudang Dulu', 'Pilih Filter Gudang terlebih dahulu sebelum mencari barang, supaya daftar barang yang tampil sudah sesuai gudang yang dipilih.');
+      return;
+    }
+    openPersediaanPicker(row.cabang, (p) => {
+      if(p.kodeGudang !== row.filterGudangKode){
+        openMsoInfo('Barang Tidak Sesuai Gudang', `Barang <b>${p.namaBarang}</b> tercatat di gudang <b>${p.namaGudang}</b>, bukan di gudang yang sedang difilter (<b>${row.filterGudangNama}</b>). Pilih barang lain, atau ganti Filter Gudang dulu.`);
+        return;
+      }
+      row.filterItemKode = p.kodeBarang;
+      row.filterItemNama = p.namaBarang;
+      document.getElementById('fMsoItem').value = p.namaBarang;
+      msoRerenderItemFilterRow(row);
+    });
+  };
+  const clearBtn = document.getElementById('msoItemClear');
+  if(clearBtn) clearBtn.onclick = () => {
+    row.filterItemKode = ''; row.filterItemNama = '';
+    msoRerenderItemFilterRow(row);
+  };
+
+  document.getElementById('msoGenerate').onclick = () => msoGenerate(row);
+
+  document.getElementById('msoBatalkan').onclick = (e) => { e.preventDefault(); renderMsoList(); };
+
+  document.getElementById('msoSimpan').onclick = () => {
+    if(!row.items.length){
+      openMsoInfo('Validasi', 'Klik "Generate" terlebih dahulu (setelah memilih Filter Gudang) supaya Master Stock Opname memiliki minimal 1 barang.');
+      return;
+    }
+    row.keterangan = document.getElementById('fMsoKeterangan').value;
+    row.tglTransaksi = document.getElementById('fMsoTglTransaksi').value;
+    row.periodeAwal = document.getElementById('fMsoPeriodeAwal').value;
+    row.periodeAkhir = document.getElementById('fMsoPeriodeAkhir').value;
+
+    if(mode === 'add'){
+      row.cabang = document.getElementById('fMsoCabang').value;
+      row.no = msoGenerateNumber(row.cabang);
+      row.userEntry = 'sidik';
+      DATA.masterStockOpname.push(row);
+    } else {
+      DATA.masterStockOpname[idx] = row;
+    }
+    renderMsoList();
+  };
+}
+
+/* Cuma re-render baris "Filter Item Barang" (input value + tombol
+   Hapus filter) tanpa menyentuh field lain di form, supaya tombol
+   Hapus filter langsung muncul/hilang begitu filter diisi/dikosongkan. */
+function msoRerenderItemFilterRow(row){
+  document.getElementById('fMsoItem').value = row.filterItemNama || '';
+  const wrap = document.getElementById('fMsoItem').closest('.input-with-btn');
+  const oldClear = document.getElementById('msoItemClear');
+  if(row.filterItemKode && !oldClear){
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'icon-btn del'; btn.id = 'msoItemClear'; btn.title = 'Hapus Filter';
+    btn.innerHTML = icon('trash',14);
+    btn.onclick = () => { row.filterItemKode=''; row.filterItemNama=''; msoRerenderItemFilterRow(row); };
+    wrap.appendChild(btn);
+  } else if(!row.filterItemKode && oldClear){
+    oldClear.remove();
+  }
+}
+
+/* "Generate" — BENAR2 membaca DATA.persediaan (bukan dekoratif):
+   disaring kodeGudang (WAJIB, dari Filter Gudang) + kodeBarang
+   (opsional, dari Filter Item Barang). Barang yang SUDAH ada di
+   row.items sebelumnya (dicocokkan lewat kode) TETAP mempertahankan
+   Qty Counted/Ket. Area/status verified yang sudah diisi user, hanya
+   Sistem/HNA yang di-refresh ke nilai TERKINI — pola sama persis
+   rosGenerateBarang() di Reordering Sheet. */
+function msoGenerate(row){
+  if(!row.filterGudangKode){
+    openMsoInfo('Filter Gudang Wajib Diisi', 'Pilih Filter Gudang terlebih dahulu sebelum Generate, supaya barang yang di-generate benar-benar sesuai gudang yang akan di-stock-opname-kan.');
+    return;
+  }
+  const matches = DATA.persediaan.filter(p =>
+    p.kodeGudang === row.filterGudangKode &&
+    (!row.filterItemKode || p.kodeBarang === row.filterItemKode));
+
+  if(!matches.length){
+    openMsoInfo('Tidak Ada Barang', 'Tidak ada barang di Persediaan yang cocok dengan Filter Gudang/Filter Item Barang yang dipilih. Rincian barang sebelumnya tidak diubah.');
+    return;
+  }
+
+  const existingByKode = {};
+  row.items.forEach(it => { existingByKode[it.kode] = it; });
+  const itemsMaster = {};
+  DATA.items.forEach(it => { itemsMaster[it.kode] = it; });
+
+  row.items = matches.map(p => {
+    const prev = existingByKode[p.kodeBarang];
+    const hna = (itemsMaster[p.kodeBarang] && itemsMaster[p.kodeBarang].harga) || 0;
+    if(prev){
+      return { ...prev, nama: p.namaBarang, kodeGudang: p.kodeGudang, sistem: p.qtyPhysical, hna };
+    }
+    return {
+      kodeGudang: p.kodeGudang, kode: p.kodeBarang, nama: p.namaBarang,
+      batch: '-', exp: '-', ketArea: '', sistem: p.qtyPhysical, qtyCounted: p.qtyPhysical, hna, verified: false,
+    };
+  });
+
+  msoItemPage = 1;
+  msoRefreshItemsWrap(row, false);
+}
+
+function msoWireItemInputs(row, dis){
+  if(dis) return;
+  const wrap = document.getElementById('msoItemsWrap');
+  wrap.querySelectorAll('[data-mso-qty]').forEach(inp => inp.onchange = () => {
+    const ii = +inp.dataset.msoQty;
+    row.items[ii].qtyCounted = +inp.value || 0;
+    row.items[ii].verified = false;
+    msoRefreshItemsWrap(row, false);
+  });
+  wrap.querySelectorAll('[data-mso-ketarea]').forEach(inp => inp.onchange = () => {
+    const ii = +inp.dataset.msoKetarea;
+    row.items[ii].ketArea = inp.value;
+  });
+  wrap.querySelectorAll('[data-mso-verif]').forEach(btn => btn.onclick = () => openMsoVerifModal(row, +btn.dataset.msoVerif));
+  wrap.querySelectorAll('[data-mso-hapus]').forEach(btn => btn.onclick = () => openMsoItemDeleteConfirm(row, +btn.dataset.msoHapus));
+
+  const pagerWrap = document.getElementById('msoItemPager');
+  if(pagerWrap) pagerWrap.querySelectorAll('[data-msoitempage]').forEach(b => b.onclick = () => {
+    msoItemPage = +b.dataset.msoitempage;
+    msoRefreshItemsWrap(row, false);
+  });
+}
+
+function msoRefreshItemsWrap(row, dis){
+  document.getElementById('msoItemsWrap').innerHTML = tplMsoItemsTable(row.items, msoItemPage, 10, dis);
+  msoWireItemInputs(row, dis);
+}
+
+function openMsoVerifModal(row, ii){
+  closeModal();
+  const it = row.items[ii];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplMsoVerifModal(it, ii);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalVerifSave').onclick = () => {
+    it.qtyCounted = +document.getElementById('mvQty').value || 0;
+    it.ketArea = document.getElementById('mvKetArea').value;
+    it.verified = true;
+    closeModal();
+    msoRefreshItemsWrap(row, false);
+  };
+}
+
+function openMsoItemDeleteConfirm(row, ii){
+  closeModal();
+  const it = row.items[ii];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplMsoItemDeleteConfirm(it);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    row.items.splice(ii, 1);
+    closeModal();
+    msoRefreshItemsWrap(row, false);
+  };
+}
+
+function openMsoDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.masterStockOpname[idx];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplMsoDeleteConfirm(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.masterStockOpname.splice(idx, 1);
+    closeModal();
+    renderMsoTable();
+  };
+}
+
+function openMsoInfo(title, text){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplMsoInfoModal(title, text);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalOk').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+}
+
+function openMsoPrintResult(idx){
+  const row = DATA.masterStockOpname[idx];
+  const html = tplMsoResultDoc(row);
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+}
+
+/* =========================================================
+   "Laporan Pembantu Stock Opname" — modal "Daftar Fisik Inventory"
+   dibuka dari tombol header list. Show Report / Show Report Pdf
+   SAMA2 membuka tab cetak dokumen KOSONG "Cek Fisik Inventory"
+   (kolom Hasil Hitung selalu kosong, form fisik utk dibawa ke
+   gudang) — lihat tplMsoCekFisikDoc().
+========================================================= */
+let msoLaporanFilter = { gudangKode:'', gudangNama:'', kategoriKode:'', itemKode:'', itemNama:'', tanggal:'27/08/2026', bernilaiNol:false };
+
+function openMsoLaporanBantu(){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplMsoLaporanBantuModal(msoLaporanFilter);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('mlbClose').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+
+  document.getElementById('mlbGudangSearch').onclick = () => {
+    closeModal();
+    const rows = DATA.gudang.map(g => ({ kode:g.kode, label:`${g.kode} - ${g.nama} (${g.cabang})` }));
+    const pickerOverlay = document.createElement('div');
+    pickerOverlay.className = 'modal-overlay';
+    pickerOverlay.innerHTML = tplMsoSimplePicker('Pilih Gudang', rows);
+    document.body.appendChild(pickerOverlay);
+    document.getElementById('modalClose').onclick = () => { pickerOverlay.remove(); openMsoLaporanBantu(); };
+    document.getElementById('modalCancel').onclick = () => { pickerOverlay.remove(); openMsoLaporanBantu(); };
+    pickerOverlay.onclick = (e) => { if(e.target === pickerOverlay){ pickerOverlay.remove(); openMsoLaporanBantu(); } };
+    pickerOverlay.querySelectorAll('.mso-pick-row').forEach(tr => tr.onclick = () => {
+      const g = DATA.gudang.find(x => x.kode === tr.dataset.kode);
+      msoLaporanFilter.gudangKode = g.kode; msoLaporanFilter.gudangNama = `${g.kode} - ${g.nama} (${g.cabang})`;
+      pickerOverlay.remove();
+      openMsoLaporanBantu();
+    });
+  };
+
+  document.getElementById('mlbItemSearch').onclick = () => {
+    closeModal();
+    const rows = DATA.items.map(it => ({ kode:it.kode, label:`${it.kode} - ${it.nama}` }));
+    const pickerOverlay = document.createElement('div');
+    pickerOverlay.className = 'modal-overlay';
+    pickerOverlay.innerHTML = tplMsoSimplePicker('Pilih Inventory', rows);
+    document.body.appendChild(pickerOverlay);
+    document.getElementById('modalClose').onclick = () => { pickerOverlay.remove(); openMsoLaporanBantu(); };
+    document.getElementById('modalCancel').onclick = () => { pickerOverlay.remove(); openMsoLaporanBantu(); };
+    pickerOverlay.onclick = (e) => { if(e.target === pickerOverlay){ pickerOverlay.remove(); openMsoLaporanBantu(); } };
+    pickerOverlay.querySelectorAll('.mso-pick-row').forEach(tr => tr.onclick = () => {
+      msoLaporanFilter.itemKode = tr.dataset.kode; msoLaporanFilter.itemNama = tr.dataset.label;
+      pickerOverlay.remove();
+      openMsoLaporanBantu();
+    });
+  };
+
+  const showReport = () => {
+    msoLaporanFilter.kategoriKode = document.getElementById('mlbKategori').value;
+    msoLaporanFilter.tanggal = document.getElementById('mlbTanggal').value;
+    msoLaporanFilter.bernilaiNol = document.getElementById('mlbBernilaiNol').checked;
+    const rows = DATA.persediaan.filter(p =>
+      (!msoLaporanFilter.gudangKode || p.kodeGudang === msoLaporanFilter.gudangKode) &&
+      (!msoLaporanFilter.kategoriKode || p.kodeKategori === msoLaporanFilter.kategoriKode) &&
+      (!msoLaporanFilter.itemKode || p.kodeBarang === msoLaporanFilter.itemKode) &&
+      (msoLaporanFilter.bernilaiNol || p.qtyPhysical > 0));
+
+    const byGudang = {};
+    rows.forEach(p => {
+      if(!byGudang[p.namaGudang]) byGudang[p.namaGudang] = {};
+      const kk = p.kodeKategori;
+      if(!byGudang[p.namaGudang][kk]) byGudang[p.namaGudang][kk] = [];
+      byGudang[p.namaGudang][kk].push(p);
+    });
+    const groups = Object.keys(byGudang).sort().map(namaGudang => ({
+      namaGudang,
+      kategoris: Object.keys(byGudang[namaGudang]).sort().map(kk => {
+        const kb = DATA.kategoriBarang.find(x => x.kode === kk);
+        return { namaKategori: kb ? kb.nama : kk, rows: byGudang[namaGudang][kk] };
+      }),
+    }));
+
+    const html = tplMsoCekFisikDoc(msoLaporanFilter.tanggal, groups);
+    const win = window.open('', '_blank');
+    win.document.write(html);
+    win.document.close();
+  };
+  document.getElementById('mlbShowReport').onclick = showReport;
+  document.getElementById('mlbShowReportPdf').onclick = showReport;
+}
+
+/* =========================================================
    LOGIC (JS saja) — Master Supplier (Supplier & Pembelian)
    List Daftar Supplier + form Tambah/Ubah Supplier (full page,
    bukan modal, karena jumlah field sangat banyak — sesuai
@@ -31160,7 +32713,12 @@ function wirePsbHargaTab(row, key, prefix){
 /* ===== Jenis Satuan dan Harga (fixed 4 baris) ===== */
 function wirePsbSatuanTab(row){
   document.querySelectorAll('[data-sat-barcode]').forEach(inp => { inp.oninput = (e) => { row.satuanDetail[e.target.dataset.satBarcode].barcode = e.target.value; }; });
-  document.querySelectorAll('[data-sat-satuan]').forEach(inp => { inp.oninput = (e) => { row.satuanDetail[e.target.dataset.satSatuan].satuan = e.target.value; }; });
+  /* 2026-08-27: kolom "Satuan" sekarang <select> (picker ke master
+     DATA.satuan, lihat psbSatuanOptions() di persediaan-barang.template.js)
+     — dipakai 'onchange' (bukan 'oninput' seperti field teks lain
+     di fungsi ini) karena elemen ini sekarang <select>, konsisten
+     dengan wiring <select> lain di modul ini (mis. data-hss-supplier). */
+  document.querySelectorAll('[data-sat-satuan]').forEach(sel => { sel.onchange = (e) => { row.satuanDetail[e.target.dataset.satSatuan].satuan = e.target.value; }; });
   document.querySelectorAll('[data-sat-pajak]').forEach(inp => { inp.oninput = (e) => { row.satuanDetail[e.target.dataset.satPajak].satuanPajak = e.target.value; }; });
   document.querySelectorAll('[data-sat-konversi]').forEach(inp => { inp.oninput = (e) => { row.satuanDetail[e.target.dataset.satKonversi].konversi = Number(e.target.value)||0; }; });
 }
@@ -35335,6 +36893,436 @@ function openSqInfo(title, text){
 }
 
 /* =========================================================
+   LOGIC (JS saja) — Satuan (Persediaan Barang > Master &
+   Setting > Satuan, page:'satuan'). Dimuat otomatis (lazy-load)
+   oleh core.js saat menu ini pertama kali diklik — lihat
+   PAGE_MODULES di js/core.js. Markup HTML-nya ada di file
+   sebelah: satuan.template.js.
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Pola CRUD sederhana pola Group Produk/Zat Kandungan Aktif:
+   kode MANUAL (bukan auto-generate), wajib unik, readonly di
+   mode Ubah, + sort kolom & pager windowed sungguhan fungsional
+   — lihat catatan lengkap di satuan.template.js.
+========================================================= */
+
+let satState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+
+function renderSatuanPage(){
+  content.innerHTML = tplSatPage();
+  satState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+  document.getElementById('btnSatAdd').onclick = () => openSatModal('add');
+  document.getElementById('satPageSize').onchange = () => { satState.page = 1; renderSatTable(); };
+  document.getElementById('satSearch').oninput = (e) => {
+    satState.search = e.target.value.trim().toLowerCase();
+    satState.page = 1;
+    renderSatTable();
+  };
+  document.querySelectorAll('[data-sat-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.satSort;
+    if(satState.sortField === field){
+      satState.sortDir = satState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      satState.sortField = field;
+      satState.sortDir = 'asc';
+    }
+    satState.page = 1;
+    renderSatTable();
+  });
+  renderSatTable();
+}
+
+function satPageSize(){
+  const sel = document.getElementById('satPageSize');
+  return sel ? parseInt(sel.value, 10) : 10;
+}
+
+function satFilteredSortedRows(){
+  const q = satState.search;
+  let rows = !q ? DATA.satuan.slice() : DATA.satuan.filter(r =>
+    (r.kode||'').toLowerCase().includes(q) || (r.nama||'').toLowerCase().includes(q));
+  const field = satState.sortField;
+  const dir = satState.sortDir === 'desc' ? -1 : 1;
+  rows.sort((a,b) => (a[field]||'').localeCompare(b[field]||'', 'id') * dir);
+  return rows;
+}
+
+function renderSatTable(){
+  const perPage = satPageSize();
+  const filtered = satFilteredSortedRows();
+  const totalPages = Math.max(1, Math.ceil(filtered.length/perPage));
+  if(satState.page > totalPages) satState.page = totalPages;
+  if(satState.page < 1) satState.page = 1;
+
+  document.getElementById('satTbody').innerHTML = tplSatRows(filtered, satState.page, perPage);
+  document.getElementById('satTotal').textContent = `Total Record: ${filtered.length}`;
+  document.getElementById('satPager').innerHTML = tplSatPager(satState.page, totalPages);
+
+  ['kode','nama'].forEach(f => {
+    const el = document.getElementById(`satSortIcon_${f}`);
+    if(!el) return;
+    if(satState.sortField === f){
+      el.innerHTML = satState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+
+  const tbody = document.getElementById('satTbody');
+  tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = (e) => { e.preventDefault(); openSatModal('edit', +b.dataset.edit); });
+  tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => openSatDeleteConfirm(+b.dataset.del));
+
+  const pager = document.getElementById('satPager');
+  pager.querySelectorAll('[data-satpage]').forEach(b => b.onclick = () => { satState.page = +b.dataset.satpage; renderSatTable(); });
+}
+
+function openSatModal(mode, idx){
+  closeModal();
+  const row = mode === 'edit' ? DATA.satuan[idx] : { kode: '', nama: '' };
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplSatModal(mode, row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalSave').onclick = () => {
+    const kode = document.getElementById('fSatKode').value.trim().toUpperCase();
+    const nama = document.getElementById('fSatNama').value.trim();
+    let ok = true;
+    if(!kode){ document.getElementById('fSatKodeErr').textContent = 'Kode Satuan wajib diisi'; document.getElementById('fSatKodeErr').style.display = 'block'; ok = false; }
+    else if(mode === 'add' && DATA.satuan.some(r => r.kode.toUpperCase() === kode)){
+      document.getElementById('fSatKodeErr').textContent = 'Kode sudah dipakai, gunakan kode lain'; document.getElementById('fSatKodeErr').style.display = 'block'; ok = false;
+    } else {
+      document.getElementById('fSatKodeErr').style.display = 'none';
+    }
+    if(!nama){ document.getElementById('fSatNamaErr').style.display = 'block'; ok = false; } else { document.getElementById('fSatNamaErr').style.display = 'none'; }
+    if(!ok) return;
+    if(mode === 'add'){
+      DATA.satuan.push({ kode, nama });
+    } else {
+      DATA.satuan[idx].nama = nama;
+    }
+    closeModal();
+    renderSatTable();
+  };
+}
+
+function openSatDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.satuan[idx];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplSatDeleteConfirm(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.satuan.splice(idx, 1);
+    closeModal();
+    renderSatTable();
+  };
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Stock Opname (Persediaan Barang > Daftar
+   Transaksi > Stock Opname, page:'stockOpname'). Dimuat otomatis
+   (lazy-load) oleh core.js saat menu ini pertama kali diklik — lihat
+   PAGE_MODULES di js/core.js. Markup HTML-nya ada di file sebelah:
+   stock-opname.template.js (baca komentar header di sana dulu utk
+   konteks lengkap keputusan desain & hubungan dgn Master Stock Opname).
+   NB: closeModal() & openPersediaanPicker() dipakai bersama,
+   didefinisikan di core.js.
+========================================================= */
+
+let opnListState = { page:1, search:'' };
+let opnItemPage = 1;
+
+function renderStockOpnamePage(){
+  renderOpnList();
+}
+
+function renderOpnList(){
+  content.innerHTML = tplOpnListPage();
+  opnListState = { page:1, search:'' };
+  document.getElementById('btnOpnAdd').onclick = () => openOpnForm('add');
+  document.getElementById('opnPageSize').onchange = () => { opnListState.page = 1; renderOpnTable(); };
+  document.getElementById('opnSearch').oninput = (e) => {
+    opnListState.search = e.target.value.trim().toLowerCase();
+    opnListState.page = 1;
+    renderOpnTable();
+  };
+  renderOpnTable();
+}
+
+function opnPageSize(){
+  const sel = document.getElementById('opnPageSize');
+  return sel ? parseInt(sel.value, 10) : 10;
+}
+
+function opnFilteredRows(){
+  const q = opnListState.search;
+  if(!q) return DATA.stockOpname;
+  return DATA.stockOpname.filter(r =>
+    (r.no||'').toLowerCase().includes(q) ||
+    (r.keterangan||'').toLowerCase().includes(q) ||
+    (r.cabang||'').toLowerCase().includes(q) ||
+    (r.masterStockOpnameNo||'').toLowerCase().includes(q));
+}
+
+function renderOpnTable(){
+  const perPage = opnPageSize();
+  const filtered = opnFilteredRows();
+  const totalPages = Math.max(1, Math.ceil(filtered.length/perPage));
+  if(opnListState.page > totalPages) opnListState.page = totalPages;
+  if(opnListState.page < 1) opnListState.page = 1;
+
+  document.getElementById('opnTbody').innerHTML = tplOpnRows(filtered, opnListState.page, perPage);
+  document.getElementById('opnTotal').textContent = `Total: ${filtered.length}`;
+  document.getElementById('opnPager').innerHTML = tplOpnPager(opnListState.page, totalPages);
+
+  const tbody = document.getElementById('opnTbody');
+  tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = (e) => { e.preventDefault(); openOpnForm('edit', +b.dataset.edit); });
+  tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => openOpnDeleteConfirm(+b.dataset.del));
+
+  const pager = document.getElementById('opnPager');
+  pager.querySelectorAll('[data-opnpage]').forEach(b => b.onclick = () => { opnListState.page = +b.dataset.opnpage; renderOpnTable(); });
+}
+
+function opnGenerateNumber(cabang){
+  const kode = OPN_CABANG_CODE[cabang] || 'XXX';
+  const seq = DATA.stockOpname.filter(r => r.cabang === cabang).length + 1;
+  return `26/OPN-${kode}/08/${String(seq).padStart(5,'0')}`;
+}
+
+function opnEmptyRow(){
+  const cabang = OPN_CABANG_LIST[0];
+  return {
+    no: opnGenerateNumber(cabang), cabang,
+    tglTransaksi: '27/08/2026 00:00:00', masterStockOpnameNo: '',
+    gudangKode: '', gudangNama: '', keterangan: '',
+    items: [], userEntry: 'sidik',
+  };
+}
+
+function openOpnForm(mode, idx){
+  let row;
+  if(mode === 'add'){
+    row = opnEmptyRow();
+  } else {
+    const src = DATA.stockOpname[idx];
+    row = { ...src, items: src.items.map(it => ({ ...it })) };
+  }
+  opnItemPage = 1;
+
+  content.innerHTML = tplOpnForm(mode, row);
+
+  if(mode === 'add'){
+    document.getElementById('fOpnCabang').onchange = (e) => {
+      row.cabang = e.target.value;
+      row.no = opnGenerateNumber(row.cabang);
+      document.getElementById('fOpnNo').value = row.no;
+      row.masterStockOpnameNo = '';
+      row.gudangKode = ''; row.gudangNama = '';
+      document.getElementById('fOpnMso').innerHTML = `<option value="">- Pilih Master Stock Opname -</option>${opnMsoOptionsForCabang(row.cabang, '')}`;
+      document.getElementById('fOpnGudang').innerHTML = `<option value="">- Pilih Gudang -</option>${opnGudangOptionsForCabang(row.cabang, '')}`;
+    };
+    document.getElementById('opnRefreshNo').onclick = () => {
+      row.no = opnGenerateNumber(row.cabang);
+      document.getElementById('fOpnNo').value = row.no;
+    };
+  }
+
+  document.getElementById('fOpnMso').onchange = (e) => {
+    row.masterStockOpnameNo = e.target.value;
+    const mso = DATA.masterStockOpname.find(m => m.no === row.masterStockOpnameNo);
+    if(mso){
+      row.gudangKode = mso.filterGudangKode || '';
+      row.gudangNama = mso.filterGudangNama || '';
+      if(!document.getElementById('fOpnKeterangan').value) {
+        row.keterangan = mso.keterangan || '';
+        document.getElementById('fOpnKeterangan').value = row.keterangan;
+      }
+      document.getElementById('fOpnGudang').innerHTML = `<option value="">- Pilih Gudang -</option>${opnGudangOptionsForCabang(row.cabang, row.gudangKode)}`;
+    }
+  };
+
+  document.getElementById('fOpnGudang').onchange = (e) => {
+    const g = DATA.gudang.find(x => x.kode === e.target.value);
+    row.gudangKode = g ? g.kode : '';
+    row.gudangNama = g ? g.nama : '';
+  };
+
+  document.getElementById('opnGenerate').onclick = () => opnGenerate(row);
+
+  opnWireItemInputs(row);
+
+  document.getElementById('opnBatalkan').onclick = (e) => { e.preventDefault(); renderOpnList(); };
+
+  document.getElementById('opnSimpan').onclick = () => {
+    if(!row.items.length){
+      openOpnInfo('Validasi', 'Klik "Generate" terlebih dahulu (setelah memilih Master Stock Opname), atau tambahkan minimal 1 barang lewat "+Tambah Item", sebelum menyimpan.');
+      return;
+    }
+    if(row.items.some(it => !it.kode)){
+      openOpnInfo('Validasi', 'Ada baris Rincian yang belum diisi Kode Barang-nya. Lengkapi atau hapus baris tersebut dulu.');
+      return;
+    }
+    row.keterangan = document.getElementById('fOpnKeterangan').value;
+    row.tglTransaksi = document.getElementById('fOpnTglTransaksi').value;
+
+    if(mode === 'add'){
+      row.cabang = document.getElementById('fOpnCabang').value;
+      row.no = opnGenerateNumber(row.cabang);
+      row.userEntry = 'sidik';
+      DATA.stockOpname.push(row);
+    } else {
+      DATA.stockOpname[idx] = row;
+    }
+    renderOpnList();
+  };
+}
+
+/* "Generate" — mengambil daftar barang dari Master Stock Opname yang
+   dipilih (row.masterStockOpnameNo) lalu mengisi Rincian 1 baris per
+   barang. Qty Batch DIINISIALISASI = Qty Counted barang itu di MSO
+   (titik awal yang masuk akal utk 1 batch — user bisa split jadi
+   beberapa batch lewat "+Tambah Batch Number"). Barang yang SUDAH ada
+   di row.items sebelumnya (dicocokkan lewat kode) TETAP mempertahankan
+   Batch Number/Qty Batch/Tgl. Expired yang sudah diisi user — pola
+   sama merge-preserve msoGenerate()/rosGenerateBarang(). */
+function opnGenerate(row){
+  if(!row.masterStockOpnameNo){
+    openOpnInfo('Master Stock Opname Wajib Dipilih', 'Pilih dokumen Master Stock Opname terlebih dahulu sebelum Generate, supaya barang yang di-generate benar-benar sesuai hasil hitung yang sudah ada.');
+    return;
+  }
+  const mso = DATA.masterStockOpname.find(m => m.no === row.masterStockOpnameNo);
+  if(!mso || !mso.items.length){
+    openOpnInfo('Tidak Ada Barang', 'Master Stock Opname yang dipilih tidak memiliki barang. Rincian sebelumnya tidak diubah.');
+    return;
+  }
+
+  const existingByKode = {};
+  row.items.forEach(it => { if(!existingByKode[it.kode]) existingByKode[it.kode] = it; });
+
+  row.items = mso.items.map(it => {
+    const prev = existingByKode[it.kode];
+    if(prev) return { ...prev, nama: it.nama };
+    return { kode: it.kode, nama: it.nama, batch: '', qtyBatch: it.qtyCounted||0, exp: '' };
+  });
+
+  opnItemPage = 1;
+  opnRefreshItemsWrap(row);
+  showOpnGeneratedBanner();
+}
+
+function showOpnGeneratedBanner(){
+  if(document.getElementById('opnGeneratedBanner')) return;
+  const body = document.querySelector('.card-body');
+  if(!body) return;
+  const div = document.createElement('div');
+  div.className = 'alert-warning';
+  div.id = 'opnGeneratedBanner';
+  div.textContent = 'Master Stock Opname sudah digenerate';
+  body.insertBefore(div, body.firstChild);
+}
+
+function opnWireItemInputs(row){
+  const wrap = document.getElementById('opnItemsWrap');
+  wrap.querySelectorAll('[data-opn-batch]').forEach(inp => inp.onchange = () => {
+    row.items[+inp.dataset.opnBatch].batch = inp.value;
+  });
+  wrap.querySelectorAll('[data-opn-qtybatch]').forEach(inp => inp.onchange = () => {
+    row.items[+inp.dataset.opnQtybatch].qtyBatch = +inp.value || 0;
+  });
+  wrap.querySelectorAll('[data-opn-exp]').forEach(inp => inp.onchange = () => {
+    row.items[+inp.dataset.opnExp].exp = inp.value;
+  });
+  wrap.querySelectorAll('[data-opn-kodesearch]').forEach(btn => btn.onclick = () => {
+    const ii = +btn.dataset.opnKodesearch;
+    if(!row.gudangKode){
+      openOpnInfo('Pilih Gudang Dulu', 'Pilih Gudang terlebih dahulu sebelum mencari barang, supaya daftar barang yang tampil sudah sesuai gudang yang dipilih.');
+      return;
+    }
+    openPersediaanPicker(row.cabang, (p) => {
+      if(p.kodeGudang !== row.gudangKode){
+        openOpnInfo('Barang Tidak Sesuai Gudang', `Barang <b>${p.namaBarang}</b> tercatat di gudang <b>${p.namaGudang}</b>, bukan di gudang yang sedang dipilih (<b>${row.gudangNama}</b>). Pilih barang lain, atau ganti Gudang dulu.`);
+        return;
+      }
+      row.items[ii].kode = p.kodeBarang;
+      row.items[ii].nama = p.namaBarang;
+      opnRefreshItemsWrap(row);
+    });
+  });
+  wrap.querySelectorAll('[data-opn-hapus]').forEach(btn => btn.onclick = () => {
+    row.items.splice(+btn.dataset.opnHapus, 1);
+    opnRefreshItemsWrap(row);
+  });
+
+  const pagerWrap = document.getElementById('opnItemPager');
+  if(pagerWrap) pagerWrap.querySelectorAll('[data-opnitempage]').forEach(b => b.onclick = () => {
+    opnItemPage = +b.dataset.opnitempage;
+    opnRefreshItemsWrap(row);
+  });
+
+  const addItemLink = document.getElementById('opnAddItem');
+  if(addItemLink) addItemLink.onclick = (e) => {
+    e.preventDefault();
+    row.items.push({ kode:'', nama:'', batch:'', qtyBatch:0, exp:'' });
+    opnItemPage = Math.max(1, Math.ceil(row.items.length/10));
+    opnRefreshItemsWrap(row);
+  };
+  const addBatchLink = document.getElementById('opnAddBatch');
+  if(addBatchLink) addBatchLink.onclick = (e) => {
+    e.preventDefault();
+    if(!row.items.length){
+      openOpnInfo('Belum Ada Barang', 'Tambahkan minimal 1 barang dulu (lewat "Generate" atau "+Tambah Item") sebelum menambah Batch Number baru.');
+      return;
+    }
+    const last = row.items[row.items.length-1];
+    row.items.push({ kode:last.kode, nama:last.nama, batch:'', qtyBatch:0, exp:'' });
+    opnItemPage = Math.max(1, Math.ceil(row.items.length/10));
+    opnRefreshItemsWrap(row);
+  };
+}
+
+function opnRefreshItemsWrap(row){
+  document.getElementById('opnItemsWrap').innerHTML = tplOpnItemsTable(row.items, opnItemPage, 10);
+  opnWireItemInputs(row);
+}
+
+function openOpnDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.stockOpname[idx];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplOpnDeleteConfirm(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.stockOpname.splice(idx, 1);
+    closeModal();
+    renderOpnTable();
+  };
+}
+
+function openOpnInfo(title, text){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplOpnInfoModal(title, text);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalOk').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+}
+
+/* =========================================================
    LOGIC (JS saja) — Stock Request (Persediaan Barang > Daftar
    Transaksi). Dimuat otomatis (lazy-load) oleh core.js saat menu
    ini pertama kali diklik — lihat PAGE_MODULES di js/core.js.
@@ -36850,6 +38838,9 @@ const PAGE_MODULES={
   disposalAsset:{srcs:['js/pages/disposal-asset.template.js','js/pages/disposal-asset.js'], fn:'renderDisposalAssetPage'},
   revaluasiAsset:{srcs:['js/pages/revaluasi-asset.template.js','js/pages/revaluasi-asset.js'], fn:'renderRevaluasiAssetPage'},
   monitoringControlDelivery:{srcs:['js/pages/monitoring-control-delivery.template.js','js/pages/monitoring-control-delivery.js'], fn:'renderMonitoringControlDeliveryPage'},
+  satuan:{srcs:['js/pages/satuan.template.js','js/pages/satuan.js'], fn:'renderSatuanPage'},
+  masterStockOpname:{srcs:['js/pages/master-stock-opname.template.js','js/pages/master-stock-opname.js'], fn:'renderMasterStockOpnamePage'},
+  stockOpname:{srcs:['js/pages/stock-opname.template.js','js/pages/stock-opname.js'], fn:'renderStockOpnamePage'},
 };
 const loadedModules=new Set(Object.keys(PAGE_MODULES));
 
