@@ -159,6 +159,7 @@ const PAGE_MODULES={
   priceListProvince:{srcs:['js/pages/price-list-province.template.js','js/pages/price-list-province.js'], fn:'renderPriceListProvincePage'},
   penerimaanPiutang:{srcs:['js/pages/penerimaan-piutang.template.js','js/pages/penerimaan-piutang.js'], fn:'renderPenerimaanPiutangPage'},
   penerimaanSsp:{srcs:['js/pages/penerimaan-ssp.template.js','js/pages/penerimaan-ssp.js'], fn:'renderPenerimaanSspPage'},
+  opnameDokumen:{srcs:['js/pages/opname-dokumen.template.js','js/pages/opname-dokumen.js'], fn:'renderOpnameDokumenPage'},
   reorderingSheet:{srcs:['js/pages/reordering-sheet.template.js','js/pages/reordering-sheet.js'], fn:'renderReorderingSheetPage'},
   zatKandunganAktif:{srcs:['js/pages/zat-kandungan-aktif.template.js','js/pages/zat-kandungan-aktif.js'], fn:'renderZatKandunganAktifPage'},
   farmakoterapi:{srcs:['js/pages/farmakoterapi.template.js','js/pages/farmakoterapi.js'], fn:'renderFarmakoterapiPage'},

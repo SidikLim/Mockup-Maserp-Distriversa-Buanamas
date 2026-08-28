@@ -77,6 +77,7 @@ const MENU=[
    {label:'Consignment Refund', page:'placeholder', title:'Consignment Refund'},
    {label:'T3F', page:'placeholder', title:'T3F'},
    {label:'Daftar Tagih Piutang', page:'placeholder', title:'Daftar Tagih Piutang'},
+   {label:'Opname Faktur, Retur & S.J.', page:'opnameDokumen'},
  ]},
  {label:'Persediaan Barang', icon:'box', page:'inventoryDashboard', children:[
    {header:'Master & Setting'},

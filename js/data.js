@@ -3053,6 +3053,61 @@ const DATA = {
       ]},
   ],
 
+  /* =========================================================
+     2026-08-28 — DATA utk modul BARU "Opname Faktur, Retur & S.J."
+     (Customer & Penjualan > Daftar Transaksi, page:'opnameDokumen' —
+     sesuai dokumen "Spesifikasi Aplikasi Web Opname Faktur, Retur &
+     Surat Jalan" yang dikirim user; lihat catatan desain lengkap di
+     header js/pages/opname-dokumen.template.js).
+
+     1) collectorList & inkasoList: opsi Basis Filter metode opname
+        "Random / By Filter" (spec: per Salesman / per Collector / per
+        Inkaso). Belum ada master Collector/Inkaso di mockup ini, jadi
+        dibuat daftar nama sederhana; penugasan collector/inkaso per
+        customer dihitung deterministik di opdCollectorOf()/
+        opdInkasoOf() (opname-dokumen.js) — simplifikasi terdokumentasi.
+     2) returPenjualanDocs: dokumen Retur Penjualan OUTSTANDING —
+        modul Retur Penjualan sendiri masih placeholder, tapi opname
+        (cakupan "Retur") & Form Konfirmasi Outlet butuh dokumennya.
+        4 baris di-chain deskriptif ke Invoice yang sudah ada
+        (dariInvoice), nilai kecil yang wajar utk retur parsial.
+     3) opnameDokumen: transaksi opname tersimpan. 1 baris sample
+        SELESAI (metode Menyeluruh, cakupan Faktur+Retur+S.J., petugas
+        Internal Audit) — items adalah SNAPSHOT hasil "Generate Daftar
+        Dokumen" dari data live (nomor/nilai persis DATA.invoices/
+        returPenjualanDocs/noSJ) + status hasil input petugas: 8
+        Ditemukan / Sesuai, 2 Blank (Belum Diketemukan), 1 Selisih —
+        supaya ketiga laporan (Rincian per Status/Summary By Salesman
+        By Status/Rekapitulasi) langsung berisi contoh bermakna. */
+  collectorList:['Rudi Salam','Yanto Prakoso','Sri Handayani'],
+  inkasoList:['Tim Inkaso HO','Tim Inkaso Jawa Timur','Tim Inkaso Jabar'],
+  returPenjualanDocs:[
+    {no:'26/RJ/HO/08/00001', tgl:'18/08/2026', cabang:'Head Office', customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', dariInvoice:'26/SI/HO/08/00001', nilai:150000, alasan:'Barang rusak dalam pengiriman', status:'Outstanding'},
+    {no:'26/RJ/SBY/08/00001', tgl:'20/08/2026', cabang:'Surabaya', customerKode:'CUST-002', customerNama:'UD Makmur Jaya', dariInvoice:'26/SI/SBY/08/00001', nilai:90000, alasan:'Kemasan penyok', status:'Outstanding'},
+    {no:'26/RJ/BDG/08/00001', tgl:'21/08/2026', cabang:'Bandung', customerKode:'CUST-003', customerNama:'CV Berkah Abadi', dariInvoice:'26/SI/BDG/07/00009', nilai:120000, alasan:'Barang mendekati tanggal kadaluarsa', status:'Outstanding'},
+    {no:'26/RJ/TGR/08/00001', tgl:'24/08/2026', cabang:'Tangerang', customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya', dariInvoice:'26/SI/TGR/08/00001', nilai:85000, alasan:'Salah kirim varian', status:'Outstanding'},
+  ],
+  opnameDokumen:[
+    {no:'26/OPD/HO/08/00001', tgl:'27/08/2026', cabang:'Semua Cabang',
+      tipePetugas:'Internal Audit', petugas:'Maulana Sidik',
+      metode:'Menyeluruh', filterBasis:'', filterNilai:'',
+      cakupan:{faktur:true, retur:true, suratJalan:true},
+      keterangan:'Opname menyeluruh dokumen Faktur, Retur & Surat Jalan periode Agustus 2026.',
+      status:'Selesai', userEntry:'sidik', tglInput:'27/08/2026 09:15:00',
+      items:[
+        {jenis:'Faktur', no:'26/SI/HO/08/00001', tgl:'07/08/2026', customerNama:'Toko Sumber Rejeki', salesman:'Budi Santoso', nilai:1120000, statusOpname:'Ditemukan / Sesuai', ket:''},
+        {jenis:'Faktur', no:'26/SI/TGR/08/00001', tgl:'11/08/2026', customerNama:'Toko Family Mart Jaya', salesman:'Budi Santoso', nilai:1700000, statusOpname:'Ditemukan / Sesuai', ket:''},
+        {jenis:'Faktur', no:'26/SI/SBY/08/00001', tgl:'08/08/2026', customerNama:'UD Makmur Jaya', salesman:'Andi Wijaya', nilai:880000, statusOpname:'Ditemukan / Sesuai', ket:''},
+        {jenis:'Faktur', no:'26/SI/MDN/08/00001', tgl:'06/08/2026', customerNama:'Toko Anugrah', salesman:'Dedi Kurniawan', nilai:600000, statusOpname:'Blank (Belum Diketemukan)', ket:'Fisik faktur tidak ada di odner MDN'},
+        {jenis:'Faktur', no:'26/SI/MKS/08/00001', tgl:'07/08/2026', customerNama:'UD Sinar Harapan', salesman:'Eka Putri', nilai:250000, statusOpname:'Ditemukan / Sesuai', ket:''},
+        {jenis:'Faktur', no:'26/SI/SMG/08/00001', tgl:'05/08/2026', customerNama:'CV Maju Terus', salesman:'Fajar Nugroho', nilai:400000, statusOpname:'Ditemukan / Sesuai', ket:''},
+        {jenis:'Retur', no:'26/RJ/HO/08/00001', tgl:'18/08/2026', customerNama:'Toko Sumber Rejeki', salesman:'Budi Santoso', nilai:150000, statusOpname:'Ditemukan / Sesuai', ket:''},
+        {jenis:'Retur', no:'26/RJ/SBY/08/00001', tgl:'20/08/2026', customerNama:'UD Makmur Jaya', salesman:'Andi Wijaya', nilai:90000, statusOpname:'Selisih / Tidak Sesuai', ket:'Nilai fisik retur tidak cocok dengan sistem'},
+        {jenis:'Retur', no:'26/RJ/BDG/08/00001', tgl:'21/08/2026', customerNama:'CV Berkah Abadi', salesman:'Citra Lestari', nilai:120000, statusOpname:'Ditemukan / Sesuai', ket:''},
+        {jenis:'Surat Jalan', no:'26/SJ/HO/08/00002', tgl:'11/08/2026', customerNama:'Toko Family Mart Jaya', salesman:'Budi Santoso', nilai:350000, statusOpname:'Ditemukan / Sesuai', ket:''},
+        {jenis:'Surat Jalan', no:'26/SJ/SMG/08/00001', tgl:'05/08/2026', customerNama:'CV Maju Terus', salesman:'Fajar Nugroho', nilai:400000, statusOpname:'Blank (Belum Diketemukan)', ket:'SJ belum kembali dari pengiriman'},
+      ]},
+  ],
   /* Purchase Order — menu Supplier & Pembelian > Daftar Transaksi >
      Purchase Order (lihat js/pages/purchase-order.*). 11 baris data
      sample meniru struktur & alur screenshot MASERP "Daftar Purchase
