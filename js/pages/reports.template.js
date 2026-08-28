@@ -508,3 +508,263 @@ function tplRcBonusReportDoc(periodeAwal, periodeAkhir, rows, grandTotalQty, pri
   <div class="rc-doc-sign">${printedBy}<br>${printedAt}</div>
 </body></html>`;
 }
+
+/* =========================================================
+   2026-08-28 — filter modal "+ Laporan Umur Piutang Customer"
+   (FA-10 Lap Umur Piutang, Account Receivable) sesuai screenshot
+   acuan: Pilih Mata Uang & Cabang sebagai <select> polos (screenshot
+   tidak menampilkan tombol kaca pembesar di 2 field itu — precedent
+   "Lokasi Gudang" filter Bonus), Customer Group/Customer/Salesman/
+   Area/Rayon sebagai picker tplRcFieldWithBtn, Interval angka
+   (default 30, FUNGSIONAL: lebar bucket umur), Periode Transaksi
+   default 01/03/2025 S/D 31/08/2026 (persis screenshot; rentang
+   panjang supaya faktur historis DATA.arFakturHistoris ikut),
+   Batas Tanggal default hari ini, keterangan rumus, dan checkbox
+   Show Total Salesman.
+   MODIFIKASI DBM (permintaan user 2026-08-28): blok "View Report"
+   BARU — radio pilihan dasar perhitungan umur "Tanggal Faktur"
+   (default, = perilaku contoh PDF) / "Tanggal Jatuh Tempo".
+   Keterangan rumus (id rcuFormulaNote) di-update live oleh
+   openRcUmurFilter() saat radio dipindah. Logic-nya di
+   reports.js (openRcUmurFilter dst.). */
+function tplRcUmurMataUangList(){
+  return rcUniqueVals((DATA.customers || []).map(c => c.mataUang || 'IDR'));
+}
+
+function tplRcUmurCabangList(){
+  const all = (DATA.customers || []).map(c => c.cabang)
+    .concat((DATA.invoices || []).map(i => i.cabang))
+    .concat((DATA.arFakturHistoris || []).map(h => h.cabang));
+  return rcUniqueVals(all);
+}
+
+function tplRcUmurFormulaNote(basis){
+  if(basis === 'jthTempo'){
+    return `Umur Piutang = (Batas Tanggal - Tanggal Jatuh Tempo)<br>Telat = (Batas Tanggal - Tanggal Jatuh Tempo)<br><span style="color:var(--text-light);">Faktur yang belum jatuh tempo masuk kolom "Belum Jth Tempo".</span>`;
+  }
+  return `Umur Piutang = (Batas Tanggal - Tanggal Transaksi)<br>Telat = (Batas Tanggal - Tanggal Jatuh Tempo)`;
+}
+
+function tplRcUmurFilterModal(){
+  const mataUangList = tplRcUmurMataUangList();
+  const cabangList = tplRcUmurCabangList();
+  return `
+    <div class="modal-box" style="max-width:520px;">
+      <div class="modal-header"><span>+ Laporan Umur Piutang Customer</span><span class="close" id="rcUmurFilterClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Pilih Mata Uang</label>
+          <select id="rcuMataUang">
+            <option value="">Pilih Mata Uang</option>
+            ${mataUangList.map(m => `<option value="${m}">${m}</option>`).join('')}
+          </select>
+        </div>
+        ${tplRcFieldWithBtn('Customer Group', 'rcuGroup', 'Customer Group')}
+        ${tplRcFieldWithBtn('Customer', 'rcuCustomer', 'Pilih Customer')}
+        <div class="form-group">
+          <label>Interval</label>
+          <input type="number" id="rcuInterval" value="30" min="1" max="999">
+        </div>
+        ${tplRcFieldWithBtn('Salesman', 'rcuSalesman', 'Cari Salesman')}
+        <div class="form-group">
+          <label>Cabang</label>
+          <select id="rcuCabang">
+            <option value="">Pilih Cabang...</option>
+            ${cabangList.map(c => `<option value="${c}">${c}</option>`).join('')}
+          </select>
+        </div>
+        ${tplRcFieldWithBtn('Area', 'rcuArea', 'Wilayah')}
+        ${tplRcFieldWithBtn('Rayon', 'rcuRayon', 'Pilih Rayon')}
+        <div class="form-group">
+          <label>Periode Transaksi</label>
+          <div class="field-pair">
+            <input type="text" id="rcuPeriodeAwal" value="01/03/2025">
+            <span style="align-self:center;color:var(--text-light);">S/D</span>
+            <input type="text" id="rcuPeriodeAkhir" value="31/08/2026">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Batas Tanggal</label>
+          <input type="text" id="rcuBatasTanggal" value="${rcTodayLabel()}">
+        </div>
+        <div class="form-group">
+          <label>View Report &mdash; Umur Berdasarkan</label>
+          <div class="radio-inline">
+            <label><input type="radio" name="rcuBasis" value="jthTempo"> Tanggal Jatuh Tempo</label>
+            <label><input type="radio" name="rcuBasis" value="faktur" checked> Tanggal Faktur</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div id="rcuFormulaNote" style="font-size:12.5px;line-height:1.6;">${tplRcUmurFormulaNote('faktur')}</div>
+        </div>
+        <div class="form-group">
+          <label>Show Total Salesman</label>
+          <input type="checkbox" id="rcuShowTotalSalesman" style="width:auto;">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="rcUmurFilterCancel">Close</button>
+        <button class="btn-primary" id="rcuShowReport">Show Report</button>
+        <button class="btn-primary" id="rcuShowReportPdf">Show Report Pdf</button>
+      </div>
+    </div>`;
+}
+
+/* Dokumen cetak — layout meniru contoh PDF "Laporan Perincian Umur
+   Piutang" (Tgl Print kiri atas + halaman kanan atas, nama perusahaan
+   + judul + "Per tanggal :" + "Tgl Umur Piutang:" di tengah, tabel
+   13 kolom dgn grup Currency > Departemen > Customer + Subtotal
+   Customer/Departemen/Currency). Ditambah 1 baris keterangan "Umur
+   Piutang Berdasarkan : ..." (modifikasi DBM) dan — khusus mode
+   Tanggal Jatuh Tempo — kolom bucket ekstra "Belum Jth Tempo" di
+   depan "1 - N Hari". Departemen ditulis tetap "00" (data mockup DBM
+   tidak punya dimensi departemen — simplifikasi terdokumentasi). */
+function tplRcUmurReportDoc(filter, basis, interval, rows, showTotalSalesman, printedBy, printedAt){
+  const fmt2 = n => Number(n || 0).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const buckets = rcuBuckets(interval);
+  const hasBelum = basis === 'jthTempo';
+  const nCols = 7 + (hasBelum ? 1 : 0) + buckets.length + 1;
+  const basisLabel = hasBelum ? 'Tanggal Jatuh Tempo' : 'Tanggal Faktur';
+
+  function rowBuckets(r){
+    const vals = new Array(buckets.length).fill(0);
+    let belum = 0;
+    if(r.jlhTransaksi > 0){
+      const age = hasBelum ? r.telat : r.umurFaktur;
+      if(hasBelum && age <= 0){ belum = r.jlhTransaksi; }
+      else { vals[rcuBucketIndex(age, buckets)] = r.jlhTransaksi; }
+    }
+    return {belum: belum, vals: vals};
+  }
+
+  function sumInto(acc, r){
+    const b = rowBuckets(r);
+    acc.jlh += r.jlhTransaksi || 0;
+    acc.belum += b.belum;
+    b.vals.forEach((v, i) => { acc.vals[i] += v; });
+    acc.ssp += r.ssp || 0;
+    return acc;
+  }
+  function newAcc(){ return {jlh:0, belum:0, vals:new Array(buckets.length).fill(0), ssp:0}; }
+
+  function tdsBucket(belum, vals, ssp){
+    return (hasBelum ? `<td style="text-align:right;">${fmt2(belum)}</td>` : '')
+      + vals.map(v => `<td style="text-align:right;">${fmt2(v)}</td>`).join('')
+      + `<td style="text-align:right;">${fmt2(ssp)}</td>`;
+  }
+  function subtotalRow(label, acc){
+    return `
+      <tr class="rcu-subtotal">
+        <td colspan="4" style="text-align:right;font-weight:700;">${label}</td>
+        <td style="text-align:right;font-weight:700;">${fmt2(acc.jlh)}</td>
+        <td colspan="2"></td>
+        ${tdsBucket(acc.belum, acc.vals, acc.ssp)}
+      </tr>`;
+  }
+
+  /* Grup per customer (rows sudah diurutkan rcuBuildRows()). */
+  let body = '';
+  const currencyAcc = newAcc();
+  const salesmanTotals = {};
+  if(!rows.length){
+    body = `<tr><td colspan="${nCols}" style="text-align:center;color:#777;padding:14px;">Tidak ada piutang outstanding untuk filter ini.</td></tr>`;
+  } else {
+    let i = 0;
+    while(i < rows.length){
+      const kode = rows[i].customerKode;
+      const nama = rows[i].customerNama;
+      const custAcc = newAcc();
+      body += `<tr class="rcu-cust-row"><td colspan="${nCols}" style="font-weight:700;">${kode} - ${String(nama).toUpperCase()}</td></tr>`;
+      let no = 1;
+      while(i < rows.length && rows[i].customerKode === kode){
+        const r = rows[i];
+        sumInto(custAcc, r);
+        sumInto(currencyAcc, r);
+        if(r.salesman){ salesmanTotals[r.salesman] = (salesmanTotals[r.salesman] || 0) + (r.jlhTransaksi || 0); }
+        const b = rowBuckets(r);
+        const lewat = r.telat > 0 ? (r.telat + ' hari') : 'Blm';
+        const umur = hasBelum ? (r.telat > 0 ? r.telat : 'Blm') : r.umurFaktur;
+        body += `
+          <tr>
+            <td style="text-align:center;">${no++}</td>
+            <td>${r.noFaktur}</td>
+            <td>${r.tglTrn}</td>
+            <td>${r.tglJtmp}</td>
+            <td style="text-align:right;">${fmt2(r.jlhTransaksi)}</td>
+            <td style="text-align:center;">${lewat}</td>
+            <td style="text-align:center;">${umur}</td>
+            ${tdsBucket(b.belum, b.vals, r.ssp)}
+          </tr>`;
+        i++;
+      }
+      body += subtotalRow(`Subtotal Customer ${kode} :`, custAcc);
+    }
+    body += subtotalRow('Subtotal Departemen 00 :', currencyAcc);
+    body += subtotalRow('Subtotal Currency IDR :', currencyAcc);
+  }
+
+  const salesmanBlock = showTotalSalesman ? `
+    <h2 style="font-size:12px;margin:18px 0 6px;">Total per Salesman</h2>
+    <table style="width:auto;min-width:320px;">
+      <thead><tr><th>Salesman</th><th style="width:130px;">Total Piutang</th></tr></thead>
+      <tbody>
+        ${Object.keys(salesmanTotals).sort().map(s => `
+          <tr><td>${s}</td><td style="text-align:right;">${fmt2(salesmanTotals[s])}</td></tr>`).join('') || `<tr><td colspan="2" style="color:#777;">Tidak ada data.</td></tr>`}
+      </tbody>
+      <tfoot><tr><td style="text-align:right;font-weight:700;">Grand Total :</td><td style="text-align:right;font-weight:700;">${fmt2(Object.keys(salesmanTotals).reduce((t,s)=>t+salesmanTotals[s],0))}</td></tr></tfoot>
+    </table>` : '';
+
+  return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Laporan Perincian Umur Piutang</title>
+<style>
+  body{font-family:Arial, Helvetica, sans-serif;font-size:11px;color:#111;margin:20px;}
+  .rc-doc-toolbar{margin-bottom:10px;}
+  .rc-doc-toolbar button{padding:7px 16px;border:none;border-radius:5px;font-size:12.5px;font-weight:600;cursor:pointer;margin-right:8px;}
+  .rc-doc-toolbar .btn-print{background:#4472c4;color:#fff;}
+  .rc-doc-toolbar .btn-close{background:#eef1f7;color:#333;}
+  .rc-doc-head{display:flex;justify-content:space-between;font-size:10.5px;color:#333;}
+  .rc-doc-company{font-weight:700;font-size:13.5px;text-align:center;margin-top:2px;}
+  h1{font-size:14px;text-align:center;margin:2px 0;}
+  .sub{font-size:11px;text-align:center;margin:0;font-weight:700;}
+  .sub-basis{font-size:10.5px;text-align:center;margin:2px 0 10px;}
+  table{width:100%;border-collapse:collapse;}
+  th,td{border-bottom:1px solid #bbb;padding:3px 4px;font-size:10px;}
+  thead th{border-top:2px solid #333;border-bottom:2px solid #333;background:#fff;text-align:center;font-weight:700;}
+  .rcu-cust-row td{border-bottom:none;padding-top:7px;}
+  .rcu-subtotal td{border-top:1px solid #333;border-bottom:2px solid #333;background:#fafafa;}
+  @media print{ .rc-doc-toolbar{display:none;} body{margin:0;} }
+</style></head>
+<body>
+  <div class="rc-doc-toolbar">
+    <button class="btn-print" onclick="window.print()">Cetak</button>
+    <button class="btn-close" onclick="window.close()">Tutup</button>
+  </div>
+  <div class="rc-doc-head"><span>Tgl Print: ${printedAt}</span><span>1/1</span></div>
+  <div class="rc-doc-company">PT Distriversa Buanamas</div>
+  <h1>Laporan Perincian Umur Piutang</h1>
+  <div class="sub">Per tanggal : ${filter.periodeAkhir || printedAt}</div>
+  <div class="sub">Tgl Umur Piutang: ${filter.batasTanggal}</div>
+  <div class="sub-basis">Umur Piutang Berdasarkan : <b>${basisLabel}</b></div>
+  <table>
+    <thead><tr>
+      <th style="width:26px;">No.</th>
+      <th style="width:130px;">No. Faktur</th>
+      <th style="width:64px;">Tgl. Trn</th>
+      <th style="width:64px;">Tgl. Jtmp</th>
+      <th style="width:82px;">Jlh. Transaksi</th>
+      <th style="width:56px;">Lewat Jth<br>Tmp</th>
+      <th style="width:40px;">Umur</th>
+      ${hasBelum ? '<th style="width:78px;">Belum Jth<br>Tempo</th>' : ''}
+      ${buckets.map(b => `<th style="width:78px;">${b.label}</th>`).join('')}
+      <th style="width:72px;">SSP</th>
+    </tr></thead>
+    <tbody>
+      <tr><td colspan="${nCols}" style="font-weight:700;border-bottom:none;">Currency : IDR</td></tr>
+      <tr><td colspan="${nCols}" style="font-weight:700;border-bottom:none;">Departemen : 00</td></tr>
+      ${body}
+    </tbody>
+  </table>
+  ${salesmanBlock}
+  <div style="margin-top:26px;font-size:11px;">${printedBy}<br>${printedAt}</div>
+</body></html>`;
+}

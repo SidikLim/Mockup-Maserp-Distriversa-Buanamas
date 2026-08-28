@@ -60,6 +60,7 @@ function wireRcRowActions(){
       if(handler === 'sspBelumDiterima'){ openRcSspFilter(); }
       else if(handler === 'bonusTransaksi'){ openRcBonusFilter(); }
       else if(handler === 'transferProdukBonus'){ openRcTpbFilter(); }
+      else if(handler === 'umurPiutang'){ openRcUmurFilter(); }
     };
   });
   document.querySelectorAll('[data-rc-action]').forEach(btn => {
@@ -70,6 +71,7 @@ function wireRcRowActions(){
         if(handler === 'sspBelumDiterima'){ openRcSspFilter(); return; }
         if(handler === 'bonusTransaksi'){ openRcBonusFilter(); return; }
         if(handler === 'transferProdukBonus'){ openRcTpbFilter(); return; }
+        if(handler === 'umurPiutang'){ openRcUmurFilter(); return; }
       }
       const msg = action === 'print'
         ? 'Preview/cetak laporan ini akan tersedia setelah format report-nya dirancang — mockup ini baru mencakup daftar laporannya.'
@@ -91,6 +93,7 @@ function rcReportHandlerFor(perm){
   if(perm === 'PrintReportSspListNotReceived') return 'sspBelumDiterima';
   if(perm === 'PrintTransactionInventoryBonus') return 'bonusTransaksi';
   if(perm === 'PrintLaporanTransferProdukBonus') return 'transferProdukBonus';
+  if(perm === 'PrintReceivabledDueDate') return 'umurPiutang';
   return null;
 }
 
@@ -549,6 +552,263 @@ function openRcTpbReportFromFilter(overlay){
     periodeAkhir = String(lastDay).padStart(2,'0') + '/' + String(month).padStart(2,'0') + '/' + year;
   }
   const html = tplRcTpbReportDoc(periodeAwal, periodeAkhir, rows, grandTotal, rcTodayLabel());
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  if(overlay) overlay.remove();
+}
+
+/* =========================================================
+   2026-08-28 — "FA-10 Lap Umur Piutang" (Account Receivable >
+   grup FINANCE, permission code PrintReceivabledDueDate): report
+   SUNGGUHAN ke-4 di Report Center, sesuai screenshot filter
+   "+ Laporan Umur Piutang Customer" (Pilih Mata Uang/Customer
+   Group/Customer/Interval 30/Salesman/Cabang/Area/Rayon/Periode
+   Transaksi 01/03/2025 S/D 31/08/2026/Batas Tanggal/keterangan
+   rumus/Show Total Salesman/Close/Show Report/Show Report Pdf)
+   + contoh PDF "Laporan Perincian Umur Piutang" 91 halaman yang
+   dikirim user (header Tgl Print + nama perusahaan + Per tanggal
+   + Tgl Umur Piutang; kolom No./No. Faktur/Tgl. Trn/Tgl. Jtmp/
+   Jlh. Transaksi/Lewat Jth Tmp/Umur/1-30/31-60/61-90/91-120/
+   >120 Hari/SSP; grup Currency > Departemen > Customer dgn
+   Subtotal Customer/Departemen/Currency). Data customer rumah
+   sakit di PDF contoh adalah instalasi MASERP lain (SDL) — TIDAK
+   direplikasi, mengikuti precedent FA-08/Bonus.
+
+   MODIFIKASI DBM YANG DIMINTA USER (2026-08-28): opsi "View
+   Report" BARU di filter — perhitungan UMUR (dasar penentuan
+   bucket kolom umur) bisa dipilih "Tanggal Faktur" (default,
+   persis perilaku contoh PDF: Umur = Batas Tanggal - Tanggal
+   Transaksi) atau "Tanggal Jatuh Tempo" (Umur = Batas Tanggal -
+   Tanggal Jatuh Tempo). Pada mode Tanggal Jatuh Tempo, faktur
+   yang BELUM jatuh tempo tidak punya umur keterlambatan — kolom
+   bucket tambahan "Belum Jth Tempo" disisipkan sebelum "1-30
+   Hari" khusus mode itu (kolom & baris subtotal ikut menyesuaikan;
+   dokumen juga mencetak baris keterangan "Umur Piutang
+   Berdasarkan : ..." di bawah "Tgl Umur Piutang" supaya jelas
+   mode mana yang sedang dicetak).
+
+   SUMBER DATA (semua LIVE, bukan salinan PDF contoh):
+   1. DATA.invoices — outstanding = jumlah - (dibayar||0) per
+      batas tanggal (faktur lunas otomatis hilang); Tgl. Jtmp
+      dihitung dari syaratBayar faktur ('Kredit N Hari' -> +N
+      hari, 'CBD'/tanpa angka -> = tgl faktur).
+   2. DATA.arFakturHistoris (BARU, lihat komentar besar di
+      js/data.js) — rincian per-faktur saldo piutang historis yang
+      rekonsil PERSIS dengan field `piutang` DATA.customers,
+      supaya bucket 31-60/61-90/91-120/>120 benar-benar terisi.
+   3. DATA.penerimaanPiutang — faktur yang piutangnya sudah lunas
+      tapi SSP PPN/PPH-nya belum diterima muncul sebagai baris
+      Jlh. Transaksi 0,00 dengan nilai di kolom SSP (persis pola
+      baris SSP di PDF contoh, mis. C000201), nominalnya dihitung
+      rcSspFakturTax()/rcSspPphRate() yang SAMA dengan FA-08.
+   Interval (default 30) FUNGSIONAL: lebar bucket mengikuti input
+   (1-N, N+1-2N, ... , >4N). "Show Total Salesman" FUNGSIONAL:
+   menambah blok "Total per Salesman" di bawah tabel. Field Mata
+   Uang & Cabang dibuat <select> polos (bukan picker kaca
+   pembesar) meniru screenshot acuan yang tidak menampilkan tombol
+   pencarian di kedua field itu — precedent field "Lokasi Gudang"
+   filter Bonus. Grup "Departemen : 00" ditulis tetap (data DBM
+   mockup tidak punya dimensi departemen; PDF contoh menampilkan
+   departemen per customer — disederhanakan 1 departemen 00,
+   didokumentasikan sebagai simplifikasi). rcSspParseDMY()/
+   rcUniqueVals()/rcTodayLabel()/tplRcFieldWithBtn() di atas
+   di-reuse langsung (generik, file yang sama). */
+function rcuFieldOptions(targetId){
+  if(targetId === 'rcuGroup'){
+    return rcUniqueVals((DATA.customers || []).map(c => c.groupCustomer)).map(v => ({kode:v, label:v}));
+  }
+  if(targetId === 'rcuCustomer'){
+    return (DATA.customers || []).map(c => ({kode:c.kode, label:c.kode + ' - ' + c.nama}));
+  }
+  if(targetId === 'rcuSalesman'){
+    return rcUniqueVals((DATA.customers || []).map(c => c.salesman)).map(v => ({kode:v, label:v}));
+  }
+  if(targetId === 'rcuArea'){
+    return rcUniqueVals((DATA.customers || []).map(c => c.area)).map(v => ({kode:v, label:v}));
+  }
+  if(targetId === 'rcuRayon'){
+    const seen = {}; const out = [];
+    (DATA.customers || []).forEach(c => { if(c.rayonKode && !seen[c.rayonKode]){ seen[c.rayonKode] = true; out.push({kode:c.rayonKode, label:c.rayonNama || c.rayonKode}); } });
+    return out;
+  }
+  return [];
+}
+
+function openRcUmurPicker(targetId){
+  const titles = {rcuGroup:'Pilih Customer Group', rcuCustomer:'Pilih Customer', rcuSalesman:'Cari Salesman', rcuArea:'Pilih Area', rcuRayon:'Pilih Rayon'};
+  const rows = rcuFieldOptions(targetId);
+  const picker = document.createElement('div');
+  picker.className = 'modal-overlay';
+  picker.innerHTML = tplRcFilterPickerModal(titles[targetId] || 'Pilih', rows);
+  document.body.appendChild(picker);
+  document.getElementById('rcPickClose').onclick = () => picker.remove();
+  document.getElementById('rcPickCancel').onclick = () => picker.remove();
+  picker.onclick = (e) => { if(e.target === picker) picker.remove(); };
+  picker.querySelectorAll('.rc-pick-row').forEach(row => {
+    row.onclick = () => {
+      const input = document.getElementById(targetId);
+      if(input){ input.value = row.dataset.label; input.dataset.kode = row.dataset.kode; }
+      picker.remove();
+    };
+  });
+}
+
+function openRcUmurFilter(){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplRcUmurFilterModal();
+  document.body.appendChild(overlay);
+  document.getElementById('rcUmurFilterClose').onclick = () => overlay.remove();
+  document.getElementById('rcUmurFilterCancel').onclick = () => overlay.remove();
+  overlay.onclick = (e) => { if(e.target === overlay) overlay.remove(); };
+  overlay.querySelectorAll('[data-rc-pick]').forEach(btn => {
+    btn.onclick = () => openRcUmurPicker(btn.dataset.rcPick);
+  });
+  /* Keterangan rumus di bawah Batas Tanggal ikut berubah saat radio
+     "View Report" (modifikasi DBM) dipindah, supaya user langsung
+     melihat konsekuensi pilihannya sebelum menekan Show Report. */
+  overlay.querySelectorAll('input[name="rcuBasis"]').forEach(r => {
+    r.onchange = () => {
+      const note = document.getElementById('rcuFormulaNote');
+      if(note) note.innerHTML = tplRcUmurFormulaNote(rcuSelectedBasis());
+    };
+  });
+  document.getElementById('rcuShowReport').onclick = () => openRcUmurReportFromFilter(overlay);
+  document.getElementById('rcuShowReportPdf').onclick = () => openRcUmurReportFromFilter(overlay);
+}
+
+function rcuSelectedBasis(){
+  const el = document.querySelector('input[name="rcuBasis"]:checked');
+  return el ? el.value : 'faktur';
+}
+
+/* 'Kredit 30 Hari' -> 30; 'CBD'/'Tunai'/kosong -> 0 (jatuh tempo =
+   tanggal faktur, konsisten sifat cash-before-delivery). */
+function rcuTermDays(syarat){
+  const m = /(\d+)/.exec(syarat || '');
+  return m ? Number(m[1]) : 0;
+}
+
+function rcuFmtDMY(d){
+  return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear();
+}
+
+function rcuAddDays(dmyStr, days){
+  const d = rcSspParseDMY(dmyStr);
+  if(!d) return dmyStr;
+  d.setDate(d.getDate() + days);
+  return rcuFmtDMY(d);
+}
+
+function rcuDaysDiff(fromDmy, toDmy){
+  const a = rcSspParseDMY(fromDmy), b = rcSspParseDMY(toDmy);
+  if(!a || !b) return 0;
+  return Math.round((b.getTime() - a.getTime()) / 86400000);
+}
+
+function rcuInterval(){
+  const el = document.getElementById('rcuInterval');
+  const n = el ? parseInt(el.value, 10) : 30;
+  return (n > 0 && n <= 999) ? n : 30;
+}
+
+/* 5 bucket umur, lebar mengikuti Interval (default 30 -> 1-30/31-60/
+   61-90/91-120/>120 persis PDF contoh). */
+function rcuBuckets(interval){
+  return [
+    {label:'1 - ' + interval + ' Hari', min:1, max:interval},
+    {label:(interval+1) + ' - ' + (2*interval) + ' Hari', min:interval+1, max:2*interval},
+    {label:(2*interval+1) + ' - ' + (3*interval) + ' Hari', min:2*interval+1, max:3*interval},
+    {label:(3*interval+1) + ' - ' + (4*interval) + ' Hari', min:3*interval+1, max:4*interval},
+    {label:'>' + (4*interval) + ' Hari', min:4*interval+1, max:Infinity},
+  ];
+}
+
+function rcuBucketIndex(age, buckets){
+  for(let i = 0; i < buckets.length; i++){
+    if(age >= buckets[i].min && age <= buckets[i].max) return i;
+  }
+  return age > 0 ? buckets.length - 1 : 0;
+}
+
+/* Kumpulkan SEMUA baris kandidat (live invoice + historis + SSP
+   outstanding), lalu saring dengan filter modal. 1 baris = 1 faktur. */
+function rcuBuildRows(filter){
+  const out = [];
+  const custOf = kode => (DATA.customers || []).find(c => c.kode === kode) || {};
+  function pushRow(customerKode, cabang, noFaktur, tglTrn, tglJtmp, jlhTransaksi, ssp){
+    const cust = custOf(customerKode);
+    if(filter.mataUang && (cust.mataUang || 'IDR') !== filter.mataUang) return;
+    if(filter.group && cust.groupCustomer !== filter.group) return;
+    if(filter.customer && customerKode !== filter.customer) return;
+    if(filter.salesman && cust.salesman !== filter.salesman) return;
+    if(filter.cabang && cabang !== filter.cabang) return;
+    if(filter.area && cust.area !== filter.area) return;
+    if(filter.rayon && cust.rayonKode !== filter.rayon) return;
+    if(!rcSspInPeriode(tglTrn, filter.periodeAwal, filter.periodeAkhir)) return;
+    const umurFaktur = rcuDaysDiff(tglTrn, filter.batasTanggal);
+    const telat = rcuDaysDiff(tglJtmp, filter.batasTanggal);
+    out.push({
+      customerKode: customerKode,
+      customerNama: cust.nama || customerKode,
+      salesman: cust.salesman || '',
+      noFaktur: noFaktur, tglTrn: tglTrn, tglJtmp: tglJtmp,
+      jlhTransaksi: jlhTransaksi, ssp: ssp,
+      umurFaktur: umurFaktur, telat: telat
+    });
+  }
+  /* 1. Outstanding live dari modul Invoice. */
+  (DATA.invoices || []).forEach(inv => {
+    const sisa = (inv.jumlah || 0) - (inv.dibayar || 0);
+    if(sisa <= 0) return;
+    pushRow(inv.customerKode, inv.cabang, inv.no, inv.tgl, rcuAddDays(inv.tgl, rcuTermDays(inv.syaratBayar)), sisa, 0);
+  });
+  /* 2. Saldo historis per faktur (lihat komentar DATA.arFakturHistoris). */
+  (DATA.arFakturHistoris || []).forEach(h => {
+    pushRow(h.customerKode, h.cabang, h.noFaktur, h.tglFaktur, h.tglJthTempo, h.sisa, 0);
+  });
+  /* 3. Faktur lunas yang SSP-nya masih outstanding (pola baris
+     "Jlh. Transaksi 0,00 + kolom SSP terisi" di PDF contoh). */
+  (DATA.penerimaanPiutang || []).forEach(pp => {
+    (pp.fakturs || []).forEach(f => {
+      const ppnOut = !!(f.potonganPpn && !f.sudahTerimaSspPpn);
+      const pphOut = !!(f.potonganPph && !f.sudahTerimaSspPph);
+      if(!ppnOut && !pphOut) return;
+      const tax = rcSspFakturTax(f.pembayaran);
+      const ssp = (ppnOut ? tax.ppn : 0) + (pphOut ? tax.dpp * rcSspPphRate(f.pphKode) : 0);
+      pushRow(pp.customerKode, f.cabang || pp.cabang, f.no, f.tglFaktur, f.tglJthTempo, 0, ssp);
+    });
+  });
+  /* Urut per customer (kode), lalu per tanggal transaksi naik —
+     mengikuti urutan baris di PDF contoh. */
+  out.sort((a, b) => a.customerKode === b.customerKode
+    ? (rcSspParseDMY(a.tglTrn) - rcSspParseDMY(b.tglTrn))
+    : (a.customerKode < b.customerKode ? -1 : 1));
+  return out;
+}
+
+function openRcUmurReportFromFilter(overlay){
+  const val = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+  const kode = id => { const el = document.getElementById(id); return (el && el.dataset.kode) || ''; };
+  const filter = {
+    mataUang: val('rcuMataUang'),
+    group: kode('rcuGroup'),
+    customer: kode('rcuCustomer'),
+    salesman: kode('rcuSalesman'),
+    cabang: val('rcuCabang'),
+    area: kode('rcuArea'),
+    rayon: kode('rcuRayon'),
+    periodeAwal: val('rcuPeriodeAwal'),
+    periodeAkhir: val('rcuPeriodeAkhir'),
+    batasTanggal: val('rcuBatasTanggal') || rcTodayLabel()
+  };
+  const basis = rcuSelectedBasis();
+  const interval = rcuInterval();
+  const showTotalSalesman = !!(document.getElementById('rcuShowTotalSalesman') || {}).checked;
+  const rows = rcuBuildRows(filter);
+  const html = tplRcUmurReportDoc(filter, basis, interval, rows, showTotalSalesman, 'Sidik', rcTodayLabel());
   const win = window.open('', '_blank');
   win.document.write(html);
   win.document.close();

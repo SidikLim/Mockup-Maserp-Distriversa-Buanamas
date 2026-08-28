@@ -263,11 +263,17 @@ canvas{max-width:100%;}
 
 /* ===== Modal (Tambah/Ubah/Hapus) ===== */
 .modal-overlay{position:fixed;inset:0;background:rgba(20,20,40,.45);display:flex;align-items:center;justify-content:center;z-index:200;}
-.modal-box{background:#fff;border-radius:9px;width:100%;max-width:420px;margin:0 16px;box-shadow:0 10px 40px rgba(0,0,0,.25);overflow:hidden;}
+/* 2026-08-28 — modal dibuat flex-column dgn max-height layar &
+   .modal-body yang scroll: modal tinggi (mis. filter FA-10 Lap Umur
+   Piutang yang field-nya banyak) tidak lagi terpotong keluar layar —
+   header & footer (tombol Close/Show Report) selalu terlihat, isi
+   form-nya yang di-scroll. Berlaku global utk semua modal (modal
+   pendek tidak terpengaruh karena max-height hanya membatasi). */
+.modal-box{background:#fff;border-radius:9px;width:100%;max-width:420px;margin:0 16px;box-shadow:0 10px 40px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;max-height:calc(100vh - 48px);}
 .modal-header{background:var(--navy);color:#fff;padding:14px 18px;font-size:14.5px;font-weight:700;display:flex;justify-content:space-between;align-items:center;}
 .modal-header .close{cursor:pointer;opacity:.8;font-size:20px;line-height:1;}
 .modal-header .close:hover{opacity:1;}
-.modal-body{padding:20px 18px;}
+.modal-body{padding:20px 18px;overflow-y:auto;flex:1 1 auto;}
 .modal-body p{font-size:13px;line-height:1.6;color:var(--text);}
 .modal-footer{padding:14px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
 .form-group{margin-bottom:14px;}
@@ -1985,6 +1991,61 @@ const DATA = {
     {no:'PACK-0703', tgl:'2026-08-03', so:'SO-2026-0814', status:'Proses'},
     {no:'PACK-0704', tgl:'2026-08-04', so:'SO-2026-0816', status:'Baru'},
   ],
+  /* =========================================================
+     2026-08-28 — ARRAY BARU "arFakturHistoris": saldo piutang
+     HISTORIS per faktur, ditambahkan khusus untuk laporan Report
+     Center baru "FA-10 Lap Umur Piutang" (Account Receivable,
+     permission code PrintReceivabledDueDate — report SUNGGUHAN
+     ke-4 setelah FA-08/Bonus Penjualan/Transfer Produk Bonus,
+     lihat js/pages/reports.js rcuBuildRows()).
+     KENAPA PERLU ARRAY BARU: laporan umur piutang butuh baris
+     outstanding yang tersebar di banyak bucket umur (1-30/31-60/
+     61-90/91-120/>120 hari), sedangkan DATA.invoices semuanya
+     bertanggal Agustus 2026 (semua akan jatuh di bucket 1-30 saja)
+     dan TIDAK BOLEH ditambah baris lama karena 8+2 barisnya
+     terdokumentasi di-chain 1:1 ke DATA.pickingList/DATA.promotion
+     (lihat komentar besar di atas DATA.invoices). Precedent yang
+     diikuti: 6 baris "historis/dekoratif" bernomor Juli di
+     DATA.penerimaanPiutang (faktur lama yang sengaja tidak
+     terhubung ke DATA.invoices).
+     REKONSILIASI (bukan angka acak): sisa historis per customer +
+     outstanding live DATA.invoices (jumlah - dibayar, per batas
+     tanggal default 28/08/2026) = PERSIS field `piutang` yang
+     SUDAH ADA di DATA.customers sejak awal (saldo piutang yang
+     dipakai hitung "Sisa CL" di Sales Order):
+       CUST-001 17.515.000 + 735.000            = 18.250.000
+       CUST-002  5.240.000 + (880.000+3.000.000) =  9.120.000
+       CUST-003  4.300.000 + 0                   =  4.300.000
+       CUST-004  6.000.000 + 600.000             =  6.600.000
+       CUST-005  1.900.000 + 250.000             =  2.150.000
+       CUST-006  7.970.000 + (1.700.000+200.000) =  9.870.000
+       CUST-007    800.000 + 400.000             =  1.200.000
+       CUST-008  2.770.000 + 350.000             =  3.120.000
+     — jadi array ini adalah RINCIAN per-faktur dari saldo piutang
+     customer yang memang sudah ada, bukan data baru yang lepas.
+     tglJthTempo tiap baris konsisten dgn pola syarat bayar customer
+     yang dipakai faktur live-nya (HO/SMG/MKS N30, SBY/BDG N14,
+     MDN N45). Nomor faktur mengikuti format nomor per-cabang yang
+     sudah ada, dicek tidak bentrok dengan nomor manapun di
+     DATA.invoices/DATA.penerimaanPiutang (referensi deskriptif,
+     bukan foreign-key — precedent yang sama dgn field serupa di
+     modul lain). */
+  arFakturHistoris:[
+    {customerKode:'CUST-001', cabang:'Head Office', noFaktur:'25/SI/HO/11/00021', tglFaktur:'10/11/2025', tglJthTempo:'10/12/2025', sisa:6500000},
+    {customerKode:'CUST-001', cabang:'Head Office', noFaktur:'26/SI/HO/05/00012', tglFaktur:'12/05/2026', tglJthTempo:'11/06/2026', sisa:7200000},
+    {customerKode:'CUST-001', cabang:'Head Office', noFaktur:'26/SI/HO/07/00044', tglFaktur:'08/07/2026', tglJthTempo:'07/08/2026', sisa:3815000},
+    {customerKode:'CUST-002', cabang:'Surabaya', noFaktur:'26/SI/SBY/06/00025', tglFaktur:'10/06/2026', tglJthTempo:'24/06/2026', sisa:3100000},
+    {customerKode:'CUST-002', cabang:'Surabaya', noFaktur:'26/SI/SBY/07/00031', tglFaktur:'20/07/2026', tglJthTempo:'03/08/2026', sisa:2140000},
+    {customerKode:'CUST-003', cabang:'Bandung', noFaktur:'26/SI/BDG/05/00017', tglFaktur:'20/05/2026', tglJthTempo:'03/06/2026', sisa:2500000},
+    {customerKode:'CUST-003', cabang:'Bandung', noFaktur:'26/SI/BDG/07/00022', tglFaktur:'15/07/2026', tglJthTempo:'29/07/2026', sisa:1800000},
+    {customerKode:'CUST-004', cabang:'Medan', noFaktur:'26/SI/MDN/03/00008', tglFaktur:'05/03/2026', tglJthTempo:'19/04/2026', sisa:3750000},
+    {customerKode:'CUST-004', cabang:'Medan', noFaktur:'26/SI/MDN/06/00019', tglFaktur:'18/06/2026', tglJthTempo:'02/08/2026', sisa:2250000},
+    {customerKode:'CUST-005', cabang:'Makassar', noFaktur:'26/SI/MKS/07/00020', tglFaktur:'05/07/2026', tglJthTempo:'04/08/2026', sisa:1900000},
+    {customerKode:'CUST-006', cabang:'Head Office', noFaktur:'26/SI/HO/06/00033', tglFaktur:'02/06/2026', tglJthTempo:'02/07/2026', sisa:4470000},
+    {customerKode:'CUST-006', cabang:'Head Office', noFaktur:'26/SI/HO/07/00051', tglFaktur:'22/07/2026', tglJthTempo:'21/08/2026', sisa:3500000},
+    {customerKode:'CUST-007', cabang:'Semarang', noFaktur:'26/SI/SMG/07/00040', tglFaktur:'12/07/2026', tglJthTempo:'11/08/2026', sisa:800000},
+    {customerKode:'CUST-008', cabang:'Surabaya', noFaktur:'26/SI/SBY/05/00028', tglFaktur:'12/05/2026', tglJthTempo:'26/05/2026', sisa:2770000},
+  ],
   /* Penerimaan Piutang (Customer & Penjualan > Daftar Transaksi >
      Penerimaan Piutang, page:'penerimaanPiutang') — lihat catatan
      desain lengkap di header js/pages/penerimaan-piutang.template.js.
@@ -3046,6 +3107,18 @@ const DATA = {
     {kode:'1120004', nama:'Piutang SSP PPH', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'2120003', nama:'PPN Pemungut', kategori:'B', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'1140003', nama:'Uang Muka PPH 22', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    /* 4 akun BARU 2026-08-28 — dipakai 2 modul master Kas/Bank baru
+       "Jurnal Pelunasan Utang/Piutang" (DATA.jurnalKasUtangPiutang) &
+       "Currency" (DATA.currencies): Bank BNI/BRI melengkapi Mandiri/BCA
+       yang sudah ada (akun kas jurnal utk baris Bank BNI SBY & Bank BRI
+       MDN di DATA.kasBank), 2 akun Giro Mundur utk field Akun Utang/
+       Piutang Giro Mundur di form Jurnal Kas (screenshot MASERP acuan
+       memakai akun giro mundur terpisah dari akun utang/piutang usaha).
+       Precedent penambahan akun: 3110002 (Revaluasi, 2026-08-26). */
+    {kode:'1100013', nama:'Bank BNI', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'1100014', nama:'Bank BRI', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'1120005', nama:'Piutang Usaha - Giro Mundur', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'2110004', nama:'Hutang Usaha Giro Mundur', kategori:'B', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     /* 12 akun baru (6 pasang Biaya Susut/Akum. Susut) — menu Aktiva
        Tetap (2026-08-26), lihat catatan besar di atas DATA.aktivaTetap
        & js/pages/fixed-asset.template.js. Screenshot MASERP contoh
@@ -4474,6 +4547,121 @@ const DATA = {
      kbkNextKode() di js/pages/kas-bank.js. `mataUang` semua 'IDR' &
      `nonAktif`/`smartlink` semua false di data sample (kedua field ini
      cuma toggle di form, screenshot tidak menunjukkan contoh yang aktif). */
+  /* =========================================================
+     2026-08-28 — DATA BARU "currencies": Master Currency (Kas/Bank >
+     Master & Setting > Currency, page:'currency' — sebelumnya
+     placeholder murni). Sesuai 3 screenshot MASERP yang dikirim user:
+     "Daftar Mata Uang" (4 baris CNY/IDR/SGD/USD — kode & nama mata
+     uang generik internasional, bukan data spesifik instalasi lain,
+     jadi direplikasi apa adanya) dan "Ubah Mata Uang" USD (2 tab:
+     "Rincian Transaksi" berisi grid Periode Kurs, "Jurnal Mata Uang"
+     berisi Setting Account Jurnal Selisih Kurs).
+     - periodeKurs USD: 8 baris akhir-bulan Des 2025 s/d Jul 2026,
+       nilai kurs mengikuti screenshot (kurs pasar publik, bukan data
+       sensitif instalasi lain); CNY & SGD diberi 3 periode terakhir
+       dengan kurs pasar yang wajar supaya semua mata uang asing punya
+       contoh; IDR (mata uang dasar) tanpa periode kurs.
+     - jurnal (Setting Account Jurnal Selisih Kurs): screenshot acuan
+       memakai akun per-valas khusus (Piutang Usaha USD 110502 dst.)
+       milik COA instalasi lain — TIDAK direplikasi; USD dipetakan ke
+       akun DATA.akunGL DBM yang sudah ada (1120001/2110001/1140001/
+       2140001/6010002/6510002 — persis akun yang dipakai
+       DATA.jurnalPembelian/jurnalPenjualan utk selisih kurs), CNY/SGD
+       sengaja dikosongkan (belum pernah dipakai transaksi, sekaligus
+       mendemokan picker akun GL pada form). */
+  currencies:[
+    {kode:'CNY', nama:'Chinese Yuan', keterangan:'', nonAktif:false,
+      periodeKurs:[
+        {kursTarget:'IDR', tglAwal:'31/05/2026', tglAkhir:'31/05/2026', kursStd:2470, kursPajak:2470},
+        {kursTarget:'IDR', tglAwal:'30/06/2026', tglAkhir:'30/06/2026', kursStd:2481, kursPajak:2481},
+        {kursTarget:'IDR', tglAwal:'31/07/2026', tglAkhir:'31/07/2026', kursStd:2512, kursPajak:2512},
+      ],
+      jurnal:{akunPiutang:'', akunUtang:'', akunUMPembelian:'', akunUMPenjualan:'', akunLabaSelisihKurs:'', akunRugiSelisihKurs:''}},
+    {kode:'IDR', nama:'Indonesian Rupiah', keterangan:'', nonAktif:false,
+      periodeKurs:[],
+      jurnal:{akunPiutang:'1120001', akunUtang:'2110001', akunUMPembelian:'1140001', akunUMPenjualan:'2140001', akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002'}},
+    {kode:'SGD', nama:'Singapore Dollar', keterangan:'', nonAktif:false,
+      periodeKurs:[
+        {kursTarget:'IDR', tglAwal:'31/05/2026', tglAkhir:'31/05/2026', kursStd:13802, kursPajak:13802},
+        {kursTarget:'IDR', tglAwal:'30/06/2026', tglAkhir:'30/06/2026', kursStd:13951, kursPajak:13951},
+        {kursTarget:'IDR', tglAwal:'31/07/2026', tglAkhir:'31/07/2026', kursStd:14126, kursPajak:14126},
+      ],
+      jurnal:{akunPiutang:'', akunUtang:'', akunUMPembelian:'', akunUMPenjualan:'', akunLabaSelisihKurs:'', akunRugiSelisihKurs:''}},
+    {kode:'USD', nama:'American Dollar', keterangan:'', nonAktif:false,
+      periodeKurs:[
+        {kursTarget:'IDR', tglAwal:'31/12/2025', tglAkhir:'31/12/2025', kursStd:16782, kursPajak:16782},
+        {kursTarget:'IDR', tglAwal:'31/01/2026', tglAkhir:'31/01/2026', kursStd:16786, kursPajak:16786},
+        {kursTarget:'IDR', tglAwal:'28/02/2026', tglAkhir:'28/02/2026', kursStd:16758, kursPajak:16758},
+        {kursTarget:'IDR', tglAwal:'31/03/2026', tglAkhir:'31/03/2026', kursStd:16993, kursPajak:16993},
+        {kursTarget:'IDR', tglAwal:'30/04/2026', tglAkhir:'30/04/2026', kursStd:17324, kursPajak:17324},
+        {kursTarget:'IDR', tglAwal:'31/05/2026', tglAkhir:'31/05/2026', kursStd:17789, kursPajak:17789},
+        {kursTarget:'IDR', tglAwal:'30/06/2026', tglAkhir:'30/06/2026', kursStd:17856, kursPajak:17856},
+        {kursTarget:'IDR', tglAwal:'31/07/2026', tglAkhir:'31/07/2026', kursStd:18078, kursPajak:18078},
+      ],
+      jurnal:{akunPiutang:'1120001', akunUtang:'2110001', akunUMPembelian:'1140001', akunUMPenjualan:'2140001', akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002'}},
+  ],
+  /* =========================================================
+     2026-08-28 — DATA BARU "jurnalKasUtangPiutang": master Jurnal
+     Pelunasan Utang/Piutang (Kas/Bank > Master & Setting, page:
+     'jurnalPelunasanUP' — sebelumnya placeholder murni). Sesuai 2
+     screenshot MASERP yang dikirim user: "Daftar Jurnal Kas Utang dan
+     Piutang" (list Kode Jurnal/Keterangan/Ubah/Hapus, Total Record 16,
+     kode sparse 1/13/143/...) dan form "+ Buat Jurnal Kas" (Nama
+     Jurnal + Mata Uang readonly + 15 field akun GL dgn picker, tombol
+     Simpan/Batalkan/DUPLICATE). Data list screenshot (BCA IDR
+     829.091.0219 dst.) adalah rekening instalasi MASERP lain (SDL) —
+     TIDAK direplikasi; 8 baris di bawah dibuat 1:1 dari baris
+     DATA.kasBank DBM yang sudah ada (nama & no. rekening persis field
+     kasBank, kode sequential 1..8 mengikuti pola kode numerik
+     DATA.jurnalPembelian). Akun-akunnya dipetakan ke DATA.akunGL DBM:
+     akun kas per baris = akun GL kas/bank yang sesuai (Bank BNI/BRI
+     baru ditambahkan di atas), akun lain persis pemetaan yang sudah
+     dipakai DATA.jurnalPembelian/jurnalPenjualan — Akun Biaya/
+     Pendapatan Lain-Lain dua-duanya ke 6510003 'Selisih Pembulatan /
+     Pembayaran' MENIRU screenshot acuan yang juga memetakan kedua
+     field itu ke 1 akun selisih pembulatan yang sama. */
+  jurnalKasUtangPiutang:[
+    {kode:1, nama:'Kas Kecil HO (IDR)', mataUang:'IDR',
+      akunKas:'1100001', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+    {kode:2, nama:'Kas Besar HO (IDR)', mataUang:'IDR',
+      akunKas:'1100002', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+    {kode:3, nama:'Bank Mandiri HO 1270012345678', mataUang:'IDR',
+      akunKas:'1100011', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+    {kode:4, nama:'Bank BCA HO 0123456789', mataUang:'IDR',
+      akunKas:'1100012', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+    {kode:5, nama:'Bank BNI SBY 0198765432', mataUang:'IDR',
+      akunKas:'1100013', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+    {kode:6, nama:'Bank Mandiri BDG 1270087654321', mataUang:'IDR',
+      akunKas:'1100011', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+    {kode:7, nama:'Bank BCA TGR 0234567891', mataUang:'IDR',
+      akunKas:'1100012', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+    {kode:8, nama:'Bank BRI MDN 009801123456789', mataUang:'IDR',
+      akunKas:'1100014', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+  ],
   kasBank:[
     {kode:'110101', masterBank:'PT Distriversa Buanamas - Head Office', nama:'Kas Kecil HO', mataUang:'IDR', alamat:'', telepon:'', kontakPerson:'', noRekening:'', tipeRekening:'Kas', nonAktif:false, smartlink:false, saldo:12674900},
     {kode:'110102', masterBank:'PT Distriversa Buanamas - Sidoarjo', nama:'Kas Besar SDA', mataUang:'IDR', alamat:'', telepon:'', kontakPerson:'', noRekening:'', tipeRekening:'Kas', nonAktif:false, smartlink:false, saldo:17012515.11},
@@ -6155,8 +6343,8 @@ const MENU=[
    {header:'Master & Setting'},
    {label:'Master Bank', page:'placeholder', title:'Master Bank'},
    {label:'Kas/Bank', page:'kasBank'},
-   {label:'Currency', page:'placeholder', title:'Currency'},
-   {label:'Jurnal Pelunasan Utang/Piutang', page:'placeholder', title:'Jurnal Pelunasan Utang/Piutang'},
+   {label:'Currency', page:'currency'},
+   {label:'Jurnal Pelunasan Utang/Piutang', page:'jurnalPelunasanUP'},
    {label:'Jurnal Kas Lain-Lain', page:'placeholder', title:'Jurnal Kas Lain-Lain'},
    {label:'Cash Flow', page:'placeholder', title:'Cash Flow'},
    {header:'Daftar Transaksi'},
@@ -7419,6 +7607,285 @@ function tplCcDeleteConfirm(row){
       <div class="modal-footer">
         <button class="btn-secondary" id="modalCancel">Batal</button>
         <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
+   TEMPLATE (HTML saja) — Master Currency (Kas/Bank > Master &
+   Setting > Currency). Semua fungsi di file ini HANYA menyusun &
+   mengembalikan markup HTML (string), TIDAK ada logic/DOM-binding/
+   data mutation di sini. Logic-nya ada di file sebelah: currency.js
+
+   Sesuai 3 screenshot MASERP yang dikirim user 2026-08-28:
+   - "Daftar Mata Uang": list kolom Mata Uang/Nama Mata Uang/
+     Keterangan/Ubah/Hapus + tombol header "Impor Periode Kurs"
+     (teal), "+ Tambah" (biru), "Tutorial" (merah), Total Record: 4.
+   - "Ubah Mata Uang" tab "Rincian Transaksi": header form (Kode
+     Mata Uang readonly/Nama Mata Uang/Keterangan/checkbox Non
+     Aktif ?) + panel dark "Periode Kurs" berisi grid baris kurs
+     (Kurs Target select/Tanggal Awal+Akhir dgn tombol kalender/
+     Kurs Std/Kurs Pajak rata kanan/Hapus) + link "+Tambah Periode
+     Kurs" + Simpan/Batalkan.
+   - "Ubah Mata Uang" tab "Jurnal Mata Uang": panel dark "Setting
+     Account Jurnal Selisih Kurs" berisi tabel Keterangan/Akun GL
+     (input readonly + tombol kaca pembesar)/Nama Akun GL — 6 baris
+     tetap (Akun Piutang/Utang/UM Pembelian/UM Penjualan/Laba/Rugi
+     Selisih Kurs).
+   Pola tab memakai .inv-tabs (disalin dari Cabang/Invoice), pola
+   picker Akun GL adalah SALINAN LOKAL tplJpAkunPicker (Jurnal
+   Pembelian — modul lazy-load lain yang urutan muatnya tidak boleh
+   diandalkan), pola baris akun memakai .jp-akun-table yang sudah
+   ada di style.css. Tombol kalender di kolom tanggal dekoratif
+   (input teks dd/mm/yyyy langsung diketik — konsisten field
+   tanggal modul lain di mockup ini yang juga plain text). */
+
+const CRC_JURNAL_FIELDS = [
+  { key:'akunPiutang', label:'Akun Piutang' },
+  { key:'akunUtang', label:'Akun Utang' },
+  { key:'akunUMPembelian', label:'Akun UM Pembelian' },
+  { key:'akunUMPenjualan', label:'Akun UM Penjualan' },
+  { key:'akunLabaSelisihKurs', label:'Akun Laba Selisih Kurs' },
+  { key:'akunRugiSelisihKurs', label:'Akun Rugi Selisih Kurs' },
+];
+
+function crcAkunNama(kode){
+  if(!kode) return '';
+  const a = DATA.akunGL.find(x => x.kode === kode);
+  return a ? a.nama : '';
+}
+
+function crcFmtKurs(n){
+  return Number(n || 0).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function tplCurrencyListPage(){
+  return `
+    <div class="breadcrumb">Home / Kas/Bank / <b>Currency</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('dollar',15)} Daftar Mata Uang</h3>
+        <div class="toolbar-actions">
+          <button class="btn-teal" id="btnCrcImpor">${icon('save',14)} Impor Periode Kurs</button>
+          <button class="btn-primary" id="btnCrcAdd">${icon('plus',14)} Tambah</button>
+          <button class="btn-danger" id="btnCrcTutorial">${icon('card',14)} Tutorial</button>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <select><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="crcSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th style="width:110px;">Mata Uang</th>
+          <th style="width:240px;">Nama Mata Uang</th>
+          <th>Keterangan</th>
+          <th style="width:60px;">Ubah</th>
+          <th style="width:64px;">Hapus</th>
+        </tr></thead>
+        <tbody id="crcTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager"><button>First</button><button>Previous</button><button class="active">1</button><button>Next</button><button>Last</button></div><div id="crcTotal"></div></div>
+    </div>`;
+}
+
+function tplCrcRows(rows){
+  if(!rows.length){
+    return `<tr><td colspan="5" style="color:var(--text-light);padding:14px;">Tidak ada mata uang yang cocok dengan pencarian.</td></tr>`;
+  }
+  return rows.map(r => `
+    <tr>
+      <td><a href="javascript:void(0)" class="crc-kode-link" data-edit-kode="${r.kode}" style="color:var(--blue);font-weight:600;text-decoration:none;">${r.kode}</a></td>
+      <td>${r.nama || ''}</td>
+      <td>${r.keterangan || ''}</td>
+      <td><button class="icon-btn edit" data-edit-kode="${r.kode}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del-kode="${r.kode}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`).join('');
+}
+
+/* 1 baris grid Periode Kurs — semua input membawa data-kurs-idx utk
+   di-wire currency.js (nilai disimpan ke state saat berubah). */
+function tplCrcKursRow(k, i, kodeSendiri){
+  const targetList = DATA.currencies.map(c => c.kode).filter(kd => kd !== kodeSendiri);
+  return `
+    <tr>
+      <td style="width:26px;"></td>
+      <td style="width:90px;">
+        <select data-kurs-field="kursTarget" data-kurs-idx="${i}">
+          ${targetList.map(kd => `<option ${k.kursTarget === kd ? 'selected' : ''}>${kd}</option>`).join('')}
+        </select>
+      </td>
+      <td>
+        <div class="input-with-btn">
+          <input type="text" value="${k.tglAwal || ''}" placeholder="dd/mm/yyyy" data-kurs-field="tglAwal" data-kurs-idx="${i}">
+          <button type="button" class="icon-btn edit" data-kurs-cal="${i}" title="Kalender">${icon('calendar',14)}</button>
+        </div>
+      </td>
+      <td>
+        <div class="input-with-btn">
+          <input type="text" value="${k.tglAkhir || ''}" placeholder="dd/mm/yyyy" data-kurs-field="tglAkhir" data-kurs-idx="${i}">
+          <button type="button" class="icon-btn edit" data-kurs-cal="${i}" title="Kalender">${icon('calendar',14)}</button>
+        </div>
+      </td>
+      <td><input type="text" value="${crcFmtKurs(k.kursStd)}" style="text-align:right;" data-kurs-field="kursStd" data-kurs-idx="${i}"></td>
+      <td><input type="text" value="${crcFmtKurs(k.kursPajak)}" style="text-align:right;" data-kurs-field="kursPajak" data-kurs-idx="${i}"></td>
+      <td style="width:56px;text-align:center;"><button type="button" class="icon-btn del" data-kurs-del="${i}" title="Hapus">${icon('trash',14)}</button></td>
+    </tr>`;
+}
+
+function tplCrcKursPanel(row){
+  return `
+    <div class="card" style="margin-top:14px;">
+      <div class="card-header dark-header"><h3>${icon('alertTriangle',14)} Periode Kurs</h3></div>
+      <div class="table-wrap">
+        <table class="jp-akun-table" style="margin-bottom:0;">
+          <thead><tr>
+            <th style="width:26px;"></th>
+            <th style="width:90px;text-align:left;padding:9px 14px;">Kurs Target</th>
+            <th style="text-align:left;padding:9px 14px;">Tanggal Awal</th>
+            <th style="text-align:left;padding:9px 14px;">Tanggal Akhir</th>
+            <th style="text-align:right;padding:9px 14px;">Kurs Std</th>
+            <th style="text-align:right;padding:9px 14px;">Kurs Pajak</th>
+            <th style="width:56px;text-align:left;padding:9px 14px;">Hapus</th>
+          </tr></thead>
+          <tbody id="crcKursBody">${row.periodeKurs.map((k,i) => tplCrcKursRow(k, i, row.kode)).join('')}</tbody>
+        </table>
+        <a href="javascript:void(0)" class="link-add" id="crcKursAdd" style="margin:10px 14px 14px;">${icon('plus',13)}Tambah Periode Kurs</a>
+      </div>
+    </div>`;
+}
+
+function tplCrcJurnalRow(f, row){
+  const kode = (row.jurnal || {})[f.key] || '';
+  return `
+    <tr>
+      <td class="jp-label">${f.label}</td>
+      <td class="jp-input">
+        <div class="input-with-btn">
+          <input type="text" id="fCrc_${f.key}" value="${kode}" placeholder="Pilih Akun" readonly>
+          <button type="button" class="icon-btn edit" data-akun-search="${f.key}" title="Cari Akun">${icon('search',14)}</button>
+        </div>
+      </td>
+      <td class="jp-nama" id="fCrcNama_${f.key}">${crcAkunNama(kode)}</td>
+    </tr>`;
+}
+
+function tplCrcJurnalPanel(row){
+  return `
+    <div class="card" style="margin-top:14px;">
+      <div class="card-header dark-header"><h3>${icon('alertTriangle',14)} Setting Account Jurnal Selisih Kurs</h3></div>
+      <div class="card-body">
+        <table class="jp-akun-table" style="margin-bottom:0;">
+          <thead><tr>
+            <th style="text-align:left;padding:9px 14px;width:230px;">Keterangan</th>
+            <th style="text-align:left;padding:9px 14px;width:220px;">Akun GL</th>
+            <th style="text-align:left;padding:9px 14px;">Nama Akun GL</th>
+          </tr></thead>
+          <tbody>${CRC_JURNAL_FIELDS.map(f => tplCrcJurnalRow(f, row)).join('')}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function tplCurrencyForm(mode, row){
+  const isAdd = mode === 'add';
+  return `
+    <div class="breadcrumb">Home / Kas/Bank / Currency / <b>${isAdd ? 'Tambah' : 'Ubah'}</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon(isAdd ? 'plus' : 'edit',15)} ${isAdd ? 'Tambah' : 'Ubah'} Mata Uang</h3>
+        <button class="btn-danger" id="btnCrcFormTutorial" type="button">${icon('card',14)} Tutorial</button>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Kode Mata Uang</label>
+            <input type="text" id="fCrcKode" value="${row.kode || ''}" maxlength="5" placeholder="Contoh: USD" ${isAdd ? '' : 'disabled'}>
+          </div>
+          <div class="form-group">
+            <label>Nama Mata Uang</label>
+            <input type="text" id="fCrcNama" value="${row.nama || ''}" placeholder="Contoh: American Dollar">
+          </div>
+          <div class="form-group">
+            <label>Keterangan</label>
+            <input type="text" id="fCrcKeterangan" value="${row.keterangan || ''}" placeholder="Keterangan">
+          </div>
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <div class="checkbox-row" style="margin:6px 0 0;">
+              <label for="fCrcNonAktif" style="font-weight:600;">Non Aktif ?</label>
+              <input type="checkbox" id="fCrcNonAktif" ${row.nonAktif ? 'checked' : ''} style="width:18px;height:18px;">
+            </div>
+          </div>
+        </div>
+
+        <div class="inv-tabs" style="margin-top:8px;">
+          <button type="button" class="inv-tab-btn active" data-crc-tab="kurs">Rincian Transaksi</button>
+          <button type="button" class="inv-tab-btn" data-crc-tab="jurnal">Jurnal Mata Uang</button>
+        </div>
+
+        <div id="crcTabPanel-kurs">${tplCrcKursPanel(row)}</div>
+        <div id="crcTabPanel-jurnal" style="display:none;">${tplCrcJurnalPanel(row)}</div>
+
+        <div class="form-page-actions">
+          <a href="#" id="crcCancel">Batalkan</a>
+          <button class="btn-primary" id="crcSave">Simpan</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* SALINAN LOKAL pola picker Akun GL Jurnal Pembelian (tplJpAkunPicker)
+   — id elemen dibedakan (crc...) supaya tidak bentrok. */
+function tplCrcAkunPicker(list, fieldKey){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Akun GL</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="crcAkunPickerSearch" placeholder="Cari kode / nama akun..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Akun</th><th>Kat.</th><th></th></tr></thead>
+            <tbody id="crcAkunPickerBody">${tplCrcAkunPickerRows(list, fieldKey)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Tutup</button>
+      </div>
+    </div>`;
+}
+
+function tplCrcAkunPickerRows(list, fieldKey){
+  if(!list.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada akun ditemukan</td></tr>`;
+  return list.map(a => `
+    <tr>
+      <td>${a.kode}</td>
+      <td>${a.nama}</td>
+      <td>${a.kategori}</td>
+      <td><button class="btn-pick" data-pick-akun="${a.kode}" data-pick-field="${fieldKey}">Pilih</button></td>
+    </tr>`).join('');
+}
+
+function tplCrcDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Mata Uang</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus mata uang <b>${row.kode}</b> — ${row.nama || ''}?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+function tplCrcInfoModal(title, text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="modalCancel">Tutup</button>
       </div>
     </div>`;
 }
@@ -11460,6 +11927,194 @@ function tplJfaAkunPickerRows(list, target){
       <td>${a.nama}</td>
       <td><button class="btn-pick" data-pick-akun="${a.kode}" data-target="${target}">Pilih</button></td>
     </tr>`).join('');
+}
+
+/* =========================================================
+   TEMPLATE (HTML saja) — Jurnal Pelunasan Utang/Piutang (Kas/Bank
+   > Master & Setting). Semua fungsi di file ini HANYA menyusun &
+   mengembalikan markup HTML (string), TIDAK ada logic/DOM-binding/
+   data mutation di sini. Logic-nya ada di file sebelah:
+   jurnal-pelunasan-up.js
+
+   Sesuai 2 screenshot MASERP yang dikirim user 2026-08-28:
+   - "Daftar Jurnal Kas Utang dan Piutang": list kolom Kode Jurnal/
+     Keterangan/Ubah/Hapus + tombol "+ Tambah", pencarian global,
+     select jumlah baris.
+   - "+ Buat Jurnal Kas": form full page — baris teratas Nama Jurnal
+     (input) + Mata Uang (readonly), lalu 15 baris field akun GL
+     (Akun Kas s/d Akun Uang Muka PPH 22) masing-masing input
+     readonly + tombol kaca pembesar + tombol hapus + nama akun di
+     kolom kanan, footer Simpan/Batalkan/DUPLICATE + tombol merah
+     Tutorial di header.
+   Pola form & baris akun mengikuti persis Jurnal Pembelian
+   (field-table + .jp-akun-table + picker Akun GL dari DATA.akunGL)
+   — picker-nya SALINAN LOKAL tplJpAkunPicker (modul lazy-load lain
+   yang urutan muatnya tidak boleh diandalkan), id elemen dibedakan
+   (jkup...). Sumber datanya DATA.jurnalKasUtangPiutang (BARU
+   2026-08-28, lihat komentar besar di js/data.js). */
+
+const JKUP_AKUN_FIELDS = [
+  { key:'akunKas', label:'Akun Kas' },
+  { key:'akunUtang', label:'Akun Utang' },
+  { key:'akunUtangGiroMundur', label:'Akun Utang Giro Mundur' },
+  { key:'akunPiutang', label:'Akun Piutang' },
+  { key:'akunPiutangGiroMundur', label:'Akun Piutang Giro Mundur' },
+  { key:'akunLabaSelisihKurs', label:'Akun Laba Selisih Kurs' },
+  { key:'akunRugiSelisihKurs', label:'Akun Rugi Selisih Kurs' },
+  { key:'akunBiayaLain', label:'Akun Biaya Lain - Lain' },
+  { key:'akunPendapatanLain', label:'Akun Pendapatan Lain - Lain' },
+  { key:'akunUangMukaPembelian', label:'Akun Uang Muka Pembelian' },
+  { key:'akunUangMukaPenjualan', label:'Akun Uang Muka Penjualan' },
+  { key:'akunARSSPPPN', label:'Akun AR SSP PPN' },
+  { key:'akunARSSPPPH', label:'Akun AR SSP PPH' },
+  { key:'akunPPNPemungut', label:'Akun PPn Pemungut' },
+  { key:'akunUangMukaPPH22', label:'Akun Uang Muka PPH 22' },
+];
+
+function jkupAkunNama(kode){
+  if(!kode) return '';
+  const a = DATA.akunGL.find(x => x.kode === kode);
+  return a ? a.nama : '';
+}
+
+function tplJkupListPage(){
+  return `
+    <div class="breadcrumb">Home / Kas/Bank / <b>Jurnal Pelunasan Utang/Piutang</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('alertTriangle',15)} Daftar Jurnal Kas Utang dan Piutang</h3>
+        <button class="btn-primary" id="btnJkupAdd">${icon('plus',14)} Tambah</button>
+      </div>
+      <div class="table-toolbar">
+        <select><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="jkupSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th style="width:130px;">Kode Jurnal</th>
+          <th>Keterangan</th>
+          <th style="width:60px;">Ubah</th>
+          <th style="width:64px;">Hapus</th>
+        </tr></thead>
+        <tbody id="jkupTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager"><button>First</button><button>Previous</button><button class="active">1</button><button>Next</button><button>Last</button></div><div id="jkupTotal"></div></div>
+    </div>`;
+}
+
+function tplJkupRows(rows){
+  if(!rows.length){
+    return `<tr><td colspan="4" style="color:var(--text-light);padding:14px;">Tidak ada jurnal yang cocok dengan pencarian.</td></tr>`;
+  }
+  return rows.map(r => `
+    <tr>
+      <td><a href="javascript:void(0)" data-edit-kode="${r.kode}" style="color:var(--blue);font-weight:600;text-decoration:none;">${r.kode}</a></td>
+      <td>${r.nama || ''}</td>
+      <td><button class="icon-btn edit" data-edit-kode="${r.kode}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del-kode="${r.kode}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`).join('');
+}
+
+function tplJkupAkunRow(f, row){
+  const kode = row[f.key] || '';
+  return `
+    <tr>
+      <td class="jp-label">${f.label}</td>
+      <td class="jp-input">
+        <div class="input-with-btn">
+          <input type="text" id="fJkup_${f.key}" value="${kode}" placeholder="Pilih Akun" readonly>
+          <button type="button" class="icon-btn edit" data-akun-search="${f.key}" title="Cari Akun">${icon('search',14)}</button>
+          <button type="button" class="icon-btn del" data-akun-clear="${f.key}" title="Hapus">${icon('trash',14)}</button>
+        </div>
+      </td>
+      <td class="jp-nama" id="fJkupNama_${f.key}">${jkupAkunNama(kode)}</td>
+    </tr>`;
+}
+
+function tplJkupForm(mode, row){
+  const isAdd = mode === 'add';
+  return `
+    <div class="breadcrumb">Home / Kas/Bank / Jurnal Pelunasan Utang/Piutang / <b>${isAdd ? 'Tambah' : 'Ubah'}</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon(isAdd ? 'plus' : 'edit',15)} ${isAdd ? 'Buat' : 'Ubah'} Jurnal Kas</h3>
+        <button class="btn-danger" id="btnJkupTutorial" type="button">${icon('card',14)} Tutorial</button>
+      </div>
+      <div class="card-body">
+        <table class="field-table">
+          <tr>
+            <td class="flabel">Nama Jurnal</td>
+            <td><input type="text" id="fJkupNama" value="${row.nama || ''}" placeholder="Contoh: Bank BCA HO 0123456789"></td>
+            <td class="flabel">Mata Uang</td>
+            <td><input type="text" value="${row.mataUang || 'IDR'}" disabled></td>
+          </tr>
+        </table>
+
+        <table class="jp-akun-table">
+          ${JKUP_AKUN_FIELDS.map(f => tplJkupAkunRow(f, row)).join('')}
+        </table>
+
+        <div class="form-page-actions">
+          <a href="#" id="jkupCancel" class="link-add" style="margin-right:auto;">Batalkan</a>
+          <button class="btn-primary" id="jkupSave">Simpan</button>
+          <button class="btn-primary" id="jkupDuplicate" style="background:#5a86cf;">DUPLICATE</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* SALINAN LOKAL pola picker Akun GL Jurnal Pembelian (tplJpAkunPicker). */
+function tplJkupAkunPicker(list, fieldKey){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Akun GL</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="jkupAkunPickerSearch" placeholder="Cari kode / nama akun..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Akun</th><th>Kat.</th><th></th></tr></thead>
+            <tbody id="jkupAkunPickerBody">${tplJkupAkunPickerRows(list, fieldKey)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Tutup</button>
+      </div>
+    </div>`;
+}
+
+function tplJkupAkunPickerRows(list, fieldKey){
+  if(!list.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada akun ditemukan</td></tr>`;
+  return list.map(a => `
+    <tr>
+      <td>${a.kode}</td>
+      <td>${a.nama}</td>
+      <td>${a.kategori}</td>
+      <td><button class="btn-pick" data-pick-akun="${a.kode}" data-pick-field="${fieldKey}">Pilih</button></td>
+    </tr>`).join('');
+}
+
+function tplJkupDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Jurnal Kas</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus jurnal <b>${row.kode}</b> — ${row.nama || ''}?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+function tplJkupInfoModal(title, text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="modalCancel">Tutup</button>
+      </div>
+    </div>`;
 }
 
 /* =========================================================
@@ -20079,6 +20734,266 @@ function tplRcBonusReportDoc(periodeAwal, periodeAkhir, rows, grandTotalQty, pri
 }
 
 /* =========================================================
+   2026-08-28 — filter modal "+ Laporan Umur Piutang Customer"
+   (FA-10 Lap Umur Piutang, Account Receivable) sesuai screenshot
+   acuan: Pilih Mata Uang & Cabang sebagai <select> polos (screenshot
+   tidak menampilkan tombol kaca pembesar di 2 field itu — precedent
+   "Lokasi Gudang" filter Bonus), Customer Group/Customer/Salesman/
+   Area/Rayon sebagai picker tplRcFieldWithBtn, Interval angka
+   (default 30, FUNGSIONAL: lebar bucket umur), Periode Transaksi
+   default 01/03/2025 S/D 31/08/2026 (persis screenshot; rentang
+   panjang supaya faktur historis DATA.arFakturHistoris ikut),
+   Batas Tanggal default hari ini, keterangan rumus, dan checkbox
+   Show Total Salesman.
+   MODIFIKASI DBM (permintaan user 2026-08-28): blok "View Report"
+   BARU — radio pilihan dasar perhitungan umur "Tanggal Faktur"
+   (default, = perilaku contoh PDF) / "Tanggal Jatuh Tempo".
+   Keterangan rumus (id rcuFormulaNote) di-update live oleh
+   openRcUmurFilter() saat radio dipindah. Logic-nya di
+   reports.js (openRcUmurFilter dst.). */
+function tplRcUmurMataUangList(){
+  return rcUniqueVals((DATA.customers || []).map(c => c.mataUang || 'IDR'));
+}
+
+function tplRcUmurCabangList(){
+  const all = (DATA.customers || []).map(c => c.cabang)
+    .concat((DATA.invoices || []).map(i => i.cabang))
+    .concat((DATA.arFakturHistoris || []).map(h => h.cabang));
+  return rcUniqueVals(all);
+}
+
+function tplRcUmurFormulaNote(basis){
+  if(basis === 'jthTempo'){
+    return `Umur Piutang = (Batas Tanggal - Tanggal Jatuh Tempo)<br>Telat = (Batas Tanggal - Tanggal Jatuh Tempo)<br><span style="color:var(--text-light);">Faktur yang belum jatuh tempo masuk kolom "Belum Jth Tempo".</span>`;
+  }
+  return `Umur Piutang = (Batas Tanggal - Tanggal Transaksi)<br>Telat = (Batas Tanggal - Tanggal Jatuh Tempo)`;
+}
+
+function tplRcUmurFilterModal(){
+  const mataUangList = tplRcUmurMataUangList();
+  const cabangList = tplRcUmurCabangList();
+  return `
+    <div class="modal-box" style="max-width:520px;">
+      <div class="modal-header"><span>+ Laporan Umur Piutang Customer</span><span class="close" id="rcUmurFilterClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Pilih Mata Uang</label>
+          <select id="rcuMataUang">
+            <option value="">Pilih Mata Uang</option>
+            ${mataUangList.map(m => `<option value="${m}">${m}</option>`).join('')}
+          </select>
+        </div>
+        ${tplRcFieldWithBtn('Customer Group', 'rcuGroup', 'Customer Group')}
+        ${tplRcFieldWithBtn('Customer', 'rcuCustomer', 'Pilih Customer')}
+        <div class="form-group">
+          <label>Interval</label>
+          <input type="number" id="rcuInterval" value="30" min="1" max="999">
+        </div>
+        ${tplRcFieldWithBtn('Salesman', 'rcuSalesman', 'Cari Salesman')}
+        <div class="form-group">
+          <label>Cabang</label>
+          <select id="rcuCabang">
+            <option value="">Pilih Cabang...</option>
+            ${cabangList.map(c => `<option value="${c}">${c}</option>`).join('')}
+          </select>
+        </div>
+        ${tplRcFieldWithBtn('Area', 'rcuArea', 'Wilayah')}
+        ${tplRcFieldWithBtn('Rayon', 'rcuRayon', 'Pilih Rayon')}
+        <div class="form-group">
+          <label>Periode Transaksi</label>
+          <div class="field-pair">
+            <input type="text" id="rcuPeriodeAwal" value="01/03/2025">
+            <span style="align-self:center;color:var(--text-light);">S/D</span>
+            <input type="text" id="rcuPeriodeAkhir" value="31/08/2026">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Batas Tanggal</label>
+          <input type="text" id="rcuBatasTanggal" value="${rcTodayLabel()}">
+        </div>
+        <div class="form-group">
+          <label>View Report &mdash; Umur Berdasarkan</label>
+          <div class="radio-inline">
+            <label><input type="radio" name="rcuBasis" value="jthTempo"> Tanggal Jatuh Tempo</label>
+            <label><input type="radio" name="rcuBasis" value="faktur" checked> Tanggal Faktur</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div id="rcuFormulaNote" style="font-size:12.5px;line-height:1.6;">${tplRcUmurFormulaNote('faktur')}</div>
+        </div>
+        <div class="form-group">
+          <label>Show Total Salesman</label>
+          <input type="checkbox" id="rcuShowTotalSalesman" style="width:auto;">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="rcUmurFilterCancel">Close</button>
+        <button class="btn-primary" id="rcuShowReport">Show Report</button>
+        <button class="btn-primary" id="rcuShowReportPdf">Show Report Pdf</button>
+      </div>
+    </div>`;
+}
+
+/* Dokumen cetak — layout meniru contoh PDF "Laporan Perincian Umur
+   Piutang" (Tgl Print kiri atas + halaman kanan atas, nama perusahaan
+   + judul + "Per tanggal :" + "Tgl Umur Piutang:" di tengah, tabel
+   13 kolom dgn grup Currency > Departemen > Customer + Subtotal
+   Customer/Departemen/Currency). Ditambah 1 baris keterangan "Umur
+   Piutang Berdasarkan : ..." (modifikasi DBM) dan — khusus mode
+   Tanggal Jatuh Tempo — kolom bucket ekstra "Belum Jth Tempo" di
+   depan "1 - N Hari". Departemen ditulis tetap "00" (data mockup DBM
+   tidak punya dimensi departemen — simplifikasi terdokumentasi). */
+function tplRcUmurReportDoc(filter, basis, interval, rows, showTotalSalesman, printedBy, printedAt){
+  const fmt2 = n => Number(n || 0).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const buckets = rcuBuckets(interval);
+  const hasBelum = basis === 'jthTempo';
+  const nCols = 7 + (hasBelum ? 1 : 0) + buckets.length + 1;
+  const basisLabel = hasBelum ? 'Tanggal Jatuh Tempo' : 'Tanggal Faktur';
+
+  function rowBuckets(r){
+    const vals = new Array(buckets.length).fill(0);
+    let belum = 0;
+    if(r.jlhTransaksi > 0){
+      const age = hasBelum ? r.telat : r.umurFaktur;
+      if(hasBelum && age <= 0){ belum = r.jlhTransaksi; }
+      else { vals[rcuBucketIndex(age, buckets)] = r.jlhTransaksi; }
+    }
+    return {belum: belum, vals: vals};
+  }
+
+  function sumInto(acc, r){
+    const b = rowBuckets(r);
+    acc.jlh += r.jlhTransaksi || 0;
+    acc.belum += b.belum;
+    b.vals.forEach((v, i) => { acc.vals[i] += v; });
+    acc.ssp += r.ssp || 0;
+    return acc;
+  }
+  function newAcc(){ return {jlh:0, belum:0, vals:new Array(buckets.length).fill(0), ssp:0}; }
+
+  function tdsBucket(belum, vals, ssp){
+    return (hasBelum ? `<td style="text-align:right;">${fmt2(belum)}</td>` : '')
+      + vals.map(v => `<td style="text-align:right;">${fmt2(v)}</td>`).join('')
+      + `<td style="text-align:right;">${fmt2(ssp)}</td>`;
+  }
+  function subtotalRow(label, acc){
+    return `
+      <tr class="rcu-subtotal">
+        <td colspan="4" style="text-align:right;font-weight:700;">${label}</td>
+        <td style="text-align:right;font-weight:700;">${fmt2(acc.jlh)}</td>
+        <td colspan="2"></td>
+        ${tdsBucket(acc.belum, acc.vals, acc.ssp)}
+      </tr>`;
+  }
+
+  /* Grup per customer (rows sudah diurutkan rcuBuildRows()). */
+  let body = '';
+  const currencyAcc = newAcc();
+  const salesmanTotals = {};
+  if(!rows.length){
+    body = `<tr><td colspan="${nCols}" style="text-align:center;color:#777;padding:14px;">Tidak ada piutang outstanding untuk filter ini.</td></tr>`;
+  } else {
+    let i = 0;
+    while(i < rows.length){
+      const kode = rows[i].customerKode;
+      const nama = rows[i].customerNama;
+      const custAcc = newAcc();
+      body += `<tr class="rcu-cust-row"><td colspan="${nCols}" style="font-weight:700;">${kode} - ${String(nama).toUpperCase()}</td></tr>`;
+      let no = 1;
+      while(i < rows.length && rows[i].customerKode === kode){
+        const r = rows[i];
+        sumInto(custAcc, r);
+        sumInto(currencyAcc, r);
+        if(r.salesman){ salesmanTotals[r.salesman] = (salesmanTotals[r.salesman] || 0) + (r.jlhTransaksi || 0); }
+        const b = rowBuckets(r);
+        const lewat = r.telat > 0 ? (r.telat + ' hari') : 'Blm';
+        const umur = hasBelum ? (r.telat > 0 ? r.telat : 'Blm') : r.umurFaktur;
+        body += `
+          <tr>
+            <td style="text-align:center;">${no++}</td>
+            <td>${r.noFaktur}</td>
+            <td>${r.tglTrn}</td>
+            <td>${r.tglJtmp}</td>
+            <td style="text-align:right;">${fmt2(r.jlhTransaksi)}</td>
+            <td style="text-align:center;">${lewat}</td>
+            <td style="text-align:center;">${umur}</td>
+            ${tdsBucket(b.belum, b.vals, r.ssp)}
+          </tr>`;
+        i++;
+      }
+      body += subtotalRow(`Subtotal Customer ${kode} :`, custAcc);
+    }
+    body += subtotalRow('Subtotal Departemen 00 :', currencyAcc);
+    body += subtotalRow('Subtotal Currency IDR :', currencyAcc);
+  }
+
+  const salesmanBlock = showTotalSalesman ? `
+    <h2 style="font-size:12px;margin:18px 0 6px;">Total per Salesman</h2>
+    <table style="width:auto;min-width:320px;">
+      <thead><tr><th>Salesman</th><th style="width:130px;">Total Piutang</th></tr></thead>
+      <tbody>
+        ${Object.keys(salesmanTotals).sort().map(s => `
+          <tr><td>${s}</td><td style="text-align:right;">${fmt2(salesmanTotals[s])}</td></tr>`).join('') || `<tr><td colspan="2" style="color:#777;">Tidak ada data.</td></tr>`}
+      </tbody>
+      <tfoot><tr><td style="text-align:right;font-weight:700;">Grand Total :</td><td style="text-align:right;font-weight:700;">${fmt2(Object.keys(salesmanTotals).reduce((t,s)=>t+salesmanTotals[s],0))}</td></tr></tfoot>
+    </table>` : '';
+
+  return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Laporan Perincian Umur Piutang</title>
+<style>
+  body{font-family:Arial, Helvetica, sans-serif;font-size:11px;color:#111;margin:20px;}
+  .rc-doc-toolbar{margin-bottom:10px;}
+  .rc-doc-toolbar button{padding:7px 16px;border:none;border-radius:5px;font-size:12.5px;font-weight:600;cursor:pointer;margin-right:8px;}
+  .rc-doc-toolbar .btn-print{background:#4472c4;color:#fff;}
+  .rc-doc-toolbar .btn-close{background:#eef1f7;color:#333;}
+  .rc-doc-head{display:flex;justify-content:space-between;font-size:10.5px;color:#333;}
+  .rc-doc-company{font-weight:700;font-size:13.5px;text-align:center;margin-top:2px;}
+  h1{font-size:14px;text-align:center;margin:2px 0;}
+  .sub{font-size:11px;text-align:center;margin:0;font-weight:700;}
+  .sub-basis{font-size:10.5px;text-align:center;margin:2px 0 10px;}
+  table{width:100%;border-collapse:collapse;}
+  th,td{border-bottom:1px solid #bbb;padding:3px 4px;font-size:10px;}
+  thead th{border-top:2px solid #333;border-bottom:2px solid #333;background:#fff;text-align:center;font-weight:700;}
+  .rcu-cust-row td{border-bottom:none;padding-top:7px;}
+  .rcu-subtotal td{border-top:1px solid #333;border-bottom:2px solid #333;background:#fafafa;}
+  @media print{ .rc-doc-toolbar{display:none;} body{margin:0;} }
+</style></head>
+<body>
+  <div class="rc-doc-toolbar">
+    <button class="btn-print" onclick="window.print()">Cetak</button>
+    <button class="btn-close" onclick="window.close()">Tutup</button>
+  </div>
+  <div class="rc-doc-head"><span>Tgl Print: ${printedAt}</span><span>1/1</span></div>
+  <div class="rc-doc-company">PT Distriversa Buanamas</div>
+  <h1>Laporan Perincian Umur Piutang</h1>
+  <div class="sub">Per tanggal : ${filter.periodeAkhir || printedAt}</div>
+  <div class="sub">Tgl Umur Piutang: ${filter.batasTanggal}</div>
+  <div class="sub-basis">Umur Piutang Berdasarkan : <b>${basisLabel}</b></div>
+  <table>
+    <thead><tr>
+      <th style="width:26px;">No.</th>
+      <th style="width:130px;">No. Faktur</th>
+      <th style="width:64px;">Tgl. Trn</th>
+      <th style="width:64px;">Tgl. Jtmp</th>
+      <th style="width:82px;">Jlh. Transaksi</th>
+      <th style="width:56px;">Lewat Jth<br>Tmp</th>
+      <th style="width:40px;">Umur</th>
+      ${hasBelum ? '<th style="width:78px;">Belum Jth<br>Tempo</th>' : ''}
+      ${buckets.map(b => `<th style="width:78px;">${b.label}</th>`).join('')}
+      <th style="width:72px;">SSP</th>
+    </tr></thead>
+    <tbody>
+      <tr><td colspan="${nCols}" style="font-weight:700;border-bottom:none;">Currency : IDR</td></tr>
+      <tr><td colspan="${nCols}" style="font-weight:700;border-bottom:none;">Departemen : 00</td></tr>
+      ${body}
+    </tbody>
+  </table>
+  ${salesmanBlock}
+  <div style="margin-top:26px;font-size:11px;">${printedBy}<br>${printedAt}</div>
+</body></html>`;
+}
+
+/* =========================================================
    TEMPLATE (HTML saja) — Revaluasi Asset (Aktiva Tetap > Daftar
    Transaksi > Revaluasi Asset, page:'revaluasiAsset'). Semua
    fungsi di file ini HANYA menyusun & mengembalikan markup HTML
@@ -24383,6 +25298,234 @@ function openCcDeleteConfirm(idx){
 }
 
 /* =========================================================
+   LOGIC (JS saja) — Master Currency (Kas/Bank > Master & Setting >
+   Currency). Dimuat otomatis (lazy-load) oleh core.js saat menu ini
+   pertama kali diklik — lihat PAGE_MODULES di js/core.js. Markup
+   HTML-nya ada di file sebelah: currency.template.js. NB:
+   closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Pola CRUD: list + form FULL PAGE (form punya 2 tab + sub-grid
+   Periode Kurs yang reaktif, jadi memakai variabel state modul
+   `crcFormRow` seperti modul CRUD besar lain — grid di-render ulang
+   dari state saat baris ditambah/dihapus, nilai input disalin ke
+   state lewat event oninput/onchange supaya tidak hilang saat
+   re-render atau pindah tab).
+
+   Sumber data: DATA.currencies (BARU 2026-08-28, lihat komentar
+   besar di js/data.js). Picker Akun GL me-list DATA.akunGL — pola
+   sama seperti Jurnal Pembelian (salinan lokal, bukan reuse
+   cross-module). Tombol "Impor Periode Kurs"/"Tutorial"/kalender
+   dekoratif (membuka modal info), konsisten tombol serupa di
+   Master Bank. Angka kurs diketik/ditampilkan dalam format id-ID
+   ("17.856,00") — crcParseNum() mengubahnya balik ke Number saat
+   disimpan ke state. */
+
+var crcFormRow = null;
+var crcSearchQ = '';
+
+function renderCurrencyPage(){
+  renderCrcList();
+}
+
+function crcFilteredRows(){
+  const q = crcSearchQ.trim().toLowerCase();
+  if(!q) return DATA.currencies;
+  return DATA.currencies.filter(r =>
+    r.kode.toLowerCase().includes(q) ||
+    (r.nama || '').toLowerCase().includes(q) ||
+    (r.keterangan || '').toLowerCase().includes(q));
+}
+
+function renderCrcList(){
+  crcSearchQ = '';
+  content.innerHTML = tplCurrencyListPage();
+  document.getElementById('btnCrcAdd').onclick = () => openCrcForm('add');
+  document.getElementById('btnCrcImpor').onclick = () => openCrcInfo('Impor Periode Kurs', 'Impor Periode Kurs massal dari file Excel akan tersedia di sini — pada mockup ini periode kurs diisi lewat form Ubah Mata Uang (tab Rincian Transaksi).');
+  document.getElementById('btnCrcTutorial').onclick = () => openCrcInfo('Tutorial', 'Video tutorial pengisian Master Currency akan tersedia di sini.');
+  document.getElementById('crcSearch').oninput = (e) => { crcSearchQ = e.target.value; renderCrcTable(); };
+  renderCrcTable();
+}
+
+function renderCrcTable(){
+  const rows = crcFilteredRows();
+  document.getElementById('crcTbody').innerHTML = tplCrcRows(rows);
+  document.getElementById('crcTotal').textContent = `Total Record: ${rows.length}`;
+  content.querySelectorAll('[data-edit-kode]').forEach(el => el.onclick = () => {
+    const idx = DATA.currencies.findIndex(c => c.kode === el.dataset.editKode);
+    if(idx >= 0) openCrcForm('edit', idx);
+  });
+  content.querySelectorAll('[data-del-kode]').forEach(el => el.onclick = () => {
+    const idx = DATA.currencies.findIndex(c => c.kode === el.dataset.delKode);
+    if(idx >= 0) openCrcDeleteConfirm(idx);
+  });
+}
+
+function crcParseNum(s){
+  const n = parseFloat(String(s || '').replace(/\./g, '').replace(',', '.'));
+  return isNaN(n) ? 0 : n;
+}
+
+function crcEmptyRow(){
+  return { kode:'', nama:'', keterangan:'', nonAktif:false, periodeKurs:[],
+    jurnal:{akunPiutang:'', akunUtang:'', akunUMPembelian:'', akunUMPenjualan:'', akunLabaSelisihKurs:'', akunRugiSelisihKurs:''} };
+}
+
+function openCrcForm(mode, idx){
+  /* Deep copy supaya Batalkan benar-benar membuang perubahan
+     (periodeKurs & jurnal adalah objek bersarang). */
+  crcFormRow = mode === 'edit'
+    ? JSON.parse(JSON.stringify(DATA.currencies[idx]))
+    : crcEmptyRow();
+  const row = crcFormRow;
+
+  content.innerHTML = tplCurrencyForm(mode, row);
+
+  document.getElementById('btnCrcFormTutorial').onclick = () => openCrcInfo('Tutorial', 'Video tutorial pengisian Master Currency akan tersedia di sini.');
+
+  /* Tab switching (pola sama dgn Cabang/Invoice). */
+  content.querySelectorAll('[data-crc-tab]').forEach(btn => {
+    btn.onclick = () => {
+      content.querySelectorAll('[data-crc-tab]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('crcTabPanel-kurs').style.display = btn.dataset.crcTab === 'kurs' ? '' : 'none';
+      document.getElementById('crcTabPanel-jurnal').style.display = btn.dataset.crcTab === 'jurnal' ? '' : 'none';
+    };
+  });
+
+  wireCrcKursGrid(row);
+  wireCrcJurnalFields(row);
+
+  document.getElementById('crcCancel').onclick = (e) => { e.preventDefault(); renderCrcList(); };
+  document.getElementById('crcSave').onclick = () => {
+    const kode = document.getElementById('fCrcKode').value.trim().toUpperCase();
+    const nama = document.getElementById('fCrcNama').value.trim();
+    if(!kode){ crcValidationError('Kode Mata Uang wajib diisi.'); return; }
+    if(!nama){ crcValidationError('Nama Mata Uang wajib diisi.'); return; }
+    if(mode === 'add' && DATA.currencies.some(c => c.kode === kode)){
+      crcValidationError(`Kode Mata Uang ${kode} sudah terdaftar.`); return;
+    }
+    row.kode = kode;
+    row.nama = nama;
+    row.keterangan = document.getElementById('fCrcKeterangan').value.trim();
+    row.nonAktif = document.getElementById('fCrcNonAktif').checked;
+    if(mode === 'add'){
+      DATA.currencies.push(row);
+      DATA.currencies.sort((a, b) => a.kode < b.kode ? -1 : 1);
+    } else {
+      DATA.currencies[idx] = row;
+    }
+    renderCrcList();
+  };
+}
+
+/* Grid Periode Kurs: baris di-render dari state row.periodeKurs;
+   input menyalin nilainya balik ke state, tombol hapus/tambah
+   me-render ulang tbody lalu wiring ulang. */
+function wireCrcKursGrid(row){
+  const tbody = document.getElementById('crcKursBody');
+
+  const rewire = () => {
+    tbody.querySelectorAll('[data-kurs-field]').forEach(inp => {
+      inp.onchange = () => {
+        const k = row.periodeKurs[+inp.dataset.kursIdx];
+        const f = inp.dataset.kursField;
+        if(f === 'kursStd' || f === 'kursPajak'){
+          k[f] = crcParseNum(inp.value);
+          inp.value = crcFmtKurs(k[f]);
+        } else {
+          k[f] = inp.value;
+        }
+      };
+    });
+    tbody.querySelectorAll('[data-kurs-del]').forEach(btn => btn.onclick = () => {
+      row.periodeKurs.splice(+btn.dataset.kursDel, 1);
+      rerender();
+    });
+    tbody.querySelectorAll('[data-kurs-cal]').forEach(btn => btn.onclick = () =>
+      openCrcInfo('Kalender', 'Ketik tanggal langsung pada kolomnya dengan format dd/mm/yyyy — date picker kalender belum tersedia di mockup ini.'));
+  };
+
+  const rerender = () => {
+    tbody.innerHTML = row.periodeKurs.map((k, i) => tplCrcKursRow(k, i, row.kode)).join('');
+    rewire();
+  };
+
+  document.getElementById('crcKursAdd').onclick = () => {
+    row.periodeKurs.push({kursTarget:'IDR', tglAwal:'', tglAkhir:'', kursStd:0, kursPajak:0});
+    rerender();
+  };
+  rewire();
+}
+
+function wireCrcJurnalFields(row){
+  if(!row.jurnal) row.jurnal = crcEmptyRow().jurnal;
+  CRC_JURNAL_FIELDS.forEach(f => {
+    content.querySelector(`[data-akun-search="${f.key}"]`).onclick = () => openCrcAkunPicker(f.key, row);
+  });
+}
+
+function openCrcAkunPicker(fieldKey, row){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplCrcAkunPicker(DATA.akunGL, fieldKey);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+
+  const wireRows = () => {
+    overlay.querySelectorAll('[data-pick-akun]').forEach(btn => btn.onclick = () => {
+      const kode = btn.dataset.pickAkun;
+      row.jurnal[fieldKey] = kode;
+      document.getElementById(`fCrc_${fieldKey}`).value = kode;
+      document.getElementById(`fCrcNama_${fieldKey}`).textContent = crcAkunNama(kode);
+      closeModal();
+    });
+  };
+  wireRows();
+
+  document.getElementById('crcAkunPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const filtered = DATA.akunGL.filter(a => a.kode.toLowerCase().includes(q) || a.nama.toLowerCase().includes(q));
+    document.getElementById('crcAkunPickerBody').innerHTML = tplCrcAkunPickerRows(filtered, fieldKey);
+    wireRows();
+  };
+}
+
+function openCrcDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.currencies[idx];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplCrcDeleteConfirm(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.currencies.splice(idx, 1);
+    closeModal();
+    renderCrcTable();
+  };
+}
+
+function openCrcInfo(title, text){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplCrcInfoModal(title, text);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+}
+
+function crcValidationError(text){
+  openCrcInfo('Validasi', text);
+}
+
+/* =========================================================
    LOGIC (JS saja) — Grup Customer (Customer & Penjualan > Master
    & Setting). Dimuat otomatis (lazy-load) oleh core.js saat menu
    ini pertama kali diklik — lihat PAGE_MODULES di js/core.js.
@@ -27911,6 +29054,164 @@ function openJfaDeleteConfirm(idx){
     closeModal();
     renderJfaTable();
   };
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Jurnal Pelunasan Utang/Piutang (Kas/Bank >
+   Master & Setting). Dimuat otomatis (lazy-load) oleh core.js saat
+   menu ini pertama kali diklik — lihat PAGE_MODULES di js/core.js.
+   Markup HTML-nya ada di file sebelah: jurnal-pelunasan-up.template.js
+   (plus konstanta JKUP_AKUN_FIELDS yang dipakai bersama di sini).
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Pola CRUD: list + form FULL PAGE dgn 15 field akun GL ber-picker —
+   disalin dari pola Jurnal Pembelian (openJpForm/openJpAkunPicker),
+   termasuk tombol DUPLICATE (menyalin jurnal jadi baris baru dgn
+   kode berikutnya, persis tombol Duplikat Jurnal Pembelian; label
+   memakai ejaan "DUPLICATE" mengikuti screenshot acuan form ini).
+   Sumber data: DATA.jurnalKasUtangPiutang (BARU 2026-08-28, lihat
+   komentar besar di js/data.js). */
+
+var jkupSearchQ = '';
+
+function renderJurnalPelunasanUPPage(){
+  renderJkupList();
+}
+
+function jkupFilteredRows(){
+  const q = jkupSearchQ.trim().toLowerCase();
+  if(!q) return DATA.jurnalKasUtangPiutang;
+  return DATA.jurnalKasUtangPiutang.filter(r =>
+    String(r.kode).includes(q) || (r.nama || '').toLowerCase().includes(q));
+}
+
+function renderJkupList(){
+  jkupSearchQ = '';
+  content.innerHTML = tplJkupListPage();
+  document.getElementById('btnJkupAdd').onclick = () => openJkupForm('add');
+  document.getElementById('jkupSearch').oninput = (e) => { jkupSearchQ = e.target.value; renderJkupTable(); };
+  renderJkupTable();
+}
+
+function renderJkupTable(){
+  const rows = jkupFilteredRows();
+  document.getElementById('jkupTbody').innerHTML = tplJkupRows(rows);
+  document.getElementById('jkupTotal').textContent = `Total Record: ${rows.length}`;
+  content.querySelectorAll('[data-edit-kode]').forEach(el => el.onclick = () => {
+    const idx = DATA.jurnalKasUtangPiutang.findIndex(r => r.kode === +el.dataset.editKode);
+    if(idx >= 0) openJkupForm('edit', idx);
+  });
+  content.querySelectorAll('[data-del-kode]').forEach(el => el.onclick = () => {
+    const idx = DATA.jurnalKasUtangPiutang.findIndex(r => r.kode === +el.dataset.delKode);
+    if(idx >= 0) openJkupDeleteConfirm(idx);
+  });
+}
+
+function jkupNextKode(){
+  return DATA.jurnalKasUtangPiutang.length
+    ? Math.max(...DATA.jurnalKasUtangPiutang.map(r => r.kode)) + 1 : 1;
+}
+
+function jkupEmptyRow(){
+  const row = { kode:null, nama:'', mataUang:'IDR' };
+  JKUP_AKUN_FIELDS.forEach(f => { row[f.key] = ''; });
+  return row;
+}
+
+function openJkupForm(mode, idx){
+  const row = mode === 'edit' ? { ...DATA.jurnalKasUtangPiutang[idx] } : jkupEmptyRow();
+  content.innerHTML = tplJkupForm(mode, row);
+
+  document.getElementById('btnJkupTutorial').onclick = () => openJkupInfo('Tutorial', 'Video tutorial pengisian Jurnal Pelunasan Utang/Piutang akan tersedia di sini.');
+
+  JKUP_AKUN_FIELDS.forEach(f => {
+    content.querySelector(`[data-akun-search="${f.key}"]`).onclick = () => openJkupAkunPicker(f.key, row);
+    content.querySelector(`[data-akun-clear="${f.key}"]`).onclick = () => {
+      row[f.key] = '';
+      document.getElementById(`fJkup_${f.key}`).value = '';
+      document.getElementById(`fJkupNama_${f.key}`).textContent = '';
+    };
+  });
+
+  document.getElementById('jkupCancel').onclick = (e) => { e.preventDefault(); renderJkupList(); };
+  document.getElementById('jkupDuplicate').onclick = () => {
+    const nama = document.getElementById('fJkupNama').value.trim();
+    DATA.jurnalKasUtangPiutang.push({ ...row, kode: jkupNextKode(), nama: (nama || row.nama) + ' (Copy)' });
+    renderJkupList();
+  };
+  document.getElementById('jkupSave').onclick = () => {
+    const nama = document.getElementById('fJkupNama').value.trim();
+    if(!nama){ jkupValidationError('Nama Jurnal wajib diisi.'); return; }
+    row.nama = nama;
+    if(mode === 'add'){
+      row.kode = jkupNextKode();
+      DATA.jurnalKasUtangPiutang.push(row);
+    } else {
+      DATA.jurnalKasUtangPiutang[idx] = row;
+    }
+    renderJkupList();
+  };
+}
+
+function openJkupAkunPicker(fieldKey, row){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplJkupAkunPicker(DATA.akunGL, fieldKey);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+
+  const wireRows = () => {
+    overlay.querySelectorAll('[data-pick-akun]').forEach(btn => btn.onclick = () => {
+      const kode = btn.dataset.pickAkun;
+      row[fieldKey] = kode;
+      document.getElementById(`fJkup_${fieldKey}`).value = kode;
+      document.getElementById(`fJkupNama_${fieldKey}`).textContent = jkupAkunNama(kode);
+      closeModal();
+    });
+  };
+  wireRows();
+
+  document.getElementById('jkupAkunPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const filtered = DATA.akunGL.filter(a => a.kode.toLowerCase().includes(q) || a.nama.toLowerCase().includes(q));
+    document.getElementById('jkupAkunPickerBody').innerHTML = tplJkupAkunPickerRows(filtered, fieldKey);
+    wireRows();
+  };
+}
+
+function openJkupDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.jurnalKasUtangPiutang[idx];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplJkupDeleteConfirm(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.jurnalKasUtangPiutang.splice(idx, 1);
+    closeModal();
+    renderJkupTable();
+  };
+}
+
+function openJkupInfo(title, text){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplJkupInfoModal(title, text);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+}
+
+function jkupValidationError(text){
+  openJkupInfo('Validasi', text);
 }
 
 /* =========================================================
@@ -35134,6 +36435,7 @@ function wireRcRowActions(){
       if(handler === 'sspBelumDiterima'){ openRcSspFilter(); }
       else if(handler === 'bonusTransaksi'){ openRcBonusFilter(); }
       else if(handler === 'transferProdukBonus'){ openRcTpbFilter(); }
+      else if(handler === 'umurPiutang'){ openRcUmurFilter(); }
     };
   });
   document.querySelectorAll('[data-rc-action]').forEach(btn => {
@@ -35144,6 +36446,7 @@ function wireRcRowActions(){
         if(handler === 'sspBelumDiterima'){ openRcSspFilter(); return; }
         if(handler === 'bonusTransaksi'){ openRcBonusFilter(); return; }
         if(handler === 'transferProdukBonus'){ openRcTpbFilter(); return; }
+        if(handler === 'umurPiutang'){ openRcUmurFilter(); return; }
       }
       const msg = action === 'print'
         ? 'Preview/cetak laporan ini akan tersedia setelah format report-nya dirancang — mockup ini baru mencakup daftar laporannya.'
@@ -35165,6 +36468,7 @@ function rcReportHandlerFor(perm){
   if(perm === 'PrintReportSspListNotReceived') return 'sspBelumDiterima';
   if(perm === 'PrintTransactionInventoryBonus') return 'bonusTransaksi';
   if(perm === 'PrintLaporanTransferProdukBonus') return 'transferProdukBonus';
+  if(perm === 'PrintReceivabledDueDate') return 'umurPiutang';
   return null;
 }
 
@@ -35623,6 +36927,263 @@ function openRcTpbReportFromFilter(overlay){
     periodeAkhir = String(lastDay).padStart(2,'0') + '/' + String(month).padStart(2,'0') + '/' + year;
   }
   const html = tplRcTpbReportDoc(periodeAwal, periodeAkhir, rows, grandTotal, rcTodayLabel());
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  if(overlay) overlay.remove();
+}
+
+/* =========================================================
+   2026-08-28 — "FA-10 Lap Umur Piutang" (Account Receivable >
+   grup FINANCE, permission code PrintReceivabledDueDate): report
+   SUNGGUHAN ke-4 di Report Center, sesuai screenshot filter
+   "+ Laporan Umur Piutang Customer" (Pilih Mata Uang/Customer
+   Group/Customer/Interval 30/Salesman/Cabang/Area/Rayon/Periode
+   Transaksi 01/03/2025 S/D 31/08/2026/Batas Tanggal/keterangan
+   rumus/Show Total Salesman/Close/Show Report/Show Report Pdf)
+   + contoh PDF "Laporan Perincian Umur Piutang" 91 halaman yang
+   dikirim user (header Tgl Print + nama perusahaan + Per tanggal
+   + Tgl Umur Piutang; kolom No./No. Faktur/Tgl. Trn/Tgl. Jtmp/
+   Jlh. Transaksi/Lewat Jth Tmp/Umur/1-30/31-60/61-90/91-120/
+   >120 Hari/SSP; grup Currency > Departemen > Customer dgn
+   Subtotal Customer/Departemen/Currency). Data customer rumah
+   sakit di PDF contoh adalah instalasi MASERP lain (SDL) — TIDAK
+   direplikasi, mengikuti precedent FA-08/Bonus.
+
+   MODIFIKASI DBM YANG DIMINTA USER (2026-08-28): opsi "View
+   Report" BARU di filter — perhitungan UMUR (dasar penentuan
+   bucket kolom umur) bisa dipilih "Tanggal Faktur" (default,
+   persis perilaku contoh PDF: Umur = Batas Tanggal - Tanggal
+   Transaksi) atau "Tanggal Jatuh Tempo" (Umur = Batas Tanggal -
+   Tanggal Jatuh Tempo). Pada mode Tanggal Jatuh Tempo, faktur
+   yang BELUM jatuh tempo tidak punya umur keterlambatan — kolom
+   bucket tambahan "Belum Jth Tempo" disisipkan sebelum "1-30
+   Hari" khusus mode itu (kolom & baris subtotal ikut menyesuaikan;
+   dokumen juga mencetak baris keterangan "Umur Piutang
+   Berdasarkan : ..." di bawah "Tgl Umur Piutang" supaya jelas
+   mode mana yang sedang dicetak).
+
+   SUMBER DATA (semua LIVE, bukan salinan PDF contoh):
+   1. DATA.invoices — outstanding = jumlah - (dibayar||0) per
+      batas tanggal (faktur lunas otomatis hilang); Tgl. Jtmp
+      dihitung dari syaratBayar faktur ('Kredit N Hari' -> +N
+      hari, 'CBD'/tanpa angka -> = tgl faktur).
+   2. DATA.arFakturHistoris (BARU, lihat komentar besar di
+      js/data.js) — rincian per-faktur saldo piutang historis yang
+      rekonsil PERSIS dengan field `piutang` DATA.customers,
+      supaya bucket 31-60/61-90/91-120/>120 benar-benar terisi.
+   3. DATA.penerimaanPiutang — faktur yang piutangnya sudah lunas
+      tapi SSP PPN/PPH-nya belum diterima muncul sebagai baris
+      Jlh. Transaksi 0,00 dengan nilai di kolom SSP (persis pola
+      baris SSP di PDF contoh, mis. C000201), nominalnya dihitung
+      rcSspFakturTax()/rcSspPphRate() yang SAMA dengan FA-08.
+   Interval (default 30) FUNGSIONAL: lebar bucket mengikuti input
+   (1-N, N+1-2N, ... , >4N). "Show Total Salesman" FUNGSIONAL:
+   menambah blok "Total per Salesman" di bawah tabel. Field Mata
+   Uang & Cabang dibuat <select> polos (bukan picker kaca
+   pembesar) meniru screenshot acuan yang tidak menampilkan tombol
+   pencarian di kedua field itu — precedent field "Lokasi Gudang"
+   filter Bonus. Grup "Departemen : 00" ditulis tetap (data DBM
+   mockup tidak punya dimensi departemen; PDF contoh menampilkan
+   departemen per customer — disederhanakan 1 departemen 00,
+   didokumentasikan sebagai simplifikasi). rcSspParseDMY()/
+   rcUniqueVals()/rcTodayLabel()/tplRcFieldWithBtn() di atas
+   di-reuse langsung (generik, file yang sama). */
+function rcuFieldOptions(targetId){
+  if(targetId === 'rcuGroup'){
+    return rcUniqueVals((DATA.customers || []).map(c => c.groupCustomer)).map(v => ({kode:v, label:v}));
+  }
+  if(targetId === 'rcuCustomer'){
+    return (DATA.customers || []).map(c => ({kode:c.kode, label:c.kode + ' - ' + c.nama}));
+  }
+  if(targetId === 'rcuSalesman'){
+    return rcUniqueVals((DATA.customers || []).map(c => c.salesman)).map(v => ({kode:v, label:v}));
+  }
+  if(targetId === 'rcuArea'){
+    return rcUniqueVals((DATA.customers || []).map(c => c.area)).map(v => ({kode:v, label:v}));
+  }
+  if(targetId === 'rcuRayon'){
+    const seen = {}; const out = [];
+    (DATA.customers || []).forEach(c => { if(c.rayonKode && !seen[c.rayonKode]){ seen[c.rayonKode] = true; out.push({kode:c.rayonKode, label:c.rayonNama || c.rayonKode}); } });
+    return out;
+  }
+  return [];
+}
+
+function openRcUmurPicker(targetId){
+  const titles = {rcuGroup:'Pilih Customer Group', rcuCustomer:'Pilih Customer', rcuSalesman:'Cari Salesman', rcuArea:'Pilih Area', rcuRayon:'Pilih Rayon'};
+  const rows = rcuFieldOptions(targetId);
+  const picker = document.createElement('div');
+  picker.className = 'modal-overlay';
+  picker.innerHTML = tplRcFilterPickerModal(titles[targetId] || 'Pilih', rows);
+  document.body.appendChild(picker);
+  document.getElementById('rcPickClose').onclick = () => picker.remove();
+  document.getElementById('rcPickCancel').onclick = () => picker.remove();
+  picker.onclick = (e) => { if(e.target === picker) picker.remove(); };
+  picker.querySelectorAll('.rc-pick-row').forEach(row => {
+    row.onclick = () => {
+      const input = document.getElementById(targetId);
+      if(input){ input.value = row.dataset.label; input.dataset.kode = row.dataset.kode; }
+      picker.remove();
+    };
+  });
+}
+
+function openRcUmurFilter(){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplRcUmurFilterModal();
+  document.body.appendChild(overlay);
+  document.getElementById('rcUmurFilterClose').onclick = () => overlay.remove();
+  document.getElementById('rcUmurFilterCancel').onclick = () => overlay.remove();
+  overlay.onclick = (e) => { if(e.target === overlay) overlay.remove(); };
+  overlay.querySelectorAll('[data-rc-pick]').forEach(btn => {
+    btn.onclick = () => openRcUmurPicker(btn.dataset.rcPick);
+  });
+  /* Keterangan rumus di bawah Batas Tanggal ikut berubah saat radio
+     "View Report" (modifikasi DBM) dipindah, supaya user langsung
+     melihat konsekuensi pilihannya sebelum menekan Show Report. */
+  overlay.querySelectorAll('input[name="rcuBasis"]').forEach(r => {
+    r.onchange = () => {
+      const note = document.getElementById('rcuFormulaNote');
+      if(note) note.innerHTML = tplRcUmurFormulaNote(rcuSelectedBasis());
+    };
+  });
+  document.getElementById('rcuShowReport').onclick = () => openRcUmurReportFromFilter(overlay);
+  document.getElementById('rcuShowReportPdf').onclick = () => openRcUmurReportFromFilter(overlay);
+}
+
+function rcuSelectedBasis(){
+  const el = document.querySelector('input[name="rcuBasis"]:checked');
+  return el ? el.value : 'faktur';
+}
+
+/* 'Kredit 30 Hari' -> 30; 'CBD'/'Tunai'/kosong -> 0 (jatuh tempo =
+   tanggal faktur, konsisten sifat cash-before-delivery). */
+function rcuTermDays(syarat){
+  const m = /(\d+)/.exec(syarat || '');
+  return m ? Number(m[1]) : 0;
+}
+
+function rcuFmtDMY(d){
+  return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear();
+}
+
+function rcuAddDays(dmyStr, days){
+  const d = rcSspParseDMY(dmyStr);
+  if(!d) return dmyStr;
+  d.setDate(d.getDate() + days);
+  return rcuFmtDMY(d);
+}
+
+function rcuDaysDiff(fromDmy, toDmy){
+  const a = rcSspParseDMY(fromDmy), b = rcSspParseDMY(toDmy);
+  if(!a || !b) return 0;
+  return Math.round((b.getTime() - a.getTime()) / 86400000);
+}
+
+function rcuInterval(){
+  const el = document.getElementById('rcuInterval');
+  const n = el ? parseInt(el.value, 10) : 30;
+  return (n > 0 && n <= 999) ? n : 30;
+}
+
+/* 5 bucket umur, lebar mengikuti Interval (default 30 -> 1-30/31-60/
+   61-90/91-120/>120 persis PDF contoh). */
+function rcuBuckets(interval){
+  return [
+    {label:'1 - ' + interval + ' Hari', min:1, max:interval},
+    {label:(interval+1) + ' - ' + (2*interval) + ' Hari', min:interval+1, max:2*interval},
+    {label:(2*interval+1) + ' - ' + (3*interval) + ' Hari', min:2*interval+1, max:3*interval},
+    {label:(3*interval+1) + ' - ' + (4*interval) + ' Hari', min:3*interval+1, max:4*interval},
+    {label:'>' + (4*interval) + ' Hari', min:4*interval+1, max:Infinity},
+  ];
+}
+
+function rcuBucketIndex(age, buckets){
+  for(let i = 0; i < buckets.length; i++){
+    if(age >= buckets[i].min && age <= buckets[i].max) return i;
+  }
+  return age > 0 ? buckets.length - 1 : 0;
+}
+
+/* Kumpulkan SEMUA baris kandidat (live invoice + historis + SSP
+   outstanding), lalu saring dengan filter modal. 1 baris = 1 faktur. */
+function rcuBuildRows(filter){
+  const out = [];
+  const custOf = kode => (DATA.customers || []).find(c => c.kode === kode) || {};
+  function pushRow(customerKode, cabang, noFaktur, tglTrn, tglJtmp, jlhTransaksi, ssp){
+    const cust = custOf(customerKode);
+    if(filter.mataUang && (cust.mataUang || 'IDR') !== filter.mataUang) return;
+    if(filter.group && cust.groupCustomer !== filter.group) return;
+    if(filter.customer && customerKode !== filter.customer) return;
+    if(filter.salesman && cust.salesman !== filter.salesman) return;
+    if(filter.cabang && cabang !== filter.cabang) return;
+    if(filter.area && cust.area !== filter.area) return;
+    if(filter.rayon && cust.rayonKode !== filter.rayon) return;
+    if(!rcSspInPeriode(tglTrn, filter.periodeAwal, filter.periodeAkhir)) return;
+    const umurFaktur = rcuDaysDiff(tglTrn, filter.batasTanggal);
+    const telat = rcuDaysDiff(tglJtmp, filter.batasTanggal);
+    out.push({
+      customerKode: customerKode,
+      customerNama: cust.nama || customerKode,
+      salesman: cust.salesman || '',
+      noFaktur: noFaktur, tglTrn: tglTrn, tglJtmp: tglJtmp,
+      jlhTransaksi: jlhTransaksi, ssp: ssp,
+      umurFaktur: umurFaktur, telat: telat
+    });
+  }
+  /* 1. Outstanding live dari modul Invoice. */
+  (DATA.invoices || []).forEach(inv => {
+    const sisa = (inv.jumlah || 0) - (inv.dibayar || 0);
+    if(sisa <= 0) return;
+    pushRow(inv.customerKode, inv.cabang, inv.no, inv.tgl, rcuAddDays(inv.tgl, rcuTermDays(inv.syaratBayar)), sisa, 0);
+  });
+  /* 2. Saldo historis per faktur (lihat komentar DATA.arFakturHistoris). */
+  (DATA.arFakturHistoris || []).forEach(h => {
+    pushRow(h.customerKode, h.cabang, h.noFaktur, h.tglFaktur, h.tglJthTempo, h.sisa, 0);
+  });
+  /* 3. Faktur lunas yang SSP-nya masih outstanding (pola baris
+     "Jlh. Transaksi 0,00 + kolom SSP terisi" di PDF contoh). */
+  (DATA.penerimaanPiutang || []).forEach(pp => {
+    (pp.fakturs || []).forEach(f => {
+      const ppnOut = !!(f.potonganPpn && !f.sudahTerimaSspPpn);
+      const pphOut = !!(f.potonganPph && !f.sudahTerimaSspPph);
+      if(!ppnOut && !pphOut) return;
+      const tax = rcSspFakturTax(f.pembayaran);
+      const ssp = (ppnOut ? tax.ppn : 0) + (pphOut ? tax.dpp * rcSspPphRate(f.pphKode) : 0);
+      pushRow(pp.customerKode, f.cabang || pp.cabang, f.no, f.tglFaktur, f.tglJthTempo, 0, ssp);
+    });
+  });
+  /* Urut per customer (kode), lalu per tanggal transaksi naik —
+     mengikuti urutan baris di PDF contoh. */
+  out.sort((a, b) => a.customerKode === b.customerKode
+    ? (rcSspParseDMY(a.tglTrn) - rcSspParseDMY(b.tglTrn))
+    : (a.customerKode < b.customerKode ? -1 : 1));
+  return out;
+}
+
+function openRcUmurReportFromFilter(overlay){
+  const val = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+  const kode = id => { const el = document.getElementById(id); return (el && el.dataset.kode) || ''; };
+  const filter = {
+    mataUang: val('rcuMataUang'),
+    group: kode('rcuGroup'),
+    customer: kode('rcuCustomer'),
+    salesman: kode('rcuSalesman'),
+    cabang: val('rcuCabang'),
+    area: kode('rcuArea'),
+    rayon: kode('rcuRayon'),
+    periodeAwal: val('rcuPeriodeAwal'),
+    periodeAkhir: val('rcuPeriodeAkhir'),
+    batasTanggal: val('rcuBatasTanggal') || rcTodayLabel()
+  };
+  const basis = rcuSelectedBasis();
+  const interval = rcuInterval();
+  const showTotalSalesman = !!(document.getElementById('rcuShowTotalSalesman') || {}).checked;
+  const rows = rcuBuildRows(filter);
+  const html = tplRcUmurReportDoc(filter, basis, interval, rows, showTotalSalesman, 'Sidik', rcTodayLabel());
   const win = window.open('', '_blank');
   win.document.write(html);
   win.document.close();
@@ -38800,6 +40361,8 @@ const PAGE_MODULES={
   fakturPenjualanSJ:{srcs:['js/pages/faktur-penjualan-sj.template.js','js/pages/faktur-penjualan-sj.js'], fn:'renderFakturPenjualanSJPage'},
   gudang:{srcs:['js/pages/gudang.template.js','js/pages/gudang.js'], fn:'renderGudangPage'},
   kasBank:{srcs:['js/pages/kas-bank.template.js','js/pages/kas-bank.js'], fn:'renderKasBankPage'},
+  currency:{srcs:['js/pages/currency.template.js','js/pages/currency.js'], fn:'renderCurrencyPage'},
+  jurnalPelunasanUP:{srcs:['js/pages/jurnal-pelunasan-up.template.js','js/pages/jurnal-pelunasan-up.js'], fn:'renderJurnalPelunasanUPPage'},
   reportCabang:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportCabang'},
   reportAktivaTetap:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportAktivaTetap'},
   reportAP:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportAP'},

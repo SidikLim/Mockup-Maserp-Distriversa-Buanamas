@@ -1393,6 +1393,61 @@ const DATA = {
     {no:'PACK-0703', tgl:'2026-08-03', so:'SO-2026-0814', status:'Proses'},
     {no:'PACK-0704', tgl:'2026-08-04', so:'SO-2026-0816', status:'Baru'},
   ],
+  /* =========================================================
+     2026-08-28 — ARRAY BARU "arFakturHistoris": saldo piutang
+     HISTORIS per faktur, ditambahkan khusus untuk laporan Report
+     Center baru "FA-10 Lap Umur Piutang" (Account Receivable,
+     permission code PrintReceivabledDueDate — report SUNGGUHAN
+     ke-4 setelah FA-08/Bonus Penjualan/Transfer Produk Bonus,
+     lihat js/pages/reports.js rcuBuildRows()).
+     KENAPA PERLU ARRAY BARU: laporan umur piutang butuh baris
+     outstanding yang tersebar di banyak bucket umur (1-30/31-60/
+     61-90/91-120/>120 hari), sedangkan DATA.invoices semuanya
+     bertanggal Agustus 2026 (semua akan jatuh di bucket 1-30 saja)
+     dan TIDAK BOLEH ditambah baris lama karena 8+2 barisnya
+     terdokumentasi di-chain 1:1 ke DATA.pickingList/DATA.promotion
+     (lihat komentar besar di atas DATA.invoices). Precedent yang
+     diikuti: 6 baris "historis/dekoratif" bernomor Juli di
+     DATA.penerimaanPiutang (faktur lama yang sengaja tidak
+     terhubung ke DATA.invoices).
+     REKONSILIASI (bukan angka acak): sisa historis per customer +
+     outstanding live DATA.invoices (jumlah - dibayar, per batas
+     tanggal default 28/08/2026) = PERSIS field `piutang` yang
+     SUDAH ADA di DATA.customers sejak awal (saldo piutang yang
+     dipakai hitung "Sisa CL" di Sales Order):
+       CUST-001 17.515.000 + 735.000            = 18.250.000
+       CUST-002  5.240.000 + (880.000+3.000.000) =  9.120.000
+       CUST-003  4.300.000 + 0                   =  4.300.000
+       CUST-004  6.000.000 + 600.000             =  6.600.000
+       CUST-005  1.900.000 + 250.000             =  2.150.000
+       CUST-006  7.970.000 + (1.700.000+200.000) =  9.870.000
+       CUST-007    800.000 + 400.000             =  1.200.000
+       CUST-008  2.770.000 + 350.000             =  3.120.000
+     — jadi array ini adalah RINCIAN per-faktur dari saldo piutang
+     customer yang memang sudah ada, bukan data baru yang lepas.
+     tglJthTempo tiap baris konsisten dgn pola syarat bayar customer
+     yang dipakai faktur live-nya (HO/SMG/MKS N30, SBY/BDG N14,
+     MDN N45). Nomor faktur mengikuti format nomor per-cabang yang
+     sudah ada, dicek tidak bentrok dengan nomor manapun di
+     DATA.invoices/DATA.penerimaanPiutang (referensi deskriptif,
+     bukan foreign-key — precedent yang sama dgn field serupa di
+     modul lain). */
+  arFakturHistoris:[
+    {customerKode:'CUST-001', cabang:'Head Office', noFaktur:'25/SI/HO/11/00021', tglFaktur:'10/11/2025', tglJthTempo:'10/12/2025', sisa:6500000},
+    {customerKode:'CUST-001', cabang:'Head Office', noFaktur:'26/SI/HO/05/00012', tglFaktur:'12/05/2026', tglJthTempo:'11/06/2026', sisa:7200000},
+    {customerKode:'CUST-001', cabang:'Head Office', noFaktur:'26/SI/HO/07/00044', tglFaktur:'08/07/2026', tglJthTempo:'07/08/2026', sisa:3815000},
+    {customerKode:'CUST-002', cabang:'Surabaya', noFaktur:'26/SI/SBY/06/00025', tglFaktur:'10/06/2026', tglJthTempo:'24/06/2026', sisa:3100000},
+    {customerKode:'CUST-002', cabang:'Surabaya', noFaktur:'26/SI/SBY/07/00031', tglFaktur:'20/07/2026', tglJthTempo:'03/08/2026', sisa:2140000},
+    {customerKode:'CUST-003', cabang:'Bandung', noFaktur:'26/SI/BDG/05/00017', tglFaktur:'20/05/2026', tglJthTempo:'03/06/2026', sisa:2500000},
+    {customerKode:'CUST-003', cabang:'Bandung', noFaktur:'26/SI/BDG/07/00022', tglFaktur:'15/07/2026', tglJthTempo:'29/07/2026', sisa:1800000},
+    {customerKode:'CUST-004', cabang:'Medan', noFaktur:'26/SI/MDN/03/00008', tglFaktur:'05/03/2026', tglJthTempo:'19/04/2026', sisa:3750000},
+    {customerKode:'CUST-004', cabang:'Medan', noFaktur:'26/SI/MDN/06/00019', tglFaktur:'18/06/2026', tglJthTempo:'02/08/2026', sisa:2250000},
+    {customerKode:'CUST-005', cabang:'Makassar', noFaktur:'26/SI/MKS/07/00020', tglFaktur:'05/07/2026', tglJthTempo:'04/08/2026', sisa:1900000},
+    {customerKode:'CUST-006', cabang:'Head Office', noFaktur:'26/SI/HO/06/00033', tglFaktur:'02/06/2026', tglJthTempo:'02/07/2026', sisa:4470000},
+    {customerKode:'CUST-006', cabang:'Head Office', noFaktur:'26/SI/HO/07/00051', tglFaktur:'22/07/2026', tglJthTempo:'21/08/2026', sisa:3500000},
+    {customerKode:'CUST-007', cabang:'Semarang', noFaktur:'26/SI/SMG/07/00040', tglFaktur:'12/07/2026', tglJthTempo:'11/08/2026', sisa:800000},
+    {customerKode:'CUST-008', cabang:'Surabaya', noFaktur:'26/SI/SBY/05/00028', tglFaktur:'12/05/2026', tglJthTempo:'26/05/2026', sisa:2770000},
+  ],
   /* Penerimaan Piutang (Customer & Penjualan > Daftar Transaksi >
      Penerimaan Piutang, page:'penerimaanPiutang') — lihat catatan
      desain lengkap di header js/pages/penerimaan-piutang.template.js.
@@ -2454,6 +2509,18 @@ const DATA = {
     {kode:'1120004', nama:'Piutang SSP PPH', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'2120003', nama:'PPN Pemungut', kategori:'B', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'1140003', nama:'Uang Muka PPH 22', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    /* 4 akun BARU 2026-08-28 — dipakai 2 modul master Kas/Bank baru
+       "Jurnal Pelunasan Utang/Piutang" (DATA.jurnalKasUtangPiutang) &
+       "Currency" (DATA.currencies): Bank BNI/BRI melengkapi Mandiri/BCA
+       yang sudah ada (akun kas jurnal utk baris Bank BNI SBY & Bank BRI
+       MDN di DATA.kasBank), 2 akun Giro Mundur utk field Akun Utang/
+       Piutang Giro Mundur di form Jurnal Kas (screenshot MASERP acuan
+       memakai akun giro mundur terpisah dari akun utang/piutang usaha).
+       Precedent penambahan akun: 3110002 (Revaluasi, 2026-08-26). */
+    {kode:'1100013', nama:'Bank BNI', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'1100014', nama:'Bank BRI', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'1120005', nama:'Piutang Usaha - Giro Mundur', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'2110004', nama:'Hutang Usaha Giro Mundur', kategori:'B', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     /* 12 akun baru (6 pasang Biaya Susut/Akum. Susut) — menu Aktiva
        Tetap (2026-08-26), lihat catatan besar di atas DATA.aktivaTetap
        & js/pages/fixed-asset.template.js. Screenshot MASERP contoh
@@ -3882,6 +3949,121 @@ const DATA = {
      kbkNextKode() di js/pages/kas-bank.js. `mataUang` semua 'IDR' &
      `nonAktif`/`smartlink` semua false di data sample (kedua field ini
      cuma toggle di form, screenshot tidak menunjukkan contoh yang aktif). */
+  /* =========================================================
+     2026-08-28 — DATA BARU "currencies": Master Currency (Kas/Bank >
+     Master & Setting > Currency, page:'currency' — sebelumnya
+     placeholder murni). Sesuai 3 screenshot MASERP yang dikirim user:
+     "Daftar Mata Uang" (4 baris CNY/IDR/SGD/USD — kode & nama mata
+     uang generik internasional, bukan data spesifik instalasi lain,
+     jadi direplikasi apa adanya) dan "Ubah Mata Uang" USD (2 tab:
+     "Rincian Transaksi" berisi grid Periode Kurs, "Jurnal Mata Uang"
+     berisi Setting Account Jurnal Selisih Kurs).
+     - periodeKurs USD: 8 baris akhir-bulan Des 2025 s/d Jul 2026,
+       nilai kurs mengikuti screenshot (kurs pasar publik, bukan data
+       sensitif instalasi lain); CNY & SGD diberi 3 periode terakhir
+       dengan kurs pasar yang wajar supaya semua mata uang asing punya
+       contoh; IDR (mata uang dasar) tanpa periode kurs.
+     - jurnal (Setting Account Jurnal Selisih Kurs): screenshot acuan
+       memakai akun per-valas khusus (Piutang Usaha USD 110502 dst.)
+       milik COA instalasi lain — TIDAK direplikasi; USD dipetakan ke
+       akun DATA.akunGL DBM yang sudah ada (1120001/2110001/1140001/
+       2140001/6010002/6510002 — persis akun yang dipakai
+       DATA.jurnalPembelian/jurnalPenjualan utk selisih kurs), CNY/SGD
+       sengaja dikosongkan (belum pernah dipakai transaksi, sekaligus
+       mendemokan picker akun GL pada form). */
+  currencies:[
+    {kode:'CNY', nama:'Chinese Yuan', keterangan:'', nonAktif:false,
+      periodeKurs:[
+        {kursTarget:'IDR', tglAwal:'31/05/2026', tglAkhir:'31/05/2026', kursStd:2470, kursPajak:2470},
+        {kursTarget:'IDR', tglAwal:'30/06/2026', tglAkhir:'30/06/2026', kursStd:2481, kursPajak:2481},
+        {kursTarget:'IDR', tglAwal:'31/07/2026', tglAkhir:'31/07/2026', kursStd:2512, kursPajak:2512},
+      ],
+      jurnal:{akunPiutang:'', akunUtang:'', akunUMPembelian:'', akunUMPenjualan:'', akunLabaSelisihKurs:'', akunRugiSelisihKurs:''}},
+    {kode:'IDR', nama:'Indonesian Rupiah', keterangan:'', nonAktif:false,
+      periodeKurs:[],
+      jurnal:{akunPiutang:'1120001', akunUtang:'2110001', akunUMPembelian:'1140001', akunUMPenjualan:'2140001', akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002'}},
+    {kode:'SGD', nama:'Singapore Dollar', keterangan:'', nonAktif:false,
+      periodeKurs:[
+        {kursTarget:'IDR', tglAwal:'31/05/2026', tglAkhir:'31/05/2026', kursStd:13802, kursPajak:13802},
+        {kursTarget:'IDR', tglAwal:'30/06/2026', tglAkhir:'30/06/2026', kursStd:13951, kursPajak:13951},
+        {kursTarget:'IDR', tglAwal:'31/07/2026', tglAkhir:'31/07/2026', kursStd:14126, kursPajak:14126},
+      ],
+      jurnal:{akunPiutang:'', akunUtang:'', akunUMPembelian:'', akunUMPenjualan:'', akunLabaSelisihKurs:'', akunRugiSelisihKurs:''}},
+    {kode:'USD', nama:'American Dollar', keterangan:'', nonAktif:false,
+      periodeKurs:[
+        {kursTarget:'IDR', tglAwal:'31/12/2025', tglAkhir:'31/12/2025', kursStd:16782, kursPajak:16782},
+        {kursTarget:'IDR', tglAwal:'31/01/2026', tglAkhir:'31/01/2026', kursStd:16786, kursPajak:16786},
+        {kursTarget:'IDR', tglAwal:'28/02/2026', tglAkhir:'28/02/2026', kursStd:16758, kursPajak:16758},
+        {kursTarget:'IDR', tglAwal:'31/03/2026', tglAkhir:'31/03/2026', kursStd:16993, kursPajak:16993},
+        {kursTarget:'IDR', tglAwal:'30/04/2026', tglAkhir:'30/04/2026', kursStd:17324, kursPajak:17324},
+        {kursTarget:'IDR', tglAwal:'31/05/2026', tglAkhir:'31/05/2026', kursStd:17789, kursPajak:17789},
+        {kursTarget:'IDR', tglAwal:'30/06/2026', tglAkhir:'30/06/2026', kursStd:17856, kursPajak:17856},
+        {kursTarget:'IDR', tglAwal:'31/07/2026', tglAkhir:'31/07/2026', kursStd:18078, kursPajak:18078},
+      ],
+      jurnal:{akunPiutang:'1120001', akunUtang:'2110001', akunUMPembelian:'1140001', akunUMPenjualan:'2140001', akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002'}},
+  ],
+  /* =========================================================
+     2026-08-28 — DATA BARU "jurnalKasUtangPiutang": master Jurnal
+     Pelunasan Utang/Piutang (Kas/Bank > Master & Setting, page:
+     'jurnalPelunasanUP' — sebelumnya placeholder murni). Sesuai 2
+     screenshot MASERP yang dikirim user: "Daftar Jurnal Kas Utang dan
+     Piutang" (list Kode Jurnal/Keterangan/Ubah/Hapus, Total Record 16,
+     kode sparse 1/13/143/...) dan form "+ Buat Jurnal Kas" (Nama
+     Jurnal + Mata Uang readonly + 15 field akun GL dgn picker, tombol
+     Simpan/Batalkan/DUPLICATE). Data list screenshot (BCA IDR
+     829.091.0219 dst.) adalah rekening instalasi MASERP lain (SDL) —
+     TIDAK direplikasi; 8 baris di bawah dibuat 1:1 dari baris
+     DATA.kasBank DBM yang sudah ada (nama & no. rekening persis field
+     kasBank, kode sequential 1..8 mengikuti pola kode numerik
+     DATA.jurnalPembelian). Akun-akunnya dipetakan ke DATA.akunGL DBM:
+     akun kas per baris = akun GL kas/bank yang sesuai (Bank BNI/BRI
+     baru ditambahkan di atas), akun lain persis pemetaan yang sudah
+     dipakai DATA.jurnalPembelian/jurnalPenjualan — Akun Biaya/
+     Pendapatan Lain-Lain dua-duanya ke 6510003 'Selisih Pembulatan /
+     Pembayaran' MENIRU screenshot acuan yang juga memetakan kedua
+     field itu ke 1 akun selisih pembulatan yang sama. */
+  jurnalKasUtangPiutang:[
+    {kode:1, nama:'Kas Kecil HO (IDR)', mataUang:'IDR',
+      akunKas:'1100001', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+    {kode:2, nama:'Kas Besar HO (IDR)', mataUang:'IDR',
+      akunKas:'1100002', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+    {kode:3, nama:'Bank Mandiri HO 1270012345678', mataUang:'IDR',
+      akunKas:'1100011', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+    {kode:4, nama:'Bank BCA HO 0123456789', mataUang:'IDR',
+      akunKas:'1100012', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+    {kode:5, nama:'Bank BNI SBY 0198765432', mataUang:'IDR',
+      akunKas:'1100013', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+    {kode:6, nama:'Bank Mandiri BDG 1270087654321', mataUang:'IDR',
+      akunKas:'1100011', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+    {kode:7, nama:'Bank BCA TGR 0234567891', mataUang:'IDR',
+      akunKas:'1100012', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+    {kode:8, nama:'Bank BRI MDN 009801123456789', mataUang:'IDR',
+      akunKas:'1100014', akunUtang:'2110001', akunUtangGiroMundur:'2110004', akunPiutang:'1120001', akunPiutangGiroMundur:'1120005',
+      akunLabaSelisihKurs:'6010002', akunRugiSelisihKurs:'6510002', akunBiayaLain:'6510003', akunPendapatanLain:'6510003',
+      akunUangMukaPembelian:'1140001', akunUangMukaPenjualan:'2140001',
+      akunARSSPPPN:'1120003', akunARSSPPPH:'1120004', akunPPNPemungut:'2120003', akunUangMukaPPH22:'1140003'},
+  ],
   kasBank:[
     {kode:'110101', masterBank:'PT Distriversa Buanamas - Head Office', nama:'Kas Kecil HO', mataUang:'IDR', alamat:'', telepon:'', kontakPerson:'', noRekening:'', tipeRekening:'Kas', nonAktif:false, smartlink:false, saldo:12674900},
     {kode:'110102', masterBank:'PT Distriversa Buanamas - Sidoarjo', nama:'Kas Besar SDA', mataUang:'IDR', alamat:'', telepon:'', kontakPerson:'', noRekening:'', tipeRekening:'Kas', nonAktif:false, smartlink:false, saldo:17012515.11},

@@ -136,6 +136,8 @@ const PAGE_MODULES={
   fakturPenjualanSJ:{srcs:['js/pages/faktur-penjualan-sj.template.js','js/pages/faktur-penjualan-sj.js'], fn:'renderFakturPenjualanSJPage'},
   gudang:{srcs:['js/pages/gudang.template.js','js/pages/gudang.js'], fn:'renderGudangPage'},
   kasBank:{srcs:['js/pages/kas-bank.template.js','js/pages/kas-bank.js'], fn:'renderKasBankPage'},
+  currency:{srcs:['js/pages/currency.template.js','js/pages/currency.js'], fn:'renderCurrencyPage'},
+  jurnalPelunasanUP:{srcs:['js/pages/jurnal-pelunasan-up.template.js','js/pages/jurnal-pelunasan-up.js'], fn:'renderJurnalPelunasanUPPage'},
   reportCabang:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportCabang'},
   reportAktivaTetap:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportAktivaTetap'},
   reportAP:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportAP'},
