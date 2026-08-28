@@ -12,7 +12,7 @@ const MENU=[
    {label:'Jurnal Biaya Impor', page:'placeholder', title:'Jurnal Biaya Impor'},
    {label:'Estimasi Hari Pengiriman', page:'placeholder', title:'Estimasi Hari Pengiriman'},
    {header:'Daftar Transaksi'},
-   {label:'Tutup Pending PO', page:'placeholder', title:'Tutup Pending PO'},
+   {label:'Tutup Pending PO', page:'tutupPendingPO'},
    {label:'Uang Muka Supplier', page:'placeholder', title:'Uang Muka Supplier'},
    {label:'Transaksi A.P.', page:'placeholder', title:'Transaksi A.P.'},
    {label:'Permintaan Pembelian', page:'placeholder', title:'Permintaan Pembelian'},

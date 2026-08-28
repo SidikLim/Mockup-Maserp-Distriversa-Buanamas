@@ -110,10 +110,55 @@ function ppOutstandingInvoicesForCustomer(customerKode){
   return DATA.invoices.filter(inv => inv.posted && inv.customerKode === customerKode && (inv.jumlah - (inv.dibayar||0)) > 0.004);
 }
 
+/* =========================================================
+   2026-08-28 — FITUR BARU "Pelunasan Piutang Terpusat (Holding)"
+   (modifikasi DBM yang diminta user: 1 entitas pusat melunasi
+   piutang cabang-cabang di bawahnya, contoh kasus "Matahari Pusat
+   melunasi piutang cabang"). Struktur pusat-cabang memakai field
+   customerIndukKode yang SUDAH ADA di DATA.customers sejak awal
+   (baru sekarang terpakai nyata — lihat komentar CUST-009/CUST-010
+   di js/data.js).
+   - ppHoldingList(): daftar customer yang menjadi PUSAT, yaitu
+     kode-nya dipakai sebagai customerIndukKode >= 1 customer lain —
+     inilah isi picker saat toggle "Pelunasan Terpusat (Holding) ?"
+     aktif (bukan seluruh master customer).
+   - ppChildrenOf(): semua cabang di bawah 1 pusat.
+   - ppOutstandingInvoicesForHolding(): gabungan faktur outstanding
+     SEMUA cabang (plus milik pusat sendiri kalau ada) — hasilnya
+     multi-customer, karena itu tabel "Lunasi Beberapa Faktur"
+     mendapat kolom tambahan "Customer" pada mode holding (lihat
+     tplPpFakturRows di template). Urut per customer lalu tgl faktur
+     supaya faktur 1 cabang mengelompok.
+   Alur Simpan/Hapus TIDAK berubah sama sekali: `dibayar` tetap
+   ditambahkan/dikembalikan per invoiceNo apa pun customer-nya,
+   jadi pembukuan AR per cabang tetap benar walau dilunasi pusat. */
+function ppHoldingList(){
+  return DATA.customers.filter(c =>
+    DATA.customers.some(x => x.customerIndukKode === c.kode));
+}
+
+function ppChildrenOf(indukKode){
+  return DATA.customers.filter(c => c.customerIndukKode === indukKode);
+}
+
+function ppOutstandingInvoicesForHolding(indukKode){
+  const kodes = ppChildrenOf(indukKode).map(c => c.kode);
+  kodes.push(indukKode); // faktur atas nama pusat sendiri (kalau ada) ikut ditagihkan
+  const out = DATA.invoices.filter(inv => inv.posted && kodes.indexOf(inv.customerKode) !== -1 && (inv.jumlah - (inv.dibayar||0)) > 0.004);
+  out.sort((a, b) => a.customerKode === b.customerKode
+    ? ((ppParseTglDDMMYYYY(a.tgl) || 0) - (ppParseTglDDMMYYYY(b.tgl) || 0))
+    : (a.customerKode < b.customerKode ? -1 : 1));
+  return out;
+}
+
 function ppBuildFakturRow(inv){
   const sisa = Math.round((inv.jumlah - (inv.dibayar||0)) * 100) / 100;
   return {
     no: inv.no, cabang: inv.cabang, tipeTransaksi: 'Jual Kredit',
+    /* customerKode/Nama per-faktur (2026-08-28, fitur Holding) — di
+       mode biasa nilainya sama semua (customer terpilih), di mode
+       holding dipakai kolom "Customer" tabel Lunasi Beberapa Faktur. */
+    customerKode: inv.customerKode, customerNama: inv.customerNama,
     tglFaktur: inv.tgl, tglJthTempo: ppJatuhTempo(inv.tgl, inv.syaratBayar),
     mataUang: 'IDR', kurs: 1,
     reminder: sisa, pembayaran: sisa, checked: true,
@@ -216,6 +261,11 @@ function ppBuildJurnalLines(row, totals){
 function ppComposeKeterangan(row){
   const fakturNos = (row.fakturs||[]).filter(f => f.checked).map(f => f.no);
   if(!fakturNos.length || !row.customerNama) return '';
+  /* Mode holding (2026-08-28): tandai jelas bahwa pembayar adalah
+     customer PUSAT yang melunasi faktur cabang-cabangnya. */
+  if(row.holding){
+    return `VA - Terima Piutang (HOLDING) ${fakturNos.join(', ')} OLEH ${row.customerNama.toUpperCase()}`;
+  }
   return `VA - Terima Piutang ${fakturNos.join(', ')} ${row.customerNama.toUpperCase()}`;
 }
 
@@ -239,6 +289,7 @@ function ppBuildEmptyRow(){
   const cabang0 = PP_CABANG_LIST[0];
   return {
     no: ppGenerateNo(cabang0), cabang: cabang0, tgl: '19/08/2026',
+    holding: false, /* 2026-08-28 — fitur Pelunasan Piutang Terpusat (Holding) */
     customerKode: '', customerNama: '', badanUsaha: '', noPenagihanPiutang: '',
     akunBankKode: '', tipeTransaksi: 'Terima Kas', cair: true, noGiro: '', bankSumber: '', tglJthTempoBank: '19/08/2026',
     fakturs: [], keteranganUangMuka: '', kursUangMuka: 1, jadikanUangMuka: 0, keterangan: '',
@@ -272,7 +323,7 @@ function refreshPpTotalsDOM(row){
 
 function refreshPpFakturTableDOM(mode, row){
   const isView = mode === 'view';
-  document.getElementById('ppFakturBody').innerHTML = tplPpFakturRows(row.fakturs, isView);
+  document.getElementById('ppFakturBody').innerHTML = tplPpFakturRows(row.fakturs, isView, row.holding);
   const hint = document.getElementById('ppFakturEmptyHint');
   if(hint) hint.style.display = (row.fakturs && row.fakturs.length) ? 'none' : '';
   wirePpFakturRows(mode, row);
@@ -389,6 +440,24 @@ function wirePpForm(mode, idx, row){
     }
 
     document.getElementById('fPpTgl').oninput = (e) => { row.tgl = e.target.value; };
+
+    /* Toggle "Pelunasan Terpusat (Holding) ?" (fitur baru 2026-08-28):
+       ganti mode -> customer & daftar faktur di-reset (pusat != customer
+       biasa, fakturnya pun lintas customer) lalu SELURUH form di-render
+       ulang dari state `row` — perlu render penuh karena thead tabel
+       Lunasi Beberapa Faktur berubah (kolom "Customer" muncul/hilang)
+       dan label field customer ikut berganti. Semua nilai field lain
+       aman karena selalu tersimpan di `row` lewat oninput masing2. */
+    const holdingCb = document.getElementById('fPpHolding');
+    if(holdingCb) holdingCb.onchange = (e) => {
+      row.holding = e.target.checked;
+      row.customerKode = ''; row.customerNama = ''; row.badanUsaha = '';
+      row.fakturs = [];
+      row.keterangan = '';
+      content.innerHTML = tplPpForm(mode, row);
+      wirePpForm(mode, idx, row);
+    };
+
     document.getElementById('ppCustomerSearch').onclick = () => openPpCustomerPicker(mode, row);
     const penagihanBtn = document.getElementById('ppPenagihanSearch');
     if(penagihanBtn) penagihanBtn.onclick = () => openPpDecorativePicker('Pilih Penagihan Piutang', []);
@@ -450,7 +519,12 @@ function openPpCustomerPicker(mode, row){
   closeModal();
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
-  overlay.innerHTML = tplPpCustomerPicker(DATA.customers);
+  /* Mode holding (2026-08-28): picker HANYA menampilkan customer yang
+     benar-benar menjadi PUSAT (dirujuk sebagai customerIndukKode oleh
+     customer lain), lengkap dgn jumlah & nama cabang di bawahnya. */
+  overlay.innerHTML = row.holding
+    ? tplPpCustomerPicker(ppHoldingList(), true)
+    : tplPpCustomerPicker(DATA.customers, false);
   document.body.appendChild(overlay);
   document.getElementById('modalClose').onclick = closeModal;
   document.getElementById('modalCancel').onclick = closeModal;
@@ -459,9 +533,14 @@ function openPpCustomerPicker(mode, row){
     const c = DATA.customers.find(x => x.kode === btn.dataset.pickCustomer);
     row.customerKode = c.kode;
     row.customerNama = c.nama;
-    row.fakturs = ppOutstandingInvoicesForCustomer(c.kode).map(ppBuildFakturRow);
+    row.badanUsaha = row.holding ? (c.badanUsaha || '') : row.badanUsaha;
+    row.fakturs = (row.holding
+      ? ppOutstandingInvoicesForHolding(c.kode)
+      : ppOutstandingInvoicesForCustomer(c.kode)).map(ppBuildFakturRow);
     row.keterangan = ppComposeKeterangan(row);
     document.getElementById('fPpCustomer').value = row.customerNama;
+    const bu = document.getElementById('fPpBadanUsaha');
+    if(bu && row.holding) bu.value = row.badanUsaha;
     document.getElementById('fPpKeterangan').value = row.keterangan;
     const ketBank = document.getElementById('fPpBankKeterangan');
     if(ketBank) ketBank.value = row.keterangan;

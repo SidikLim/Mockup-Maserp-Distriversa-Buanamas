@@ -131,12 +131,40 @@ function invApplyPickingList(row, plRow){
    ke Customer. Baris lama (tanpa field `bonus`) tidak terpengaruh sama
    sekali karena `it.bonus` bernilai undefined/falsy untuknya. */
 function invRecalcJumlah(row){
-  row.jumlah = (row.items || []).reduce((sum, it) => {
+  /* 2026-08-28 — FITUR BARU "Diskon Global 1 & 2" (modifikasi DBM yang
+     diminta user, seragam dgn Sales Order & Faktur Penjualan):
+     subtotal barang dihitung dulu seperti semula, lalu dikurangi
+     Diskon Global 1 (dari subtotal) dan Diskon Global 2 (BERTINGKAT —
+     dari SISA setelah Diskon Global 1); masing-masing bisa persentase
+     (unit '%') atau nominal rupiah (unit 'Rp'). `jumlah` (nilai
+     Invoice yang dipakai list/jurnal/Penerimaan Piutang) = subtotal
+     setelah kedua diskon. Baris lama tanpa field diskonGlobal*
+     otomatis 0/unit '%' — nilainya tidak berubah sama sekali. */
+  const subtotal = (row.items || []).reduce((sum, it) => {
     if(it.bonus) return sum;
     const master = DATA.items.find(x => x.kode === it.kode);
     const harga = master ? (+master.harga || 0) : 0;
     return sum + harga * (+it.qtyKirim || 0);
   }, 0);
+  row.subtotalBarang = subtotal;
+  const d1 = +row.diskonGlobal1 || 0;
+  row.diskonGlobal1Amount = (row.diskonGlobal1Unit === 'Rp') ? Math.min(Math.round(d1), subtotal) : Math.round(subtotal * d1 / 100);
+  const sisaSetelahDg1 = subtotal - row.diskonGlobal1Amount;
+  const d2 = +row.diskonGlobal2 || 0;
+  row.diskonGlobal2Amount = (row.diskonGlobal2Unit === 'Rp') ? Math.min(Math.round(d2), sisaSetelahDg1) : Math.round(sisaSetelahDg1 * d2 / 100);
+  row.jumlah = sisaSetelahDg1 - row.diskonGlobal2Amount;
+}
+
+/* Refresh angka panel Diskon Global (fitur baru 2026-08-28) tanpa
+   render ulang seluruh form — dipanggil dari handler input diskon,
+   perubahan Qty Kirim per baris, dan rerenderInvItemsTable(). */
+function invRefreshDiskonGlobalDOM(row){
+  invRecalcJumlah(row);
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.value = v; };
+  set('fInvSubtotalBarang', num(row.subtotalBarang || 0));
+  set('fInvDg1Amount', num(row.diskonGlobal1Amount || 0));
+  set('fInvDg2Amount', num(row.diskonGlobal2Amount || 0));
+  set('fInvJumlahSetelahDiskon', num(row.jumlah || 0));
 }
 
 function invBuildEmptyRow(){
@@ -151,6 +179,9 @@ function invBuildEmptyRow(){
     syaratBayar: INV_SYARAT_BAYAR_LIST[0], layanan: DATA.layananList[0],
     alamatPengiriman:'', shipVia: INV_SHIP_VIA_LIST[0], noResi:'', driver:'',
     keterangan:'', items:[], jumlah:0, posted:false, ts:'Create Invoice',
+    /* Diskon Global 1 & 2 — fitur baru 2026-08-28 (lihat invRecalcJumlah). */
+    subtotalBarang:0, diskonGlobal1:0, diskonGlobal1Unit:'%', diskonGlobal1Amount:0,
+    diskonGlobal2:0, diskonGlobal2Unit:'%', diskonGlobal2Amount:0,
     tglInput:'', userInput:'', tglEdit:'', userEdit:'',
     jurnalMode:'otomatis', jurnalAkun:[],
   };
@@ -390,8 +421,24 @@ function wireInvItemEvents(row){
     const qtyKirimEl = document.querySelector(`[data-inv-qtykirim="${idx}"]`);
     if(qtyKirimEl) qtyKirimEl.onchange = () => {
       item.qtyKirim = +qtyKirimEl.value || 0;
+      invRefreshDiskonGlobalDOM(row); // subtotal & jumlah setelah diskon ikut berubah (2026-08-28)
       if(row.jurnalMode === 'otomatis'){ invBuildJurnalOtomatis(row); refreshInvJurnalContent(row); }
     };
+  });
+  /* Input Diskon Global 1 & 2 (fitur baru 2026-08-28) — reaktif;
+     jurnal otomatis ikut di-refresh karena berbasis row.jumlah. */
+  const dgManual = () => {
+    const val = id => { const el = document.getElementById(id); return el ? el.value : null; };
+    row.diskonGlobal1 = +val('fInvDg1') || 0;
+    row.diskonGlobal1Unit = val('fInvDg1Unit') || '%';
+    row.diskonGlobal2 = +val('fInvDg2') || 0;
+    row.diskonGlobal2Unit = val('fInvDg2Unit') || '%';
+    invRefreshDiskonGlobalDOM(row);
+    if(row.jurnalMode === 'otomatis'){ invBuildJurnalOtomatis(row); refreshInvJurnalContent(row); }
+  };
+  ['fInvDg1','fInvDg1Unit','fInvDg2','fInvDg2Unit'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.onchange = dgManual;
   });
 }
 
@@ -400,6 +447,7 @@ function rerenderInvItemsTable(row){
   wireInvItemEvents(row);
   const hint = document.getElementById('invItemsEmptyHint');
   if(hint) hint.style.display = row.items.length ? 'none' : '';
+  invRefreshDiskonGlobalDOM(row); // fitur Diskon Global 2026-08-28
   if(row.jurnalMode === 'otomatis'){ invBuildJurnalOtomatis(row); refreshInvJurnalContent(row); }
 }
 

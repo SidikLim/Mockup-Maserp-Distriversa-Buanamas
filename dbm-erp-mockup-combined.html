@@ -1377,7 +1377,13 @@ const DATA = {
     legalitasPemilik:[{syarat:'KTP', keterangan:'Sesuai dokumen terlampir', tglExpired:'', tglProses:'10/01/2024', uploaded:true}, {syarat:'Nama Penanggung Jawab', keterangan:'Bpk. Harapan Daeng', tglExpired:'', tglProses:'10/01/2024', uploaded:true}]},
     {kode:'CUST-006', nama:'Toko Family Mart Jaya', kota:'Jakarta', salesman:'Budi Santoso', limit:28000000, status:'Aktif', alamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara', piutang:9870000,
     noRef:'HO.0002', tglRegistrasi:'08/09/2017', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
-    customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
+    /* 2026-08-28 — customerInduk diisi (sebelumnya kosong) utk fitur
+       BARU "Pelunasan Piutang Terpusat (Holding)" di Penerimaan
+       Piutang: CUST-006 jadi salah satu cabang di bawah pusat
+       CUST-009 PT Family Mart Indonesia (lihat komentar besar di
+       baris CUST-009 di bawah). Field customerInduk* memang sudah
+       ada di master customer sejak awal, baru sekarang terpakai. */
+    customerIndukKode:'CUST-009', customerIndukNama:'PT Family Mart Indonesia', customerIndukAlamat:'Jl. Jend. Sudirman Kav. 52-53, Jakarta Selatan',
     namaPemilik:'Bpk. Jaya Kusuma', kontakPerson:'Bpk. Jaya Kusuma', gender:'Pria', email:'jaya.kusuma@familymartjaya.co.id', tglLahir:'05/04/1985', fax:'', agama:'Buddha', jabatan:'Direktur', telepon:'021-4587213',
     tipeIdentitas:'TIN', noIdentitas:'3172050485850007', profesi:'Wiraswasta', cabang:'Head Office', gudangJualSFA:'(00-GUU) Gudang Utama-HO', kodeNegara:'IDN', idTKU:'000000', consignment:true,
     area:'DKI001', rayonKode:'RY-JKT01', rayonNama:'Rayon Jakarta Pusat', rayonDistrict:'Jakarta Pusat', provinsi:'DKI Jakarta', kabupaten:'Jakarta Utara', kecamatan:'Kelapa Gading', kelurahan:'Kelapa Gading Barat', kodePos:'14240', latitude:-6.1352, longitude:106.8133,
@@ -1411,6 +1417,57 @@ const DATA = {
     npwp:'-', namaNpwp:'TOKO SEJAHTERA', alamatPajak:'', pkpStatus:'Non-PKP', kodeTransaksiPajak:'04', typePpn:'Eksklusif',
     masterBank:'', noVA:'', noRek:'',
     top:'N14', dominasiLimit:3500000, wajibDominasi:false,
+    glAkunPiutang:'1120001', glAkunUangMuka:'', uangMuka:0,
+    legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'NPWP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'SKPKP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
+    legalitasPemilik:[{syarat:'KTP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Nama Penanggung Jawab', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}]},
+    /* =========================================================
+       2 CUSTOMER BARU 2026-08-28 — utk fitur BARU "Pelunasan Piutang
+       Terpusat (Holding)" di Penerimaan Piutang (modifikasi DBM yang
+       diminta user: 1 entitas pusat melunasi piutang cabang-cabang di
+       bawahnya, contoh kasus user "Matahari Pusat melunasi piutang
+       cabang"). Struktur holding memakai field customerInduk* yang
+       SUDAH ADA di master customer sejak awal (baru sekarang terpakai
+       nyata):
+       - CUST-009 "PT Family Mart Indonesia" = CUSTOMER PUSAT (holding,
+         tidak bertransaksi sendiri — piutang 0, limit besar). Muncul
+         di picker "Pilih Customer Pusat (Holding)" di Penerimaan
+         Piutang karena jadi customerIndukKode 2 customer lain.
+       - CUST-010 "Toko Family Mart Sentosa" (Surabaya) = cabang BARU
+         di bawah CUST-009, di samping CUST-006 Toko Family Mart Jaya
+         (existing, customerInduk-nya diisi — lihat komentar di baris
+         CUST-006). piutang 1.240.000 = PERSIS outstanding 2 Invoice
+         posted barunya (26/SI/SBY/08/00004 700.000 + 00005 540.000,
+         lihat komentar di DATA.invoices) — konsisten aturan
+         rekonsiliasi piutang FA-10 Lap Umur Piutang.
+       Kedua cabang SENGAJA dibiarkan punya faktur outstanding
+       (CUST-006 sisa 200.000 dari 26/SI/HO/08/00002, CUST-010
+       1.240.000) supaya demo end-to-end pelunasan holding multi-
+       customer bisa langsung dijalankan dari menu Penerimaan Piutang
+       (pola "sengaja dibiarkan belum lunas" yang sama dgn UD Makmur
+       Jaya utk demo + Tambah biasa). */
+    {kode:'CUST-009', nama:'PT Family Mart Indonesia', kota:'Jakarta', salesman:'Budi Santoso', limit:100000000, status:'Aktif', alamat:'Jl. Jend. Sudirman Kav. 52-53, Jakarta Selatan', piutang:0,
+    noRef:'HO.0003', tglRegistrasi:'15/03/2016', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
+    customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
+    namaPemilik:'Ibu Ratna Dewi', kontakPerson:'Ibu Ratna Dewi', gender:'Wanita', email:'finance@familymartindonesia.co.id', tglLahir:'11/02/1978', fax:'021-5150999', agama:'Islam', jabatan:'Finance Director', telepon:'021-5150998',
+    tipeIdentitas:'TIN', noIdentitas:'3174021102780003', profesi:'Karyawan Swasta', cabang:'Head Office', gudangJualSFA:'(00-GUU) Gudang Utama-HO', kodeNegara:'IDN', idTKU:'000000', consignment:false,
+    area:'DKI001', rayonKode:'RY-JKT01', rayonNama:'Rayon Jakarta Pusat', rayonDistrict:'Jakarta Pusat', provinsi:'DKI Jakarta', kabupaten:'Jakarta Selatan', kecamatan:'Kebayoran Baru', kelurahan:'Senayan', kodePos:'12190', latitude:-6.2251, longitude:106.8097,
+    groupCustomer:'RTMD', badanUsaha:'PT', statusARCustomer:'Lancar',
+    npwp:'01.777.888.9-012.006', namaNpwp:'PT FAMILY MART INDONESIA', alamatPajak:'', pkpStatus:'PKP', kodeTransaksiPajak:'04', typePpn:'Eksklusif',
+    masterBank:'', noVA:'', noRek:'',
+    top:'N30', dominasiLimit:0, wajibDominasi:false,
+    glAkunPiutang:'1120001', glAkunUangMuka:'', uangMuka:0,
+    legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'NPWP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'SKPKP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
+    legalitasPemilik:[{syarat:'KTP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Nama Penanggung Jawab', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}]},
+    {kode:'CUST-010', nama:'Toko Family Mart Sentosa', kota:'Surabaya', salesman:'Andi Wijaya', limit:20000000, status:'Aktif', alamat:'Jl. Basuki Rahmat No. 105, Surabaya', piutang:1240000,
+    noRef:'SBY.0003', tglRegistrasi:'02/06/2021', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
+    customerIndukKode:'CUST-009', customerIndukNama:'PT Family Mart Indonesia', customerIndukAlamat:'Jl. Jend. Sudirman Kav. 52-53, Jakarta Selatan',
+    namaPemilik:'Bpk. Hendro Sentosa', kontakPerson:'Bpk. Hendro Sentosa', gender:'Pria', email:'fm.sentosa@familymartindonesia.co.id', tglLahir:'19/07/1988', fax:'', agama:'Kristen', jabatan:'Store Manager', telepon:'031-5347788',
+    tipeIdentitas:'TIN', noIdentitas:'3578191907880004', profesi:'Karyawan Swasta', cabang:'Surabaya', gudangJualSFA:'(01-GUU) Gudang Utama-SBY', kodeNegara:'IDN', idTKU:'000000', consignment:false,
+    area:'JATIM001', rayonKode:'RY-SBY01', rayonNama:'Rayon Surabaya Kota', rayonDistrict:'Surabaya', provinsi:'Jawa Timur', kabupaten:'Surabaya', kecamatan:'Tegalsari', kelurahan:'Dr. Soetomo', kodePos:'60264', latitude:-7.2652, longitude:112.7425,
+    groupCustomer:'RTMD', badanUsaha:'PT', statusARCustomer:'Lancar',
+    npwp:'01.777.888.9-012.007', namaNpwp:'TOKO FAMILY MART SENTOSA', alamatPajak:'', pkpStatus:'PKP', kodeTransaksiPajak:'04', typePpn:'Eksklusif',
+    masterBank:'', noVA:'', noRek:'',
+    top:'N14', dominasiLimit:4000000, wajibDominasi:false,
     glAkunPiutang:'1120001', glAkunUangMuka:'', uangMuka:0,
     legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'NPWP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'SKPKP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
     legalitasPemilik:[{syarat:'KTP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Nama Penanggung Jawab', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}]},
@@ -1853,6 +1910,62 @@ const DATA = {
         {tanggal:'21/08/2026 09:50', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
         {tanggal:'21/08/2026 10:20', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
         {tanggal:'21/08/2026 13:10', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh UD Makmur Jaya.'},
+      ]},
+    /* 2026-08-28 — 2 baris BARU (bukan mengedit baris yang sudah
+       terverifikasi) utk fitur BARU "Pelunasan Piutang Terpusat
+       (Holding)" di Penerimaan Piutang: keduanya Invoice POSTED
+       (posted:true — syarat tampil di tab "Lunasi Beberapa Faktur")
+       milik cabang holding BARU CUST-010 Toko Family Mart Sentosa
+       (lihat komentar besar di DATA.customers), dibiarkan outstanding
+       (dibayar:0) supaya picker holding menampilkan faktur dari 2
+       customer sekaligus (CUST-010 di sini + CUST-006 sisa 200.000
+       dari 26/SI/HO/08/00002 yang sudah ada). `jumlah` dihitung nyata
+       dari harga jual barang DBM yang sama dgn invoice lain (Kecap
+       ABC 14.000 x 50 = 700.000; Teh Sariwangi 10.000 x 54 = 540.000)
+       — total 1.240.000 = PERSIS field `piutang` CUST-010 (aturan
+       rekonsiliasi FA-10). Nomor 26/SI/SBY/08/00004-00005 melanjutkan
+       urutan SBY yang ada (00006 sudah terpakai sbg faktur lunas
+       historis di DATA.penerimaanPiutang). noSO/noPL deskriptif
+       (precedent "referensi deskriptif, bukan foreign-key wajib"). */
+    {no:'26/SI/SBY/08/00004', noSJ:'26/SJ/SBY/08/00004', tglBuat:'22/08/2026 10:10', tgl:'22/08/2026',
+      cabang:'Surabaya', gudang:'(01-GUU) Gudang Utama-SBY', area:'JAWA TIMUR',
+      customerKode:'CUST-010', customerNama:'Toko Family Mart Sentosa', customerAlamat:'Jl. Basuki Rahmat No. 105, Surabaya',
+      noSO:'26/SO/SBY/08/00009', noPL:'26/PKL/SBY/08/00045', noSP:'SP/SBY/08/00009', noDSC:'', principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara', tglSP:'21/08/2026',
+      spAsli:true, skEd:false, cito:false, citoTgl:'22/08/2026',
+      syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Basuki Rahmat No. 105, Surabaya',
+      shipVia:'Driver', noResi:'', driver:'Bambang Wijaya - B 9012 XYZ (ABC)',
+      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00045.',
+      items:[
+        {kode:'BRG-006', nama:'Kecap Manis ABC 600ml', satuan:'Dus', qtyPesan:50, qtyKirim:50, batch:'BT-260818-18', ed:'2027-01-20'},
+      ],
+      jumlah:700000, posted:true, ts:'Invoice Selesai', dibayar:0,
+      tglInput:'22/08/2026 10:10', userInput:'sidik', tglEdit:'22/08/2026 15:40', userEdit:'sidik',
+      mcdHistory:[
+        {tanggal:'22/08/2026 10:10', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SBY/08/00045.'},
+        {tanggal:'22/08/2026 10:15', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'22/08/2026 11:00', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
+        {tanggal:'22/08/2026 14:30', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh Toko Family Mart Sentosa.'},
+        {tanggal:'22/08/2026 15:40', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
+      ]},
+    {no:'26/SI/SBY/08/00005', noSJ:'26/SJ/SBY/08/00005', tglBuat:'24/08/2026 09:05', tgl:'24/08/2026',
+      cabang:'Surabaya', gudang:'(01-GUU) Gudang Utama-SBY', area:'JAWA TIMUR',
+      customerKode:'CUST-010', customerNama:'Toko Family Mart Sentosa', customerAlamat:'Jl. Basuki Rahmat No. 105, Surabaya',
+      noSO:'26/SO/SBY/08/00010', noPL:'26/PKL/SBY/08/00046', noSP:'SP/SBY/08/00010', noDSC:'', principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia', tglSP:'23/08/2026',
+      spAsli:true, skEd:false, cito:false, citoTgl:'24/08/2026',
+      syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Basuki Rahmat No. 105, Surabaya',
+      shipVia:'Driver', noResi:'', driver:'Bambang Wijaya - B 9012 XYZ (ABC)',
+      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00046.',
+      items:[
+        {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', satuan:'Dus', qtyPesan:54, qtyKirim:54, batch:'BT-260819-19', ed:'2027-09-18'},
+      ],
+      jumlah:540000, posted:true, ts:'Invoice Selesai', dibayar:0,
+      tglInput:'24/08/2026 09:05', userInput:'sidik', tglEdit:'24/08/2026 13:20', userEdit:'sidik',
+      mcdHistory:[
+        {tanggal:'24/08/2026 09:05', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SBY/08/00046.'},
+        {tanggal:'24/08/2026 09:10', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'24/08/2026 10:00', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
+        {tanggal:'24/08/2026 12:45', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh Toko Family Mart Sentosa.'},
+        {tanggal:'24/08/2026 13:20', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
       ]},
   ],
   /* Daftar Driver (dipakai field "Driver" di form Invoice, picker
@@ -3553,9 +3666,22 @@ const DATA = {
      PPN 11% = Jumlah baris x 11% [mode PPN Eksklusif]; PPh = Jumlah
      baris x %PPh; Jumlah Akhir = Jumlah baris + PPN − PPh + Ongkos
      Angkut) — BUKAN dicontek apa adanya dari angka di screenshot asli
-     (yang skalanya tidak konsisten dengan skema harga barang DBM). */
+     (yang skalanya tidak konsisten dengan skema harga barang DBM).
+
+     2026-08-28 — field BARU `tutupPoStatus` ('Pending'/'In Progress'/
+     'Close') ditambahkan ke SETIAP baris utk modul baru "Tutup Pending
+     PO" (Supplier & Pembelian > Daftar Transaksi, sebelumnya
+     placeholder — lihat js/pages/tutup-pending-po.*). Field ini
+     SENGAJA terpisah dari `status` ('Pending Receive') yang sudah
+     dipakai kolom Status list Purchase Order, supaya tampilan modul
+     PO lama tidak berubah. Seeding-nya meniru campuran status di
+     screenshot acuan: 1 baris Close (26/PO/HO/08/00002 — PO CBD
+     "Diambil Sendiri" yang wajar sudah selesai/ditutup), 2 baris
+     In Progress (00009 & 00007_RI — PO cetakanKe>1/revisi yang wajar
+     sedang berjalan), sisanya Pending. Tombol Tutup/Buka Order di
+     modul baru itu mengubah field ini LIVE (Close <-> status semula). */
   purchaseOrder:[
-    {no:'26/PO/HO/08/00011', noPR:'', tglPO:'06/08/2026', supplier:'PT Sumber Pangan Nusantara', keterangan:'26/SR/HO/08/00003 - Sembako Gudang Utama', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00011', noPR:'', tglPO:'06/08/2026', supplier:'PT Sumber Pangan Nusantara', keterangan:'26/SR/HO/08/00003 - Sembako Gudang Utama', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'26/SR/HO/08/00003', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'07/08/2026', noSoIndent:'', syaratBayar:'Kredit 60 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur',
@@ -3563,7 +3689,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:4750000, pajak11:'PPN11', ppnAmount:522500,
       pphAktif:true, pphKode:'PPH 22 (0.3)', pphPersen:0.3, pphAmount:14250, ongkosAngkut:0, jumlahTotal:5258250,
       tglInput:'06/08/2026 08:20:10', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00010', noPR:'', tglPO:'06/08/2026', supplier:'PT Wilmar Nabati Indonesia', keterangan:'26/SR/BDG/08/00001 - Stok Jabar', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00010', noPR:'', tglPO:'06/08/2026', supplier:'PT Wilmar Nabati Indonesia', keterangan:'26/SR/BDG/08/00001 - Stok Jabar', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'26/SR/BDG/08/00001', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'08/08/2026', noSoIndent:'', syaratBayar:'Kredit 45 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Bandung',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung',
@@ -3571,7 +3697,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:7350000, pajak11:'PPN11', ppnAmount:808500,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:8158500,
       tglInput:'06/08/2026 09:05:44', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00009', noPR:'26/PR-HO/07/00003', tglPO:'06/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon II/SDL/VII/2026', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00009', noPR:'26/PR-HO/07/00003', tglPO:'06/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon II/SDL/VII/2026', status:'Pending Receive', tutupPoStatus:'In Progress', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'08/08/2026', noSoIndent:'', syaratBayar:'Kredit 14 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung',
@@ -3579,7 +3705,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:1200000, pajak11:'PPN11', ppnAmount:132000,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:1332000,
       tglInput:'06/08/2026 10:12:00', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00008', noPR:'26/PR-HO/07/00002', tglPO:'06/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon II/SDL/VII/2026', status:'Pending Receive', cetakanKe:2,
+    {no:'26/PO/HO/08/00008', noPR:'26/PR-HO/07/00002', tglPO:'06/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon II/SDL/VII/2026', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:2,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'08/08/2026', noSoIndent:'', syaratBayar:'Kredit 14 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung',
@@ -3587,7 +3713,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:1200000, pajak11:'PPN11', ppnAmount:132000,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:1332000,
       tglInput:'06/08/2026 10:15:22', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00007_RI', noPR:'', tglPO:'06/08/2026', supplier:'PT Sasa Inti', keterangan:'26/SR/HO/08/00002 - Pemenuhan Toko Anugrah', status:'Pending Receive', cetakanKe:2,
+    {no:'26/PO/HO/08/00007_RI', noPR:'', tglPO:'06/08/2026', supplier:'PT Sasa Inti', keterangan:'26/SR/HO/08/00002 - Pemenuhan Toko Anugrah', status:'Pending Receive', tutupPoStatus:'In Progress', cetakanKe:2,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'26/SR/HO/08/00002', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'07/08/2026', noSoIndent:'', syaratBayar:'Kredit 30 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur',
@@ -3595,7 +3721,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:4074000, pajak11:'PPN11', ppnAmount:448140,
       pphAktif:true, pphKode:'PPH 22 (0.3)', pphPersen:0.3, pphAmount:12222, ongkosAngkut:0, jumlahTotal:4509918,
       tglInput:'06/08/2026 11:02:37', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00006', noPR:'', tglPO:'06/08/2026', supplier:'PT Sasa Inti', keterangan:'26/SR/HO/08/00001 - Pemenuhan Toko Sejahtera', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00006', noPR:'', tglPO:'06/08/2026', supplier:'PT Sasa Inti', keterangan:'26/SR/HO/08/00001 - Pemenuhan Toko Sejahtera', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'26/SR/HO/08/00001', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'07/08/2026', noSoIndent:'', syaratBayar:'Kredit 30 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur',
@@ -3603,7 +3729,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:2037000, pajak11:'PPN11', ppnAmount:224070,
       pphAktif:true, pphKode:'PPH 22 (0.3)', pphPersen:0.3, pphAmount:6111, ongkosAngkut:0, jumlahTotal:2254959,
       tglInput:'06/08/2026 11:30:05', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00005', noPR:'26/PR-HO/07/00002', tglPO:'05/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon IT No. 002/SDL/07/2026', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00005', noPR:'26/PR-HO/07/00002', tglPO:'05/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon IT No. 002/SDL/07/2026', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'07/08/2026', noSoIndent:'', syaratBayar:'Kredit 14 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung',
@@ -3611,7 +3737,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:600000, pajak11:'PPN11', ppnAmount:66000,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:666000,
       tglInput:'05/08/2026 09:40:00', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00004', noPR:'26/PR-HO/07/00003', tglPO:'05/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon IT No. 001/SDL/07/2026', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00004', noPR:'26/PR-HO/07/00003', tglPO:'05/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon IT No. 001/SDL/07/2026', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'07/08/2026', noSoIndent:'', syaratBayar:'Kredit 14 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung',
@@ -3619,7 +3745,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:600000, pajak11:'PPN11', ppnAmount:66000,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:666000,
       tglInput:'05/08/2026 09:42:15', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00003', noPR:'', tglPO:'05/08/2026', supplier:'PT Sumber Pangan Nusantara', keterangan:'26/SR/SMG/08/00001 - Penambahan Stok Semarang', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00003', noPR:'', tglPO:'05/08/2026', supplier:'PT Sumber Pangan Nusantara', keterangan:'26/SR/SMG/08/00001 - Penambahan Stok Semarang', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'26/SR/SMG/08/00001', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'06/08/2026', noSoIndent:'', syaratBayar:'Kredit 30 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Semarang',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Pemuda No. 45, Semarang',
@@ -3627,7 +3753,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:1568000, pajak11:'PPN11', ppnAmount:172480,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:1740480,
       tglInput:'05/08/2026 14:05:50', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00002', noPR:'', tglPO:'03/08/2026', supplier:'PT Sumber Pangan Nusantara', keterangan:'Pemenuhan PT. DAN Direct dari Pabrik', status:'Pending Receive', cetakanKe:0,
+    {no:'26/PO/HO/08/00002', noPR:'', tglPO:'03/08/2026', supplier:'PT Sumber Pangan Nusantara', keterangan:'Pemenuhan PT. DAN Direct dari Pabrik', status:'Pending Receive', tutupPoStatus:'Close', cetakanKe:0,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'', fob:'', shipVia:'Diambil Sendiri', cito:false,
       noOtomatis:'PO001', etd:'04/08/2026', noSoIndent:'', syaratBayar:'CBD', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN CBD (IDR)', alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur',
@@ -3635,7 +3761,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:750000, pajak11:'PPN11', ppnAmount:82500,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:832500,
       tglInput:'03/08/2026 08:15:00', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00001', noPR:'', tglPO:'01/08/2026', supplier:'PT Roda Mas Trading', keterangan:'Pembelian Rutin Bulanan Gudang Cirebon', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00001', noPR:'', tglPO:'01/08/2026', supplier:'PT Roda Mas Trading', keterangan:'Pembelian Rutin Bulanan Gudang Cirebon', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'03/08/2026', noSoIndent:'', syaratBayar:'Kredit 30 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Siliwangi No. 77, Cirebon',
@@ -4702,6 +4828,14 @@ const DATA = {
     {kode:'DPF', nama:'Discount Proposal Form'},
     {kode:'DPL', nama:'Discount Proposal List'},
     {kode:'CAT', nama:'Discount Category'},
+    /* 2026-08-28 — kategori BARU "Diskon Syarat Bayar" (modifikasi DBM
+       yang diminta user): promo yang memilih BEBERAPA syarat bayar dan
+       memberi diskon berupa DISKON GLOBAL 1 & 2 saja (persentase ATAU
+       nominal, TANPA pemilihan item barang), berlaku otomatis ke
+       transaksi Sales Order yang syarat bayarnya cocok — lihat varian
+       'DSB' di js/pages/promotion.* dan soApplyPromoSyaratBayar() di
+       js/pages/sales-order.js. */
+    {kode:'DSB', nama:'Diskon Syarat Bayar'},
   ],
   /* Opsi dropdown "Tipe Customer" di form Promotion — beda konsep dari
      DATA.customerGroup (channel penjualan): ini pengelompokan tipe customer
@@ -4756,6 +4890,23 @@ const DATA = {
        jamTutup(Jam/Menit)/minimalTransaksi/kuota + `items[]` flat
        (kategoriKode,kategoriNama,qty,discPrincipal(Unit),discDistributor(Unit)). */
   promotion:[
+    /* 2026-08-28 — 1 baris BARU kategori 'DSB' (Diskon Syarat Bayar,
+       modifikasi DBM — lihat komentar di DATA.promotionCategoryList):
+       diskonnya HANYA berupa Diskon Global 1 & 2 (bertingkat: DG2
+       dihitung dari sisa setelah DG1), masing-masing bisa persentase
+       ('%') atau nominal ('Rp'), TANPA array items (bukan diskon
+       per-item — beda dari 4 kategori lain). syaratBayarDiskon berisi
+       BEBERAPA syarat bayar dari DATA.syaratBayarList; Sales Order
+       yang Syarat Bayar-nya termasuk daftar ini otomatis mendapat
+       Diskon Global 1 & 2 promo ini (soApplyPromoSyaratBayar(),
+       sales-order.js) selama status Active. Contoh nyata: customer
+       ber-TOP N14 (Toko Sejahtera/UD Makmur Jaya) langsung kena saat
+       dipilih di SO. */
+    {kode:'26/PM-HO/08/00003', noOtomatis:'PRO15', nama:'Promo Diskon Pembayaran Cepat (CBD & Kredit Pendek)', kategori:'DSB', kodeLock:'',
+      tglAwal:'01/08/2026', tglAkhir:'30/09/2026', status:'Active', tipeCustomer:'TC01', customer:'', grupCustomer:'',
+      description:'Diskon Global otomatis pada Sales Order untuk pembayaran cepat: syarat bayar CBD., N7, atau N14 mendapat Diskon Global 1 sebesar 2% dan Diskon Global 2 sebesar 1% (bertingkat). Tanpa pemilihan item barang.', outlet:'Head Office', ppn:11,
+      syaratBayarDiskon:['CBD.','N7','N14'],
+      diskonGlobal1:2, diskonGlobal1Unit:'%', diskonGlobal2:1, diskonGlobal2Unit:'%'},
     {kode:'26/PM-HO/08/00001', noOtomatis:'PRO01', nama:'Promo Diskon Bertingkat Sembako', kategori:'A', kodeLock:'LOCK-SMB01',
       tglAwal:'01/08/2026', tglAkhir:'31/08/2026', status:'Active', tipeCustomer:'TC01', customer:'Toko Sumber Rejeki', grupCustomer:'GRSR',
       description:'Diskon bertingkat pembelian kategori Sembako, semakin banyak qty semakin besar diskon plus bonus barang.', outlet:'Head Office', ppn:11,
@@ -6244,7 +6395,7 @@ const MENU=[
    {label:'Jurnal Biaya Impor', page:'placeholder', title:'Jurnal Biaya Impor'},
    {label:'Estimasi Hari Pengiriman', page:'placeholder', title:'Estimasi Hari Pengiriman'},
    {header:'Daftar Transaksi'},
-   {label:'Tutup Pending PO', page:'placeholder', title:'Tutup Pending PO'},
+   {label:'Tutup Pending PO', page:'tutupPendingPO'},
    {label:'Uang Muka Supplier', page:'placeholder', title:'Uang Muka Supplier'},
    {label:'Transaksi A.P.', page:'placeholder', title:'Transaksi A.P.'},
    {label:'Permintaan Pembelian', page:'placeholder', title:'Permintaan Pembelian'},
@@ -9600,8 +9751,28 @@ function tplFktForm(mode, row){
               <div class="form-section">Rincian Transaksi</div>
               <table class="field-table po-rincian-table">
                 <tr><td class="flabel">Mata Uang</td><td><input type="text" id="fFktMataUang" value="${row.mataUang||'Rupiah (IDR)'}" disabled></td><td class="flabel">Kurs</td><td><input type="text" id="fFktKurs" value="${Number(row.kurs||1).toFixed(2)}" disabled></td></tr>
-                <tr><td class="flabel">Diskon 1</td><td><input type="number" id="fFktDiskon1" value="${row.diskon1||0}" ${dis}> %</td><td></td><td><input type="text" id="fFktDiskon1Rp" value="${num(row.diskon1Amount||0)}" disabled></td></tr>
-                <tr><td class="flabel">Diskon 2</td><td><input type="number" id="fFktDiskon2" value="${row.diskon2||0}" ${dis}> %</td><td></td><td><input type="text" id="fFktDiskon2Rp" value="${num(row.diskon2Amount||0)}" disabled></td></tr>
+                <!-- 2026-08-28 — Diskon Global 1 & 2 di-upgrade: nilai bisa
+                     %/nominal (select unit) dan dihitung BERTINGKAT (Diskon
+                     Global 2 dari sisa setelah Diskon Global 1) — lihat
+                     fktRecalcTotals() di faktur-penjualan-sj.js. -->
+                <tr><td class="flabel">Diskon Global 1</td><td>
+                    <div style="display:flex;gap:6px;">
+                      <input type="number" min="0" id="fFktDiskon1" value="${row.diskon1||0}" ${dis} style="width:110px;flex:0 0 auto;">
+                      <select id="fFktDiskon1Unit" style="width:auto;" ${dis}>
+                        <option value="%" ${row.diskon1Unit!=='Rp'?'selected':''}>%</option>
+                        <option value="Rp" ${row.diskon1Unit==='Rp'?'selected':''}>Rp</option>
+                      </select>
+                    </div>
+                  </td><td></td><td><input type="text" id="fFktDiskon1Rp" value="${num(row.diskon1Amount||0)}" disabled></td></tr>
+                <tr><td class="flabel">Diskon Global 2 <span style="font-weight:400;font-size:10.5px;color:var(--text-light);">(dari sisa setelah DG1)</span></td><td>
+                    <div style="display:flex;gap:6px;">
+                      <input type="number" min="0" id="fFktDiskon2" value="${row.diskon2||0}" ${dis} style="width:110px;flex:0 0 auto;">
+                      <select id="fFktDiskon2Unit" style="width:auto;" ${dis}>
+                        <option value="%" ${row.diskon2Unit!=='Rp'?'selected':''}>%</option>
+                        <option value="Rp" ${row.diskon2Unit==='Rp'?'selected':''}>Rp</option>
+                      </select>
+                    </div>
+                  </td><td></td><td><input type="text" id="fFktDiskon2Rp" value="${num(row.diskon2Amount||0)}" disabled></td></tr>
                 <tr><td class="flabel">DPP</td><td colspan="3"><input type="text" id="fFktDpp" value="${num(row.dpp||0)}" disabled></td></tr>
                 <tr><td class="flabel">Pajak 11%</td><td><input type="text" id="fFktPajak11" value="${row.pajak11||''}" disabled></td><td></td><td><input type="text" id="fFktPpnAmount" value="${num(row.ppn||0)}" disabled></td></tr>
                 <tr><td class="flabel">Pph Dipotong</td><td>
@@ -11217,7 +11388,7 @@ function tplInvForm(mode, row){
               <td>
                 <div style="display:flex;align-items:center;gap:10px;">
                   <div class="checkbox-row" style="margin:0;"><input type="checkbox" id="fInvCito" ${row.cito?'checked':''}><label for="fInvCito">CITO</label></div>
-                  <input type="text" id="fInvCitoTgl" value="${row.citoTgl||row.tgl||''}" readonly style="max-width:110px;">
+                  <input type="text" id="fInvCitoTgl" value="${row.citoTgl||row.tgl||''}" readonly style="width:110px;flex:0 0 auto;">
                 </div>
               </td>
             </tr>
@@ -11284,6 +11455,7 @@ function tplInvForm(mode, row){
             </table>
           </div>
           <div id="invItemsEmptyHint" style="font-size:11.5px;color:var(--text-light);margin-top:6px;${row.items.length?'display:none;':''}">Belum ada barang — pilih No SO atau No PL terlebih dahulu.</div>
+          ${tplInvDiskonGlobalPanel(row)}
         </div>
         <div id="invTabJurnalContent" style="display:none;">${tplInvJurnalContent(row)}</div>
 
@@ -11779,6 +11951,52 @@ function tplInvPrintDoc(row, mode){
   </div>
 </body>
 </html>`;
+}
+
+/* =========================================================
+   2026-08-28 — panel "Diskon Global" (modifikasi DBM yang diminta
+   user, seragam dgn Sales Order & Faktur Penjualan): ditampilkan di
+   bawah tabel Produk (tab Detail Transaksi). Subtotal Barang dihitung
+   live dari item x harga master (sumber yang sama dgn invRecalcJumlah,
+   yang memang dipanggil dulu di sini — precedent template memanggil
+   helper kalkulasi: tplPpForm/ppRecalcTotals), lalu Diskon Global 1
+   & 2 (nilai + unit %/Rp, BERTINGKAT — DG2 dari sisa setelah DG1)
+   mengurangi subtotal menjadi "Jumlah Setelah Diskon Global" =
+   row.jumlah yang tersimpan. Logic/wiring-nya di invoice.js
+   (invRecalcJumlah/invRefreshDiskonGlobalDOM/wireInvItemEvents). */
+function tplInvDiskonGlobalPanel(row){
+  invRecalcJumlah(row);
+  return `
+    <table class="field-table po-rincian-table" style="margin-top:16px;max-width:560px;">
+      <tr><td class="flabel">Subtotal Barang</td><td colspan="2"><input type="text" id="fInvSubtotalBarang" value="${num(row.subtotalBarang||0)}" disabled></td></tr>
+      <tr>
+        <td class="flabel">Diskon Global 1</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <input type="number" min="0" id="fInvDg1" value="${row.diskonGlobal1||0}" style="width:110px;flex:0 0 auto;">
+            <select id="fInvDg1Unit" style="width:auto;">
+              <option value="%" ${row.diskonGlobal1Unit!=='Rp'?'selected':''}>%</option>
+              <option value="Rp" ${row.diskonGlobal1Unit==='Rp'?'selected':''}>Rp</option>
+            </select>
+          </div>
+        </td>
+        <td style="width:160px;"><input type="text" id="fInvDg1Amount" value="${num(row.diskonGlobal1Amount||0)}" disabled style="text-align:right;"></td>
+      </tr>
+      <tr>
+        <td class="flabel">Diskon Global 2 <span style="font-weight:400;font-size:10.5px;color:var(--text-light);">(dari sisa setelah Diskon Global 1)</span></td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <input type="number" min="0" id="fInvDg2" value="${row.diskonGlobal2||0}" style="width:110px;flex:0 0 auto;">
+            <select id="fInvDg2Unit" style="width:auto;">
+              <option value="%" ${row.diskonGlobal2Unit!=='Rp'?'selected':''}>%</option>
+              <option value="Rp" ${row.diskonGlobal2Unit==='Rp'?'selected':''}>Rp</option>
+            </select>
+          </div>
+        </td>
+        <td><input type="text" id="fInvDg2Amount" value="${num(row.diskonGlobal2Amount||0)}" disabled style="text-align:right;"></td>
+      </tr>
+      <tr><td class="flabel">Jumlah Setelah Diskon Global</td><td colspan="2"><input type="text" id="fInvJumlahSetelahDiskon" value="${num(row.jumlah||0)}" disabled style="font-weight:700;"></td></tr>
+    </table>`;
 }
 
 /* =========================================================
@@ -17054,11 +17272,20 @@ function tplPpForm(mode, row){
             </div>
           </div>
           <div class="form-group">
-            <label>Dari Customer</label>
+            <label>${row.holding ? 'Dari Customer Pusat (Holding)' : 'Dari Customer'}</label>
             <div class="input-with-btn">
-              <input type="text" id="fPpCustomer" value="${row.customerNama||''}" placeholder="Pilih Customer" readonly>
-              ${!isView ? `<button type="button" class="icon-btn edit" id="ppCustomerSearch" title="Cari Customer">${icon('search',13)}</button>` : ''}
+              <input type="text" id="fPpCustomer" value="${row.customerNama||''}" placeholder="${row.holding ? 'Pilih Customer Pusat' : 'Pilih Customer'}" readonly>
+              ${!isView ? `<button type="button" class="icon-btn edit" id="ppCustomerSearch" title="${row.holding ? 'Cari Customer Pusat (Holding)' : 'Cari Customer'}">${icon('search',13)}</button>` : ''}
             </div>
+            <!-- 2026-08-28 — MODIFIKASI DBM: Pelunasan Piutang Terpusat
+                 (Holding). Saat dicentang, picker customer berganti ke
+                 daftar customer PUSAT dan tabel Lunasi Beberapa Faktur
+                 menampilkan faktur outstanding SEMUA cabang di bawahnya
+                 sekaligus (multi-customer, kolom "Customer" muncul). -->
+            <label style="display:flex;align-items:center;gap:6px;font-size:11.8px;color:var(--text);cursor:pointer;margin-top:6px;font-weight:400;">
+              <input type="checkbox" id="fPpHolding" ${row.holding?'checked':''} ${dis} style="width:auto;">
+              Pelunasan Terpusat (Holding) ?
+            </label>
           </div>
           <div class="form-group">
             <label>Badan Usaha</label>
@@ -17175,6 +17402,7 @@ function tplPpFakturTab(row, isView, totals){
         <thead><tr>
           <th>Bayar</th>
           <th>No. Faktur</th>
+          ${row.holding ? '<th>Customer</th>' : ''}
           <th>Cabang</th>
           <th>Tipe Transaksi</th>
           <th>Tgl. Faktur</th>
@@ -17184,10 +17412,12 @@ function tplPpFakturTab(row, isView, totals){
           <th>Reminder</th>
           <th>Pembayaran</th>
         </tr></thead>
-        <tbody id="ppFakturBody">${tplPpFakturRows(row.fakturs, isView)}</tbody>
+        <tbody id="ppFakturBody">${tplPpFakturRows(row.fakturs, isView, row.holding)}</tbody>
       </table>
     </div>
-    <div id="ppFakturEmptyHint" style="font-size:11.5px;color:var(--text-light);margin-top:6px;${(row.fakturs&&row.fakturs.length)?'display:none;':''}">Belum ada faktur yang dipilih — pilih Customer terlebih dahulu, faktur yang belum lunas &amp; sudah di-posting akan tampil di sini.</div>
+    <div id="ppFakturEmptyHint" style="font-size:11.5px;color:var(--text-light);margin-top:6px;${(row.fakturs&&row.fakturs.length)?'display:none;':''}">${row.holding
+      ? 'Belum ada faktur yang dipilih — pilih Customer Pusat (Holding) terlebih dahulu, faktur yang belum lunas &amp; sudah di-posting dari SEMUA cabang di bawahnya akan tampil di sini sekaligus.'
+      : 'Belum ada faktur yang dipilih — pilih Customer terlebih dahulu, faktur yang belum lunas &amp; sudah di-posting akan tampil di sini.'}</div>
 
     <div style="display:flex;justify-content:flex-end;margin-top:14px;">
       <div style="max-width:280px;width:100%;">
@@ -17219,12 +17449,20 @@ function tplPpFakturTab(row, isView, totals){
     </table>`;
 }
 
-function tplPpFakturRows(fakturs, isView){
-  if(!fakturs || !fakturs.length) return `<tr><td colspan="10" style="color:var(--text-light);">Belum ada faktur — pilih Customer terlebih dahulu.</td></tr>`;
+/* Param `holding` (2026-08-28, fitur Pelunasan Piutang Terpusat):
+   true = tabel dapat kolom tambahan "Customer" setelah No. Faktur
+   (fakturnya lintas customer — semua cabang di bawah 1 pusat), dan
+   colspan baris kosong/detail ikut jadi 11. Mode biasa (false/
+   undefined, termasuk baris lama yang tersimpan tanpa field holding)
+   tampil PERSIS seperti sebelumnya. */
+function tplPpFakturRows(fakturs, isView, holding){
+  const nCols = holding ? 11 : 10;
+  if(!fakturs || !fakturs.length) return `<tr><td colspan="${nCols}" style="color:var(--text-light);">Belum ada faktur — pilih ${holding?'Customer Pusat (Holding)':'Customer'} terlebih dahulu.</td></tr>`;
   return fakturs.map((f,idx)=>`
     <tr data-pp-faktur-row="${idx}">
       <td style="text-align:center;width:50px;"><input type="checkbox" data-pp-bayar="${idx}" ${f.checked?'checked':''} ${isView?'disabled':''}></td>
       <td>${f.no}</td>
+      ${holding ? `<td>${f.customerNama||''}</td>` : ''}
       <td>${f.cabang||''}</td>
       <td>${f.tipeTransaksi||'Jual Kredit'}</td>
       <td>${f.tglFaktur||''}</td>
@@ -17233,7 +17471,7 @@ function tplPpFakturRows(fakturs, isView){
       <td>${ppNum2(f.kurs!=null?f.kurs:1)}</td>
       <td class="text-right">${ppNum2(f.reminder)}</td>
       <td style="width:130px;"><input type="text" data-pp-pembayaran="${idx}" value="${ppNum2(f.pembayaran)}" style="text-align:right;" ${(!f.checked||isView)?'disabled':''}></td>
-    </tr>` + (f.checked ? tplPpFakturDetailRow(f, idx, isView) : '')).join('');
+    </tr>` + (f.checked ? tplPpFakturDetailRow(f, idx, isView, nCols) : '')).join('');
 }
 
 /* Panel "Ada potongan Ppn?/Pph?" per baris faktur yang dicentang Bayar
@@ -17241,12 +17479,12 @@ function tplPpFakturRows(fakturs, isView){
    HANYA dirender kalau f.checked (faktur yang tidak sedang dilunasi
    tidak perlu diatur potongan pajaknya). colspan=10 sama seperti baris
    utamanya (10 kolom header tabel Lunasi Beberapa Faktur). */
-function tplPpFakturDetailRow(f, idx, isView){
+function tplPpFakturDetailRow(f, idx, isView, nCols){
   const dis = isView ? 'disabled' : '';
   const net = ppFakturNetPembayaran(f);
   return `
     <tr data-pp-detail-row="${idx}">
-      <td colspan="10" style="background:#f8fafc;padding:12px 16px;border-top:none;">
+      <td colspan="${nCols || 10}" style="background:#f8fafc;padding:12px 16px;border-top:none;">
         <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:center;">
           <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
             <input type="checkbox" data-pp-potongan-ppn="${idx}" ${f.potonganPpn?'checked':''} ${dis}> Ada potongan Ppn?
@@ -17345,14 +17583,29 @@ function tplPpJurnalContent(row, totals){
    Order). Bukan reuse fungsi lintas modul (lihat catatan "local copy"
    di header file ini).
 ===================================================================== */
-function tplPpCustomerPicker(list){
-  return `
+/* Param `holdingMode` (2026-08-28, fitur Pelunasan Piutang Terpusat):
+   true = judul jadi "Pilih Customer Pusat (Holding)" + kolom tambahan
+   "Cabang di Bawahnya" (nama-nama customer yang customerIndukKode-nya
+   menunjuk ke customer pusat itu) supaya user tahu cakupan pelunasan
+   sebelum memilih. List-nya sudah difilter di openPpCustomerPicker()
+   (hanya customer yang benar-benar jadi induk). */
+function tplPpCustomerPicker(list, holdingMode){
+  const title = holdingMode ? 'Pilih Customer Pusat (Holding)' : 'Pilih Customer';
+  if(!list.length){
+    return `
     <div class="modal-box" style="max-width:560px;">
-      <div class="modal-header"><span>Pilih Customer</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p style="color:var(--text-light);">Belum ada customer pusat — isi field "Customer Induk" pada master customer cabang terlebih dahulu.</p></div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+  }
+  return `
+    <div class="modal-box" style="max-width:${holdingMode?'680px':'560px'};">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
       <div class="modal-body">
         <div class="table-wrap" style="max-height:340px;overflow:auto;"><table>
-          <thead><tr><th>Kode</th><th>Nama Customer</th><th>Kota</th><th></th></tr></thead>
-          <tbody>${list.map(c=>`<tr><td>${c.kode}</td><td>${c.nama}</td><td>${c.kota}</td><td><button class="btn-pick" data-pick-customer="${c.kode}">Pilih</button></td></tr>`).join('')}</tbody>
+          <thead><tr><th>Kode</th><th>Nama Customer</th><th>Kota</th>${holdingMode?'<th>Cabang di Bawahnya</th>':''}<th></th></tr></thead>
+          <tbody>${list.map(c=>`<tr><td>${c.kode}</td><td>${c.nama}</td><td>${c.kota}</td>${holdingMode?`<td style="font-size:11.8px;">${ppChildrenOf(c.kode).map(x=>x.nama).join(', ')||'-'}</td>`:''}<td><button class="btn-pick" data-pick-customer="${c.kode}">Pilih</button></td></tr>`).join('')}</tbody>
         </table></div>
       </div>
       <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
@@ -19339,6 +19592,7 @@ function tplPromotionFormBody(mode, row){
   if(row.kategori === 'DPF') return tplPromDiscountProposal(mode, row, {showKuota:true});
   if(row.kategori === 'DPL') return tplPromDiscountProposal(mode, row, {showKuota:false});
   if(row.kategori === 'CAT') return tplPromDiscountCategory(mode, row);
+  if(row.kategori === 'DSB') return tplPromDiskonSyaratBayar(mode, row); /* BARU 2026-08-28 — Diskon Syarat Bayar */
   return tplPromDiscountProgram(mode, row);
 }
 
@@ -19463,6 +19717,68 @@ function tplPromInfoModal(title,text){
         <button class="btn-primary" id="modalOk">Mengerti</button>
       </div>
     </div>`;
+}
+
+/* ============================================================
+   VARIAN 5 (BARU 2026-08-28) — Diskon Syarat Bayar (kategori 'DSB')
+   Lihat catatan desain lengkap di atas wireDiskonSyaratBayar()
+   (promotion.js). Tanpa tabel item sama sekali — hanya checkbox
+   multi-pilih syarat bayar + 2 baris Diskon Global (nilai + unit
+   %/Rp, pola select unit sama dgn promDiscUnitOptions varian lain)
+   + catatan cara kerjanya di transaksi SO.
+   ============================================================ */
+function tplPromDsbBlock(row){
+  const sbList = row.syaratBayarDiskon || [];
+  return `
+    <div class="form-section">${icon('percent',15)} Syarat Bayar &amp; Diskon Global</div>
+    <table class="field-table">
+      <tr>
+        <td class="flabel" style="vertical-align:top;">Syarat Bayar<br><span style="font-weight:400;font-size:11px;color:var(--text-light);">(bisa pilih beberapa)</span></td>
+        <td colspan="3">
+          <div style="display:flex;gap:18px;flex-wrap:wrap;padding:4px 0;">
+            ${DATA.syaratBayarList.map(sb => `
+              <label style="display:flex;align-items:center;gap:6px;font-size:12.6px;font-weight:400;cursor:pointer;">
+                <input type="checkbox" data-prom-dsb-sb="${sb}" ${sbList.indexOf(sb)!==-1?'checked':''} style="width:auto;"> ${sb}
+              </label>`).join('')}
+          </div>
+          <div style="font-size:11.5px;color:var(--text-light);margin-top:2px;">Terpilih: <b id="promDsbTerpilih">${sbList.length ? sbList.join(', ') : 'Belum ada syarat bayar dipilih'}</b></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="flabel">Diskon Global 1</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <input type="number" min="0" id="fPromDsbDg1" value="${row.diskonGlobal1||0}" style="max-width:120px;">
+            <select id="fPromDsbDg1Unit" style="width:auto;">
+              <option value="%" ${row.diskonGlobal1Unit!=='Rp'?'selected':''}>%</option>
+              <option value="Rp" ${row.diskonGlobal1Unit==='Rp'?'selected':''}>Rp</option>
+            </select>
+          </div>
+        </td>
+        <td class="flabel">Diskon Global 2</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <input type="number" min="0" id="fPromDsbDg2" value="${row.diskonGlobal2||0}" style="max-width:120px;">
+            <select id="fPromDsbDg2Unit" style="width:auto;">
+              <option value="%" ${row.diskonGlobal2Unit!=='Rp'?'selected':''}>%</option>
+              <option value="Rp" ${row.diskonGlobal2Unit==='Rp'?'selected':''}>Rp</option>
+            </select>
+          </div>
+        </td>
+      </tr>
+    </table>
+    <div style="font-size:11.8px;color:var(--text-light);line-height:1.7;margin-top:6px;">
+      Diskon promo ini berupa <b>Diskon Global 1 &amp; Diskon Global 2</b> saja (perhitungan bertingkat: Diskon Global 2 dihitung dari sisa setelah Diskon Global 1) — <b>tidak ada pemilihan item barang</b>.
+      Berlaku otomatis pada transaksi <b>Sales Order</b> yang Syarat Bayar-nya termasuk daftar terpilih di atas, selama status promo Active.
+    </div>`;
+}
+
+function tplPromDiskonSyaratBayar(mode, row){
+  return `
+    ${tplPromCommonHeader(mode, row)}
+    ${tplPromCommonBlock(row)}
+    ${tplPromDsbBlock(row)}
+    ${tplPromFooter()}`;
 }
 
 /* =========================================================
@@ -21662,7 +21978,17 @@ function tplSoForm(mode, row){
               ${isAdd ? `<button type="button" class="icon-btn edit" id="soRefreshNo" title="Generate Nomor">${icon('refreshCw',13)}</button>` : ''}
             </div>
           </div>
-          <div class="form-group"></div>
+          <!-- Syarat Bayar (fitur baru 2026-08-28): otomatis mengikuti TOP
+               master customer saat Customer dipilih, tetap bisa diganti.
+               Jadi kunci pencocokan promo "Diskon Syarat Bayar" (kategori
+               DSB, Master Promotion) yang mengisi Diskon Global 1 & 2. -->
+          <div class="form-group">
+            <label>Syarat Bayar</label>
+            <select id="fSoSyaratBayar" ${dis}>
+              <option value="">Pilih Syarat Bayar</option>
+              ${DATA.syaratBayarList.map(sb=>`<option ${row.syaratBayar===sb?'selected':''}>${sb}</option>`).join('')}
+            </select>
+          </div>
         </div>
 
         <div class="po-grid-3">
@@ -21768,11 +22094,45 @@ function tplSoForm(mode, row){
         </div>
         ${!isView ? `<a href="#" id="soAddItem" class="link-add">${icon('plus',13)} Tambah Item Baru</a>` : ''}
 
-        <table class="field-table po-rincian-table" style="margin-top:22px;max-width:460px;">
-          <tr><td class="flabel">Total DPP</td><td><input type="text" id="fSoTotalDpp" value="${num(row.totalDpp||0)}" disabled></td></tr>
-          <tr><td class="flabel">Total PPN</td><td><input type="text" id="fSoTotalPpn" value="${num(row.totalPpn||0)}" disabled></td></tr>
-          <tr><td class="flabel">Total Biaya Kirim</td><td><input type="text" id="fSoTotalBiayaKirim" value="${num(row.totalBiayaKirim||0)}" disabled></td></tr>
-          <tr><td class="flabel">Jumlah Akhir</td><td><input type="text" id="fSoJumlahAkhir" value="${num(row.jumlahAkhir||0)}" disabled style="font-weight:700;"></td></tr>
+        <!-- Diskon Global 1 & 2 (fitur baru 2026-08-28): perhitungan
+             BERTINGKAT (DG2 dari sisa setelah DG1), nilai bisa persentase
+             maupun nominal (select unit %/Rp per baris), Total PPN
+             terkoreksi proporsional — lihat soRecalcTotals(). Baris nilai
+             juga terisi otomatis dari promo "Diskon Syarat Bayar" saat
+             Syarat Bayar SO cocok (soApplyPromoSyaratBayar). -->
+        <div id="soDgPromoNote" style="display:${row.diskonPromoKode?'':'none'};font-size:11.8px;color:var(--blue);margin-top:18px;font-weight:600;">${row.diskonPromoKode ? `Diskon Global otomatis dari Promotion <b>${row.diskonPromoKode}</b> (Diskon Syarat Bayar; nilai masih bisa diubah manual).` : ''}</div>
+        <table class="field-table po-rincian-table" style="margin-top:${row.diskonPromoKode?'6':'22'}px;max-width:560px;">
+          <tr><td class="flabel">Total DPP</td><td colspan="2"><input type="text" id="fSoTotalDpp" value="${num(row.totalDpp||0)}" disabled></td></tr>
+          <tr>
+            <td class="flabel">Diskon Global 1</td>
+            <td>
+              <div style="display:flex;gap:6px;">
+                <input type="number" min="0" id="fSoDg1" value="${row.diskonGlobal1||0}" style="width:110px;flex:0 0 auto;" ${dis}>
+                <select id="fSoDg1Unit" style="width:auto;" ${dis}>
+                  <option value="%" ${row.diskonGlobal1Unit!=='Rp'?'selected':''}>%</option>
+                  <option value="Rp" ${row.diskonGlobal1Unit==='Rp'?'selected':''}>Rp</option>
+                </select>
+              </div>
+            </td>
+            <td style="width:160px;"><input type="text" id="fSoDg1Amount" value="${num(row.diskonGlobal1Amount||0)}" disabled style="text-align:right;"></td>
+          </tr>
+          <tr>
+            <td class="flabel">Diskon Global 2 <span style="font-weight:400;font-size:10.5px;color:var(--text-light);">(dari sisa setelah Diskon Global 1)</span></td>
+            <td>
+              <div style="display:flex;gap:6px;">
+                <input type="number" min="0" id="fSoDg2" value="${row.diskonGlobal2||0}" style="width:110px;flex:0 0 auto;" ${dis}>
+                <select id="fSoDg2Unit" style="width:auto;" ${dis}>
+                  <option value="%" ${row.diskonGlobal2Unit!=='Rp'?'selected':''}>%</option>
+                  <option value="Rp" ${row.diskonGlobal2Unit==='Rp'?'selected':''}>Rp</option>
+                </select>
+              </div>
+            </td>
+            <td><input type="text" id="fSoDg2Amount" value="${num(row.diskonGlobal2Amount||0)}" disabled style="text-align:right;"></td>
+          </tr>
+          <tr><td class="flabel">DPP Setelah Diskon Global</td><td colspan="2"><input type="text" id="fSoDppSetelahDiskon" value="${num(row.dppSetelahDiskon!=null?row.dppSetelahDiskon:(row.totalDpp||0))}" disabled></td></tr>
+          <tr><td class="flabel">Total PPN</td><td colspan="2"><input type="text" id="fSoTotalPpn" value="${num(row.totalPpn||0)}" disabled></td></tr>
+          <tr><td class="flabel">Total Biaya Kirim</td><td colspan="2"><input type="text" id="fSoTotalBiayaKirim" value="${num(row.totalBiayaKirim||0)}" disabled></td></tr>
+          <tr><td class="flabel">Jumlah Akhir</td><td colspan="2"><input type="text" id="fSoJumlahAkhir" value="${num(row.jumlahAkhir||0)}" disabled style="font-weight:700;"></td></tr>
         </table>
 
         <div style="font-size:11.8px;color:var(--text-light);margin-top:6px;line-height:1.7;">
@@ -24183,6 +24543,167 @@ function tplTpInfoModal(title, msg){
     <div class="modal-box" style="max-width:440px;">
       <div class="modal-header">${title}<span class="close" id="modalClose">&times;</span></div>
       <div class="modal-body"><p>${msg}</p></div>
+    </div>`;
+}
+
+/* =========================================================
+   TEMPLATE (HTML saja) — Tutup Pending PO (Supplier & Pembelian >
+   Daftar Transaksi). Semua fungsi di file ini HANYA menyusun &
+   mengembalikan markup HTML (string), TIDAK ada logic/DOM-binding/
+   data mutation di sini. Logic-nya ada di file sebelah:
+   tutup-pending-po.js
+
+   Sesuai screenshot MASERP "+ Tutup Pending PO" yang dikirim user
+   2026-08-28: list full page dgn header dark berisi 2 dropdown filter
+   kecil warna teal (status "All" & bulan "Agustus 2026") + tombol
+   merah Tutorial; toolbar select jumlah baris + Pencarian Global;
+   tabel No. PO (link biru)/Tgl. PO/Supplier/Keterangan/Jumlah Akhir
+   (rata kanan, format id-ID 2 desimal)/Status (teks Pending -
+   In Progress - Close)/kolom "Tutup / Buka" berisi tombol per baris:
+   "Tutup Order" (biru) utk PO yang belum Close, "Buka Order" (teal)
+   utk PO yang sudah Close.
+
+   Data list pada screenshot (PT SATORIA ANEKA INDUSTRI dst.) adalah
+   data instalasi MASERP lain (SDL) — TIDAK direplikasi; list di sini
+   diambil LIVE dari DATA.purchaseOrder DBM (11 baris PO Agustus 2026
+   yang sudah ada) lewat field BARU `tutupPoStatus` — lihat komentar
+   besar di atas DATA.purchaseOrder di js/data.js. Link No. PO membuka
+   modal ringkasan PO read-only (mockup ini tidak menavigasi ke form
+   Purchase Order penuh — modul PO adalah lazy-load terpisah yang
+   urutan muatnya tidak boleh diandalkan). */
+
+function tplTppListPage(){
+  const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const selStyle = 'background:var(--blue-light);color:#fff;border:none;border-radius:6px;padding:8px 10px;font-size:12.5px;font-weight:600;cursor:pointer;';
+  return `
+    <div class="breadcrumb">Home / Supplier &amp; Pembelian / <b>Tutup Pending PO</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('plus',15)} Tutup Pending PO</h3>
+        <div class="toolbar-actions">
+          <select id="tppFilterStatus" style="${selStyle}">
+            <option value="">All</option>
+            <option>Pending</option>
+            <option>In Progress</option>
+            <option>Close</option>
+          </select>
+          <select id="tppFilterBulan" style="${selStyle}">
+            ${months.map((m, i) => {
+              const ym = '2026' + String(i + 1).padStart(2, '0');
+              return `<option value="${ym}"${ym === '202608' ? ' selected' : ''}>${m} 2026</option>`;
+            }).join('')}
+          </select>
+          <button class="btn-danger" id="btnTppTutorial">${icon('card',14)} Tutorial</button>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <select><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="tppSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th style="width:150px;">No. PO</th>
+          <th style="width:90px;">Tgl. PO</th>
+          <th style="width:210px;">Supplier</th>
+          <th>Keterangan</th>
+          <th class="text-right" style="width:120px;">Jumlah Akhir</th>
+          <th style="width:96px;">Status</th>
+          <th style="width:110px;">Tutup / Buka</th>
+        </tr></thead>
+        <tbody id="tppTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager"><button>First</button><button>Previous</button><button class="active">1</button><button>Next</button><button>Last</button></div><div id="tppTotal"></div></div>
+    </div>`;
+}
+
+function tplTppRows(rows){
+  const fmt2 = n => Number(n || 0).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2});
+  if(!rows.length){
+    return `<tr><td colspan="7" style="color:var(--text-light);padding:14px;">Tidak ada PO yang cocok dengan filter/pencarian.</td></tr>`;
+  }
+  return rows.map(r => {
+    const isClose = r.tutupPoStatus === 'Close';
+    return `
+    <tr>
+      <td><a href="javascript:void(0)" data-tpp-view="${r.no}" style="color:var(--blue);font-weight:600;text-decoration:none;">${r.no}</a></td>
+      <td>${r.tglPO || ''}</td>
+      <td>${r.supplier || ''}</td>
+      <td>${r.keterangan || ''}</td>
+      <td class="text-right">${fmt2(r.jumlahTotal)}</td>
+      <td>${r.tutupPoStatus || 'Pending'}</td>
+      <td>
+        ${isClose
+          ? `<button class="btn-teal" data-tpp-toggle="${r.no}" style="padding:7px 12px;font-size:12px;">Buka Order</button>`
+          : `<button class="btn-primary" data-tpp-toggle="${r.no}" style="padding:7px 12px;font-size:12px;">Tutup Order</button>`}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function tplTppConfirmModal(row, willClose){
+  return `
+    <div class="modal-box" style="max-width:460px;">
+      <div class="modal-header"><span>${willClose ? 'Tutup Order' : 'Buka Order'}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <p>Yakin ingin ${willClose ? 'menutup' : 'membuka kembali'} PO <b>${row.no}</b> — ${row.supplier || ''}?</p>
+        <p style="color:var(--text-light);font-size:12.5px;margin-top:8px;">
+          ${willClose
+            ? 'PO yang ditutup tidak lagi menunggu penerimaan barang (sisa qty yang belum diterima dibatalkan) dan hilang dari daftar PO pending.'
+            : 'PO yang dibuka kembali akan berstatus Pending dan menunggu penerimaan barang lagi.'}
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="${willClose ? 'btn-danger' : 'btn-primary'}" id="tppConfirmBtn">${willClose ? 'Tutup Order' : 'Buka Order'}</button>
+      </div>
+    </div>`;
+}
+
+/* Modal ringkasan PO read-only utk link No. PO — bukan form Purchase
+   Order penuh (lihat catatan di header file). */
+function tplTppDetailModal(row){
+  const fmt2 = n => Number(n || 0).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const itemRows = (row.items || []).map((it, i) => `
+    <tr>
+      <td style="text-align:center;">${i + 1}</td>
+      <td>${it.kode}</td>
+      <td>${it.nama}</td>
+      <td style="text-align:right;">${num(it.qty)} ${it.um || ''}</td>
+      <td style="text-align:right;">${fmt2(it.jumlah)}</td>
+    </tr>`).join('');
+  return `
+    <div class="modal-box" style="max-width:620px;">
+      <div class="modal-header"><span>Purchase Order ${row.no}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <table class="field-table" style="margin-bottom:12px;">
+          <tr><td class="flabel">No. PO</td><td>${row.no}</td><td class="flabel">Tgl. PO</td><td>${row.tglPO || ''}</td></tr>
+          <tr><td class="flabel">Supplier</td><td>${row.supplier || ''}</td><td class="flabel">Status</td><td>${row.tutupPoStatus || 'Pending'}</td></tr>
+          <tr><td class="flabel">Keterangan</td><td colspan="3">${row.keterangan || ''}</td></tr>
+        </table>
+        <table>
+          <thead><tr><th style="width:36px;">No.</th><th>Kode</th><th>Nama Barang</th><th class="text-right">Qty</th><th class="text-right">Jumlah</th></tr></thead>
+          <tbody>${itemRows}</tbody>
+          <tfoot><tr>
+            <td colspan="4" style="text-align:right;font-weight:700;">Jumlah Akhir (termasuk pajak) :</td>
+            <td style="text-align:right;font-weight:700;">${fmt2(row.jumlahTotal)}</td>
+          </tr></tfoot>
+        </table>
+        <p style="color:var(--text-light);font-size:12px;margin-top:10px;">Detail lengkap PO dapat dilihat di menu Supplier &amp; Pembelian &gt; Daftar Transaksi &gt; Purchase Order.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Tutup</button>
+      </div>
+    </div>`;
+}
+
+function tplTppInfoModal(title, text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="modalCancel">Tutup</button>
+      </div>
     </div>`;
 }
 
@@ -26797,7 +27318,7 @@ function fktBuildEmptyRow(){
     tglBatasRetur:'', tipeLayanan: DATA.layananList[0],
     items:[],
     tipePpn: FKT_PPN_LIST[3], mataUang:'Rupiah (IDR)', kursPajak:0, tglFakturPajak:'', kodePajak: DATA.kodePajakList[0], noFakturPajak:'',
-    diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, kurs:1, dpp:0, pajak11:'PPN11',
+    diskon1:0, diskon1Unit:'%', diskon1Amount:0, diskon2:0, diskon2Unit:'%', diskon2Amount:0, kurs:1, dpp:0, pajak11:'PPN11',
     uangMukaTipe: FKT_UANG_MUKA_LIST[0], sisaUangMuka:0, uangMukaPakai:0,
     pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0,
     ongkosAngkut:0, ppn:0, jumlahAkhir:0, sisaJumlah:0,
@@ -26838,9 +27359,19 @@ function fktRefreshItemRowDOM(idx, item){
    SEBELUM fungsi ini dipanggil (bukan dibaca ulang dari DOM di sini). */
 function fktRecalcTotals(row){
   const subtotal = row.items.reduce((s, it) => s + (+it.jumlah || 0), 0);
-  row.diskon1Amount = Math.round(subtotal * (+row.diskon1 || 0) / 100);
-  row.diskon2Amount = Math.round(subtotal * (+row.diskon2 || 0) / 100);
-  row.dpp = subtotal - row.diskon1Amount - row.diskon2Amount;
+  /* 2026-08-28 — Diskon Global 1 & 2 di-upgrade (modifikasi DBM yang
+     diminta user, seragam dgn SO & Invoice): (1) nilai bisa persentase
+     (unit '%') ATAU nominal rupiah (unit 'Rp' — dipakai apa adanya,
+     dibatasi tidak melebihi sisa), (2) perhitungan BERTINGKAT — Diskon
+     Global 2 dihitung dari SISA setelah Diskon Global 1, bukan lagi
+     dua-duanya dari subtotal. Baris lama tanpa field diskon1Unit/
+     diskon2Unit otomatis dianggap '%' (perilaku sebelumnya). */
+  const d1 = +row.diskon1 || 0;
+  row.diskon1Amount = (row.diskon1Unit === 'Rp') ? Math.min(Math.round(d1), subtotal) : Math.round(subtotal * d1 / 100);
+  const sisaSetelahD1 = subtotal - row.diskon1Amount;
+  const d2 = +row.diskon2 || 0;
+  row.diskon2Amount = (row.diskon2Unit === 'Rp') ? Math.min(Math.round(d2), sisaSetelahD1) : Math.round(sisaSetelahD1 * d2 / 100);
+  row.dpp = sisaSetelahD1 - row.diskon2Amount;
   row.pajak11 = (row.tipePpn === 'PPN Inklusif' || row.tipePpn === 'PPN Eksklusif(+11%)') ? 'PPN11' : '';
   row.ppn = (row.tipePpn === 'PPN Eksklusif(+11%)') ? Math.round(row.dpp * 0.11) : 0;
   row.pphAmount = row.pphAktif ? Math.round(row.dpp * (+row.pphPersen || 0) / 100) : 0;
@@ -26995,6 +27526,16 @@ function openFktForm(mode, idx){
       fktRefreshTotalsDOM(row);
     };
   });
+  /* Unit %/Rp Diskon Global 1 & 2 (fitur baru 2026-08-28) — reaktif
+     seperti nilai diskonnya. */
+  ['fFktDiskon1Unit','fFktDiskon2Unit'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.onchange = (e) => {
+      row[id === 'fFktDiskon1Unit' ? 'diskon1Unit' : 'diskon2Unit'] = e.target.value;
+      fktRecalcTotals(row);
+      fktRefreshTotalsDOM(row);
+    };
+  });
   // Kurs Pajak/Tgl. Faktur Pajak/Kode Pajak — dekoratif (tidak
   // memengaruhi kalkulasi PPN, sama seperti Kurs di Purchase Order),
   // cuma disimpan ke `row` supaya tidak hilang saat Simpan.
@@ -27035,7 +27576,9 @@ function openFktForm(mode, idx){
     row.tipeLayanan = document.getElementById('fFktTipeLayanan').value;
     row.keterangan = document.getElementById('fFktKeterangan').value;
     row.diskon1 = +document.getElementById('fFktDiskon1').value || 0;
+    row.diskon1Unit = document.getElementById('fFktDiskon1Unit').value;
     row.diskon2 = +document.getElementById('fFktDiskon2').value || 0;
+    row.diskon2Unit = document.getElementById('fFktDiskon2Unit').value;
     row.ongkosAngkut = +document.getElementById('fFktOngkosAngkut').value || 0;
     row.uangMukaPakai = +document.getElementById('fFktUangMukaPakai').value || 0;
     row.kursPajak = +document.getElementById('fFktKursPajak').value || 0;
@@ -28395,12 +28938,40 @@ function invApplyPickingList(row, plRow){
    ke Customer. Baris lama (tanpa field `bonus`) tidak terpengaruh sama
    sekali karena `it.bonus` bernilai undefined/falsy untuknya. */
 function invRecalcJumlah(row){
-  row.jumlah = (row.items || []).reduce((sum, it) => {
+  /* 2026-08-28 — FITUR BARU "Diskon Global 1 & 2" (modifikasi DBM yang
+     diminta user, seragam dgn Sales Order & Faktur Penjualan):
+     subtotal barang dihitung dulu seperti semula, lalu dikurangi
+     Diskon Global 1 (dari subtotal) dan Diskon Global 2 (BERTINGKAT —
+     dari SISA setelah Diskon Global 1); masing-masing bisa persentase
+     (unit '%') atau nominal rupiah (unit 'Rp'). `jumlah` (nilai
+     Invoice yang dipakai list/jurnal/Penerimaan Piutang) = subtotal
+     setelah kedua diskon. Baris lama tanpa field diskonGlobal*
+     otomatis 0/unit '%' — nilainya tidak berubah sama sekali. */
+  const subtotal = (row.items || []).reduce((sum, it) => {
     if(it.bonus) return sum;
     const master = DATA.items.find(x => x.kode === it.kode);
     const harga = master ? (+master.harga || 0) : 0;
     return sum + harga * (+it.qtyKirim || 0);
   }, 0);
+  row.subtotalBarang = subtotal;
+  const d1 = +row.diskonGlobal1 || 0;
+  row.diskonGlobal1Amount = (row.diskonGlobal1Unit === 'Rp') ? Math.min(Math.round(d1), subtotal) : Math.round(subtotal * d1 / 100);
+  const sisaSetelahDg1 = subtotal - row.diskonGlobal1Amount;
+  const d2 = +row.diskonGlobal2 || 0;
+  row.diskonGlobal2Amount = (row.diskonGlobal2Unit === 'Rp') ? Math.min(Math.round(d2), sisaSetelahDg1) : Math.round(sisaSetelahDg1 * d2 / 100);
+  row.jumlah = sisaSetelahDg1 - row.diskonGlobal2Amount;
+}
+
+/* Refresh angka panel Diskon Global (fitur baru 2026-08-28) tanpa
+   render ulang seluruh form — dipanggil dari handler input diskon,
+   perubahan Qty Kirim per baris, dan rerenderInvItemsTable(). */
+function invRefreshDiskonGlobalDOM(row){
+  invRecalcJumlah(row);
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.value = v; };
+  set('fInvSubtotalBarang', num(row.subtotalBarang || 0));
+  set('fInvDg1Amount', num(row.diskonGlobal1Amount || 0));
+  set('fInvDg2Amount', num(row.diskonGlobal2Amount || 0));
+  set('fInvJumlahSetelahDiskon', num(row.jumlah || 0));
 }
 
 function invBuildEmptyRow(){
@@ -28415,6 +28986,9 @@ function invBuildEmptyRow(){
     syaratBayar: INV_SYARAT_BAYAR_LIST[0], layanan: DATA.layananList[0],
     alamatPengiriman:'', shipVia: INV_SHIP_VIA_LIST[0], noResi:'', driver:'',
     keterangan:'', items:[], jumlah:0, posted:false, ts:'Create Invoice',
+    /* Diskon Global 1 & 2 — fitur baru 2026-08-28 (lihat invRecalcJumlah). */
+    subtotalBarang:0, diskonGlobal1:0, diskonGlobal1Unit:'%', diskonGlobal1Amount:0,
+    diskonGlobal2:0, diskonGlobal2Unit:'%', diskonGlobal2Amount:0,
     tglInput:'', userInput:'', tglEdit:'', userEdit:'',
     jurnalMode:'otomatis', jurnalAkun:[],
   };
@@ -28654,8 +29228,24 @@ function wireInvItemEvents(row){
     const qtyKirimEl = document.querySelector(`[data-inv-qtykirim="${idx}"]`);
     if(qtyKirimEl) qtyKirimEl.onchange = () => {
       item.qtyKirim = +qtyKirimEl.value || 0;
+      invRefreshDiskonGlobalDOM(row); // subtotal & jumlah setelah diskon ikut berubah (2026-08-28)
       if(row.jurnalMode === 'otomatis'){ invBuildJurnalOtomatis(row); refreshInvJurnalContent(row); }
     };
+  });
+  /* Input Diskon Global 1 & 2 (fitur baru 2026-08-28) — reaktif;
+     jurnal otomatis ikut di-refresh karena berbasis row.jumlah. */
+  const dgManual = () => {
+    const val = id => { const el = document.getElementById(id); return el ? el.value : null; };
+    row.diskonGlobal1 = +val('fInvDg1') || 0;
+    row.diskonGlobal1Unit = val('fInvDg1Unit') || '%';
+    row.diskonGlobal2 = +val('fInvDg2') || 0;
+    row.diskonGlobal2Unit = val('fInvDg2Unit') || '%';
+    invRefreshDiskonGlobalDOM(row);
+    if(row.jurnalMode === 'otomatis'){ invBuildJurnalOtomatis(row); refreshInvJurnalContent(row); }
+  };
+  ['fInvDg1','fInvDg1Unit','fInvDg2','fInvDg2Unit'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.onchange = dgManual;
   });
 }
 
@@ -28664,6 +29254,7 @@ function rerenderInvItemsTable(row){
   wireInvItemEvents(row);
   const hint = document.getElementById('invItemsEmptyHint');
   if(hint) hint.style.display = row.items.length ? 'none' : '';
+  invRefreshDiskonGlobalDOM(row); // fitur Diskon Global 2026-08-28
   if(row.jurnalMode === 'otomatis'){ invBuildJurnalOtomatis(row); refreshInvJurnalContent(row); }
 }
 
@@ -32987,10 +33578,55 @@ function ppOutstandingInvoicesForCustomer(customerKode){
   return DATA.invoices.filter(inv => inv.posted && inv.customerKode === customerKode && (inv.jumlah - (inv.dibayar||0)) > 0.004);
 }
 
+/* =========================================================
+   2026-08-28 — FITUR BARU "Pelunasan Piutang Terpusat (Holding)"
+   (modifikasi DBM yang diminta user: 1 entitas pusat melunasi
+   piutang cabang-cabang di bawahnya, contoh kasus "Matahari Pusat
+   melunasi piutang cabang"). Struktur pusat-cabang memakai field
+   customerIndukKode yang SUDAH ADA di DATA.customers sejak awal
+   (baru sekarang terpakai nyata — lihat komentar CUST-009/CUST-010
+   di js/data.js).
+   - ppHoldingList(): daftar customer yang menjadi PUSAT, yaitu
+     kode-nya dipakai sebagai customerIndukKode >= 1 customer lain —
+     inilah isi picker saat toggle "Pelunasan Terpusat (Holding) ?"
+     aktif (bukan seluruh master customer).
+   - ppChildrenOf(): semua cabang di bawah 1 pusat.
+   - ppOutstandingInvoicesForHolding(): gabungan faktur outstanding
+     SEMUA cabang (plus milik pusat sendiri kalau ada) — hasilnya
+     multi-customer, karena itu tabel "Lunasi Beberapa Faktur"
+     mendapat kolom tambahan "Customer" pada mode holding (lihat
+     tplPpFakturRows di template). Urut per customer lalu tgl faktur
+     supaya faktur 1 cabang mengelompok.
+   Alur Simpan/Hapus TIDAK berubah sama sekali: `dibayar` tetap
+   ditambahkan/dikembalikan per invoiceNo apa pun customer-nya,
+   jadi pembukuan AR per cabang tetap benar walau dilunasi pusat. */
+function ppHoldingList(){
+  return DATA.customers.filter(c =>
+    DATA.customers.some(x => x.customerIndukKode === c.kode));
+}
+
+function ppChildrenOf(indukKode){
+  return DATA.customers.filter(c => c.customerIndukKode === indukKode);
+}
+
+function ppOutstandingInvoicesForHolding(indukKode){
+  const kodes = ppChildrenOf(indukKode).map(c => c.kode);
+  kodes.push(indukKode); // faktur atas nama pusat sendiri (kalau ada) ikut ditagihkan
+  const out = DATA.invoices.filter(inv => inv.posted && kodes.indexOf(inv.customerKode) !== -1 && (inv.jumlah - (inv.dibayar||0)) > 0.004);
+  out.sort((a, b) => a.customerKode === b.customerKode
+    ? ((ppParseTglDDMMYYYY(a.tgl) || 0) - (ppParseTglDDMMYYYY(b.tgl) || 0))
+    : (a.customerKode < b.customerKode ? -1 : 1));
+  return out;
+}
+
 function ppBuildFakturRow(inv){
   const sisa = Math.round((inv.jumlah - (inv.dibayar||0)) * 100) / 100;
   return {
     no: inv.no, cabang: inv.cabang, tipeTransaksi: 'Jual Kredit',
+    /* customerKode/Nama per-faktur (2026-08-28, fitur Holding) — di
+       mode biasa nilainya sama semua (customer terpilih), di mode
+       holding dipakai kolom "Customer" tabel Lunasi Beberapa Faktur. */
+    customerKode: inv.customerKode, customerNama: inv.customerNama,
     tglFaktur: inv.tgl, tglJthTempo: ppJatuhTempo(inv.tgl, inv.syaratBayar),
     mataUang: 'IDR', kurs: 1,
     reminder: sisa, pembayaran: sisa, checked: true,
@@ -33093,6 +33729,11 @@ function ppBuildJurnalLines(row, totals){
 function ppComposeKeterangan(row){
   const fakturNos = (row.fakturs||[]).filter(f => f.checked).map(f => f.no);
   if(!fakturNos.length || !row.customerNama) return '';
+  /* Mode holding (2026-08-28): tandai jelas bahwa pembayar adalah
+     customer PUSAT yang melunasi faktur cabang-cabangnya. */
+  if(row.holding){
+    return `VA - Terima Piutang (HOLDING) ${fakturNos.join(', ')} OLEH ${row.customerNama.toUpperCase()}`;
+  }
   return `VA - Terima Piutang ${fakturNos.join(', ')} ${row.customerNama.toUpperCase()}`;
 }
 
@@ -33116,6 +33757,7 @@ function ppBuildEmptyRow(){
   const cabang0 = PP_CABANG_LIST[0];
   return {
     no: ppGenerateNo(cabang0), cabang: cabang0, tgl: '19/08/2026',
+    holding: false, /* 2026-08-28 — fitur Pelunasan Piutang Terpusat (Holding) */
     customerKode: '', customerNama: '', badanUsaha: '', noPenagihanPiutang: '',
     akunBankKode: '', tipeTransaksi: 'Terima Kas', cair: true, noGiro: '', bankSumber: '', tglJthTempoBank: '19/08/2026',
     fakturs: [], keteranganUangMuka: '', kursUangMuka: 1, jadikanUangMuka: 0, keterangan: '',
@@ -33149,7 +33791,7 @@ function refreshPpTotalsDOM(row){
 
 function refreshPpFakturTableDOM(mode, row){
   const isView = mode === 'view';
-  document.getElementById('ppFakturBody').innerHTML = tplPpFakturRows(row.fakturs, isView);
+  document.getElementById('ppFakturBody').innerHTML = tplPpFakturRows(row.fakturs, isView, row.holding);
   const hint = document.getElementById('ppFakturEmptyHint');
   if(hint) hint.style.display = (row.fakturs && row.fakturs.length) ? 'none' : '';
   wirePpFakturRows(mode, row);
@@ -33266,6 +33908,24 @@ function wirePpForm(mode, idx, row){
     }
 
     document.getElementById('fPpTgl').oninput = (e) => { row.tgl = e.target.value; };
+
+    /* Toggle "Pelunasan Terpusat (Holding) ?" (fitur baru 2026-08-28):
+       ganti mode -> customer & daftar faktur di-reset (pusat != customer
+       biasa, fakturnya pun lintas customer) lalu SELURUH form di-render
+       ulang dari state `row` — perlu render penuh karena thead tabel
+       Lunasi Beberapa Faktur berubah (kolom "Customer" muncul/hilang)
+       dan label field customer ikut berganti. Semua nilai field lain
+       aman karena selalu tersimpan di `row` lewat oninput masing2. */
+    const holdingCb = document.getElementById('fPpHolding');
+    if(holdingCb) holdingCb.onchange = (e) => {
+      row.holding = e.target.checked;
+      row.customerKode = ''; row.customerNama = ''; row.badanUsaha = '';
+      row.fakturs = [];
+      row.keterangan = '';
+      content.innerHTML = tplPpForm(mode, row);
+      wirePpForm(mode, idx, row);
+    };
+
     document.getElementById('ppCustomerSearch').onclick = () => openPpCustomerPicker(mode, row);
     const penagihanBtn = document.getElementById('ppPenagihanSearch');
     if(penagihanBtn) penagihanBtn.onclick = () => openPpDecorativePicker('Pilih Penagihan Piutang', []);
@@ -33327,7 +33987,12 @@ function openPpCustomerPicker(mode, row){
   closeModal();
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
-  overlay.innerHTML = tplPpCustomerPicker(DATA.customers);
+  /* Mode holding (2026-08-28): picker HANYA menampilkan customer yang
+     benar-benar menjadi PUSAT (dirujuk sebagai customerIndukKode oleh
+     customer lain), lengkap dgn jumlah & nama cabang di bawahnya. */
+  overlay.innerHTML = row.holding
+    ? tplPpCustomerPicker(ppHoldingList(), true)
+    : tplPpCustomerPicker(DATA.customers, false);
   document.body.appendChild(overlay);
   document.getElementById('modalClose').onclick = closeModal;
   document.getElementById('modalCancel').onclick = closeModal;
@@ -33336,9 +34001,14 @@ function openPpCustomerPicker(mode, row){
     const c = DATA.customers.find(x => x.kode === btn.dataset.pickCustomer);
     row.customerKode = c.kode;
     row.customerNama = c.nama;
-    row.fakturs = ppOutstandingInvoicesForCustomer(c.kode).map(ppBuildFakturRow);
+    row.badanUsaha = row.holding ? (c.badanUsaha || '') : row.badanUsaha;
+    row.fakturs = (row.holding
+      ? ppOutstandingInvoicesForHolding(c.kode)
+      : ppOutstandingInvoicesForCustomer(c.kode)).map(ppBuildFakturRow);
     row.keterangan = ppComposeKeterangan(row);
     document.getElementById('fPpCustomer').value = row.customerNama;
+    const bu = document.getElementById('fPpBadanUsaha');
+    if(bu && row.holding) bu.value = row.badanUsaha;
     document.getElementById('fPpKeterangan').value = row.keterangan;
     const ketBank = document.getElementById('fPpBankKeterangan');
     if(ketBank) ketBank.value = row.keterangan;
@@ -34996,6 +35666,17 @@ function promEnsureCategoryDefaults(row){
     if(!Array.isArray(row.items) || !row.items.length || !('kategoriKode' in row.items[0])){
       row.items = [promEmptyCatItem()];
     }
+  } else if(row.kategori === 'DSB'){
+    /* 2026-08-28 — kategori BARU "Diskon Syarat Bayar" (modifikasi
+       DBM): TANPA array items sama sekali (bukan diskon per-item),
+       hanya daftar syarat bayar terpilih + Diskon Global 1 & 2
+       (nilai + unit '%'/'Rp'). Lihat komentar di
+       DATA.promotionCategoryList & tplPromDiskonSyaratBayar(). */
+    if(!Array.isArray(row.syaratBayarDiskon)) row.syaratBayarDiskon = [];
+    if(row.diskonGlobal1 === undefined) row.diskonGlobal1 = 0;
+    if(row.diskonGlobal1Unit === undefined) row.diskonGlobal1Unit = '%';
+    if(row.diskonGlobal2 === undefined) row.diskonGlobal2 = 0;
+    if(row.diskonGlobal2Unit === undefined) row.diskonGlobal2Unit = '%';
   }
 }
 
@@ -35006,6 +35687,12 @@ function promCloneRow(src){
   }
   if(src.items){
     row.items = src.items.map(it => ({ ...it }));
+  }
+  /* Array syarat bayar promo DSB (2026-08-28) ikut di-deep-copy —
+     checkbox-nya memutasi array langsung, jangan sampai Batalkan tetap
+     mengubah baris master. */
+  if(src.syaratBayarDiskon){
+    row.syaratBayarDiskon = src.syaratBayarDiskon.slice();
   }
   return row;
 }
@@ -35061,6 +35748,7 @@ function openPromForm(mode, idx){
     if(row.kategori === 'A') wireDiscountProgram(row);
     else if(row.kategori === 'DPF' || row.kategori === 'DPL') wireDiscountProposal(row);
     else if(row.kategori === 'CAT') wireDiscountCategory(row);
+    else if(row.kategori === 'DSB') wireDiskonSyaratBayar(row);
   }
 
   function wireFooter(){
@@ -35068,6 +35756,9 @@ function openPromForm(mode, idx){
     document.getElementById('promSave').onclick = () => {
       promSyncCommonFromDOM(row);
       if(!row.nama){ promValidationError('Promotion Name wajib diisi'); return; }
+      if(row.kategori === 'DSB' && !(row.syaratBayarDiskon||[]).length){
+        promValidationError('Pilih minimal 1 Syarat Bayar untuk promo Diskon Syarat Bayar'); return;
+      }
       if(mode === 'add'){
         row.kode = row.kode || promGenerateNumber(row.outlet);
         DATA.promotion.push(row);
@@ -35541,6 +36232,39 @@ function openPromInfo(title, text){
   document.getElementById('modalClose').onclick = closeModal;
   document.getElementById('modalOk').onclick = closeModal;
   overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+}
+
+/* =========================================================
+   VARIAN 5 (BARU 2026-08-28) — Diskon Syarat Bayar (kategori 'DSB')
+   Modifikasi DBM yang diminta user: promo memilih BEBERAPA syarat
+   bayar (checkbox dari DATA.syaratBayarList) + Diskon Global 1 & 2
+   yang nilainya bisa persentase ('%') atau nominal ('Rp'). TIDAK ada
+   pemilihan item barang (bukan diskon per-item) — karena itu tidak
+   ada tombol "Tambah Item" sama sekali di varian ini. Hasilnya
+   dikonsumsi transaksi Sales Order lewat soApplyPromoSyaratBayar()
+   (sales-order.js): SO yang Syarat Bayar-nya termasuk daftar promo
+   Active otomatis mendapat Diskon Global 1 & 2 promo ini.
+========================================================= */
+function wireDiskonSyaratBayar(row){
+  document.querySelectorAll('[data-prom-dsb-sb]').forEach(cb => cb.onchange = (e) => {
+    const sb = cb.dataset.promDsbSb;
+    if(!Array.isArray(row.syaratBayarDiskon)) row.syaratBayarDiskon = [];
+    const i = row.syaratBayarDiskon.indexOf(sb);
+    if(e.target.checked && i === -1) row.syaratBayarDiskon.push(sb);
+    if(!e.target.checked && i !== -1) row.syaratBayarDiskon.splice(i, 1);
+    const lbl = document.getElementById('promDsbTerpilih');
+    if(lbl) lbl.textContent = row.syaratBayarDiskon.length
+      ? row.syaratBayarDiskon.join(', ')
+      : 'Belum ada syarat bayar dipilih';
+  });
+  const dg1 = document.getElementById('fPromDsbDg1');
+  const dg1u = document.getElementById('fPromDsbDg1Unit');
+  const dg2 = document.getElementById('fPromDsbDg2');
+  const dg2u = document.getElementById('fPromDsbDg2Unit');
+  if(dg1) dg1.onchange = (e) => { row.diskonGlobal1 = +e.target.value || 0; };
+  if(dg1u) dg1u.onchange = (e) => { row.diskonGlobal1Unit = e.target.value; };
+  if(dg2) dg2.onchange = (e) => { row.diskonGlobal2 = +e.target.value || 0; };
+  if(dg2u) dg2u.onchange = (e) => { row.diskonGlobal2Unit = e.target.value; };
 }
 
 /* =========================================================
@@ -37762,19 +38486,103 @@ function soRefreshItemRowDOM(idx, item){
 
 /* Total dokumen — Biaya Kirim didefinisikan per-baris (kolom di tabel
    item) lalu dijumlah ke Total Biaya Kirim dokumen, konsisten dengan
-   Ongkos Angkut di Purchase Order yang juga masuk ke Jumlah Akhir. */
+   Ongkos Angkut di Purchase Order yang juga masuk ke Jumlah Akhir.
+
+   2026-08-28 — FITUR BARU "Diskon Global 1 & 2" (modifikasi DBM yang
+   diminta user, ada juga di Invoice & Faktur Penjualan): dihitung
+   BERTINGKAT dari Total DPP — Diskon Global 1 dari Total DPP, lalu
+   Diskon Global 2 dari SISA setelah Diskon Global 1 — dan nilainya
+   bisa dimasukkan sebagai persentase (unit '%') maupun nominal
+   rupiah (unit 'Rp'). Total PPN ikut dikoreksi PROPORSIONAL terhadap
+   rasio DPP-setelah-diskon / Total DPP (diskon global mengecilkan
+   dasar pengenaan pajak semua baris secara merata — simplifikasi
+   terdokumentasi, alokasi per-baris tidak dimodelkan di mockup ini).
+   Jumlah Akhir = DPP Setelah Diskon + Total PPN (terkoreksi) + Total
+   Biaya Kirim. */
+function soHitungDiskonGlobal(base, nilai, unit){
+  const v = +nilai || 0;
+  if(unit === 'Rp') return Math.min(Math.round(v), base);
+  return Math.round(base * v / 100);
+}
+
 function soRecalcTotals(row){
   row.totalDpp = row.items.reduce((s,it) => s + (+it.dpp || 0), 0);
-  row.totalPpn = row.items.reduce((s,it) => s + (+it.ppn || 0), 0);
+  const ppnPenuh = row.items.reduce((s,it) => s + (+it.ppn || 0), 0);
   row.totalBiayaKirim = row.items.reduce((s,it) => s + (+it.biayaKirim || 0), 0);
-  row.jumlahAkhir = row.totalDpp + row.totalPpn + row.totalBiayaKirim;
+
+  row.diskonGlobal1Amount = soHitungDiskonGlobal(row.totalDpp, row.diskonGlobal1, row.diskonGlobal1Unit);
+  const sisaSetelahDg1 = row.totalDpp - row.diskonGlobal1Amount;
+  row.diskonGlobal2Amount = soHitungDiskonGlobal(sisaSetelahDg1, row.diskonGlobal2, row.diskonGlobal2Unit);
+  row.dppSetelahDiskon = sisaSetelahDg1 - row.diskonGlobal2Amount;
+
+  const faktor = row.totalDpp > 0 ? (row.dppSetelahDiskon / row.totalDpp) : 1;
+  row.totalPpn = Math.round(ppnPenuh * faktor);
+  row.jumlahAkhir = row.dppSetelahDiskon + row.totalPpn + row.totalBiayaKirim;
 }
 
 function soRefreshTotalsDOM(row){
   document.getElementById('fSoTotalDpp').value = num(row.totalDpp);
+  const dg1El = document.getElementById('fSoDg1Amount');
+  if(dg1El) dg1El.value = num(row.diskonGlobal1Amount || 0);
+  const dg2El = document.getElementById('fSoDg2Amount');
+  if(dg2El) dg2El.value = num(row.diskonGlobal2Amount || 0);
+  const dppNetEl = document.getElementById('fSoDppSetelahDiskon');
+  if(dppNetEl) dppNetEl.value = num(row.dppSetelahDiskon || 0);
   document.getElementById('fSoTotalPpn').value = num(row.totalPpn);
   document.getElementById('fSoTotalBiayaKirim').value = num(row.totalBiayaKirim);
   document.getElementById('fSoJumlahAkhir').value = num(row.jumlahAkhir);
+}
+
+/* Cari promo "Diskon Syarat Bayar" (kategori DSB, fitur baru
+   2026-08-28 — lihat js/pages/promotion.*) yang Active dan daftar
+   syarat bayarnya memuat syarat bayar SO ini. Dipanggil saat Syarat
+   Bayar berganti (manual maupun otomatis dari TOP customer). Nilai
+   diskon promo diisikan ke Diskon Global 1 & 2 tapi TETAP bisa
+   diubah manual setelahnya (mengubah manual melepas tautan promo). */
+function soFindPromoSyaratBayar(syaratBayar){
+  if(!syaratBayar) return null;
+  return (DATA.promotion || []).find(p =>
+    p.kategori === 'DSB' && p.status === 'Active' &&
+    (p.syaratBayarDiskon || []).indexOf(syaratBayar) !== -1) || null;
+}
+
+function soApplyPromoSyaratBayar(row){
+  const promo = soFindPromoSyaratBayar(row.syaratBayar);
+  if(promo){
+    row.diskonGlobal1 = +promo.diskonGlobal1 || 0;
+    row.diskonGlobal1Unit = promo.diskonGlobal1Unit || '%';
+    row.diskonGlobal2 = +promo.diskonGlobal2 || 0;
+    row.diskonGlobal2Unit = promo.diskonGlobal2Unit || '%';
+    row.diskonPromoKode = promo.kode;
+  } else if(row.diskonPromoKode){
+    /* Syarat bayar baru tidak (lagi) kena promo — diskon dari promo
+       lama dicabut; diskon yang diisi manual (tanpa diskonPromoKode)
+       TIDAK disentuh. */
+    row.diskonGlobal1 = 0; row.diskonGlobal2 = 0;
+    row.diskonPromoKode = '';
+  }
+  soRefreshDiskonGlobalDOM(row);
+}
+
+function soRefreshDiskonGlobalDOM(row){
+  const dg1 = document.getElementById('fSoDg1');
+  const dg1u = document.getElementById('fSoDg1Unit');
+  const dg2 = document.getElementById('fSoDg2');
+  const dg2u = document.getElementById('fSoDg2Unit');
+  if(dg1) dg1.value = row.diskonGlobal1 || 0;
+  if(dg1u) dg1u.value = row.diskonGlobal1Unit || '%';
+  if(dg2) dg2.value = row.diskonGlobal2 || 0;
+  if(dg2u) dg2u.value = row.diskonGlobal2Unit || '%';
+  const note = document.getElementById('soDgPromoNote');
+  if(note){
+    if(row.diskonPromoKode){
+      const promo = (DATA.promotion || []).find(p => p.kode === row.diskonPromoKode);
+      note.style.display = '';
+      note.innerHTML = `${icon('percent',12)} Diskon Global otomatis dari Promotion <b>${row.diskonPromoKode}</b>${promo ? ' — ' + promo.nama : ''} (Diskon Syarat Bayar; nilai masih bisa diubah manual).`;
+    } else {
+      note.style.display = 'none';
+    }
+  }
 }
 
 /* CL/Piutang/Sisa CL — dihitung ulang begitu Customer diganti (bukan
@@ -37801,6 +38609,10 @@ function openSoForm(mode, idx){
       alamat:'', rayon: DATA.rayonList[0], principalKode:'', principalNama:'',
       cito:false, spAsli:false, skEd:false, cl:0, piutang:0, sisaCl:0,
       konsinyasi:false, keterangan:'', isGuarantee:false, pecahFaktur:false, ukuranBasis:'KG',
+      /* syaratBayar + diskonGlobal* — fitur baru 2026-08-28 (lihat
+         soRecalcTotals/soApplyPromoSyaratBayar di atas). */
+      syaratBayar:'', diskonGlobal1:0, diskonGlobal1Unit:'%', diskonGlobal1Amount:0,
+      diskonGlobal2:0, diskonGlobal2Unit:'%', diskonGlobal2Amount:0, dppSetelahDiskon:0, diskonPromoKode:'',
       items:[soBuildEmptyItem()], totalDpp:0, totalPpn:0, totalBiayaKirim:0, jumlahAkhir:0,
       tglSO:'11/08/2026', tglInput:'', userInput:'', tglEdit:'', userEdit:'',
     };
@@ -37833,6 +38645,30 @@ function openSoForm(mode, idx){
 
   document.getElementById('soCustomerSearch').onclick = () => openSoCustomerPicker(row);
   document.getElementById('soPrincipalSearch').onclick = () => openSoPrincipalPicker(row);
+
+  /* ===== Syarat Bayar + Diskon Global 1 & 2 (fitur baru 2026-08-28) =====
+     Semua reaktif: ganti Syarat Bayar -> cek promo Diskon Syarat Bayar
+     (auto-isi Diskon Global); ubah nilai/unit diskon -> hitung ulang
+     bertingkat + lepaskan tautan promo (dianggap koreksi manual). */
+  document.getElementById('fSoSyaratBayar').onchange = (e) => {
+    row.syaratBayar = e.target.value;
+    soApplyPromoSyaratBayar(row);
+    soRecalcTotals(row);
+    soRefreshTotalsDOM(row);
+  };
+  const soDgManual = () => {
+    row.diskonGlobal1 = +document.getElementById('fSoDg1').value || 0;
+    row.diskonGlobal1Unit = document.getElementById('fSoDg1Unit').value;
+    row.diskonGlobal2 = +document.getElementById('fSoDg2').value || 0;
+    row.diskonGlobal2Unit = document.getElementById('fSoDg2Unit').value;
+    row.diskonPromoKode = '';
+    soRefreshDiskonGlobalDOM(row);
+    soRecalcTotals(row);
+    soRefreshTotalsDOM(row);
+  };
+  ['fSoDg1','fSoDg1Unit','fSoDg2','fSoDg2Unit'].forEach(id => {
+    document.getElementById(id).onchange = soDgManual;
+  });
   document.getElementById('soSqSearch').onclick = () => {
     // Sejak 2026-08-13: sumbernya DATA.salesQuotation sungguhan (modul
     // Sales Quotation), bukan lagi SO_SQ_DUMMY_LIST statis — lihat
@@ -37986,6 +38822,16 @@ function openSoCustomerPicker(row){
     row.alamat = c.alamat || '';
     document.getElementById('fSoCustomer').value = row.customer;
     document.getElementById('fSoAlamat').value = row.alamat;
+    /* Syarat Bayar otomatis mengikuti TOP master customer (fitur baru
+       2026-08-28) lalu langsung dicek ke promo Diskon Syarat Bayar. */
+    if(c.top && DATA.syaratBayarList.indexOf(c.top) !== -1){
+      row.syaratBayar = c.top;
+      const sbEl = document.getElementById('fSoSyaratBayar');
+      if(sbEl) sbEl.value = row.syaratBayar;
+      soApplyPromoSyaratBayar(row);
+      soRecalcTotals(row);
+      soRefreshTotalsDOM(row);
+    }
     soRecalcCustomerFinance(row, c);
     soRefreshCustomerFinanceDOM(row);
     closeModal();
@@ -40087,6 +40933,120 @@ function openTpInfo(title, msg){
 }
 
 /* =========================================================
+   LOGIC (JS saja) — Tutup Pending PO (Supplier & Pembelian >
+   Daftar Transaksi). Dimuat otomatis (lazy-load) oleh core.js saat
+   menu ini pertama kali diklik — lihat PAGE_MODULES di js/core.js.
+   Markup HTML-nya ada di file sebelah: tutup-pending-po.template.js.
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Fungsi modul: menampilkan daftar PO dari DATA.purchaseOrder LIVE
+   dan menutup ("Tutup Order") atau membuka kembali ("Buka Order")
+   PO lewat field BARU `tutupPoStatus` — lihat komentar besar di atas
+   DATA.purchaseOrder di js/data.js. Kedua tombol FUNGSIONAL dengan
+   modal konfirmasi (bukan confirm() bawaan browser, sesuai kebijakan
+   mockup): Tutup Order mengubah status baris menjadi 'Close' (tombol
+   berubah jadi "Buka Order" teal, persis baris teratas screenshot),
+   Buka Order mengembalikannya ke 'Pending'. Status semula sebelum
+   ditutup ('Pending'/'In Progress') disimpan di field sementara
+   `tutupPoPrevStatus` supaya Buka Order mengembalikan status yang
+   benar, bukan selalu 'Pending'.
+
+   Filter header (dropdown teal "All" = status & bulan, default
+   "Agustus 2026" — semua PO sample DBM memang Agustus 2026) dan
+   Pencarian Global FUNGSIONAL, meniru kontrol yang terlihat di
+   screenshot. */
+
+var tppState = { status:'', bulan:'202608', search:'' };
+
+function renderTutupPendingPOPage(){
+  tppState = { status:'', bulan:'202608', search:'' };
+  content.innerHTML = tplTppListPage();
+  document.getElementById('btnTppTutorial').onclick = () => openTppInfo('Tutorial', 'Video tutorial Tutup Pending PO akan tersedia di sini.');
+  document.getElementById('tppFilterStatus').onchange = (e) => { tppState.status = e.target.value; renderTppTable(); };
+  document.getElementById('tppFilterBulan').onchange = (e) => { tppState.bulan = e.target.value; renderTppTable(); };
+  document.getElementById('tppSearch').oninput = (e) => { tppState.search = e.target.value; renderTppTable(); };
+  renderTppTable();
+}
+
+/* tglPO 'dd/mm/yyyy' -> 'yyyymm' utk filter bulan. */
+function tppYm(tglPO){
+  const p = (tglPO || '').split('/');
+  return p.length === 3 ? (p[2] + p[1]) : '';
+}
+
+function tppFilteredRows(){
+  const q = tppState.search.trim().toLowerCase();
+  return (DATA.purchaseOrder || []).filter(r => {
+    if(tppState.status && (r.tutupPoStatus || 'Pending') !== tppState.status) return false;
+    if(tppState.bulan && tppYm(r.tglPO) !== tppState.bulan) return false;
+    if(q && !(
+      r.no.toLowerCase().includes(q) ||
+      (r.supplier || '').toLowerCase().includes(q) ||
+      (r.keterangan || '').toLowerCase().includes(q))) return false;
+    return true;
+  });
+}
+
+function renderTppTable(){
+  const rows = tppFilteredRows();
+  document.getElementById('tppTbody').innerHTML = tplTppRows(rows);
+  document.getElementById('tppTotal').textContent = `Total Record: ${rows.length}`;
+  content.querySelectorAll('[data-tpp-view]').forEach(a => a.onclick = () => {
+    const row = DATA.purchaseOrder.find(r => r.no === a.dataset.tppView);
+    if(row) openTppDetail(row);
+  });
+  content.querySelectorAll('[data-tpp-toggle]').forEach(b => b.onclick = () => {
+    const row = DATA.purchaseOrder.find(r => r.no === b.dataset.tppToggle);
+    if(row) openTppConfirm(row);
+  });
+}
+
+function openTppConfirm(row){
+  closeModal();
+  const willClose = row.tutupPoStatus !== 'Close';
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplTppConfirmModal(row, willClose);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('tppConfirmBtn').onclick = () => {
+    if(willClose){
+      row.tutupPoPrevStatus = row.tutupPoStatus || 'Pending';
+      row.tutupPoStatus = 'Close';
+    } else {
+      row.tutupPoStatus = row.tutupPoPrevStatus || 'Pending';
+      delete row.tutupPoPrevStatus;
+    }
+    closeModal();
+    renderTppTable();
+  };
+}
+
+function openTppDetail(row){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplTppDetailModal(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+}
+
+function openTppInfo(title, text){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplTppInfoModal(title, text);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+}
+
+/* =========================================================
    LOGIC (JS saja) — Zat Kandungan Aktif (Persediaan Barang >
    Master & Setting > Zat Kandungan Aktif, page:'zatKandunganAktif').
    Dimuat otomatis (lazy-load) oleh core.js saat menu ini pertama
@@ -40346,6 +41306,7 @@ const PAGE_MODULES={
   akunGL:{srcs:['js/pages/akun-gl.template.js','js/pages/akun-gl.js'], fn:'renderAkunGLPage'},
   stockRequest:{srcs:['js/pages/stock-request.template.js','js/pages/stock-request.js'], fn:'renderStockRequestPage'},
   purchaseOrder:{srcs:['js/pages/purchase-order.template.js','js/pages/purchase-order.js'], fn:'renderPurchaseOrderPage'},
+  tutupPendingPO:{srcs:['js/pages/tutup-pending-po.template.js','js/pages/tutup-pending-po.js'], fn:'renderTutupPendingPOPage'},
   terimaBarang:{srcs:['js/pages/terima-barang.template.js','js/pages/terima-barang.js'], fn:'renderTerimaBarangPage'},
   pembelianBPB:{srcs:['js/pages/pembelian-bpb.template.js','js/pages/pembelian-bpb.js'], fn:'renderPembelianBPBPage'},
   pelunasanUtang:{srcs:['js/pages/pelunasan-utang.template.js','js/pages/pelunasan-utang.js'], fn:'renderPelunasanUtangPage'},

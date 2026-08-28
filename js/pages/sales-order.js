@@ -78,19 +78,103 @@ function soRefreshItemRowDOM(idx, item){
 
 /* Total dokumen — Biaya Kirim didefinisikan per-baris (kolom di tabel
    item) lalu dijumlah ke Total Biaya Kirim dokumen, konsisten dengan
-   Ongkos Angkut di Purchase Order yang juga masuk ke Jumlah Akhir. */
+   Ongkos Angkut di Purchase Order yang juga masuk ke Jumlah Akhir.
+
+   2026-08-28 — FITUR BARU "Diskon Global 1 & 2" (modifikasi DBM yang
+   diminta user, ada juga di Invoice & Faktur Penjualan): dihitung
+   BERTINGKAT dari Total DPP — Diskon Global 1 dari Total DPP, lalu
+   Diskon Global 2 dari SISA setelah Diskon Global 1 — dan nilainya
+   bisa dimasukkan sebagai persentase (unit '%') maupun nominal
+   rupiah (unit 'Rp'). Total PPN ikut dikoreksi PROPORSIONAL terhadap
+   rasio DPP-setelah-diskon / Total DPP (diskon global mengecilkan
+   dasar pengenaan pajak semua baris secara merata — simplifikasi
+   terdokumentasi, alokasi per-baris tidak dimodelkan di mockup ini).
+   Jumlah Akhir = DPP Setelah Diskon + Total PPN (terkoreksi) + Total
+   Biaya Kirim. */
+function soHitungDiskonGlobal(base, nilai, unit){
+  const v = +nilai || 0;
+  if(unit === 'Rp') return Math.min(Math.round(v), base);
+  return Math.round(base * v / 100);
+}
+
 function soRecalcTotals(row){
   row.totalDpp = row.items.reduce((s,it) => s + (+it.dpp || 0), 0);
-  row.totalPpn = row.items.reduce((s,it) => s + (+it.ppn || 0), 0);
+  const ppnPenuh = row.items.reduce((s,it) => s + (+it.ppn || 0), 0);
   row.totalBiayaKirim = row.items.reduce((s,it) => s + (+it.biayaKirim || 0), 0);
-  row.jumlahAkhir = row.totalDpp + row.totalPpn + row.totalBiayaKirim;
+
+  row.diskonGlobal1Amount = soHitungDiskonGlobal(row.totalDpp, row.diskonGlobal1, row.diskonGlobal1Unit);
+  const sisaSetelahDg1 = row.totalDpp - row.diskonGlobal1Amount;
+  row.diskonGlobal2Amount = soHitungDiskonGlobal(sisaSetelahDg1, row.diskonGlobal2, row.diskonGlobal2Unit);
+  row.dppSetelahDiskon = sisaSetelahDg1 - row.diskonGlobal2Amount;
+
+  const faktor = row.totalDpp > 0 ? (row.dppSetelahDiskon / row.totalDpp) : 1;
+  row.totalPpn = Math.round(ppnPenuh * faktor);
+  row.jumlahAkhir = row.dppSetelahDiskon + row.totalPpn + row.totalBiayaKirim;
 }
 
 function soRefreshTotalsDOM(row){
   document.getElementById('fSoTotalDpp').value = num(row.totalDpp);
+  const dg1El = document.getElementById('fSoDg1Amount');
+  if(dg1El) dg1El.value = num(row.diskonGlobal1Amount || 0);
+  const dg2El = document.getElementById('fSoDg2Amount');
+  if(dg2El) dg2El.value = num(row.diskonGlobal2Amount || 0);
+  const dppNetEl = document.getElementById('fSoDppSetelahDiskon');
+  if(dppNetEl) dppNetEl.value = num(row.dppSetelahDiskon || 0);
   document.getElementById('fSoTotalPpn').value = num(row.totalPpn);
   document.getElementById('fSoTotalBiayaKirim').value = num(row.totalBiayaKirim);
   document.getElementById('fSoJumlahAkhir').value = num(row.jumlahAkhir);
+}
+
+/* Cari promo "Diskon Syarat Bayar" (kategori DSB, fitur baru
+   2026-08-28 — lihat js/pages/promotion.*) yang Active dan daftar
+   syarat bayarnya memuat syarat bayar SO ini. Dipanggil saat Syarat
+   Bayar berganti (manual maupun otomatis dari TOP customer). Nilai
+   diskon promo diisikan ke Diskon Global 1 & 2 tapi TETAP bisa
+   diubah manual setelahnya (mengubah manual melepas tautan promo). */
+function soFindPromoSyaratBayar(syaratBayar){
+  if(!syaratBayar) return null;
+  return (DATA.promotion || []).find(p =>
+    p.kategori === 'DSB' && p.status === 'Active' &&
+    (p.syaratBayarDiskon || []).indexOf(syaratBayar) !== -1) || null;
+}
+
+function soApplyPromoSyaratBayar(row){
+  const promo = soFindPromoSyaratBayar(row.syaratBayar);
+  if(promo){
+    row.diskonGlobal1 = +promo.diskonGlobal1 || 0;
+    row.diskonGlobal1Unit = promo.diskonGlobal1Unit || '%';
+    row.diskonGlobal2 = +promo.diskonGlobal2 || 0;
+    row.diskonGlobal2Unit = promo.diskonGlobal2Unit || '%';
+    row.diskonPromoKode = promo.kode;
+  } else if(row.diskonPromoKode){
+    /* Syarat bayar baru tidak (lagi) kena promo — diskon dari promo
+       lama dicabut; diskon yang diisi manual (tanpa diskonPromoKode)
+       TIDAK disentuh. */
+    row.diskonGlobal1 = 0; row.diskonGlobal2 = 0;
+    row.diskonPromoKode = '';
+  }
+  soRefreshDiskonGlobalDOM(row);
+}
+
+function soRefreshDiskonGlobalDOM(row){
+  const dg1 = document.getElementById('fSoDg1');
+  const dg1u = document.getElementById('fSoDg1Unit');
+  const dg2 = document.getElementById('fSoDg2');
+  const dg2u = document.getElementById('fSoDg2Unit');
+  if(dg1) dg1.value = row.diskonGlobal1 || 0;
+  if(dg1u) dg1u.value = row.diskonGlobal1Unit || '%';
+  if(dg2) dg2.value = row.diskonGlobal2 || 0;
+  if(dg2u) dg2u.value = row.diskonGlobal2Unit || '%';
+  const note = document.getElementById('soDgPromoNote');
+  if(note){
+    if(row.diskonPromoKode){
+      const promo = (DATA.promotion || []).find(p => p.kode === row.diskonPromoKode);
+      note.style.display = '';
+      note.innerHTML = `${icon('percent',12)} Diskon Global otomatis dari Promotion <b>${row.diskonPromoKode}</b>${promo ? ' — ' + promo.nama : ''} (Diskon Syarat Bayar; nilai masih bisa diubah manual).`;
+    } else {
+      note.style.display = 'none';
+    }
+  }
 }
 
 /* CL/Piutang/Sisa CL — dihitung ulang begitu Customer diganti (bukan
@@ -117,6 +201,10 @@ function openSoForm(mode, idx){
       alamat:'', rayon: DATA.rayonList[0], principalKode:'', principalNama:'',
       cito:false, spAsli:false, skEd:false, cl:0, piutang:0, sisaCl:0,
       konsinyasi:false, keterangan:'', isGuarantee:false, pecahFaktur:false, ukuranBasis:'KG',
+      /* syaratBayar + diskonGlobal* — fitur baru 2026-08-28 (lihat
+         soRecalcTotals/soApplyPromoSyaratBayar di atas). */
+      syaratBayar:'', diskonGlobal1:0, diskonGlobal1Unit:'%', diskonGlobal1Amount:0,
+      diskonGlobal2:0, diskonGlobal2Unit:'%', diskonGlobal2Amount:0, dppSetelahDiskon:0, diskonPromoKode:'',
       items:[soBuildEmptyItem()], totalDpp:0, totalPpn:0, totalBiayaKirim:0, jumlahAkhir:0,
       tglSO:'11/08/2026', tglInput:'', userInput:'', tglEdit:'', userEdit:'',
     };
@@ -149,6 +237,30 @@ function openSoForm(mode, idx){
 
   document.getElementById('soCustomerSearch').onclick = () => openSoCustomerPicker(row);
   document.getElementById('soPrincipalSearch').onclick = () => openSoPrincipalPicker(row);
+
+  /* ===== Syarat Bayar + Diskon Global 1 & 2 (fitur baru 2026-08-28) =====
+     Semua reaktif: ganti Syarat Bayar -> cek promo Diskon Syarat Bayar
+     (auto-isi Diskon Global); ubah nilai/unit diskon -> hitung ulang
+     bertingkat + lepaskan tautan promo (dianggap koreksi manual). */
+  document.getElementById('fSoSyaratBayar').onchange = (e) => {
+    row.syaratBayar = e.target.value;
+    soApplyPromoSyaratBayar(row);
+    soRecalcTotals(row);
+    soRefreshTotalsDOM(row);
+  };
+  const soDgManual = () => {
+    row.diskonGlobal1 = +document.getElementById('fSoDg1').value || 0;
+    row.diskonGlobal1Unit = document.getElementById('fSoDg1Unit').value;
+    row.diskonGlobal2 = +document.getElementById('fSoDg2').value || 0;
+    row.diskonGlobal2Unit = document.getElementById('fSoDg2Unit').value;
+    row.diskonPromoKode = '';
+    soRefreshDiskonGlobalDOM(row);
+    soRecalcTotals(row);
+    soRefreshTotalsDOM(row);
+  };
+  ['fSoDg1','fSoDg1Unit','fSoDg2','fSoDg2Unit'].forEach(id => {
+    document.getElementById(id).onchange = soDgManual;
+  });
   document.getElementById('soSqSearch').onclick = () => {
     // Sejak 2026-08-13: sumbernya DATA.salesQuotation sungguhan (modul
     // Sales Quotation), bukan lagi SO_SQ_DUMMY_LIST statis — lihat
@@ -302,6 +414,16 @@ function openSoCustomerPicker(row){
     row.alamat = c.alamat || '';
     document.getElementById('fSoCustomer').value = row.customer;
     document.getElementById('fSoAlamat').value = row.alamat;
+    /* Syarat Bayar otomatis mengikuti TOP master customer (fitur baru
+       2026-08-28) lalu langsung dicek ke promo Diskon Syarat Bayar. */
+    if(c.top && DATA.syaratBayarList.indexOf(c.top) !== -1){
+      row.syaratBayar = c.top;
+      const sbEl = document.getElementById('fSoSyaratBayar');
+      if(sbEl) sbEl.value = row.syaratBayar;
+      soApplyPromoSyaratBayar(row);
+      soRecalcTotals(row);
+      soRefreshTotalsDOM(row);
+    }
     soRecalcCustomerFinance(row, c);
     soRefreshCustomerFinanceDOM(row);
     closeModal();

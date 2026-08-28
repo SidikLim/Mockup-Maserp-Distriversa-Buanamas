@@ -779,7 +779,13 @@ const DATA = {
     legalitasPemilik:[{syarat:'KTP', keterangan:'Sesuai dokumen terlampir', tglExpired:'', tglProses:'10/01/2024', uploaded:true}, {syarat:'Nama Penanggung Jawab', keterangan:'Bpk. Harapan Daeng', tglExpired:'', tglProses:'10/01/2024', uploaded:true}]},
     {kode:'CUST-006', nama:'Toko Family Mart Jaya', kota:'Jakarta', salesman:'Budi Santoso', limit:28000000, status:'Aktif', alamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara', piutang:9870000,
     noRef:'HO.0002', tglRegistrasi:'08/09/2017', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
-    customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
+    /* 2026-08-28 — customerInduk diisi (sebelumnya kosong) utk fitur
+       BARU "Pelunasan Piutang Terpusat (Holding)" di Penerimaan
+       Piutang: CUST-006 jadi salah satu cabang di bawah pusat
+       CUST-009 PT Family Mart Indonesia (lihat komentar besar di
+       baris CUST-009 di bawah). Field customerInduk* memang sudah
+       ada di master customer sejak awal, baru sekarang terpakai. */
+    customerIndukKode:'CUST-009', customerIndukNama:'PT Family Mart Indonesia', customerIndukAlamat:'Jl. Jend. Sudirman Kav. 52-53, Jakarta Selatan',
     namaPemilik:'Bpk. Jaya Kusuma', kontakPerson:'Bpk. Jaya Kusuma', gender:'Pria', email:'jaya.kusuma@familymartjaya.co.id', tglLahir:'05/04/1985', fax:'', agama:'Buddha', jabatan:'Direktur', telepon:'021-4587213',
     tipeIdentitas:'TIN', noIdentitas:'3172050485850007', profesi:'Wiraswasta', cabang:'Head Office', gudangJualSFA:'(00-GUU) Gudang Utama-HO', kodeNegara:'IDN', idTKU:'000000', consignment:true,
     area:'DKI001', rayonKode:'RY-JKT01', rayonNama:'Rayon Jakarta Pusat', rayonDistrict:'Jakarta Pusat', provinsi:'DKI Jakarta', kabupaten:'Jakarta Utara', kecamatan:'Kelapa Gading', kelurahan:'Kelapa Gading Barat', kodePos:'14240', latitude:-6.1352, longitude:106.8133,
@@ -813,6 +819,57 @@ const DATA = {
     npwp:'-', namaNpwp:'TOKO SEJAHTERA', alamatPajak:'', pkpStatus:'Non-PKP', kodeTransaksiPajak:'04', typePpn:'Eksklusif',
     masterBank:'', noVA:'', noRek:'',
     top:'N14', dominasiLimit:3500000, wajibDominasi:false,
+    glAkunPiutang:'1120001', glAkunUangMuka:'', uangMuka:0,
+    legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'NPWP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'SKPKP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
+    legalitasPemilik:[{syarat:'KTP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Nama Penanggung Jawab', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}]},
+    /* =========================================================
+       2 CUSTOMER BARU 2026-08-28 — utk fitur BARU "Pelunasan Piutang
+       Terpusat (Holding)" di Penerimaan Piutang (modifikasi DBM yang
+       diminta user: 1 entitas pusat melunasi piutang cabang-cabang di
+       bawahnya, contoh kasus user "Matahari Pusat melunasi piutang
+       cabang"). Struktur holding memakai field customerInduk* yang
+       SUDAH ADA di master customer sejak awal (baru sekarang terpakai
+       nyata):
+       - CUST-009 "PT Family Mart Indonesia" = CUSTOMER PUSAT (holding,
+         tidak bertransaksi sendiri — piutang 0, limit besar). Muncul
+         di picker "Pilih Customer Pusat (Holding)" di Penerimaan
+         Piutang karena jadi customerIndukKode 2 customer lain.
+       - CUST-010 "Toko Family Mart Sentosa" (Surabaya) = cabang BARU
+         di bawah CUST-009, di samping CUST-006 Toko Family Mart Jaya
+         (existing, customerInduk-nya diisi — lihat komentar di baris
+         CUST-006). piutang 1.240.000 = PERSIS outstanding 2 Invoice
+         posted barunya (26/SI/SBY/08/00004 700.000 + 00005 540.000,
+         lihat komentar di DATA.invoices) — konsisten aturan
+         rekonsiliasi piutang FA-10 Lap Umur Piutang.
+       Kedua cabang SENGAJA dibiarkan punya faktur outstanding
+       (CUST-006 sisa 200.000 dari 26/SI/HO/08/00002, CUST-010
+       1.240.000) supaya demo end-to-end pelunasan holding multi-
+       customer bisa langsung dijalankan dari menu Penerimaan Piutang
+       (pola "sengaja dibiarkan belum lunas" yang sama dgn UD Makmur
+       Jaya utk demo + Tambah biasa). */
+    {kode:'CUST-009', nama:'PT Family Mart Indonesia', kota:'Jakarta', salesman:'Budi Santoso', limit:100000000, status:'Aktif', alamat:'Jl. Jend. Sudirman Kav. 52-53, Jakarta Selatan', piutang:0,
+    noRef:'HO.0003', tglRegistrasi:'15/03/2016', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
+    customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
+    namaPemilik:'Ibu Ratna Dewi', kontakPerson:'Ibu Ratna Dewi', gender:'Wanita', email:'finance@familymartindonesia.co.id', tglLahir:'11/02/1978', fax:'021-5150999', agama:'Islam', jabatan:'Finance Director', telepon:'021-5150998',
+    tipeIdentitas:'TIN', noIdentitas:'3174021102780003', profesi:'Karyawan Swasta', cabang:'Head Office', gudangJualSFA:'(00-GUU) Gudang Utama-HO', kodeNegara:'IDN', idTKU:'000000', consignment:false,
+    area:'DKI001', rayonKode:'RY-JKT01', rayonNama:'Rayon Jakarta Pusat', rayonDistrict:'Jakarta Pusat', provinsi:'DKI Jakarta', kabupaten:'Jakarta Selatan', kecamatan:'Kebayoran Baru', kelurahan:'Senayan', kodePos:'12190', latitude:-6.2251, longitude:106.8097,
+    groupCustomer:'RTMD', badanUsaha:'PT', statusARCustomer:'Lancar',
+    npwp:'01.777.888.9-012.006', namaNpwp:'PT FAMILY MART INDONESIA', alamatPajak:'', pkpStatus:'PKP', kodeTransaksiPajak:'04', typePpn:'Eksklusif',
+    masterBank:'', noVA:'', noRek:'',
+    top:'N30', dominasiLimit:0, wajibDominasi:false,
+    glAkunPiutang:'1120001', glAkunUangMuka:'', uangMuka:0,
+    legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'NPWP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'SKPKP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
+    legalitasPemilik:[{syarat:'KTP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Nama Penanggung Jawab', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}]},
+    {kode:'CUST-010', nama:'Toko Family Mart Sentosa', kota:'Surabaya', salesman:'Andi Wijaya', limit:20000000, status:'Aktif', alamat:'Jl. Basuki Rahmat No. 105, Surabaya', piutang:1240000,
+    noRef:'SBY.0003', tglRegistrasi:'02/06/2021', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
+    customerIndukKode:'CUST-009', customerIndukNama:'PT Family Mart Indonesia', customerIndukAlamat:'Jl. Jend. Sudirman Kav. 52-53, Jakarta Selatan',
+    namaPemilik:'Bpk. Hendro Sentosa', kontakPerson:'Bpk. Hendro Sentosa', gender:'Pria', email:'fm.sentosa@familymartindonesia.co.id', tglLahir:'19/07/1988', fax:'', agama:'Kristen', jabatan:'Store Manager', telepon:'031-5347788',
+    tipeIdentitas:'TIN', noIdentitas:'3578191907880004', profesi:'Karyawan Swasta', cabang:'Surabaya', gudangJualSFA:'(01-GUU) Gudang Utama-SBY', kodeNegara:'IDN', idTKU:'000000', consignment:false,
+    area:'JATIM001', rayonKode:'RY-SBY01', rayonNama:'Rayon Surabaya Kota', rayonDistrict:'Surabaya', provinsi:'Jawa Timur', kabupaten:'Surabaya', kecamatan:'Tegalsari', kelurahan:'Dr. Soetomo', kodePos:'60264', latitude:-7.2652, longitude:112.7425,
+    groupCustomer:'RTMD', badanUsaha:'PT', statusARCustomer:'Lancar',
+    npwp:'01.777.888.9-012.007', namaNpwp:'TOKO FAMILY MART SENTOSA', alamatPajak:'', pkpStatus:'PKP', kodeTransaksiPajak:'04', typePpn:'Eksklusif',
+    masterBank:'', noVA:'', noRek:'',
+    top:'N14', dominasiLimit:4000000, wajibDominasi:false,
     glAkunPiutang:'1120001', glAkunUangMuka:'', uangMuka:0,
     legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'NPWP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'SKPKP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
     legalitasPemilik:[{syarat:'KTP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Nama Penanggung Jawab', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}]},
@@ -1255,6 +1312,62 @@ const DATA = {
         {tanggal:'21/08/2026 09:50', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
         {tanggal:'21/08/2026 10:20', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
         {tanggal:'21/08/2026 13:10', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh UD Makmur Jaya.'},
+      ]},
+    /* 2026-08-28 — 2 baris BARU (bukan mengedit baris yang sudah
+       terverifikasi) utk fitur BARU "Pelunasan Piutang Terpusat
+       (Holding)" di Penerimaan Piutang: keduanya Invoice POSTED
+       (posted:true — syarat tampil di tab "Lunasi Beberapa Faktur")
+       milik cabang holding BARU CUST-010 Toko Family Mart Sentosa
+       (lihat komentar besar di DATA.customers), dibiarkan outstanding
+       (dibayar:0) supaya picker holding menampilkan faktur dari 2
+       customer sekaligus (CUST-010 di sini + CUST-006 sisa 200.000
+       dari 26/SI/HO/08/00002 yang sudah ada). `jumlah` dihitung nyata
+       dari harga jual barang DBM yang sama dgn invoice lain (Kecap
+       ABC 14.000 x 50 = 700.000; Teh Sariwangi 10.000 x 54 = 540.000)
+       — total 1.240.000 = PERSIS field `piutang` CUST-010 (aturan
+       rekonsiliasi FA-10). Nomor 26/SI/SBY/08/00004-00005 melanjutkan
+       urutan SBY yang ada (00006 sudah terpakai sbg faktur lunas
+       historis di DATA.penerimaanPiutang). noSO/noPL deskriptif
+       (precedent "referensi deskriptif, bukan foreign-key wajib"). */
+    {no:'26/SI/SBY/08/00004', noSJ:'26/SJ/SBY/08/00004', tglBuat:'22/08/2026 10:10', tgl:'22/08/2026',
+      cabang:'Surabaya', gudang:'(01-GUU) Gudang Utama-SBY', area:'JAWA TIMUR',
+      customerKode:'CUST-010', customerNama:'Toko Family Mart Sentosa', customerAlamat:'Jl. Basuki Rahmat No. 105, Surabaya',
+      noSO:'26/SO/SBY/08/00009', noPL:'26/PKL/SBY/08/00045', noSP:'SP/SBY/08/00009', noDSC:'', principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara', tglSP:'21/08/2026',
+      spAsli:true, skEd:false, cito:false, citoTgl:'22/08/2026',
+      syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Basuki Rahmat No. 105, Surabaya',
+      shipVia:'Driver', noResi:'', driver:'Bambang Wijaya - B 9012 XYZ (ABC)',
+      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00045.',
+      items:[
+        {kode:'BRG-006', nama:'Kecap Manis ABC 600ml', satuan:'Dus', qtyPesan:50, qtyKirim:50, batch:'BT-260818-18', ed:'2027-01-20'},
+      ],
+      jumlah:700000, posted:true, ts:'Invoice Selesai', dibayar:0,
+      tglInput:'22/08/2026 10:10', userInput:'sidik', tglEdit:'22/08/2026 15:40', userEdit:'sidik',
+      mcdHistory:[
+        {tanggal:'22/08/2026 10:10', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SBY/08/00045.'},
+        {tanggal:'22/08/2026 10:15', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'22/08/2026 11:00', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
+        {tanggal:'22/08/2026 14:30', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh Toko Family Mart Sentosa.'},
+        {tanggal:'22/08/2026 15:40', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
+      ]},
+    {no:'26/SI/SBY/08/00005', noSJ:'26/SJ/SBY/08/00005', tglBuat:'24/08/2026 09:05', tgl:'24/08/2026',
+      cabang:'Surabaya', gudang:'(01-GUU) Gudang Utama-SBY', area:'JAWA TIMUR',
+      customerKode:'CUST-010', customerNama:'Toko Family Mart Sentosa', customerAlamat:'Jl. Basuki Rahmat No. 105, Surabaya',
+      noSO:'26/SO/SBY/08/00010', noPL:'26/PKL/SBY/08/00046', noSP:'SP/SBY/08/00010', noDSC:'', principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia', tglSP:'23/08/2026',
+      spAsli:true, skEd:false, cito:false, citoTgl:'24/08/2026',
+      syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Basuki Rahmat No. 105, Surabaya',
+      shipVia:'Driver', noResi:'', driver:'Bambang Wijaya - B 9012 XYZ (ABC)',
+      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00046.',
+      items:[
+        {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', satuan:'Dus', qtyPesan:54, qtyKirim:54, batch:'BT-260819-19', ed:'2027-09-18'},
+      ],
+      jumlah:540000, posted:true, ts:'Invoice Selesai', dibayar:0,
+      tglInput:'24/08/2026 09:05', userInput:'sidik', tglEdit:'24/08/2026 13:20', userEdit:'sidik',
+      mcdHistory:[
+        {tanggal:'24/08/2026 09:05', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SBY/08/00046.'},
+        {tanggal:'24/08/2026 09:10', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'24/08/2026 10:00', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
+        {tanggal:'24/08/2026 12:45', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh Toko Family Mart Sentosa.'},
+        {tanggal:'24/08/2026 13:20', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
       ]},
   ],
   /* Daftar Driver (dipakai field "Driver" di form Invoice, picker
@@ -2955,9 +3068,22 @@ const DATA = {
      PPN 11% = Jumlah baris x 11% [mode PPN Eksklusif]; PPh = Jumlah
      baris x %PPh; Jumlah Akhir = Jumlah baris + PPN − PPh + Ongkos
      Angkut) — BUKAN dicontek apa adanya dari angka di screenshot asli
-     (yang skalanya tidak konsisten dengan skema harga barang DBM). */
+     (yang skalanya tidak konsisten dengan skema harga barang DBM).
+
+     2026-08-28 — field BARU `tutupPoStatus` ('Pending'/'In Progress'/
+     'Close') ditambahkan ke SETIAP baris utk modul baru "Tutup Pending
+     PO" (Supplier & Pembelian > Daftar Transaksi, sebelumnya
+     placeholder — lihat js/pages/tutup-pending-po.*). Field ini
+     SENGAJA terpisah dari `status` ('Pending Receive') yang sudah
+     dipakai kolom Status list Purchase Order, supaya tampilan modul
+     PO lama tidak berubah. Seeding-nya meniru campuran status di
+     screenshot acuan: 1 baris Close (26/PO/HO/08/00002 — PO CBD
+     "Diambil Sendiri" yang wajar sudah selesai/ditutup), 2 baris
+     In Progress (00009 & 00007_RI — PO cetakanKe>1/revisi yang wajar
+     sedang berjalan), sisanya Pending. Tombol Tutup/Buka Order di
+     modul baru itu mengubah field ini LIVE (Close <-> status semula). */
   purchaseOrder:[
-    {no:'26/PO/HO/08/00011', noPR:'', tglPO:'06/08/2026', supplier:'PT Sumber Pangan Nusantara', keterangan:'26/SR/HO/08/00003 - Sembako Gudang Utama', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00011', noPR:'', tglPO:'06/08/2026', supplier:'PT Sumber Pangan Nusantara', keterangan:'26/SR/HO/08/00003 - Sembako Gudang Utama', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'26/SR/HO/08/00003', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'07/08/2026', noSoIndent:'', syaratBayar:'Kredit 60 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur',
@@ -2965,7 +3091,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:4750000, pajak11:'PPN11', ppnAmount:522500,
       pphAktif:true, pphKode:'PPH 22 (0.3)', pphPersen:0.3, pphAmount:14250, ongkosAngkut:0, jumlahTotal:5258250,
       tglInput:'06/08/2026 08:20:10', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00010', noPR:'', tglPO:'06/08/2026', supplier:'PT Wilmar Nabati Indonesia', keterangan:'26/SR/BDG/08/00001 - Stok Jabar', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00010', noPR:'', tglPO:'06/08/2026', supplier:'PT Wilmar Nabati Indonesia', keterangan:'26/SR/BDG/08/00001 - Stok Jabar', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'26/SR/BDG/08/00001', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'08/08/2026', noSoIndent:'', syaratBayar:'Kredit 45 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Bandung',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung',
@@ -2973,7 +3099,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:7350000, pajak11:'PPN11', ppnAmount:808500,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:8158500,
       tglInput:'06/08/2026 09:05:44', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00009', noPR:'26/PR-HO/07/00003', tglPO:'06/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon II/SDL/VII/2026', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00009', noPR:'26/PR-HO/07/00003', tglPO:'06/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon II/SDL/VII/2026', status:'Pending Receive', tutupPoStatus:'In Progress', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'08/08/2026', noSoIndent:'', syaratBayar:'Kredit 14 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung',
@@ -2981,7 +3107,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:1200000, pajak11:'PPN11', ppnAmount:132000,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:1332000,
       tglInput:'06/08/2026 10:12:00', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00008', noPR:'26/PR-HO/07/00002', tglPO:'06/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon II/SDL/VII/2026', status:'Pending Receive', cetakanKe:2,
+    {no:'26/PO/HO/08/00008', noPR:'26/PR-HO/07/00002', tglPO:'06/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon II/SDL/VII/2026', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:2,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'08/08/2026', noSoIndent:'', syaratBayar:'Kredit 14 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung',
@@ -2989,7 +3115,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:1200000, pajak11:'PPN11', ppnAmount:132000,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:1332000,
       tglInput:'06/08/2026 10:15:22', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00007_RI', noPR:'', tglPO:'06/08/2026', supplier:'PT Sasa Inti', keterangan:'26/SR/HO/08/00002 - Pemenuhan Toko Anugrah', status:'Pending Receive', cetakanKe:2,
+    {no:'26/PO/HO/08/00007_RI', noPR:'', tglPO:'06/08/2026', supplier:'PT Sasa Inti', keterangan:'26/SR/HO/08/00002 - Pemenuhan Toko Anugrah', status:'Pending Receive', tutupPoStatus:'In Progress', cetakanKe:2,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'26/SR/HO/08/00002', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'07/08/2026', noSoIndent:'', syaratBayar:'Kredit 30 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur',
@@ -2997,7 +3123,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:4074000, pajak11:'PPN11', ppnAmount:448140,
       pphAktif:true, pphKode:'PPH 22 (0.3)', pphPersen:0.3, pphAmount:12222, ongkosAngkut:0, jumlahTotal:4509918,
       tglInput:'06/08/2026 11:02:37', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00006', noPR:'', tglPO:'06/08/2026', supplier:'PT Sasa Inti', keterangan:'26/SR/HO/08/00001 - Pemenuhan Toko Sejahtera', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00006', noPR:'', tglPO:'06/08/2026', supplier:'PT Sasa Inti', keterangan:'26/SR/HO/08/00001 - Pemenuhan Toko Sejahtera', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'26/SR/HO/08/00001', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'07/08/2026', noSoIndent:'', syaratBayar:'Kredit 30 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur',
@@ -3005,7 +3131,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:2037000, pajak11:'PPN11', ppnAmount:224070,
       pphAktif:true, pphKode:'PPH 22 (0.3)', pphPersen:0.3, pphAmount:6111, ongkosAngkut:0, jumlahTotal:2254959,
       tglInput:'06/08/2026 11:30:05', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00005', noPR:'26/PR-HO/07/00002', tglPO:'05/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon IT No. 002/SDL/07/2026', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00005', noPR:'26/PR-HO/07/00002', tglPO:'05/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon IT No. 002/SDL/07/2026', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'07/08/2026', noSoIndent:'', syaratBayar:'Kredit 14 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung',
@@ -3013,7 +3139,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:600000, pajak11:'PPN11', ppnAmount:66000,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:666000,
       tglInput:'05/08/2026 09:40:00', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00004', noPR:'26/PR-HO/07/00003', tglPO:'05/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon IT No. 001/SDL/07/2026', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00004', noPR:'26/PR-HO/07/00003', tglPO:'05/08/2026', supplier:'CV Distribusi Sentosa', keterangan:'PO Administrasi Kasbon IT No. 001/SDL/07/2026', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'07/08/2026', noSoIndent:'', syaratBayar:'Kredit 14 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung',
@@ -3021,7 +3147,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:600000, pajak11:'PPN11', ppnAmount:66000,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:666000,
       tglInput:'05/08/2026 09:42:15', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00003', noPR:'', tglPO:'05/08/2026', supplier:'PT Sumber Pangan Nusantara', keterangan:'26/SR/SMG/08/00001 - Penambahan Stok Semarang', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00003', noPR:'', tglPO:'05/08/2026', supplier:'PT Sumber Pangan Nusantara', keterangan:'26/SR/SMG/08/00001 - Penambahan Stok Semarang', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'26/SR/SMG/08/00001', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'06/08/2026', noSoIndent:'', syaratBayar:'Kredit 30 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Semarang',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Pemuda No. 45, Semarang',
@@ -3029,7 +3155,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:1568000, pajak11:'PPN11', ppnAmount:172480,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:1740480,
       tglInput:'05/08/2026 14:05:50', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00002', noPR:'', tglPO:'03/08/2026', supplier:'PT Sumber Pangan Nusantara', keterangan:'Pemenuhan PT. DAN Direct dari Pabrik', status:'Pending Receive', cetakanKe:0,
+    {no:'26/PO/HO/08/00002', noPR:'', tglPO:'03/08/2026', supplier:'PT Sumber Pangan Nusantara', keterangan:'Pemenuhan PT. DAN Direct dari Pabrik', status:'Pending Receive', tutupPoStatus:'Close', cetakanKe:0,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'', fob:'', shipVia:'Diambil Sendiri', cito:false,
       noOtomatis:'PO001', etd:'04/08/2026', noSoIndent:'', syaratBayar:'CBD', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN CBD (IDR)', alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur',
@@ -3037,7 +3163,7 @@ const DATA = {
       ppnMode:'eksklusif', mataUang:'IDR', kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:750000, pajak11:'PPN11', ppnAmount:82500,
       pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahTotal:832500,
       tglInput:'03/08/2026 08:15:00', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PO/HO/08/00001', noPR:'', tglPO:'01/08/2026', supplier:'PT Roda Mas Trading', keterangan:'Pembelian Rutin Bulanan Gudang Cirebon', status:'Pending Receive', cetakanKe:1,
+    {no:'26/PO/HO/08/00001', noPR:'', tglPO:'01/08/2026', supplier:'PT Roda Mas Trading', keterangan:'Pembelian Rutin Bulanan Gudang Cirebon', status:'Pending Receive', tutupPoStatus:'Pending', cetakanKe:1,
       cabang:'Head Office', cabangTarget:'Head Office', typePO:'Persediaan', noStockRequest:'', fob:'', shipVia:'Ekspedisi', cito:false,
       noOtomatis:'PO001', etd:'03/08/2026', noSoIndent:'', syaratBayar:'Kredit 30 Hari', gudang:'Gudang Utama-HO', gudangTarget:'Gudang Utama-HO',
       jurnalBPB:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Jl. Siliwangi No. 77, Cirebon',
@@ -4104,6 +4230,14 @@ const DATA = {
     {kode:'DPF', nama:'Discount Proposal Form'},
     {kode:'DPL', nama:'Discount Proposal List'},
     {kode:'CAT', nama:'Discount Category'},
+    /* 2026-08-28 — kategori BARU "Diskon Syarat Bayar" (modifikasi DBM
+       yang diminta user): promo yang memilih BEBERAPA syarat bayar dan
+       memberi diskon berupa DISKON GLOBAL 1 & 2 saja (persentase ATAU
+       nominal, TANPA pemilihan item barang), berlaku otomatis ke
+       transaksi Sales Order yang syarat bayarnya cocok — lihat varian
+       'DSB' di js/pages/promotion.* dan soApplyPromoSyaratBayar() di
+       js/pages/sales-order.js. */
+    {kode:'DSB', nama:'Diskon Syarat Bayar'},
   ],
   /* Opsi dropdown "Tipe Customer" di form Promotion — beda konsep dari
      DATA.customerGroup (channel penjualan): ini pengelompokan tipe customer
@@ -4158,6 +4292,23 @@ const DATA = {
        jamTutup(Jam/Menit)/minimalTransaksi/kuota + `items[]` flat
        (kategoriKode,kategoriNama,qty,discPrincipal(Unit),discDistributor(Unit)). */
   promotion:[
+    /* 2026-08-28 — 1 baris BARU kategori 'DSB' (Diskon Syarat Bayar,
+       modifikasi DBM — lihat komentar di DATA.promotionCategoryList):
+       diskonnya HANYA berupa Diskon Global 1 & 2 (bertingkat: DG2
+       dihitung dari sisa setelah DG1), masing-masing bisa persentase
+       ('%') atau nominal ('Rp'), TANPA array items (bukan diskon
+       per-item — beda dari 4 kategori lain). syaratBayarDiskon berisi
+       BEBERAPA syarat bayar dari DATA.syaratBayarList; Sales Order
+       yang Syarat Bayar-nya termasuk daftar ini otomatis mendapat
+       Diskon Global 1 & 2 promo ini (soApplyPromoSyaratBayar(),
+       sales-order.js) selama status Active. Contoh nyata: customer
+       ber-TOP N14 (Toko Sejahtera/UD Makmur Jaya) langsung kena saat
+       dipilih di SO. */
+    {kode:'26/PM-HO/08/00003', noOtomatis:'PRO15', nama:'Promo Diskon Pembayaran Cepat (CBD & Kredit Pendek)', kategori:'DSB', kodeLock:'',
+      tglAwal:'01/08/2026', tglAkhir:'30/09/2026', status:'Active', tipeCustomer:'TC01', customer:'', grupCustomer:'',
+      description:'Diskon Global otomatis pada Sales Order untuk pembayaran cepat: syarat bayar CBD., N7, atau N14 mendapat Diskon Global 1 sebesar 2% dan Diskon Global 2 sebesar 1% (bertingkat). Tanpa pemilihan item barang.', outlet:'Head Office', ppn:11,
+      syaratBayarDiskon:['CBD.','N7','N14'],
+      diskonGlobal1:2, diskonGlobal1Unit:'%', diskonGlobal2:1, diskonGlobal2Unit:'%'},
     {kode:'26/PM-HO/08/00001', noOtomatis:'PRO01', nama:'Promo Diskon Bertingkat Sembako', kategori:'A', kodeLock:'LOCK-SMB01',
       tglAwal:'01/08/2026', tglAkhir:'31/08/2026', status:'Active', tipeCustomer:'TC01', customer:'Toko Sumber Rejeki', grupCustomer:'GRSR',
       description:'Diskon bertingkat pembelian kategori Sembako, semakin banyak qty semakin besar diskon plus bonus barang.', outlet:'Head Office', ppn:11,

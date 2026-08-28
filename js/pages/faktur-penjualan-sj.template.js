@@ -404,8 +404,28 @@ function tplFktForm(mode, row){
               <div class="form-section">Rincian Transaksi</div>
               <table class="field-table po-rincian-table">
                 <tr><td class="flabel">Mata Uang</td><td><input type="text" id="fFktMataUang" value="${row.mataUang||'Rupiah (IDR)'}" disabled></td><td class="flabel">Kurs</td><td><input type="text" id="fFktKurs" value="${Number(row.kurs||1).toFixed(2)}" disabled></td></tr>
-                <tr><td class="flabel">Diskon 1</td><td><input type="number" id="fFktDiskon1" value="${row.diskon1||0}" ${dis}> %</td><td></td><td><input type="text" id="fFktDiskon1Rp" value="${num(row.diskon1Amount||0)}" disabled></td></tr>
-                <tr><td class="flabel">Diskon 2</td><td><input type="number" id="fFktDiskon2" value="${row.diskon2||0}" ${dis}> %</td><td></td><td><input type="text" id="fFktDiskon2Rp" value="${num(row.diskon2Amount||0)}" disabled></td></tr>
+                <!-- 2026-08-28 — Diskon Global 1 & 2 di-upgrade: nilai bisa
+                     %/nominal (select unit) dan dihitung BERTINGKAT (Diskon
+                     Global 2 dari sisa setelah Diskon Global 1) — lihat
+                     fktRecalcTotals() di faktur-penjualan-sj.js. -->
+                <tr><td class="flabel">Diskon Global 1</td><td>
+                    <div style="display:flex;gap:6px;">
+                      <input type="number" min="0" id="fFktDiskon1" value="${row.diskon1||0}" ${dis} style="width:110px;flex:0 0 auto;">
+                      <select id="fFktDiskon1Unit" style="width:auto;" ${dis}>
+                        <option value="%" ${row.diskon1Unit!=='Rp'?'selected':''}>%</option>
+                        <option value="Rp" ${row.diskon1Unit==='Rp'?'selected':''}>Rp</option>
+                      </select>
+                    </div>
+                  </td><td></td><td><input type="text" id="fFktDiskon1Rp" value="${num(row.diskon1Amount||0)}" disabled></td></tr>
+                <tr><td class="flabel">Diskon Global 2 <span style="font-weight:400;font-size:10.5px;color:var(--text-light);">(dari sisa setelah DG1)</span></td><td>
+                    <div style="display:flex;gap:6px;">
+                      <input type="number" min="0" id="fFktDiskon2" value="${row.diskon2||0}" ${dis} style="width:110px;flex:0 0 auto;">
+                      <select id="fFktDiskon2Unit" style="width:auto;" ${dis}>
+                        <option value="%" ${row.diskon2Unit!=='Rp'?'selected':''}>%</option>
+                        <option value="Rp" ${row.diskon2Unit==='Rp'?'selected':''}>Rp</option>
+                      </select>
+                    </div>
+                  </td><td></td><td><input type="text" id="fFktDiskon2Rp" value="${num(row.diskon2Amount||0)}" disabled></td></tr>
                 <tr><td class="flabel">DPP</td><td colspan="3"><input type="text" id="fFktDpp" value="${num(row.dpp||0)}" disabled></td></tr>
                 <tr><td class="flabel">Pajak 11%</td><td><input type="text" id="fFktPajak11" value="${row.pajak11||''}" disabled></td><td></td><td><input type="text" id="fFktPpnAmount" value="${num(row.ppn||0)}" disabled></td></tr>
                 <tr><td class="flabel">Pph Dipotong</td><td>

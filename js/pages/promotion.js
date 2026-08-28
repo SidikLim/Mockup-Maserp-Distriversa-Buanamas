@@ -105,6 +105,17 @@ function promEnsureCategoryDefaults(row){
     if(!Array.isArray(row.items) || !row.items.length || !('kategoriKode' in row.items[0])){
       row.items = [promEmptyCatItem()];
     }
+  } else if(row.kategori === 'DSB'){
+    /* 2026-08-28 — kategori BARU "Diskon Syarat Bayar" (modifikasi
+       DBM): TANPA array items sama sekali (bukan diskon per-item),
+       hanya daftar syarat bayar terpilih + Diskon Global 1 & 2
+       (nilai + unit '%'/'Rp'). Lihat komentar di
+       DATA.promotionCategoryList & tplPromDiskonSyaratBayar(). */
+    if(!Array.isArray(row.syaratBayarDiskon)) row.syaratBayarDiskon = [];
+    if(row.diskonGlobal1 === undefined) row.diskonGlobal1 = 0;
+    if(row.diskonGlobal1Unit === undefined) row.diskonGlobal1Unit = '%';
+    if(row.diskonGlobal2 === undefined) row.diskonGlobal2 = 0;
+    if(row.diskonGlobal2Unit === undefined) row.diskonGlobal2Unit = '%';
   }
 }
 
@@ -115,6 +126,12 @@ function promCloneRow(src){
   }
   if(src.items){
     row.items = src.items.map(it => ({ ...it }));
+  }
+  /* Array syarat bayar promo DSB (2026-08-28) ikut di-deep-copy —
+     checkbox-nya memutasi array langsung, jangan sampai Batalkan tetap
+     mengubah baris master. */
+  if(src.syaratBayarDiskon){
+    row.syaratBayarDiskon = src.syaratBayarDiskon.slice();
   }
   return row;
 }
@@ -170,6 +187,7 @@ function openPromForm(mode, idx){
     if(row.kategori === 'A') wireDiscountProgram(row);
     else if(row.kategori === 'DPF' || row.kategori === 'DPL') wireDiscountProposal(row);
     else if(row.kategori === 'CAT') wireDiscountCategory(row);
+    else if(row.kategori === 'DSB') wireDiskonSyaratBayar(row);
   }
 
   function wireFooter(){
@@ -177,6 +195,9 @@ function openPromForm(mode, idx){
     document.getElementById('promSave').onclick = () => {
       promSyncCommonFromDOM(row);
       if(!row.nama){ promValidationError('Promotion Name wajib diisi'); return; }
+      if(row.kategori === 'DSB' && !(row.syaratBayarDiskon||[]).length){
+        promValidationError('Pilih minimal 1 Syarat Bayar untuk promo Diskon Syarat Bayar'); return;
+      }
       if(mode === 'add'){
         row.kode = row.kode || promGenerateNumber(row.outlet);
         DATA.promotion.push(row);
@@ -650,4 +671,37 @@ function openPromInfo(title, text){
   document.getElementById('modalClose').onclick = closeModal;
   document.getElementById('modalOk').onclick = closeModal;
   overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+}
+
+/* =========================================================
+   VARIAN 5 (BARU 2026-08-28) — Diskon Syarat Bayar (kategori 'DSB')
+   Modifikasi DBM yang diminta user: promo memilih BEBERAPA syarat
+   bayar (checkbox dari DATA.syaratBayarList) + Diskon Global 1 & 2
+   yang nilainya bisa persentase ('%') atau nominal ('Rp'). TIDAK ada
+   pemilihan item barang (bukan diskon per-item) — karena itu tidak
+   ada tombol "Tambah Item" sama sekali di varian ini. Hasilnya
+   dikonsumsi transaksi Sales Order lewat soApplyPromoSyaratBayar()
+   (sales-order.js): SO yang Syarat Bayar-nya termasuk daftar promo
+   Active otomatis mendapat Diskon Global 1 & 2 promo ini.
+========================================================= */
+function wireDiskonSyaratBayar(row){
+  document.querySelectorAll('[data-prom-dsb-sb]').forEach(cb => cb.onchange = (e) => {
+    const sb = cb.dataset.promDsbSb;
+    if(!Array.isArray(row.syaratBayarDiskon)) row.syaratBayarDiskon = [];
+    const i = row.syaratBayarDiskon.indexOf(sb);
+    if(e.target.checked && i === -1) row.syaratBayarDiskon.push(sb);
+    if(!e.target.checked && i !== -1) row.syaratBayarDiskon.splice(i, 1);
+    const lbl = document.getElementById('promDsbTerpilih');
+    if(lbl) lbl.textContent = row.syaratBayarDiskon.length
+      ? row.syaratBayarDiskon.join(', ')
+      : 'Belum ada syarat bayar dipilih';
+  });
+  const dg1 = document.getElementById('fPromDsbDg1');
+  const dg1u = document.getElementById('fPromDsbDg1Unit');
+  const dg2 = document.getElementById('fPromDsbDg2');
+  const dg2u = document.getElementById('fPromDsbDg2Unit');
+  if(dg1) dg1.onchange = (e) => { row.diskonGlobal1 = +e.target.value || 0; };
+  if(dg1u) dg1u.onchange = (e) => { row.diskonGlobal1Unit = e.target.value; };
+  if(dg2) dg2.onchange = (e) => { row.diskonGlobal2 = +e.target.value || 0; };
+  if(dg2u) dg2u.onchange = (e) => { row.diskonGlobal2Unit = e.target.value; };
 }

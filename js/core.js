@@ -121,6 +121,7 @@ const PAGE_MODULES={
   akunGL:{srcs:['js/pages/akun-gl.template.js','js/pages/akun-gl.js'], fn:'renderAkunGLPage'},
   stockRequest:{srcs:['js/pages/stock-request.template.js','js/pages/stock-request.js'], fn:'renderStockRequestPage'},
   purchaseOrder:{srcs:['js/pages/purchase-order.template.js','js/pages/purchase-order.js'], fn:'renderPurchaseOrderPage'},
+  tutupPendingPO:{srcs:['js/pages/tutup-pending-po.template.js','js/pages/tutup-pending-po.js'], fn:'renderTutupPendingPOPage'},
   terimaBarang:{srcs:['js/pages/terima-barang.template.js','js/pages/terima-barang.js'], fn:'renderTerimaBarangPage'},
   pembelianBPB:{srcs:['js/pages/pembelian-bpb.template.js','js/pages/pembelian-bpb.js'], fn:'renderPembelianBPBPage'},
   pelunasanUtang:{srcs:['js/pages/pelunasan-utang.template.js','js/pages/pelunasan-utang.js'], fn:'renderPelunasanUtangPage'},

@@ -219,7 +219,17 @@ function tplSoForm(mode, row){
               ${isAdd ? `<button type="button" class="icon-btn edit" id="soRefreshNo" title="Generate Nomor">${icon('refreshCw',13)}</button>` : ''}
             </div>
           </div>
-          <div class="form-group"></div>
+          <!-- Syarat Bayar (fitur baru 2026-08-28): otomatis mengikuti TOP
+               master customer saat Customer dipilih, tetap bisa diganti.
+               Jadi kunci pencocokan promo "Diskon Syarat Bayar" (kategori
+               DSB, Master Promotion) yang mengisi Diskon Global 1 & 2. -->
+          <div class="form-group">
+            <label>Syarat Bayar</label>
+            <select id="fSoSyaratBayar" ${dis}>
+              <option value="">Pilih Syarat Bayar</option>
+              ${DATA.syaratBayarList.map(sb=>`<option ${row.syaratBayar===sb?'selected':''}>${sb}</option>`).join('')}
+            </select>
+          </div>
         </div>
 
         <div class="po-grid-3">
@@ -325,11 +335,45 @@ function tplSoForm(mode, row){
         </div>
         ${!isView ? `<a href="#" id="soAddItem" class="link-add">${icon('plus',13)} Tambah Item Baru</a>` : ''}
 
-        <table class="field-table po-rincian-table" style="margin-top:22px;max-width:460px;">
-          <tr><td class="flabel">Total DPP</td><td><input type="text" id="fSoTotalDpp" value="${num(row.totalDpp||0)}" disabled></td></tr>
-          <tr><td class="flabel">Total PPN</td><td><input type="text" id="fSoTotalPpn" value="${num(row.totalPpn||0)}" disabled></td></tr>
-          <tr><td class="flabel">Total Biaya Kirim</td><td><input type="text" id="fSoTotalBiayaKirim" value="${num(row.totalBiayaKirim||0)}" disabled></td></tr>
-          <tr><td class="flabel">Jumlah Akhir</td><td><input type="text" id="fSoJumlahAkhir" value="${num(row.jumlahAkhir||0)}" disabled style="font-weight:700;"></td></tr>
+        <!-- Diskon Global 1 & 2 (fitur baru 2026-08-28): perhitungan
+             BERTINGKAT (DG2 dari sisa setelah DG1), nilai bisa persentase
+             maupun nominal (select unit %/Rp per baris), Total PPN
+             terkoreksi proporsional — lihat soRecalcTotals(). Baris nilai
+             juga terisi otomatis dari promo "Diskon Syarat Bayar" saat
+             Syarat Bayar SO cocok (soApplyPromoSyaratBayar). -->
+        <div id="soDgPromoNote" style="display:${row.diskonPromoKode?'':'none'};font-size:11.8px;color:var(--blue);margin-top:18px;font-weight:600;">${row.diskonPromoKode ? `Diskon Global otomatis dari Promotion <b>${row.diskonPromoKode}</b> (Diskon Syarat Bayar; nilai masih bisa diubah manual).` : ''}</div>
+        <table class="field-table po-rincian-table" style="margin-top:${row.diskonPromoKode?'6':'22'}px;max-width:560px;">
+          <tr><td class="flabel">Total DPP</td><td colspan="2"><input type="text" id="fSoTotalDpp" value="${num(row.totalDpp||0)}" disabled></td></tr>
+          <tr>
+            <td class="flabel">Diskon Global 1</td>
+            <td>
+              <div style="display:flex;gap:6px;">
+                <input type="number" min="0" id="fSoDg1" value="${row.diskonGlobal1||0}" style="width:110px;flex:0 0 auto;" ${dis}>
+                <select id="fSoDg1Unit" style="width:auto;" ${dis}>
+                  <option value="%" ${row.diskonGlobal1Unit!=='Rp'?'selected':''}>%</option>
+                  <option value="Rp" ${row.diskonGlobal1Unit==='Rp'?'selected':''}>Rp</option>
+                </select>
+              </div>
+            </td>
+            <td style="width:160px;"><input type="text" id="fSoDg1Amount" value="${num(row.diskonGlobal1Amount||0)}" disabled style="text-align:right;"></td>
+          </tr>
+          <tr>
+            <td class="flabel">Diskon Global 2 <span style="font-weight:400;font-size:10.5px;color:var(--text-light);">(dari sisa setelah Diskon Global 1)</span></td>
+            <td>
+              <div style="display:flex;gap:6px;">
+                <input type="number" min="0" id="fSoDg2" value="${row.diskonGlobal2||0}" style="width:110px;flex:0 0 auto;" ${dis}>
+                <select id="fSoDg2Unit" style="width:auto;" ${dis}>
+                  <option value="%" ${row.diskonGlobal2Unit!=='Rp'?'selected':''}>%</option>
+                  <option value="Rp" ${row.diskonGlobal2Unit==='Rp'?'selected':''}>Rp</option>
+                </select>
+              </div>
+            </td>
+            <td><input type="text" id="fSoDg2Amount" value="${num(row.diskonGlobal2Amount||0)}" disabled style="text-align:right;"></td>
+          </tr>
+          <tr><td class="flabel">DPP Setelah Diskon Global</td><td colspan="2"><input type="text" id="fSoDppSetelahDiskon" value="${num(row.dppSetelahDiskon!=null?row.dppSetelahDiskon:(row.totalDpp||0))}" disabled></td></tr>
+          <tr><td class="flabel">Total PPN</td><td colspan="2"><input type="text" id="fSoTotalPpn" value="${num(row.totalPpn||0)}" disabled></td></tr>
+          <tr><td class="flabel">Total Biaya Kirim</td><td colspan="2"><input type="text" id="fSoTotalBiayaKirim" value="${num(row.totalBiayaKirim||0)}" disabled></td></tr>
+          <tr><td class="flabel">Jumlah Akhir</td><td colspan="2"><input type="text" id="fSoJumlahAkhir" value="${num(row.jumlahAkhir||0)}" disabled style="font-weight:700;"></td></tr>
         </table>
 
         <div style="font-size:11.8px;color:var(--text-light);margin-top:6px;line-height:1.7;">

@@ -431,7 +431,7 @@ function tplInvForm(mode, row){
               <td>
                 <div style="display:flex;align-items:center;gap:10px;">
                   <div class="checkbox-row" style="margin:0;"><input type="checkbox" id="fInvCito" ${row.cito?'checked':''}><label for="fInvCito">CITO</label></div>
-                  <input type="text" id="fInvCitoTgl" value="${row.citoTgl||row.tgl||''}" readonly style="max-width:110px;">
+                  <input type="text" id="fInvCitoTgl" value="${row.citoTgl||row.tgl||''}" readonly style="width:110px;flex:0 0 auto;">
                 </div>
               </td>
             </tr>
@@ -498,6 +498,7 @@ function tplInvForm(mode, row){
             </table>
           </div>
           <div id="invItemsEmptyHint" style="font-size:11.5px;color:var(--text-light);margin-top:6px;${row.items.length?'display:none;':''}">Belum ada barang — pilih No SO atau No PL terlebih dahulu.</div>
+          ${tplInvDiskonGlobalPanel(row)}
         </div>
         <div id="invTabJurnalContent" style="display:none;">${tplInvJurnalContent(row)}</div>
 
@@ -993,4 +994,50 @@ function tplInvPrintDoc(row, mode){
   </div>
 </body>
 </html>`;
+}
+
+/* =========================================================
+   2026-08-28 — panel "Diskon Global" (modifikasi DBM yang diminta
+   user, seragam dgn Sales Order & Faktur Penjualan): ditampilkan di
+   bawah tabel Produk (tab Detail Transaksi). Subtotal Barang dihitung
+   live dari item x harga master (sumber yang sama dgn invRecalcJumlah,
+   yang memang dipanggil dulu di sini — precedent template memanggil
+   helper kalkulasi: tplPpForm/ppRecalcTotals), lalu Diskon Global 1
+   & 2 (nilai + unit %/Rp, BERTINGKAT — DG2 dari sisa setelah DG1)
+   mengurangi subtotal menjadi "Jumlah Setelah Diskon Global" =
+   row.jumlah yang tersimpan. Logic/wiring-nya di invoice.js
+   (invRecalcJumlah/invRefreshDiskonGlobalDOM/wireInvItemEvents). */
+function tplInvDiskonGlobalPanel(row){
+  invRecalcJumlah(row);
+  return `
+    <table class="field-table po-rincian-table" style="margin-top:16px;max-width:560px;">
+      <tr><td class="flabel">Subtotal Barang</td><td colspan="2"><input type="text" id="fInvSubtotalBarang" value="${num(row.subtotalBarang||0)}" disabled></td></tr>
+      <tr>
+        <td class="flabel">Diskon Global 1</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <input type="number" min="0" id="fInvDg1" value="${row.diskonGlobal1||0}" style="width:110px;flex:0 0 auto;">
+            <select id="fInvDg1Unit" style="width:auto;">
+              <option value="%" ${row.diskonGlobal1Unit!=='Rp'?'selected':''}>%</option>
+              <option value="Rp" ${row.diskonGlobal1Unit==='Rp'?'selected':''}>Rp</option>
+            </select>
+          </div>
+        </td>
+        <td style="width:160px;"><input type="text" id="fInvDg1Amount" value="${num(row.diskonGlobal1Amount||0)}" disabled style="text-align:right;"></td>
+      </tr>
+      <tr>
+        <td class="flabel">Diskon Global 2 <span style="font-weight:400;font-size:10.5px;color:var(--text-light);">(dari sisa setelah Diskon Global 1)</span></td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <input type="number" min="0" id="fInvDg2" value="${row.diskonGlobal2||0}" style="width:110px;flex:0 0 auto;">
+            <select id="fInvDg2Unit" style="width:auto;">
+              <option value="%" ${row.diskonGlobal2Unit!=='Rp'?'selected':''}>%</option>
+              <option value="Rp" ${row.diskonGlobal2Unit==='Rp'?'selected':''}>Rp</option>
+            </select>
+          </div>
+        </td>
+        <td><input type="text" id="fInvDg2Amount" value="${num(row.diskonGlobal2Amount||0)}" disabled style="text-align:right;"></td>
+      </tr>
+      <tr><td class="flabel">Jumlah Setelah Diskon Global</td><td colspan="2"><input type="text" id="fInvJumlahSetelahDiskon" value="${num(row.jumlah||0)}" disabled style="font-weight:700;"></td></tr>
+    </table>`;
 }

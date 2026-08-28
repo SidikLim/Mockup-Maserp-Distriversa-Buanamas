@@ -484,6 +484,7 @@ function tplPromotionFormBody(mode, row){
   if(row.kategori === 'DPF') return tplPromDiscountProposal(mode, row, {showKuota:true});
   if(row.kategori === 'DPL') return tplPromDiscountProposal(mode, row, {showKuota:false});
   if(row.kategori === 'CAT') return tplPromDiscountCategory(mode, row);
+  if(row.kategori === 'DSB') return tplPromDiskonSyaratBayar(mode, row); /* BARU 2026-08-28 — Diskon Syarat Bayar */
   return tplPromDiscountProgram(mode, row);
 }
 
@@ -608,4 +609,66 @@ function tplPromInfoModal(title,text){
         <button class="btn-primary" id="modalOk">Mengerti</button>
       </div>
     </div>`;
+}
+
+/* ============================================================
+   VARIAN 5 (BARU 2026-08-28) — Diskon Syarat Bayar (kategori 'DSB')
+   Lihat catatan desain lengkap di atas wireDiskonSyaratBayar()
+   (promotion.js). Tanpa tabel item sama sekali — hanya checkbox
+   multi-pilih syarat bayar + 2 baris Diskon Global (nilai + unit
+   %/Rp, pola select unit sama dgn promDiscUnitOptions varian lain)
+   + catatan cara kerjanya di transaksi SO.
+   ============================================================ */
+function tplPromDsbBlock(row){
+  const sbList = row.syaratBayarDiskon || [];
+  return `
+    <div class="form-section">${icon('percent',15)} Syarat Bayar &amp; Diskon Global</div>
+    <table class="field-table">
+      <tr>
+        <td class="flabel" style="vertical-align:top;">Syarat Bayar<br><span style="font-weight:400;font-size:11px;color:var(--text-light);">(bisa pilih beberapa)</span></td>
+        <td colspan="3">
+          <div style="display:flex;gap:18px;flex-wrap:wrap;padding:4px 0;">
+            ${DATA.syaratBayarList.map(sb => `
+              <label style="display:flex;align-items:center;gap:6px;font-size:12.6px;font-weight:400;cursor:pointer;">
+                <input type="checkbox" data-prom-dsb-sb="${sb}" ${sbList.indexOf(sb)!==-1?'checked':''} style="width:auto;"> ${sb}
+              </label>`).join('')}
+          </div>
+          <div style="font-size:11.5px;color:var(--text-light);margin-top:2px;">Terpilih: <b id="promDsbTerpilih">${sbList.length ? sbList.join(', ') : 'Belum ada syarat bayar dipilih'}</b></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="flabel">Diskon Global 1</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <input type="number" min="0" id="fPromDsbDg1" value="${row.diskonGlobal1||0}" style="max-width:120px;">
+            <select id="fPromDsbDg1Unit" style="width:auto;">
+              <option value="%" ${row.diskonGlobal1Unit!=='Rp'?'selected':''}>%</option>
+              <option value="Rp" ${row.diskonGlobal1Unit==='Rp'?'selected':''}>Rp</option>
+            </select>
+          </div>
+        </td>
+        <td class="flabel">Diskon Global 2</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <input type="number" min="0" id="fPromDsbDg2" value="${row.diskonGlobal2||0}" style="max-width:120px;">
+            <select id="fPromDsbDg2Unit" style="width:auto;">
+              <option value="%" ${row.diskonGlobal2Unit!=='Rp'?'selected':''}>%</option>
+              <option value="Rp" ${row.diskonGlobal2Unit==='Rp'?'selected':''}>Rp</option>
+            </select>
+          </div>
+        </td>
+      </tr>
+    </table>
+    <div style="font-size:11.8px;color:var(--text-light);line-height:1.7;margin-top:6px;">
+      Diskon promo ini berupa <b>Diskon Global 1 &amp; Diskon Global 2</b> saja (perhitungan bertingkat: Diskon Global 2 dihitung dari sisa setelah Diskon Global 1) — <b>tidak ada pemilihan item barang</b>.
+      Berlaku otomatis pada transaksi <b>Sales Order</b> yang Syarat Bayar-nya termasuk daftar terpilih di atas, selama status promo Active.
+    </div>`;
+}
+
+function tplPromDiskonSyaratBayar(mode, row){
+  return `
+    ${tplPromCommonHeader(mode, row)}
+    ${tplPromCommonBlock(row)}
+    ${tplPromDsbBlock(row)}
+    ${tplPromFooter()}`;
 }

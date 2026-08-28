@@ -75,7 +75,7 @@ function fktBuildEmptyRow(){
     tglBatasRetur:'', tipeLayanan: DATA.layananList[0],
     items:[],
     tipePpn: FKT_PPN_LIST[3], mataUang:'Rupiah (IDR)', kursPajak:0, tglFakturPajak:'', kodePajak: DATA.kodePajakList[0], noFakturPajak:'',
-    diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, kurs:1, dpp:0, pajak11:'PPN11',
+    diskon1:0, diskon1Unit:'%', diskon1Amount:0, diskon2:0, diskon2Unit:'%', diskon2Amount:0, kurs:1, dpp:0, pajak11:'PPN11',
     uangMukaTipe: FKT_UANG_MUKA_LIST[0], sisaUangMuka:0, uangMukaPakai:0,
     pphAktif:false, pphKode:'', pphPersen:0, pphAmount:0,
     ongkosAngkut:0, ppn:0, jumlahAkhir:0, sisaJumlah:0,
@@ -116,9 +116,19 @@ function fktRefreshItemRowDOM(idx, item){
    SEBELUM fungsi ini dipanggil (bukan dibaca ulang dari DOM di sini). */
 function fktRecalcTotals(row){
   const subtotal = row.items.reduce((s, it) => s + (+it.jumlah || 0), 0);
-  row.diskon1Amount = Math.round(subtotal * (+row.diskon1 || 0) / 100);
-  row.diskon2Amount = Math.round(subtotal * (+row.diskon2 || 0) / 100);
-  row.dpp = subtotal - row.diskon1Amount - row.diskon2Amount;
+  /* 2026-08-28 — Diskon Global 1 & 2 di-upgrade (modifikasi DBM yang
+     diminta user, seragam dgn SO & Invoice): (1) nilai bisa persentase
+     (unit '%') ATAU nominal rupiah (unit 'Rp' — dipakai apa adanya,
+     dibatasi tidak melebihi sisa), (2) perhitungan BERTINGKAT — Diskon
+     Global 2 dihitung dari SISA setelah Diskon Global 1, bukan lagi
+     dua-duanya dari subtotal. Baris lama tanpa field diskon1Unit/
+     diskon2Unit otomatis dianggap '%' (perilaku sebelumnya). */
+  const d1 = +row.diskon1 || 0;
+  row.diskon1Amount = (row.diskon1Unit === 'Rp') ? Math.min(Math.round(d1), subtotal) : Math.round(subtotal * d1 / 100);
+  const sisaSetelahD1 = subtotal - row.diskon1Amount;
+  const d2 = +row.diskon2 || 0;
+  row.diskon2Amount = (row.diskon2Unit === 'Rp') ? Math.min(Math.round(d2), sisaSetelahD1) : Math.round(sisaSetelahD1 * d2 / 100);
+  row.dpp = sisaSetelahD1 - row.diskon2Amount;
   row.pajak11 = (row.tipePpn === 'PPN Inklusif' || row.tipePpn === 'PPN Eksklusif(+11%)') ? 'PPN11' : '';
   row.ppn = (row.tipePpn === 'PPN Eksklusif(+11%)') ? Math.round(row.dpp * 0.11) : 0;
   row.pphAmount = row.pphAktif ? Math.round(row.dpp * (+row.pphPersen || 0) / 100) : 0;
@@ -273,6 +283,16 @@ function openFktForm(mode, idx){
       fktRefreshTotalsDOM(row);
     };
   });
+  /* Unit %/Rp Diskon Global 1 & 2 (fitur baru 2026-08-28) — reaktif
+     seperti nilai diskonnya. */
+  ['fFktDiskon1Unit','fFktDiskon2Unit'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.onchange = (e) => {
+      row[id === 'fFktDiskon1Unit' ? 'diskon1Unit' : 'diskon2Unit'] = e.target.value;
+      fktRecalcTotals(row);
+      fktRefreshTotalsDOM(row);
+    };
+  });
   // Kurs Pajak/Tgl. Faktur Pajak/Kode Pajak — dekoratif (tidak
   // memengaruhi kalkulasi PPN, sama seperti Kurs di Purchase Order),
   // cuma disimpan ke `row` supaya tidak hilang saat Simpan.
@@ -313,7 +333,9 @@ function openFktForm(mode, idx){
     row.tipeLayanan = document.getElementById('fFktTipeLayanan').value;
     row.keterangan = document.getElementById('fFktKeterangan').value;
     row.diskon1 = +document.getElementById('fFktDiskon1').value || 0;
+    row.diskon1Unit = document.getElementById('fFktDiskon1Unit').value;
     row.diskon2 = +document.getElementById('fFktDiskon2').value || 0;
+    row.diskon2Unit = document.getElementById('fFktDiskon2Unit').value;
     row.ongkosAngkut = +document.getElementById('fFktOngkosAngkut').value || 0;
     row.uangMukaPakai = +document.getElementById('fFktUangMukaPakai').value || 0;
     row.kursPajak = +document.getElementById('fFktKursPajak').value || 0;

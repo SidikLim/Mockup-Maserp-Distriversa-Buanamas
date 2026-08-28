@@ -312,11 +312,20 @@ function tplPpForm(mode, row){
             </div>
           </div>
           <div class="form-group">
-            <label>Dari Customer</label>
+            <label>${row.holding ? 'Dari Customer Pusat (Holding)' : 'Dari Customer'}</label>
             <div class="input-with-btn">
-              <input type="text" id="fPpCustomer" value="${row.customerNama||''}" placeholder="Pilih Customer" readonly>
-              ${!isView ? `<button type="button" class="icon-btn edit" id="ppCustomerSearch" title="Cari Customer">${icon('search',13)}</button>` : ''}
+              <input type="text" id="fPpCustomer" value="${row.customerNama||''}" placeholder="${row.holding ? 'Pilih Customer Pusat' : 'Pilih Customer'}" readonly>
+              ${!isView ? `<button type="button" class="icon-btn edit" id="ppCustomerSearch" title="${row.holding ? 'Cari Customer Pusat (Holding)' : 'Cari Customer'}">${icon('search',13)}</button>` : ''}
             </div>
+            <!-- 2026-08-28 — MODIFIKASI DBM: Pelunasan Piutang Terpusat
+                 (Holding). Saat dicentang, picker customer berganti ke
+                 daftar customer PUSAT dan tabel Lunasi Beberapa Faktur
+                 menampilkan faktur outstanding SEMUA cabang di bawahnya
+                 sekaligus (multi-customer, kolom "Customer" muncul). -->
+            <label style="display:flex;align-items:center;gap:6px;font-size:11.8px;color:var(--text);cursor:pointer;margin-top:6px;font-weight:400;">
+              <input type="checkbox" id="fPpHolding" ${row.holding?'checked':''} ${dis} style="width:auto;">
+              Pelunasan Terpusat (Holding) ?
+            </label>
           </div>
           <div class="form-group">
             <label>Badan Usaha</label>
@@ -433,6 +442,7 @@ function tplPpFakturTab(row, isView, totals){
         <thead><tr>
           <th>Bayar</th>
           <th>No. Faktur</th>
+          ${row.holding ? '<th>Customer</th>' : ''}
           <th>Cabang</th>
           <th>Tipe Transaksi</th>
           <th>Tgl. Faktur</th>
@@ -442,10 +452,12 @@ function tplPpFakturTab(row, isView, totals){
           <th>Reminder</th>
           <th>Pembayaran</th>
         </tr></thead>
-        <tbody id="ppFakturBody">${tplPpFakturRows(row.fakturs, isView)}</tbody>
+        <tbody id="ppFakturBody">${tplPpFakturRows(row.fakturs, isView, row.holding)}</tbody>
       </table>
     </div>
-    <div id="ppFakturEmptyHint" style="font-size:11.5px;color:var(--text-light);margin-top:6px;${(row.fakturs&&row.fakturs.length)?'display:none;':''}">Belum ada faktur yang dipilih — pilih Customer terlebih dahulu, faktur yang belum lunas &amp; sudah di-posting akan tampil di sini.</div>
+    <div id="ppFakturEmptyHint" style="font-size:11.5px;color:var(--text-light);margin-top:6px;${(row.fakturs&&row.fakturs.length)?'display:none;':''}">${row.holding
+      ? 'Belum ada faktur yang dipilih — pilih Customer Pusat (Holding) terlebih dahulu, faktur yang belum lunas &amp; sudah di-posting dari SEMUA cabang di bawahnya akan tampil di sini sekaligus.'
+      : 'Belum ada faktur yang dipilih — pilih Customer terlebih dahulu, faktur yang belum lunas &amp; sudah di-posting akan tampil di sini.'}</div>
 
     <div style="display:flex;justify-content:flex-end;margin-top:14px;">
       <div style="max-width:280px;width:100%;">
@@ -477,12 +489,20 @@ function tplPpFakturTab(row, isView, totals){
     </table>`;
 }
 
-function tplPpFakturRows(fakturs, isView){
-  if(!fakturs || !fakturs.length) return `<tr><td colspan="10" style="color:var(--text-light);">Belum ada faktur — pilih Customer terlebih dahulu.</td></tr>`;
+/* Param `holding` (2026-08-28, fitur Pelunasan Piutang Terpusat):
+   true = tabel dapat kolom tambahan "Customer" setelah No. Faktur
+   (fakturnya lintas customer — semua cabang di bawah 1 pusat), dan
+   colspan baris kosong/detail ikut jadi 11. Mode biasa (false/
+   undefined, termasuk baris lama yang tersimpan tanpa field holding)
+   tampil PERSIS seperti sebelumnya. */
+function tplPpFakturRows(fakturs, isView, holding){
+  const nCols = holding ? 11 : 10;
+  if(!fakturs || !fakturs.length) return `<tr><td colspan="${nCols}" style="color:var(--text-light);">Belum ada faktur — pilih ${holding?'Customer Pusat (Holding)':'Customer'} terlebih dahulu.</td></tr>`;
   return fakturs.map((f,idx)=>`
     <tr data-pp-faktur-row="${idx}">
       <td style="text-align:center;width:50px;"><input type="checkbox" data-pp-bayar="${idx}" ${f.checked?'checked':''} ${isView?'disabled':''}></td>
       <td>${f.no}</td>
+      ${holding ? `<td>${f.customerNama||''}</td>` : ''}
       <td>${f.cabang||''}</td>
       <td>${f.tipeTransaksi||'Jual Kredit'}</td>
       <td>${f.tglFaktur||''}</td>
@@ -491,7 +511,7 @@ function tplPpFakturRows(fakturs, isView){
       <td>${ppNum2(f.kurs!=null?f.kurs:1)}</td>
       <td class="text-right">${ppNum2(f.reminder)}</td>
       <td style="width:130px;"><input type="text" data-pp-pembayaran="${idx}" value="${ppNum2(f.pembayaran)}" style="text-align:right;" ${(!f.checked||isView)?'disabled':''}></td>
-    </tr>` + (f.checked ? tplPpFakturDetailRow(f, idx, isView) : '')).join('');
+    </tr>` + (f.checked ? tplPpFakturDetailRow(f, idx, isView, nCols) : '')).join('');
 }
 
 /* Panel "Ada potongan Ppn?/Pph?" per baris faktur yang dicentang Bayar
@@ -499,12 +519,12 @@ function tplPpFakturRows(fakturs, isView){
    HANYA dirender kalau f.checked (faktur yang tidak sedang dilunasi
    tidak perlu diatur potongan pajaknya). colspan=10 sama seperti baris
    utamanya (10 kolom header tabel Lunasi Beberapa Faktur). */
-function tplPpFakturDetailRow(f, idx, isView){
+function tplPpFakturDetailRow(f, idx, isView, nCols){
   const dis = isView ? 'disabled' : '';
   const net = ppFakturNetPembayaran(f);
   return `
     <tr data-pp-detail-row="${idx}">
-      <td colspan="10" style="background:#f8fafc;padding:12px 16px;border-top:none;">
+      <td colspan="${nCols || 10}" style="background:#f8fafc;padding:12px 16px;border-top:none;">
         <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:center;">
           <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
             <input type="checkbox" data-pp-potongan-ppn="${idx}" ${f.potonganPpn?'checked':''} ${dis}> Ada potongan Ppn?
@@ -603,14 +623,29 @@ function tplPpJurnalContent(row, totals){
    Order). Bukan reuse fungsi lintas modul (lihat catatan "local copy"
    di header file ini).
 ===================================================================== */
-function tplPpCustomerPicker(list){
-  return `
+/* Param `holdingMode` (2026-08-28, fitur Pelunasan Piutang Terpusat):
+   true = judul jadi "Pilih Customer Pusat (Holding)" + kolom tambahan
+   "Cabang di Bawahnya" (nama-nama customer yang customerIndukKode-nya
+   menunjuk ke customer pusat itu) supaya user tahu cakupan pelunasan
+   sebelum memilih. List-nya sudah difilter di openPpCustomerPicker()
+   (hanya customer yang benar-benar jadi induk). */
+function tplPpCustomerPicker(list, holdingMode){
+  const title = holdingMode ? 'Pilih Customer Pusat (Holding)' : 'Pilih Customer';
+  if(!list.length){
+    return `
     <div class="modal-box" style="max-width:560px;">
-      <div class="modal-header"><span>Pilih Customer</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p style="color:var(--text-light);">Belum ada customer pusat — isi field "Customer Induk" pada master customer cabang terlebih dahulu.</p></div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+  }
+  return `
+    <div class="modal-box" style="max-width:${holdingMode?'680px':'560px'};">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
       <div class="modal-body">
         <div class="table-wrap" style="max-height:340px;overflow:auto;"><table>
-          <thead><tr><th>Kode</th><th>Nama Customer</th><th>Kota</th><th></th></tr></thead>
-          <tbody>${list.map(c=>`<tr><td>${c.kode}</td><td>${c.nama}</td><td>${c.kota}</td><td><button class="btn-pick" data-pick-customer="${c.kode}">Pilih</button></td></tr>`).join('')}</tbody>
+          <thead><tr><th>Kode</th><th>Nama Customer</th><th>Kota</th>${holdingMode?'<th>Cabang di Bawahnya</th>':''}<th></th></tr></thead>
+          <tbody>${list.map(c=>`<tr><td>${c.kode}</td><td>${c.nama}</td><td>${c.kota}</td>${holdingMode?`<td style="font-size:11.8px;">${ppChildrenOf(c.kode).map(x=>x.nama).join(', ')||'-'}</td>`:''}<td><button class="btn-pick" data-pick-customer="${c.kode}">Pilih</button></td></tr>`).join('')}</tbody>
         </table></div>
       </div>
       <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
