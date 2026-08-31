@@ -1214,6 +1214,39 @@ const DATA = {
       keterangan:'Pembayaran BG BANK MANDIRI No. BG 004512 Rp. 12.500.000 jatuh tempo 20/09/26 - PT WILMAR NABATI INDONESIA'},
   ],
 
+  /* Rekonsiliasi — menu Kas/Bank > Daftar Transaksi > Rekonsiliasi
+     (lihat js/pages/rekonsiliasi.*). 1 baris = 1 rekonsiliasi bank per
+     bulan: `bankKode` menaut ke DATA.kasBank (Saldo Awal dari saldo
+     rekening itu), `items[]` = Rincian Rekonsiliasi (baris ditarik
+     dari Transaksi Kas / Pelunasan Utang / Penerimaan Piutang lewat
+     3 tombol di form; `cek` = sudah dicocokkan dgn rekening koran).
+     Aritmetika: rekeningKoran = saldoAwal + total semua baris;
+     Rekonsiliasi = total baris tercentang; Selisih = 0 begitu semua
+     tercentang. No. format screenshot "{urut}/{bank} /{lokasi}/
+     {romawi bulan}/2026". 3 baris sample Bank BCA HO Juni-Agustus
+     2026 (data screenshot instalasi SDL/94 baris tidak direplikasi). */
+  rekonsiliasi:[
+    {no:'03/BCA /HO/VIII/2026', bankKode:'110107', mataUang:'IDR', bulanIdx:7, tgl:'31/08/2026', tglRekonIso:'2026-08-31T08:18:03',
+      saldoAwal:210000000, rekeningKoran:210041311,
+      items:[
+        {tglBank:'01/08/2026', noTransaksi:'26/CL-HO/08/00043', keterangan:'Biaya jasa VA Tgl 01/08/2026', kurs:1, terima:0, keluar:13626, cek:true},
+        {tglBank:'01/08/2026', noTransaksi:'26/CL-HO/08/00044', keterangan:'Admin Kliring', kurs:1, terima:0, keluar:2000, cek:true},
+        {tglBank:'02/08/2026', noTransaksi:'26/CL-HO/08/00011', keterangan:'Terima Piutang 26/SI/HO/08/00002 TOKO FAMILY MART JAYA', kurs:1, terima:56937, cek:true, keluar:0},
+      ]},
+    {no:'02/BCA /HO/VII/2026', bankKode:'110107', mataUang:'IDR', bulanIdx:6, tgl:'31/07/2026', tglRekonIso:'2026-07-31T06:39:39',
+      saldoAwal:209600000, rekeningKoran:210000000,
+      items:[
+        {tglBank:'15/07/2026', noTransaksi:'26/CL-HO/07/00021', keterangan:'Terima Piutang pelanggan HO', kurs:1, terima:415000, keluar:0, cek:true},
+        {tglBank:'20/07/2026', noTransaksi:'26/CL-HO/07/00034', keterangan:'Admin bank bulanan', kurs:1, terima:0, keluar:15000, cek:true},
+      ]},
+    {no:'01/BCA /HO/VI/2026', bankKode:'110107', mataUang:'IDR', bulanIdx:5, tgl:'30/06/2026', tglRekonIso:'2026-06-30T03:44:41',
+      saldoAwal:209104000, rekeningKoran:209600000,
+      items:[
+        {tglBank:'10/06/2026', noTransaksi:'26/CL-HO/06/00017', keterangan:'Terima Piutang pelanggan HO', kurs:1, terima:510000, keluar:0, cek:true},
+        {tglBank:'28/06/2026', noTransaksi:'26/CL-HO/06/00029', keterangan:'Admin bank bulanan', kurs:1, terima:0, keluar:14000, cek:true},
+      ]},
+  ],
+
   /* Pembelian Aktiva Tetap — menu Aktiva Tetap > Daftar Transaksi >
      Pembelian Aktiva Tetap (lihat js/pages/pembelian-aktiva-tetap.*).
      1 baris = 1 dokumen pembelian aset: `items[]` = tabel Rincian
@@ -1225,6 +1258,354 @@ const DATA = {
      No. format screenshot "26/FAB/{kode cabang}/08/{urut}".
      Screenshot list kosong — 2 baris sample supaya list & form
      Lihat langsung ada isinya. */
+
+  /* ===== Uang Muka Supplier (Supplier & Pembelian > Daftar
+     Transaksi > Uang Muka Supplier) — DP/tagihan uang muka ke
+     supplier, dibuat dari PO (barang PO jadi baris Rincian
+     Transaksi). Aritmetika: subtotal = total jumlah baris; DP
+     ditagih = subtotal x % (editable); DPP = DP ditagih; PPN 11%
+     DPP (mode eksklusif); PPh dipotong mengurangi; Jumlah = DPP +
+     PPN - PPh. jurnalAkun[] hasil "Buat Jurnal": D 1140001 Uang
+     Muka Pembelian (DPP) + D 1140002 PPN Masukan lawan K 2110001
+     Hutang Usaha (Jumlah) + K 1140003 bila ada PPh. No. format
+     "26/UMS-{kode cabang}/08/{urut 5 digit}". 2 baris sample
+     terkait PO DBM yang sudah ada di DATA.purchaseOrder. */
+
+  /* ===== Permintaan Pembelian / PR (Supplier & Pembelian > Daftar
+     Transaksi > Permintaan Pembelian) — juga dipakai menu Tutup PR
+     (flag tutupPr: tombol Tutup Request / Buka Request) dan kolom
+     Status dari flag dipakaiPO. 2 baris Agustus 2026 (chip default
+     list PR -> Total Record: 2 persis screenshot) + 7 baris periode
+     lama supaya list Tutup PR berisi 9 record lintas bulan/tahun
+     persis screenshot. No. format "26/PR-{kode cabang}/{MM}/{urut
+     5 digit}". Rincian: Nama Barang textarea bebas (spesifikasi
+     panjang, contoh Forklift screenshot). */
+
+  /* ===== Retur Penerimaan Barang / Retur PB (Supplier & Pembelian
+     > Daftar Transaksi > Retur PB) — retur barang atas penerimaan
+     BPB (DATA.pembelianBPB): Qty Terima dari BPB, user mengisi Qty
+     Retur. No. urut GLOBAL "26/RPB-{10 digit}" (bukan per cabang,
+     persis screenshot). Flag adaTagihan utk chip filter list (All /
+     Ada Tagihan / Belum Ditagih). Nilai jurnal = qtyRetur x
+     hargaBeli (+PPN 11% bila BPB eksklusif): D Hutang Usaha lawan
+     K Persediaan + K PPN Masukan. 2 baris sample terkait BPB DBM. */
+
+  /* ===== Pembelian Langsung (Supplier & Pembelian > Daftar
+     Transaksi > Pembelian Langsung) — faktur pembelian TANPA
+     PO/BPB (jasa & barang non-stock; Kode Barang boleh kosong).
+     Tipe Transaksi list dari Syarat Bayar (Kredit -> Pembelian
+     Kredit, COD/CBD -> Pembelian Tunai); tombol Hapus di list
+     NONAKTIF bila pembayaran > 0 (persis screenshot). No. faktur
+     26/PU/{kode cabang}/08/{urut} (generator ikut menghitung PU
+     milik Pembelian Melalui BPB agar tidak bentrok). Aritmetika
+     & jurnal: lihat header js/pages/pembelian-langsung.js.
+     5 baris sample DBM: 2 belum dibayar penuh Tangerang, 3
+     Semarang (2 sudah lunas -> Hapus nonaktif). */
+
+  /* ===== Pembelian dari PO (Supplier & Pembelian > Daftar
+     Transaksi > Pembelian dari PO) — faktur pembelian yang dibuat
+     DARI Purchase Order (DATA.purchaseOrder): header & barang ikut
+     PO, per baris Qty. Pesan readonly, Qty (difakturkan) editable
+     <= Qty Pesan, Qty. Belum Terima = selisihnya. Aritmetika &
+     jurnal = pola Pembelian Langsung (lihat header js/pages/
+     pembelian-po.js). Hapus di list NONAKTIF bila pembayaran > 0.
+     No. 26/PU/{kode}/08/{urut} — berbagi urutan dengan Pembelian
+     Melalui BPB & Pembelian Langsung. 2 baris sample dari PO DBM
+     (1 lunas -> Hapus nonaktif). */
+
+  /* ===== Pengajuan Pembayaran (Supplier & Pembelian > Daftar
+     Transaksi > Pengajuan Pembayaran) — usulan pembayaran hutang
+     ke supplier: pilih supplier, centang faktur outstanding-nya
+     (gabungan Pembelian Melalui BPB + Pembelian Langsung +
+     Pembelian dari PO yang sisa > 0), isi Pembayaran per faktur
+     (di-clamp <= sisa) + Reminder. No. "PYR/{kode cabang}/2608
+     {urut 4 digit}" — dropdown No. Otomatis PY{kode} memilih
+     counter cabang. 2 baris sample terkait faktur DBM yang
+     masih outstanding. */
+
+  /* ===== Master Berat Produk (Persediaan Barang > Master &
+     Setting > Berat Produk) — konversi isi box, berat (Kg) dan
+     dimensi (cm) per barang; volume form = P x L x T / 1.000.000
+     m3, kolom list "Volume m3" menampilkan nilai cm3 (quirk layar
+     MASERP asli, direplikasi). Satu baris per kode barang —
+     barang yang sudah ada tidak muncul lagi di picker Tambah. */
+  beratProduk:[
+    {kode:'BRG-001', konversi:6, berat:12.5, panjang:32, lebar:24, tinggi:28},
+    {kode:'BRG-002', konversi:1, berat:50, panjang:80, lebar:50, tinggi:15},
+    {kode:'BRG-003', konversi:1, berat:5, panjang:40, lebar:25, tinggi:10},
+    {kode:'BRG-004', konversi:20, berat:20.4, panjang:45, lebar:35, tinggi:22},
+    {kode:'BRG-005', konversi:40, berat:3.8, panjang:54, lebar:33, tinggi:18},
+    {kode:'BRG-006', konversi:12, berat:9.6, panjang:38, lebar:26, tinggi:24},
+  ],
+
+  pengajuanPembayaran:[
+    {no:'PYR/HO/26080002', kodeCabang:'HO', supplier:'PT Sumber Pangan Nusantara', tgl:'25/08/2026',
+      keterangan:'Pengajuan pembayaran faktur minyak goreng jatuh tempo Oktober',
+      fakturs:[
+        {noFaktur:'26/PU/HO/08/00005', tglFaktur:'12/08/2026', tglJthTempo:'11/10/2026', kurs:1, reminder:'05/10/2026', dipilih:true, pembayaran:5258250, sisa:5258250},
+      ],
+      jumlah:5258250, userInput:'sidik', tglInput:'25/08/2026 09:35:18'},
+    {no:'PYR/TGR/26080001', kodeCabang:'TGR', supplier:'CV Karya Abadi', tgl:'18/08/2026',
+      keterangan:'Pengajuan pembayaran tiket perjalanan dinas Agustus',
+      fakturs:[
+        {noFaktur:'26/PU/TGR/08/00002', tglFaktur:'10/08/2026', tglJthTempo:'24/08/2026', kurs:1, reminder:'22/08/2026', dipilih:true, pembayaran:4908000, sisa:4908000},
+      ],
+      jumlah:4908000, userInput:'sidik', tglInput:'18/08/2026 14:02:51'},
+  ],
+
+  pembelianPO:[
+    {no:'26/PU/HO/08/00006', cabang:'Head Office', noPO:'26/PO/HO/08/00010',
+      supplier:'PT Wilmar Nabati Indonesia', supplierNoFaktur:'INV/WNI/08/0090',
+      tglFaktur:'20/08/2026', syaratBayar:'Kredit 45 Hari', tglJthTempo:'04/10/2026',
+      gudang:'Gudang Utama-HO', jurnal:'JURNAL PEMBELIAN KREDIT (IDR)',
+      alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung',
+      keterangan:'Faktur penuh PO gula pasir stok Jabar', kurs:1, ppnMode:'eksklusif',
+      diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0,
+      dpp:7350000, pajak11:'PPN11', ppnAmount:808500, pphKode:'', pphPersen:0, pphAmount:0,
+      ongkosAngkut:0, jumlahTotal:8158500, sisaJumlah:0, pembayaran:8158500,
+      uangMukaTipe:'Oldest', sisaUangMuka:4079250, uangMukaPakai:0, jurnalMode:'otomatis',
+      items:[
+        {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', batch:'GP-2607-114', qtyPesan:500, qty:500, satuan:'Karung', hargaBeli:15000, feeDistribusi:2, budgetDiskon:0, totalDisc:2, discBarang:150000, jumlah:7350000},
+      ],
+      jurnalAkun:[
+        {kodeAkun:'1130001', namaAkun:'Persediaan', keterangan:'26/PO/HO/08/00010', debit:7350000, kredit:0},
+        {kodeAkun:'1140002', namaAkun:'PPN Masukan', keterangan:'26/PO/HO/08/00010', debit:808500, kredit:0},
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'26/PO/HO/08/00010', debit:0, kredit:8158500},
+      ],
+      userInput:'sidik', tglInput:'20/08/2026 13:05:27'},
+    {no:'26/PU/HO/08/00005', cabang:'Head Office', noPO:'26/PO/HO/08/00011',
+      supplier:'PT Sumber Pangan Nusantara', supplierNoFaktur:'INV/SPN/08/0244',
+      tglFaktur:'12/08/2026', syaratBayar:'Kredit 60 Hari', tglJthTempo:'11/10/2026',
+      gudang:'Gudang Utama-HO', jurnal:'JURNAL PEMBELIAN KREDIT (IDR)',
+      alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur',
+      keterangan:'Faktur penuh PO minyak goreng sembako gudang utama', kurs:1, ppnMode:'eksklusif',
+      diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0,
+      dpp:4750000, pajak11:'PPN11', ppnAmount:522500, pphKode:'PPH 22 (0.3)', pphPersen:0.3, pphAmount:14250,
+      ongkosAngkut:0, jumlahTotal:5258250, sisaJumlah:5258250, pembayaran:0,
+      uangMukaTipe:'Oldest', sisaUangMuka:5258250, uangMukaPakai:0, jurnalMode:'otomatis',
+      items:[
+        {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', batch:'MG-2608-021', qtyPesan:200, qty:200, satuan:'Dus', hargaBeli:25000, feeDistribusi:5, budgetDiskon:0, totalDisc:5, discBarang:250000, jumlah:4750000},
+      ],
+      jurnalAkun:[
+        {kodeAkun:'1130001', namaAkun:'Persediaan', keterangan:'26/PO/HO/08/00011', debit:4750000, kredit:0},
+        {kodeAkun:'1140002', namaAkun:'PPN Masukan', keterangan:'26/PO/HO/08/00011', debit:522500, kredit:0},
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'26/PO/HO/08/00011', debit:0, kredit:5258250},
+        {kodeAkun:'1140003', namaAkun:'Uang Muka PPH 22', keterangan:'PPh dipotong PPH 22 (0.3)', debit:0, kredit:14250},
+      ],
+      userInput:'sidik', tglInput:'12/08/2026 10:47:52'},
+  ],
+
+  pembelianLangsung:[
+    {no:'26/PU/TGR/08/00002', cabang:'Tangerang', supplier:'CV Karya Abadi', supplierNoFaktur:'546',
+      tglFaktur:'10/08/2026', syaratBayar:'Kredit 14 Hari', tglJthTempo:'24/08/2026',
+      gudang:'Non Stock Tangerang', jurnal:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'',
+      penerimaanKonsinyasi:false,
+      keterangan:'Raynaldy Kent & Sarah Aulia / CGK - SUB / 07 Agustus 2026; Suhaeni / SUB - CGK / 01 Juli 2026',
+      kurs:1, ppnMode:'tidak', diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0,
+      dpp:4908000, pajak11:'', ppnAmount:0, pphKode:'', pphPersen:0, pphAmount:0,
+      ongkosAngkut:0, jumlahTotal:4908000, sisaJumlah:4908000, pembayaran:0,
+      uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, jurnalMode:'otomatis',
+      items:[
+        {kode:'', nama:'Tiket perjalanan dinas Raynaldy Kent & Sarah Aulia / CGK - SUB / 07 Agustus 2026', batch:'', qty:1, satuan:'UNIT', hargaBeli:3348000, feeDistribusi:0, budgetDiskon:0, totalDisc:0, discBarang:0, jumlah:3348000},
+        {kode:'', nama:'Tiket perjalanan dinas Suhaeni / SUB - CGK / 01 Juli 2026', batch:'', qty:1, satuan:'UNIT', hargaBeli:1560000, feeDistribusi:0, budgetDiskon:0, totalDisc:0, discBarang:0, jumlah:1560000},
+      ],
+      jurnalAkun:[
+        {kodeAkun:'5210002', namaAkun:'Biaya Transportasi & Logistik', keterangan:'546', debit:4908000, kredit:0},
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'546', debit:0, kredit:4908000},
+      ],
+      userInput:'sidik', tglInput:'10/08/2026 10:22:31'},
+    {no:'26/PU/TGR/08/00001', cabang:'Tangerang', supplier:'UD Sumber Makmur', supplierNoFaktur:'INV/USM/08/117',
+      tglFaktur:'01/08/2026', syaratBayar:'Kredit 30 Hari', tglJthTempo:'31/08/2026',
+      gudang:'Non Stock Tangerang', jurnal:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'',
+      penerimaanKonsinyasi:false, keterangan:'Sewa tenda & perlengkapan event pasar murah Tangerang',
+      kurs:1, ppnMode:'tidak', diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0,
+      dpp:3270000, pajak11:'', ppnAmount:0, pphKode:'', pphPersen:0, pphAmount:0,
+      ongkosAngkut:0, jumlahTotal:3270000, sisaJumlah:3270000, pembayaran:0,
+      uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, jurnalMode:'otomatis',
+      items:[
+        {kode:'', nama:'Sewa tenda + meja kursi event pasar murah (3 hari)', batch:'', qty:1, satuan:'UNIT', hargaBeli:3270000, feeDistribusi:0, budgetDiskon:0, totalDisc:0, discBarang:0, jumlah:3270000},
+      ],
+      jurnalAkun:[
+        {kodeAkun:'5210002', namaAkun:'Biaya Transportasi & Logistik', keterangan:'INV/USM/08/117', debit:3270000, kredit:0},
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'INV/USM/08/117', debit:0, kredit:3270000},
+      ],
+      userInput:'sidik', tglInput:'01/08/2026 09:05:12'},
+    {no:'26/PU/SMG/08/00003', cabang:'Semarang', supplier:'CV Distribusi Sentosa', supplierNoFaktur:'HTL/0821',
+      tglFaktur:'21/08/2026', syaratBayar:'Kredit 14 Hari', tglJthTempo:'04/09/2026',
+      gudang:'Non Stock Semarang', jurnal:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'',
+      penerimaanKonsinyasi:false, keterangan:'Akomodasi hotel kunjungan audit gudang Semarang',
+      kurs:1, ppnMode:'tidak', diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0,
+      dpp:490000, pajak11:'', ppnAmount:0, pphKode:'', pphPersen:0, pphAmount:0,
+      ongkosAngkut:0, jumlahTotal:490000, sisaJumlah:490000, pembayaran:0,
+      uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, jurnalMode:'otomatis',
+      items:[
+        {kode:'', nama:'Kamar hotel 1 malam (audit gudang Semarang)', batch:'', qty:1, satuan:'UNIT', hargaBeli:490000, feeDistribusi:0, budgetDiskon:0, totalDisc:0, discBarang:0, jumlah:490000},
+      ],
+      jurnalAkun:[
+        {kodeAkun:'5210002', namaAkun:'Biaya Transportasi & Logistik', keterangan:'HTL/0821', debit:490000, kredit:0},
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'HTL/0821', debit:0, kredit:490000},
+      ],
+      userInput:'sidik', tglInput:'21/08/2026 14:41:09'},
+    {no:'26/PU/SMG/08/00002', cabang:'Semarang', supplier:'PT Mayora Distribusi', supplierNoFaktur:'INV/MYR/08/0552',
+      tglFaktur:'03/08/2026', syaratBayar:'Kredit 30 Hari', tglJthTempo:'02/09/2026',
+      gudang:'Gudang Semarang', jurnal:'JURNAL PEMBELIAN KREDIT (IDR)', alamatPengiriman:'Gudang Semarang',
+      penerimaanKonsinyasi:false, keterangan:'Pembelian langsung stok biskuit promo Agustus',
+      kurs:1, ppnMode:'eksklusif', diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0,
+      dpp:5770590.1, pajak11:'PPN11', ppnAmount:634764.91, pphKode:'', pphPersen:0, pphAmount:0,
+      ongkosAngkut:0, jumlahTotal:6405355.01, sisaJumlah:0, pembayaran:6405355.01,
+      uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, jurnalMode:'otomatis',
+      items:[
+        {kode:'BRG-005', nama:'Mie Instan Indomie Goreng (karton promo)', batch:'MI-2608-07', qty:415, satuan:'Dus', hargaBeli:13905, feeDistribusi:0, budgetDiskon:0, totalDisc:0, discBarang:0, jumlah:5770575},
+      ],
+      jurnalAkun:[
+        {kodeAkun:'1130001', namaAkun:'Persediaan', keterangan:'INV/MYR/08/0552', debit:5770590.1, kredit:0},
+        {kodeAkun:'1140002', namaAkun:'PPN Masukan', keterangan:'INV/MYR/08/0552', debit:634764.91, kredit:0},
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'INV/MYR/08/0552', debit:0, kredit:6405355.01},
+      ],
+      userInput:'sidik', tglInput:'03/08/2026 08:55:47'},
+    {no:'26/PU/SMG/08/00001', cabang:'Semarang', supplier:'PT Indofood Distribusi', supplierNoFaktur:'INV/IDF/08/0031',
+      tglFaktur:'01/08/2026', syaratBayar:'CBD', tglJthTempo:'01/08/2026',
+      gudang:'Non Stock Semarang', jurnal:'JURNAL PEMBELIAN CBD (IDR)', alamatPengiriman:'',
+      penerimaanKonsinyasi:false, keterangan:'Pembelian tunai sample produk baru utk tim sales',
+      kurs:1, ppnMode:'tidak', diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0,
+      dpp:2158200, pajak11:'', ppnAmount:0, pphKode:'', pphPersen:0, pphAmount:0,
+      ongkosAngkut:0, jumlahTotal:2158200, sisaJumlah:0, pembayaran:2158200,
+      uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0, jurnalMode:'otomatis',
+      items:[
+        {kode:'', nama:'Sample produk baru (paket display sales)', batch:'', qty:1, satuan:'Pack', hargaBeli:2158200, feeDistribusi:0, budgetDiskon:0, totalDisc:0, discBarang:0, jumlah:2158200},
+      ],
+      jurnalAkun:[
+        {kodeAkun:'5210002', namaAkun:'Biaya Transportasi & Logistik', keterangan:'INV/IDF/08/0031', debit:2158200, kredit:0},
+        {kodeAkun:'1100002', namaAkun:'Kas Besar', keterangan:'INV/IDF/08/0031', debit:0, kredit:2158200},
+      ],
+      userInput:'sidik', tglInput:'01/08/2026 11:14:26'},
+  ],
+
+  returPenerimaanBarang:[
+    {no:'26/RPB-0000000002', noBPB:'26/BPB/HO/08/00002', noPO:'26/PO/HO/08/00010',
+      tglPO:'21/08/2026', tglRetur:'24/08/2026', cabang:'Head Office',
+      supplier:'PT Wilmar Nabati Indonesia', noSJSupplier:'SJ/WNI/08/0102',
+      alamatPengiriman:'Jl. Ir. H. Juanda No. 88, Bandung',
+      penerimaanKonsinyasi:false, keterangan:'Retur 20 karung gula pasir — karung sobek & lembab saat diterima',
+      kurs:1, ppnMode:'eksklusif', adaTagihan:false,
+      items:[
+        {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', batch:'GP-2607-114', barcode:'8992761002102', satuan:'Karung', qtyRetur:20, qtyTerima:500, hargaBeli:15000},
+      ],
+      jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'Retur PB 26/BPB/HO/08/00002', debit:333000, kredit:0},
+        {kodeAkun:'1130001', namaAkun:'Persediaan', keterangan:'Retur PB 26/BPB/HO/08/00002', debit:0, kredit:300000},
+        {kodeAkun:'1140002', namaAkun:'PPN Masukan', keterangan:'Retur PB 26/BPB/HO/08/00002', debit:0, kredit:33000},
+      ],
+      userInput:'sidik', tglInput:'24/08/2026 11:26:40'},
+    {no:'26/RPB-0000000001', noBPB:'26/BPB/HO/08/00001', noPO:'26/PO/HO/08/00011',
+      tglPO:'09/08/2026', tglRetur:'12/08/2026', cabang:'Head Office',
+      supplier:'PT Sumber Pangan Nusantara', noSJSupplier:'SJ/SPN/08/0231',
+      alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur',
+      penerimaanKonsinyasi:false, keterangan:'Retur 10 dus minyak goreng — kemasan bocor (kerusakan ekspedisi)',
+      kurs:1, ppnMode:'eksklusif', adaTagihan:true,
+      items:[
+        {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', batch:'MG-2608-021', barcode:'8993115331207', satuan:'Dus', qtyRetur:10, qtyTerima:200, hargaBeli:25000},
+      ],
+      jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'Retur PB 26/BPB/HO/08/00001', debit:277500, kredit:0},
+        {kodeAkun:'1130001', namaAkun:'Persediaan', keterangan:'Retur PB 26/BPB/HO/08/00001', debit:0, kredit:250000},
+        {kodeAkun:'1140002', namaAkun:'PPN Masukan', keterangan:'Retur PB 26/BPB/HO/08/00001', debit:0, kredit:27500},
+      ],
+      userInput:'sidik', tglInput:'12/08/2026 09:48:15'},
+  ],
+
+  permintaanPembelian:[
+    {no:'26/PR-HO/08/00001', tgl:'19/08/2026', cabang:'Head Office', approvedBy:'',
+      keterangan:'Untuk kebutuhan Pendukung Aktifitas Pemindahan barang dan Bongkar Muat Barang di Warehouse PT Distriversa Buanamas Cabang Semarang',
+      gudang:'Non Stock Head Office', dipakaiPO:false, tutupPr:false,
+      items:[
+        {kode:'AK-00075', nama:'Forklift :\nVery Narrow Aisle\nMerk NIULI\nKapasitas 2 Ton, Tinggi Angkat 3 Meter', qty:1, um:'UNIT', hargaBeli:0, tglPerlu:'01/09/2026'},
+      ],
+      userInput:'sidik', tglInput:'19/08/2026 09:14:22'},
+    {no:'26/PR-HO/08/00002', tgl:'26/08/2026', cabang:'Head Office', approvedBy:'',
+      keterangan:'Farizon F3E (V3E Super Cargo) Electric Pick-up\nSupplier: Farizon Indonesia Dealer\nBattery: Lithium Iron Phosphate\nMax Power / Torque: 110 kW / 260 Nm\nCargo Length: 3.7 meters\nPayload Capacity: Up to 2,000 kg\nCharging: DC Fast Charging 100 kW',
+      gudang:'Non Stock Head Office', dipakaiPO:false, tutupPr:false,
+      items:[
+        {kode:'AK-00082', nama:'Farizon F3E (V3E Super Cargo) Electric Pick-up\nBattery: Lithium Iron Phosphate\nMax Power / Torque: 110 kW / 260 Nm\nCargo Length: 3.7 m, Payload: 2.000 kg', qty:1, um:'UNIT', hargaBeli:0, tglPerlu:'15/09/2026'},
+      ],
+      userInput:'sidik', tglInput:'26/08/2026 13:40:05'},
+    {no:'26/PR-HO/07/00001', tgl:'02/07/2026', cabang:'Head Office', approvedBy:'',
+      keterangan:'Kebutuhan ATK dan supplies kantor Head Office periode Juli 2026',
+      gudang:'Non Stock Head Office', dipakaiPO:false, tutupPr:false,
+      items:[{kode:'', nama:'ATK & supplies kantor (paket bulanan)', qty:1, um:'Pack', hargaBeli:1500000, tglPerlu:'10/07/2026'}],
+      userInput:'sidik', tglInput:'02/07/2026 08:30:00'},
+    {no:'26/PR-HO/06/00002', tgl:'08/06/2026', cabang:'Head Office', approvedBy:'',
+      keterangan:'Penggantian rak penyimpanan Gudang Utama-HO (5 unit heavy duty rack)',
+      gudang:'Non Stock Head Office', dipakaiPO:false, tutupPr:false,
+      items:[{kode:'', nama:'Heavy Duty Rack 4 tingkat, kapasitas 1 ton/level', qty:5, um:'UNIT', hargaBeli:4500000, tglPerlu:'22/06/2026'}],
+      userInput:'sidik', tglInput:'08/06/2026 10:05:41'},
+    {no:'26/PR-HO/06/00003', tgl:'17/06/2026', cabang:'Head Office', approvedBy:'',
+      keterangan:'Pembelian timbangan digital gudang untuk QC penerimaan barang',
+      gudang:'Non Stock Head Office', dipakaiPO:false, tutupPr:false,
+      items:[{kode:'', nama:'Timbangan digital platform 500 kg', qty:2, um:'UNIT', hargaBeli:3250000, tglPerlu:'30/06/2026'}],
+      userInput:'sidik', tglInput:'17/06/2026 14:12:19'},
+    {no:'26/PR-HO/01/00009', tgl:'21/01/2026', cabang:'Head Office', approvedBy:'Manager Pembelian',
+      keterangan:'Pengadaan seragam dan APD tim gudang 2026 (dibatalkan - anggaran dialihkan)',
+      gudang:'Non Stock Head Office', dipakaiPO:false, tutupPr:true,
+      items:[{kode:'', nama:'Seragam + APD tim gudang (paket)', qty:40, um:'Pack', hargaBeli:350000, tglPerlu:'10/02/2026'}],
+      userInput:'sidik', tglInput:'21/01/2026 09:55:03'},
+    {no:'25/PR-HO/11/00001', tgl:'05/11/2025', cabang:'Head Office', approvedBy:'',
+      keterangan:'Perbaikan dan sparepart hand pallet gudang (roda + hydraulic seal kit)',
+      gudang:'Non Stock Head Office', dipakaiPO:false, tutupPr:false,
+      items:[{kode:'', nama:'Sparepart hand pallet: roda PU + seal kit hydraulic', qty:6, um:'Pack', hargaBeli:850000, tglPerlu:'20/11/2025'}],
+      userInput:'sidik', tglInput:'05/11/2025 11:20:37'},
+    {no:'25/PR-HO/08/00002', tgl:'14/08/2025', cabang:'Head Office', approvedBy:'',
+      keterangan:'Pembelian AC split 2 PK untuk ruang server dan ruang meeting HO',
+      gudang:'Non Stock Head Office', dipakaiPO:false, tutupPr:false,
+      items:[{kode:'', nama:'AC Split 2 PK inverter', qty:3, um:'UNIT', hargaBeli:7200000, tglPerlu:'29/08/2025'}],
+      userInput:'sidik', tglInput:'14/08/2025 15:44:58'},
+    {no:'25/PR-HO/04/00002', tgl:'09/04/2025', cabang:'Head Office', approvedBy:'',
+      keterangan:'Pengadaan CCTV tambahan area loading dock Gudang Utama-HO',
+      gudang:'Non Stock Head Office', dipakaiPO:false, tutupPr:false,
+      items:[{kode:'', nama:'CCTV outdoor 4MP + instalasi (8 titik)', qty:8, um:'UNIT', hargaBeli:1250000, tglPerlu:'25/04/2025'}],
+      userInput:'sidik', tglInput:'09/04/2025 10:02:14'},
+  ],
+
+  uangMukaSupplier:[
+    {no:'26/UMS-HO/08/00002', tgl:'27/08/2026', cabang:'Head Office',
+      supplier:'PT Wilmar Nabati Indonesia', noPO:'26/PO/HO/08/00010',
+      keterangan:'DP 50% gula pasir - transfer via bank BCA', syaratBayar:'Kredit 45 Hari',
+      tglJthTempo:'11/10/2026', jurnal:'JURNAL PEMBELIAN KREDIT (IDR)',
+      ppnMode:'eksklusif', tglFakturPajak:'27/08/2026', tanpaFakturPajak:false,
+      noFakturPajak:'0100002608000102', noKmk:'', tglKmk:'',
+      dpPersen:50, pphKode:'', pphPersen:0,
+      items:[
+        {keterangan:'Gula Pasir Gulaku 1kg', qty:500, jumlah:7350000},
+      ],
+      subtotal:7350000, dpAmount:3675000, dpp:3675000, dpTertagih:0,
+      pajak11:'PPN11', ppnAmount:404250, pphAmount:0, jumlahTotal:4079250,
+      jurnalAkun:[
+        {kodeAkun:'1140001', namaAkun:'Uang Muka Pembelian', keterangan:'Uang Muka 26/PO/HO/08/00010', debit:3675000, kredit:0},
+        {kodeAkun:'1140002', namaAkun:'PPN Masukan', keterangan:'Uang Muka 26/PO/HO/08/00010', debit:404250, kredit:0},
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'Uang Muka 26/PO/HO/08/00010', debit:0, kredit:4079250},
+      ],
+      tglInput:'27/08/2026 10:12:40', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/UMS-HO/08/00001', tgl:'20/08/2026', cabang:'Head Office',
+      supplier:'PT Sumber Pangan Nusantara', noPO:'26/PO/HO/08/00011',
+      keterangan:'di transfer via bank BCA', syaratBayar:'Kredit 30 Hari',
+      tglJthTempo:'19/09/2026', jurnal:'JURNAL PEMBELIAN KREDIT (IDR)',
+      ppnMode:'eksklusif', tglFakturPajak:'20/08/2026', tanpaFakturPajak:false,
+      noFakturPajak:'0100002608000088', noKmk:'', tglKmk:'',
+      dpPersen:100, pphKode:'PPH 22 (0.3)', pphPersen:0.3,
+      items:[
+        {keterangan:'Minyak Goreng Sunco 2L', qty:200, jumlah:4750000},
+      ],
+      subtotal:4750000, dpAmount:4750000, dpp:4750000, dpTertagih:0,
+      pajak11:'PPN11', ppnAmount:522500, pphAmount:14250, jumlahTotal:5258250,
+      jurnalAkun:[
+        {kodeAkun:'1140001', namaAkun:'Uang Muka Pembelian', keterangan:'Uang Muka 26/PO/HO/08/00011', debit:4750000, kredit:0},
+        {kodeAkun:'1140002', namaAkun:'PPN Masukan', keterangan:'Uang Muka 26/PO/HO/08/00011', debit:522500, kredit:0},
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'Uang Muka 26/PO/HO/08/00011', debit:0, kredit:5258250},
+        {kodeAkun:'1140003', namaAkun:'Uang Muka PPH 22', keterangan:'PPh dipotong PPH 22 (0.3)', debit:0, kredit:14250},
+      ],
+      tglInput:'20/08/2026 14:35:12', userInput:'sidik', tglEdit:'', userEdit:''},
+  ],
+
   pembelianAktivaTetap:[
     {no:'26/FAB/HO/08/00001', cabang:'Head Office', tgl:'20/08/2026',
       syaratBayar:'Kredit 30 Hari', tglJthTempo:'19/09/2026', tipeTransaksi:'Beli Kredit',

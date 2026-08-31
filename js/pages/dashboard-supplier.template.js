@@ -26,11 +26,11 @@ function tplSupplierDashboard(){
           <div class="flow-arrow" style="grid-column:4;grid-row:1;">&#8594;</div>
           <div class="flow-step" data-nav="pembelianBPB" data-title="Pembelian Melalui BPB" style="grid-column:5;grid-row:1;"><div class="flow-box quick">${icon('card',28)}</div><div class="flow-label">Faktur Pembelian</div></div>
 
-          <div class="flow-step" data-nav="placeholder" data-title="Pembelian dari PO" style="grid-column:5;grid-row:2;"><div class="flow-box quick">${icon('cart',28)}</div><div class="flow-label">Pembelian dari PO</div></div>
+          <div class="flow-step" data-nav="pembelianPO" data-title="Pembelian dari PO" style="grid-column:5;grid-row:2;"><div class="flow-box quick">${icon('cart',28)}</div><div class="flow-label">Pembelian dari PO</div></div>
           <div class="flow-arrow" style="grid-column:6;grid-row:2;">&#8594;</div>
           <div class="flow-step" data-nav="pelunasanUtang" data-title="Pelunasan Utang" style="grid-column:7;grid-row:2;"><div class="flow-box quick">${icon('cash',28)}</div><div class="flow-label">Pelunasan Utang</div></div>
 
-          <div class="flow-step" data-nav="placeholder" data-title="Pembelian Langsung" style="grid-column:5;grid-row:3;"><div class="flow-box quick">${icon('cart',28)}</div><div class="flow-label">Pembelian Langsung</div></div>
+          <div class="flow-step" data-nav="pembelianLangsung" data-title="Pembelian Langsung" style="grid-column:5;grid-row:3;"><div class="flow-box quick">${icon('cart',28)}</div><div class="flow-label">Pembelian Langsung</div></div>
 
           <div class="flow-step" data-nav="masterSupplier" data-title="Supplier" style="grid-column:1;grid-row:3;"><div class="flow-box quick">${icon('users',28)}</div><div class="flow-label">Daftar Supplier</div></div>
         </div>
