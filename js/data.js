@@ -900,6 +900,463 @@ const DATA = {
     {kode:'5025', nama:'CV Anugerah Logistik', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'', crc:'IDR', mataUang:'IDR', wilayah:'Tangerang', supplierGroup:'VND000', telp:'021-5443322', fax:'', email:'ops@anugerahlogistik.co.id', kontak:'Bpk. Fikri', status:'Aktif', syaratBayar:'N14', npwp:'01.234.567.8-901.009', batasKredit:20000000, provinsi:'Banten', kabupaten:'Tangerang', kecamatan:'Cipondoh', kelurahan:'Petir', typePpn:'Non PKP', typePph:'Tidak Ada', kodePos:'15148', alamat:'Jl. Daan Mogot Km. 15, Tangerang', integration:false, integrationFreeStock:false, uangMuka:0, saldoUtang:0, pusatBisnis:[], akunGlUtang:'2-1000 Hutang Usaha - Supplier'},
     {kode:'5026', nama:'PT Roda Mas Trading', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'', crc:'IDR', mataUang:'IDR', wilayah:'Cirebon', supplierGroup:'VND001', telp:'0231-556677', fax:'0231-556678', email:'trading@rodamas.co.id', kontak:'Ibu Melinda', status:'Aktif', syaratBayar:'N30', npwp:'01.234.567.8-901.010', batasKredit:70000000, provinsi:'Jawa Barat', kabupaten:'Cirebon', kecamatan:'Kejaksan', kelurahan:'Kebon Baru', typePpn:'PPN 11%', typePph:'PPh 23', kodePos:'45123', alamat:'Jl. Siliwangi No. 77, Cirebon', integration:true, integrationFreeStock:false, uangMuka:0, saldoUtang:814980, pusatBisnis:[{kode:'BSC101', nama:'Generik'}], akunGlUtang:'2-1000 Hutang Usaha - Supplier'},
   ],
+
+  /* Estimasi Hari Pengiriman — menu Supplier & Pembelian > Master &
+     Setting > Estimasi Hari Pengiriman (lihat js/pages/
+     estimasi-hari-pengiriman.*). 1 baris = estimasi lama pengiriman
+     (hari) dari 1 supplier ke 1 cabang target — kombinasi supplier x
+     cabang unik (divalidasi saat simpan). `supplier` menaut ke
+     DATA.suppliers (dipilih lewat modal picker, disimpan namanya —
+     pola sama dengan field supplier di DATA.purchaseOrders),
+     `cabangTarget` menaut ke DATA.cabangMaster (dropdown nama cabang).
+     Screenshot MASERP acuan memakai 1 supplier farmasi (Bernofarm) ke
+     6 cabang — di sini dipetakan ke supplier & cabang milik DBM
+     sendiri, pola datanya sama: 1 supplier utama ke 6 cabang. */
+  estimasiHariPengiriman:[
+    {supplier:'PT Indofood Distribusi', cabangTarget:'Medan', hari:12},
+    {supplier:'PT Indofood Distribusi', cabangTarget:'Bandung', hari:3},
+    {supplier:'PT Indofood Distribusi', cabangTarget:'Surabaya', hari:10},
+    {supplier:'PT Indofood Distribusi', cabangTarget:'Tangerang', hari:4},
+    {supplier:'PT Indofood Distribusi', cabangTarget:'Semarang', hari:3},
+    {supplier:'PT Indofood Distribusi', cabangTarget:'Makassar', hari:13},
+  ],
+
+  /* Jurnal A.P. — menu Supplier & Pembelian > Master & Setting >
+     Jurnal A.P. (lihat js/pages/jurnal-ap.*). Master jurnal untuk
+     transaksi A.P. manual: `kode` angka berurutan (di-generate
+     nextJapKode(), tampil sebagai link biru di list), 3 field akun
+     (akunDebit/akunKredit wajib, akunPPN khusus saldo Uang Muka
+     opsional) menaut ke DATA.akunGL lewat modal picker — pola ringkas
+     dari DATA.jurnalPembelian. Kode akun screenshot MASERP (101110012
+     Bank BCA OPS / 620010420 Pph 23, skema instalasi lain) dipetakan
+     ke chart of account 7-digit DBM yang sudah ada. */
+  jurnalAP:[
+    {kode:1, nama:'Saldo Awal', akunDebit:'3200001', akunKredit:'2110001', akunPPN:''},
+    {kode:2, nama:'Saldo Awal Import', akunDebit:'3200001', akunKredit:'2110002', akunPPN:''},
+    {kode:3, nama:'Pph 23', akunDebit:'1100012', akunKredit:'2120001', akunPPN:''},
+  ],
+
+  /* Jurnal A.R. — menu Customer & Penjualan > Master & Setting >
+     Jurnal A.R. (lihat js/pages/jurnal-ar.*). KEMBARAN DATA.jurnalAP
+     untuk sisi piutang: `kode` angka berurutan (link biru di list),
+     `arSsp` = checkbox "Jurnal Ar SSP?" (menandai jurnal yang dipakai
+     transaksi Penerimaan SSP — nyambung dgn modul Transaksi A.R. SSP),
+     3 field akun (akunDebit/akunKredit wajib, akunPPN khusus saldo
+     awal Uang Muka opsional) menaut ke DATA.akunGL. 7 baris sample
+     mengikuti list screenshot MASERP; kode akunnya (210701 PPN
+     Keluaran / 110501 Piutang Usaha IDR, skema instalasi lain)
+     dipetakan ke chart of account 7-digit DBM yang sudah ada. */
+  jurnalAR:[
+    {kode:1, nama:'SALDO AWAL PIUTANG USAHA IDR', arSsp:false, akunDebit:'1120001', akunKredit:'3200001', akunPPN:''},
+    {kode:2, nama:'SALDO AWAL UANG MUKA', arSsp:false, akunDebit:'3200001', akunKredit:'2140001', akunPPN:'2120002'},
+    {kode:3, nama:'PENERIMAAN SSP PPN/PPH 22', arSsp:true, akunDebit:'2120003', akunKredit:'1120003', akunPPN:''},
+    {kode:4, nama:'SALDO AWAL PIUTANG LAIN - LAIN', arSsp:false, akunDebit:'1120001', akunKredit:'3200001', akunPPN:''},
+    {kode:5, nama:'PENERIMAAN SSP PPN', arSsp:true, akunDebit:'2120002', akunKredit:'1120001', akunPPN:''},
+    {kode:6, nama:'PENERIMAAN SSP PPH 22', arSsp:true, akunDebit:'1140003', akunKredit:'1120004', akunPPN:''},
+    {kode:7, nama:'PENERIMAAN SSP KEPADA PIUTANG USAHA', arSsp:true, akunDebit:'1120001', akunKredit:'1120003', akunPPN:''},
+  ],
+
+  /* Transaksi A.R. — menu Customer & Penjualan > Daftar Transaksi >
+     Transaksi A.R. (lihat js/pages/transaksi-ar.*). KEMBARAN
+     DATA.transaksiAP untuk sisi piutang: `jurnalKode` menaut ke
+     DATA.jurnalAR, `customerKode/Nama` ke DATA.customers, `noFaktur`
+     ke DATA.invoices (Faktur Penjualan), `rincian[]` = tab Rincian
+     Transaksi A.R. (jumlah BOLEH NEGATIF — Nota Kredit, tampil merah
+     dalam kurung di list), `jurnalAkun[]` = tab Rincian Jurnal Akun
+     (otomatis dari master Jurnal A.R.: akunDebit(D) = akunKredit(K)
+     senilai nilai absolut total). No. Transaksi format screenshot
+     "26/ARS/{kode cabang}/08/{urut}". 3 baris sample meniru pola list
+     screenshot (dokumen Penerimaan SSP bernilai minus) dengan
+     customer/faktur/akun milik DBM sendiri. */
+  transaksiAR:[
+    {no:'26/ARS/HO/08/00001', cabang:'Head Office', tgl:'29/08/2026',
+      customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', noFaktur:'26/SI/HO/08/00001', jurnalKode:3,
+      keterangan:'PEMBAYARAN SSP - TOKO SUMBER REJEKI',
+      rincian:[
+        {tipe:'Nota Kredit', tglJthTempo:'28/10/2026', crc:'IDR', kurs:1, jumlah:-390000},
+        {tipe:'Nota Kredit', tglJthTempo:'28/10/2026', crc:'IDR', kurs:1, jumlah:-2860000},
+      ],
+      jurnalMode:'manual',
+      jurnalAkun:[
+        {kodeAkun:'2120002', namaAkun:'PPN Keluaran', keterangan:'PEMBAYARAN SSP - TOKO SUMBER REJEKI', debit:2860000, kredit:0},
+        {kodeAkun:'1120003', namaAkun:'Piutang SSP PPN', keterangan:'PEMBAYARAN SSP - TOKO SUMBER REJEKI', debit:0, kredit:2860000},
+        {kodeAkun:'1140003', namaAkun:'Uang Muka PPH 22', keterangan:'PEMBAYARAN SSP - TOKO SUMBER REJEKI', debit:390000, kredit:0},
+        {kodeAkun:'1120004', namaAkun:'Piutang SSP PPH', keterangan:'PEMBAYARAN SSP - TOKO SUMBER REJEKI', debit:0, kredit:390000},
+      ],
+      jumlah:-3250000},
+    {no:'26/ARS/SBY/08/00001', cabang:'Surabaya', tgl:'28/08/2026',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya', noFaktur:'26/SI/SBY/08/00001', jurnalKode:6,
+      keterangan:'Terima Piutang SSP UD MAKMUR JAYA - 26/SI/SBY/08/00001 (Hanya PPh 22)',
+      rincian:[{tipe:'Nota Kredit', tglJthTempo:'27/10/2026', crc:'IDR', kurs:1, jumlah:-37200.24}],
+      jurnalMode:'otomatis',
+      jurnalAkun:[
+        {kodeAkun:'1140003', namaAkun:'Uang Muka PPH 22', keterangan:'Terima Piutang SSP UD MAKMUR JAYA - 26/SI/SBY/08/00001 (Hanya PPh 22)', debit:37200.24, kredit:0},
+        {kodeAkun:'1120004', namaAkun:'Piutang SSP PPH', keterangan:'Terima Piutang SSP UD MAKMUR JAYA - 26/SI/SBY/08/00001 (Hanya PPh 22)', debit:0, kredit:37200.24},
+      ],
+      jumlah:-37200.24},
+    {no:'26/ARS/TGR/08/00001', cabang:'Tangerang', tgl:'28/08/2026',
+      customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya', noFaktur:'26/SI/TGR/08/00001', jurnalKode:5,
+      keterangan:'Terima Piutang SSP TOKO FAMILY MART JAYA - 26/SI/TGR/08/00001',
+      rincian:[{tipe:'Nota Kredit', tglJthTempo:'27/10/2026', crc:'IDR', kurs:1, jumlah:-962850}],
+      jurnalMode:'otomatis',
+      jurnalAkun:[
+        {kodeAkun:'2120002', namaAkun:'PPN Keluaran', keterangan:'Terima Piutang SSP TOKO FAMILY MART JAYA - 26/SI/TGR/08/00001', debit:962850, kredit:0},
+        {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'Terima Piutang SSP TOKO FAMILY MART JAYA - 26/SI/TGR/08/00001', debit:0, kredit:962850},
+      ],
+      jumlah:-962850},
+  ],
+
+  /* Retur Surat Jalan — menu Customer & Penjualan > Daftar Transaksi >
+     Retur Surat Jalan (lihat js/pages/retur-surat-jalan.*). 1 baris =
+     1 dokumen retur atas 1 Surat Jalan (noSJ menaut ke DATA.invoices
+     — tiap invoice mockup punya nomor SJ pasangannya). items[] = 1
+     baris per batch barang SJ (gudang = kode cabang, qtySJ terkunci,
+     qtyRetur yang diedit user, tukarBatch + batchBaru utk tukar
+     batch), jurnalAkun[] hasil "Buat Jurnal": Persediaan 1130001(D) =
+     HPP 5110001(K) senilai qty retur x harga master barang.
+     alasanTipe mengisi otomatis kalimat baku alasanText (lihat
+     RSJ_ALASAN_TIPE). No. format screenshot "RSJ/{kode cabang}/
+     {YY}{MM}{urut}". 3 baris sample menaut ke SJ sungguhan mockup
+     (data screenshot milik instalasi lain/AAA Yogyakarta). */
+  returSuratJalan:[
+    {no:'RSJ/HO/260800001', cabang:'Head Office', tglRSJ:'14/08/2026', tglPrint:'',
+      noSJ:'26/SJ/HO/08/00001', noSO:'26/SO/HO/08/00011', tglSO:'07/08/2026', noSP:'',
+      customer:'Toko Sumber Rejeki', customerKode:'CUST-001', salesman:'Budi Santoso',
+      alamatPengiriman:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat',
+      items:[
+        {gudang:'HO', kode:'BRG-006', nama:'Kecap Manis ABC 600ml', satuan:'Dus', batch:'BT-260706-06', qtySJ:60, ed:'2027-03-31', qtyRetur:10, tukarBatch:false, batchBaru:''},
+        {gudang:'HO', kode:'BRG-009', nama:'Kopi Kapal Api 165gr', satuan:'Dus', batch:'BT-260709-09', qtySJ:20, ed:'2027-09-30', qtyRetur:0, tukarBatch:false, batchBaru:''},
+      ],
+      jurnalMode:'otomatis',
+      jurnalAkun:[
+        {kodeAkun:'1130001', costCenter:'', namaAkun:'Persediaan Barang Dagang Jakarta', keterangan:'RETUR SJ 26/SJ/HO/08/00001 TOKO SUMBER REJEKI', debit:120000, kredit:0},
+        {kodeAkun:'5110001', costCenter:'', namaAkun:'HPP Barang Dagang', keterangan:'RETUR SJ 26/SJ/HO/08/00001 TOKO SUMBER REJEKI', debit:0, kredit:120000},
+      ],
+      alasanTipe:'Kesalahan DPF/L', alasanSub:'Retur Sebagian', alasanText:'Salah Nilai/Amount Diskon/DPL Sudah Tidak Berlaku'},
+    {no:'RSJ/SBY/260800001', cabang:'Surabaya', tglRSJ:'22/08/2026', tglPrint:'',
+      noSJ:'26/SJ/SBY/08/00001', noSO:'26/SO/SBY/08/00007', tglSO:'08/08/2026', noSP:'SP/SBY/08/00007',
+      customer:'UD Makmur Jaya', customerKode:'CUST-002', salesman:'Andi Wijaya',
+      alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
+      items:[
+        {gudang:'SBY', kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', satuan:'Dus', batch:'BT-260707-07', qtySJ:30, ed:'2027-07-31', qtyRetur:5, tukarBatch:true, batchBaru:'BT-260807-11'},
+      ],
+      jurnalMode:'otomatis',
+      jurnalAkun:[],
+      alasanTipe:'Mendekati ED', alasanSub:'Retur Sebagian', alasanText:'Barang Mendekati/Melewati Tanggal Kadaluarsa'},
+    {no:'RSJ/TGR/260800001', cabang:'Tangerang', tglRSJ:'28/08/2026', tglPrint:'',
+      noSJ:'26/SJ/TGR/08/00001', noSO:'26/SO/HO/08/00013', tglSO:'11/08/2026', noSP:'SP/HO/08/00013',
+      customer:'Toko Family Mart Jaya', customerKode:'CUST-006', salesman:'Citra Lestari',
+      alamatPengiriman:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
+      items:[
+        {gudang:'TGR', kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', satuan:'Dus', batch:'BT-260701-01', qtySJ:20, ed:'2027-06-30', qtyRetur:20, tukarBatch:false, batchBaru:''},
+      ],
+      jurnalMode:'otomatis',
+      jurnalAkun:[],
+      alasanTipe:'Kesalahan Kirim', alasanSub:'Retur Semua', alasanText:'Salah Kirim Barang/Salah Alamat Pengiriman'},
+  ],
+
+  /* Retur Penjualan — menu Customer & Penjualan > Daftar Transaksi >
+     Retur Penjualan (lihat js/pages/retur-penjualan.*). 1 baris = 1
+     dokumen retur penjualan FINAL (tidak bisa diedit — hanya Lihat/
+     Cetak/Hapus, banner kuning di form Lihat). noFakturJual menaut ke
+     DATA.invoices (boleh kosong = retur cash tanpa faktur, seperti
+     baris pertama screenshot), items[] menyalin barang faktur (harga
+     jual dari master DATA.items, batch dari item invoice), jurnalAkun[]
+     hasil "Buat Jurnal" (pemetaan akun lihat header template). 2
+     CETAKAN per dokumen: faktur "Retur Penjualan" (tombol Cetak, ada
+     Terbilang) & "BPBR" (tombol Lihat BAPBR) — replika 2 PDF acuan
+     dengan kop PT Distriversa Buanamas. No. format screenshot
+     "26/RS-{kode cabang}/{MM}/{urut}". 4 baris sample memakai
+     customer/faktur/barang DBM (data screenshot & PDF milik instalasi
+     lain/SDL Sidoarjo, tidak direplikasi). */
+  returPenjualan:[
+    {no:'26/RS-TGR/08/00002', cabang:'Tangerang', status:'Approved', tipeTransaksi:'Retur Penjualan Cash',
+      inventoryTransaction:'', tglRetur:'15/08/2026 13:40:00', tglJthTempo:'15/08/2026',
+      customer:'Toko Family Mart Jaya', customerKode:'CUST-006', noFakturJual:'26/SI/TGR/08/00001',
+      syaratBayar:'Jadikan Nota Kredit', jurnal:'JURNAL PENJUALAN KREDIT (IDR)', principal:'PT Sumber Pangan Nusantara',
+      tipeLayanan:'Reguler', returAdministrasi:false, gudangKode:'03-GUU', gudangAlokasi:false,
+      salesman:'Citra Lestari', alamatPengiriman:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
+      items:[{kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', um:'Karung', qty:30, qtySisa:0, hargaJual:15000,
+        discPrincipal:0, discDistributor:2, totalDisc:2, diskon1:9000, jumlah:441000,
+        batches:[{no:'BT-260702-02', qty:30, ed:'2027-05-15'}]}],
+      ppnMode:'eksklusif', tglFakturPajak:'15/08/2026', kodePajak:'04 - DPP Nilai Lain', noFakturPajak:'RET04260000866357',
+      diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, bruto:450000, dpp:441000,
+      pajak11:'PPN11', ppnAmount:48510, ongkosAngkut:0, jumlahTotal:489510, sisaJumlah:489510,
+      alasanTipe:'Kesalahan DPF/L', alasanSub:'Retur Sebagian', alasanText:'Salah Nilai/Amount Diskon/DPL Sudah Tidak Berlaku',
+      jurnalAkun:[
+        {kodeAkun:'4110002', namaAkun:'Retur Penjualan', keterangan:'', debit:450000, kredit:0},
+        {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'', debit:0, kredit:489510},
+        {kodeAkun:'4110005', namaAkun:'Sales Item Discount (Distributor)', keterangan:'', debit:0, kredit:9000},
+        {kodeAkun:'2120002', namaAkun:'PPN Keluaran', keterangan:'', debit:48510, kredit:0},
+        {kodeAkun:'1130001', namaAkun:'Persediaan Barang Dagang Jakarta', keterangan:'', debit:450000, kredit:0},
+        {kodeAkun:'5110001', namaAkun:'HPP Barang Dagang', keterangan:'', debit:0, kredit:450000},
+      ]},
+    {no:'26/RS-TGR/08/00001', cabang:'Tangerang', status:'Approved', tipeTransaksi:'Retur Penjualan Cash',
+      inventoryTransaction:'', tglRetur:'14/08/2026 11:05:00', tglJthTempo:'14/08/2026',
+      customer:'Toko Family Mart Jaya', customerKode:'CUST-006', noFakturJual:'26/SI/TGR/08/00001',
+      syaratBayar:'Jadikan Nota Kredit', jurnal:'JURNAL PENJUALAN KREDIT (IDR)', principal:'PT Sumber Pangan Nusantara',
+      tipeLayanan:'Reguler', returAdministrasi:false, gudangKode:'03-GUU', gudangAlokasi:false,
+      salesman:'Citra Lestari', alamatPengiriman:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
+      items:[{kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', um:'Dus', qty:20, qtySisa:0, hargaJual:25000,
+        discPrincipal:0, discDistributor:3, totalDisc:3, diskon1:15000, jumlah:485000,
+        batches:[{no:'BT-260701-01', qty:20, ed:'2027-06-30'}]}],
+      ppnMode:'eksklusif', tglFakturPajak:'14/08/2026', kodePajak:'04 - DPP Nilai Lain', noFakturPajak:'RET04260000866349',
+      diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, bruto:500000, dpp:485000,
+      pajak11:'PPN11', ppnAmount:53350, ongkosAngkut:0, jumlahTotal:538350, sisaJumlah:538350,
+      alasanTipe:'Barang Rusak', alasanSub:'Retur Sebagian', alasanText:'Barang Diterima Customer Dalam Kondisi Rusak',
+      jurnalAkun:[
+        {kodeAkun:'4110002', namaAkun:'Retur Penjualan', keterangan:'', debit:500000, kredit:0},
+        {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'', debit:0, kredit:538350},
+        {kodeAkun:'4110005', namaAkun:'Sales Item Discount (Distributor)', keterangan:'', debit:0, kredit:15000},
+        {kodeAkun:'2120002', namaAkun:'PPN Keluaran', keterangan:'', debit:53350, kredit:0},
+        {kodeAkun:'1130001', namaAkun:'Persediaan Barang Dagang Jakarta', keterangan:'', debit:500000, kredit:0},
+        {kodeAkun:'5110001', namaAkun:'HPP Barang Dagang', keterangan:'', debit:0, kredit:500000},
+      ]},
+    {no:'26/RS-SBY/08/00001', cabang:'Surabaya', status:'Approved', tipeTransaksi:'Retur Penjualan Cash',
+      inventoryTransaction:'', tglRetur:'13/08/2026 09:15:00', tglJthTempo:'13/08/2026',
+      customer:'UD Makmur Jaya', customerKode:'CUST-002', noFakturJual:'26/SI/SBY/08/00001',
+      syaratBayar:'Jadikan Nota Kredit', jurnal:'JURNAL PENJUALAN KREDIT (IDR)', principal:'PT Wilmar Nabati Indonesia',
+      tipeLayanan:'Reguler', returAdministrasi:false, gudangKode:'01-GUU', gudangAlokasi:false,
+      salesman:'Andi Wijaya', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
+      items:[{kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', um:'Dus', qty:5, qtySisa:0, hargaJual:14000,
+        discPrincipal:0, discDistributor:0, totalDisc:0, diskon1:0, jumlah:70000,
+        batches:[{no:'BT-260707-07', qty:5, ed:'2027-07-31'}]}],
+      ppnMode:'eksklusif', tglFakturPajak:'13/08/2026', kodePajak:'04 - DPP Nilai Lain', noFakturPajak:'RET04260000866332',
+      diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, bruto:70000, dpp:70000,
+      pajak11:'PPN11', ppnAmount:7700, ongkosAngkut:0, jumlahTotal:77700, sisaJumlah:77700,
+      alasanTipe:'Mendekati ED', alasanSub:'Retur Sebagian', alasanText:'Barang Mendekati/Melewati Tanggal Kadaluarsa',
+      jurnalAkun:[
+        {kodeAkun:'4110002', namaAkun:'Retur Penjualan', keterangan:'', debit:70000, kredit:0},
+        {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'', debit:0, kredit:77700},
+        {kodeAkun:'2120002', namaAkun:'PPN Keluaran', keterangan:'', debit:7700, kredit:0},
+        {kodeAkun:'1130001', namaAkun:'Persediaan Barang Dagang Jakarta', keterangan:'', debit:70000, kredit:0},
+        {kodeAkun:'5110001', namaAkun:'HPP Barang Dagang', keterangan:'', debit:0, kredit:70000},
+      ]},
+    {no:'26/RS-HO/08/00001', cabang:'Head Office', status:'Approved', tipeTransaksi:'Retur Penjualan Cash',
+      inventoryTransaction:'', tglRetur:'09/08/2026 10:28:29', tglJthTempo:'09/08/2026',
+      customer:'Toko Sumber Rejeki', customerKode:'CUST-001', noFakturJual:'',
+      syaratBayar:'Jadikan Nota Kredit', jurnal:'JURNAL PENJUALAN KREDIT (IDR)', principal:'',
+      tipeLayanan:'Pilih', returAdministrasi:false, gudangKode:'00-GUU', gudangAlokasi:false,
+      salesman:'Budi Santoso', alamatPengiriman:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat',
+      items:[{kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', um:'Dus', qty:10, qtySisa:0, hargaJual:25000,
+        discPrincipal:0, discDistributor:3, totalDisc:3, diskon1:7500, jumlah:242500,
+        batches:[{no:'BT-260701-01', qty:10, ed:'2027-06-30'}]}],
+      ppnMode:'eksklusif', tglFakturPajak:'09/08/2026', kodePajak:'04 - DPP Nilai Lain', noFakturPajak:'RET04260000866355',
+      diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, bruto:250000, dpp:242500,
+      pajak11:'PPN11', ppnAmount:26675, ongkosAngkut:0, jumlahTotal:269175, sisaJumlah:269175,
+      alasanTipe:'Lain-lain', alasanSub:'', alasanText:'',
+      jurnalAkun:[
+        {kodeAkun:'4110002', namaAkun:'Retur Penjualan', keterangan:'', debit:250000, kredit:0},
+        {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'', debit:0, kredit:269175},
+        {kodeAkun:'4110005', namaAkun:'Sales Item Discount (Distributor)', keterangan:'', debit:0, kredit:7500},
+        {kodeAkun:'2120002', namaAkun:'PPN Keluaran', keterangan:'', debit:26675, kredit:0},
+        {kodeAkun:'1130001', namaAkun:'Persediaan Barang Dagang Jakarta', keterangan:'', debit:250000, kredit:0},
+        {kodeAkun:'5110001', namaAkun:'HPP Barang Dagang', keterangan:'', debit:0, kredit:250000},
+      ]},
+  ],
+
+  /* Master Bank — menu Kas/Bank > Master & Setting > Master Bank
+     (lihat js/pages/master-bank.*). Master identitas rekening Virtual
+     Account per cabang/entitas (dipakai penagihan customer) — beda
+     dari DATA.kasBank yang menyimpan akun kas & bank GL. Kode
+     auto-generate "B{urut 2 digit}" (mbkGenerateKode). Nama sample
+     memakai PT Distriversa Buanamas per cabang; nomor VA mengikuti
+     contoh screenshot (instalasi SDL). */
+  masterBank:[
+    {kode:'B01', nama:'PT DISTRIVERSA BUANAMAS SURABAYA', va:'8290910219'},
+    {kode:'B02', nama:'PT DISTRIVERSA BUANAMAS SEMARANG', va:'8292366689'},
+    {kode:'B03', nama:'PT DISTRIVERSA BUANAMAS TANGERANG', va:'8292806689'},
+    {kode:'B04', nama:'PT DISTRIVERSA BUANAMAS BANDUNG', va:'8293086689'},
+  ],
+
+  /* Jurnal Kas Lain-Lain — menu Kas/Bank > Master & Setting > Jurnal
+     Kas Lain-Lain (lihat js/pages/jurnal-kas-lain.*). Template jurnal
+     utk Transaksi Kas non utang/piutang: `akunKasBank` menaut ke
+     DATA.kasBank (kode 6-digit master Kas/Bank), `akunLawan` &
+     `akunGiroMundur` (opsional) ke DATA.akunGL. Kode angka berurutan
+     (nextJklKode). 7 baris sample representatif dipetakan ke kas/bank
+     & akun beban-pendapatan DBM (screenshot instalasi SDL punya 287
+     baris — tidak direplikasi). */
+  jurnalKasLain:[
+    {kode:10, nama:'Kas Bon / Opening Balance', akunKasBank:'110104', akunGiroMundur:'', akunLawan:''},
+    {kode:100, nama:'Beban Listrik & Air_BCA HO', akunKasBank:'110107', akunGiroMundur:'', akunLawan:'5210004'},
+    {kode:101, nama:'Beban Gaji & Tunjangan_Mandiri HO', akunKasBank:'110106', akunGiroMundur:'', akunLawan:'5210001'},
+    {kode:102, nama:'Beban Administrasi Bank_BCA HO', akunKasBank:'110107', akunGiroMundur:'', akunLawan:'6510001'},
+    {kode:103, nama:'Pendapatan Jasa Giro dan Deposito', akunKasBank:'110107', akunGiroMundur:'', akunLawan:'6010001'},
+    {kode:104, nama:'Beban ATK & Cetak_Kas Kecil SMG', akunKasBank:'110105', akunGiroMundur:'', akunLawan:'5210005'},
+    {kode:105, nama:'Beban Administrasi Bank_BNI SBY', akunKasBank:'110109', akunGiroMundur:'', akunLawan:'6510001'},
+  ],
+
+  /* Daftar Giro Mundur — menu Kas/Bank > Daftar Transaksi > Daftar
+     Giro Mundur (lihat js/pages/giro-mundur.*). 1 baris = 1 lembar
+     giro/cek mundur yang diterima dari customer (tipe 'Terima Giro',
+     lahir dari Penerimaan Piutang bertipe giro) atau dikeluarkan ke
+     supplier ('Keluar Giro', dari Pelunasan Utang) — makanya list
+     TIDAK punya tombol Tambah. `bankKode` menaut ke DATA.kasBank,
+     `noTransaksi` memakai format nomor Pelunasan/Penerimaan
+     ("26/CL/..."), `status` digerakkan tombol Cair ("Belum Cair" ->
+     "Cair") / Tolak ("Sudah Ditolak"). 4 baris sample semuanya
+     "Belum Cair" supaya tab default screenshot langsung berisi &
+     kedua tombol bisa didemokan (data screenshot milik instalasi
+     SDL — nomor giro AGC dipertahankan sebagai contoh). */
+  giroMundur:[
+    {noGiro:'AGC 221408', bankKode:'110107', noTransaksi:'26/CL/HO/08/00194', tgl:'07/08/2026', tglJthTempo:'05/09/2026',
+      nama:'Toko Sumber Rejeki', tipe:'Terima Giro', jumlah:13689000, status:'Belum Cair', tglEfektif:'',
+      keterangan:'Pembayaran BG BANK BCA No. AGC 221408 Rp. 13.689.000 jatuh tempo 05/09/26 - TOKO SUMBER REJEKI'},
+    {noGiro:'AGC 221468', bankKode:'110107', noTransaksi:'26/CL/HO/08/00604', tgl:'28/08/2026', tglJthTempo:'03/10/2026',
+      nama:'UD Makmur Jaya', tipe:'Terima Giro', jumlah:15180000, status:'Belum Cair', tglEfektif:'',
+      keterangan:'Pembayaran BG BANK BCA No. AGC 221468 Rp. 15.180.000 jatuh tempo 03/10/26 - UD MAKMUR JAYA'},
+    {noGiro:'AGC 221467', bankKode:'110107', noTransaksi:'26/CL/HO/08/00603', tgl:'28/08/2026', tglJthTempo:'19/09/2026',
+      nama:'Toko Family Mart Jaya', tipe:'Terima Giro', jumlah:15160000, status:'Belum Cair', tglEfektif:'',
+      keterangan:'Pembayaran BG BANK BCA No. AGC 221467 Rp. 15.160.000 jatuh tempo 19/09/26 - TOKO FAMILY MART JAYA'},
+    {noGiro:'BG 004512', bankKode:'110106', noTransaksi:'26/CL/HO/08/00002', tgl:'21/08/2026', tglJthTempo:'20/09/2026',
+      nama:'PT Wilmar Nabati Indonesia', tipe:'Keluar Giro', jumlah:12500000, status:'Belum Cair', tglEfektif:'',
+      keterangan:'Pembayaran BG BANK MANDIRI No. BG 004512 Rp. 12.500.000 jatuh tempo 20/09/26 - PT WILMAR NABATI INDONESIA'},
+  ],
+
+  /* Pembelian Aktiva Tetap — menu Aktiva Tetap > Daftar Transaksi >
+     Pembelian Aktiva Tetap (lihat js/pages/pembelian-aktiva-tetap.*).
+     1 baris = 1 dokumen pembelian aset: `items[]` = tabel Rincian
+     Aktiva Tetap (kodeAset boleh '' utk aset baru yang belum masuk
+     master Fixed Asset; jurnalKode menaut ke DATA.jurnalFixedAsset),
+     `jurnalAkun[]` hasil "Buat Jurnal" (debit akun golongan aset +
+     PPN Masukan, kredit Hutang Usaha utk Kredit / Kas Besar utk
+     CBD.). tipeTransaksi dari Syarat Bayar (CBD. -> Beli Tunai).
+     No. format screenshot "26/FAB/{kode cabang}/08/{urut}".
+     Screenshot list kosong — 2 baris sample supaya list & form
+     Lihat langsung ada isinya. */
+  pembelianAktivaTetap:[
+    {no:'26/FAB/HO/08/00001', cabang:'Head Office', tgl:'20/08/2026',
+      syaratBayar:'Kredit 30 Hari', tglJthTempo:'19/09/2026', tipeTransaksi:'Beli Kredit',
+      supplier:'PT Roda Mas Trading', supplierKode:'5026',
+      kirim:'Kirim ke Head Office - Jl. Raya Industri No. 88, Jakarta Utara',
+      keterangan:'Pembelian 2 unit laptop tim Finance & Accounting',
+      items:[
+        {kodeAset:'', namaAset:'Laptop Lenovo ThinkPad E14 (2 unit)', jurnalKode:2, hargaBeli:15000000, disc:0, diskon:0, jumlah:15000000},
+      ],
+      ppnMode:'eksklusif', pajak11:'PPN11', ppnAmount:1650000,
+      diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:15000000,
+      uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0,
+      jumlahTotal:16650000, sisaJumlah:16650000,
+      jurnalAkun:[
+        {kodeAkun:'1510004', namaAkun:'Peralatan Kantor', keterangan:'Pembelian 2 unit laptop tim Finance & Accounting', debit:15000000, kredit:0},
+        {kodeAkun:'1140002', namaAkun:'PPN Masukan', keterangan:'Pembelian 2 unit laptop tim Finance & Accounting', debit:1650000, kredit:0},
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'Pembelian 2 unit laptop tim Finance & Accounting', debit:0, kredit:16650000},
+      ]},
+    {no:'26/FAB/SBY/08/00001', cabang:'Surabaya', tgl:'12/08/2026',
+      syaratBayar:'CBD.', tglJthTempo:'12/08/2026', tipeTransaksi:'Beli Tunai',
+      supplier:'CV Anugerah Logistik', supplierKode:'5025',
+      kirim:'Kirim ke Cabang Surabaya - Jl. Rungkut Industri No. 12',
+      keterangan:'Pembelian motor operasional kurir cabang Surabaya',
+      items:[
+        {kodeAset:'', namaAset:'Motor Honda Vario 125 th 2026', jurnalKode:4, hargaBeli:22000000, disc:0, diskon:0, jumlah:22000000},
+      ],
+      ppnMode:'tidak', pajak11:'', ppnAmount:0,
+      diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:22000000,
+      uangMukaTipe:'Oldest', sisaUangMuka:0, uangMukaPakai:0,
+      jumlahTotal:22000000, sisaJumlah:22000000,
+      jurnalAkun:[
+        {kodeAkun:'1510003', namaAkun:'Kendaraan', keterangan:'Pembelian motor operasional kurir cabang Surabaya', debit:22000000, kredit:0},
+        {kodeAkun:'1100002', namaAkun:'Kas Besar', keterangan:'Pembelian motor operasional kurir cabang Surabaya', debit:0, kredit:22000000},
+      ]},
+  ],
+
+  /* Transaksi A.P. — menu Supplier & Pembelian > Daftar Transaksi >
+     Transaksi A.P. (lihat js/pages/transaksi-ap.*). 1 baris = 1 dokumen
+     transaksi A.P. manual. `jurnalKode` menaut ke DATA.jurnalAP (master
+     Jurnal A.P.), `supplierKode/Nama` ke DATA.suppliers, `rincian[]` =
+     tab "Rincian Transaksi A.P." (tipe/tglJthTempo/crc/kurs/nominal),
+     `jurnalAkun[]` = tab "Rincian Jurnal Akun" (dibangun otomatis dari
+     master Jurnal A.P.: akunDebit(D) = akunKredit(K) senilai jumlah).
+     No. Transaksi format screenshot "AP/{kode cabang}/{YY}{MM}{urut}"
+     — dokumen baru selalu di-unshift() ke depan array (terbaru di
+     atas), tapGenerateNo() menghitung urut per cabang dari jumlah
+     baris cabang itu. 3 baris sample memakai 3 jurnal di DATA.jurnalAP
+     supaya list, form Lihat/Ubah, dan kedua tab langsung ada isinya. */
+  transaksiAP:[
+    {no:'AP/HO/260800002', noFaktur:'AP/HO/260800002', cabang:'Head Office', tgl:'21/08/2026',
+      supplierKode:'5016', supplierNama:'PT Wilmar Nabati Indonesia', jurnalKode:3,
+      keterangan:'Pph 23 - PT Wilmar Nabati Indonesia', noFakturSupplier:'INV/WNI/2026/0813',
+      rincian:[{tipe:'Hutang', tglJthTempo:'20/09/2026', crc:'IDR', kurs:1, nominal:1250000}],
+      jurnalMode:'otomatis',
+      jurnalAkun:[
+        {kodeAkun:'1100012', costCenter:'', namaAkun:'Bank BCA', keterangan:'PT Wilmar Nabati Indonesia', debit:1250000, kredit:0},
+        {kodeAkun:'2120001', costCenter:'', namaAkun:'Hutang Pajak', keterangan:'PT Wilmar Nabati Indonesia', debit:0, kredit:1250000},
+      ],
+      jumlah:1250000},
+    {no:'AP/HO/260800001', noFaktur:'AP/HO/260800001', cabang:'Head Office', tgl:'05/08/2026',
+      supplierKode:'5015', supplierNama:'PT Sumber Pangan Nusantara', jurnalKode:1,
+      keterangan:'Saldo Awal - PT Sumber Pangan Nusantara', noFakturSupplier:'',
+      rincian:[{tipe:'Hutang', tglJthTempo:'04/09/2026', crc:'IDR', kurs:1, nominal:4500000}],
+      jurnalMode:'otomatis',
+      jurnalAkun:[
+        {kodeAkun:'3200001', costCenter:'', namaAkun:'Laba Ditahan', keterangan:'PT Sumber Pangan Nusantara', debit:4500000, kredit:0},
+        {kodeAkun:'2110001', costCenter:'', namaAkun:'Hutang Usaha', keterangan:'PT Sumber Pangan Nusantara', debit:0, kredit:4500000},
+      ],
+      jumlah:4500000},
+    {no:'AP/SBY/260800001', noFaktur:'AP/SBY/260800001', cabang:'Surabaya', tgl:'03/08/2026',
+      supplierKode:'5026', supplierNama:'PT Roda Mas Trading', jurnalKode:2,
+      keterangan:'Saldo Awal Import - PT Roda Mas Trading', noFakturSupplier:'RMT-IMP-2607',
+      rincian:[{tipe:'Hutang', tglJthTempo:'02/09/2026', crc:'IDR', kurs:1, nominal:8750000}],
+      jurnalMode:'otomatis',
+      jurnalAkun:[
+        {kodeAkun:'3200001', costCenter:'', namaAkun:'Laba Ditahan', keterangan:'PT Roda Mas Trading', debit:8750000, kredit:0},
+        {kodeAkun:'2110002', costCenter:'', namaAkun:'Hutang Pembelian Belum Terfaktur', keterangan:'PT Roda Mas Trading', debit:0, kredit:8750000},
+      ],
+      jumlah:8750000},
+  ],
+
+  /* Retur Pembelian — menu Supplier & Pembelian > Daftar Transaksi >
+     Retur Pembelian (lihat js/pages/retur-pembelian.*). 1 baris = 1
+     dokumen retur atas 1 Faktur Pembelian (noFakturPembelian menaut ke
+     DATA.pembelianBPB — No. Retur juga ditulis balik ke field noReturPB
+     faktur itu). items[] menyalin barang faktur (qtyFaktur = qty asli
+     faktur, qty = qty yang diretur; batches[] disintesis karena faktur
+     tidak menyimpan batch), jurnalAkun[] hasil "Buat Jurnal": Hutang
+     Usaha 2110001(D) = Persediaan 1130001(K) + PPN Masukan 1140002(K).
+     tipeTransaksi SENGAJA '' di 2 baris sample supaya kolom "Tipe
+     Transaksi" tampil kosong persis screenshot (dokumen baru yang
+     disimpan user mengisinya 'Nota Debit'). Supplier & barang memakai
+     data DBM sendiri (screenshot memakai PT Satoria Aneka Industri,
+     instalasi lain). */
+  returPembelian:[
+    {no:'26/RP-HO/08/00002', cabang:'Head Office', tipeTransaksi:'',
+      tglFaktur:'21/08/2026', tglJthTempo:'21/08/2026',
+      supplier:'PT Wilmar Nabati Indonesia', noFakturPembelian:'26/PU/HO/08/00002', supplierNoFaktur:'INV/WNI/08/0088-A',
+      syaratBayar:'Jadikan Nota Debit', jurnal:'JURNAL PEMBELIAN KREDIT (IDR)',
+      gudangKode:'00-GUU', alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur',
+      items:[{kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', um:'Karung', qty:50, qtyFaktur:500, hargaBeli:15000,
+        feeDistribusi:2, budgetDiskon:0, totalDisc:2, diskon:15000, jumlah:735000, pph:false, ppn:true,
+        batches:[{no:'B0002G01', qty:50, ed:'16/07/2028'}]}],
+      ppnMode:'eksklusif', mataUang:'IDR', tglFakturPajak:'21/08/2026', noFakturPajak:'04002600297302454',
+      kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:735000,
+      pajak11:'PPN11', ppnAmount:80850, pphKode:'', pphPersen:0, pphAmount:0,
+      jumlahTotal:815850, sisaTotal:815850,
+      keterangan:'RETUR PEMBELIAN ATAS 26/PU/HO/08/00002 (PT WILMAR NABATI INDONESIA)',
+      jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'RETUR PEMBELIAN ATAS 26/PU/HO/08/00002 (PT WILMAR NABATI INDONESIA)', debit:815850, kredit:0},
+        {kodeAkun:'1130001', namaAkun:'Persediaan Barang Dagang Jakarta', keterangan:'RETUR PEMBELIAN ATAS 26/PU/HO/08/00002 (PT WILMAR NABATI INDONESIA)', debit:0, kredit:735000},
+        {kodeAkun:'1140002', namaAkun:'PPN Masukan', keterangan:'RETUR PEMBELIAN ATAS 26/PU/HO/08/00002 (PT WILMAR NABATI INDONESIA)', debit:0, kredit:80850},
+      ]},
+    {no:'26/RP-HO/08/00001', cabang:'Head Office', tipeTransaksi:'',
+      tglFaktur:'21/08/2026', tglJthTempo:'21/08/2026',
+      supplier:'PT Sumber Pangan Nusantara', noFakturPembelian:'26/PU/HO/08/00001', supplierNoFaktur:'INV/SPN/08/0231-A',
+      syaratBayar:'Jadikan Nota Debit', jurnal:'JURNAL PEMBELIAN KREDIT (IDR)',
+      gudangKode:'00-GUU', alamatPengiriman:'Jl. Raya Industri No. 10, Kawasan Pergudangan Cakung, Jakarta Timur',
+      items:[{kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', um:'Dus', qty:20, qtyFaktur:200, hargaBeli:25000,
+        feeDistribusi:5, budgetDiskon:0, totalDisc:5, diskon:25000, jumlah:475000, pph:true, ppn:true,
+        batches:[{no:'B0001G01', qty:20, ed:'16/07/2028'}]}],
+      ppnMode:'eksklusif', mataUang:'IDR', tglFakturPajak:'21/08/2026', noFakturPajak:'04002600297302441',
+      kurs:1, diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, dpp:475000,
+      pajak11:'PPN11', ppnAmount:52250, pphKode:'', pphPersen:0, pphAmount:0,
+      jumlahTotal:527250, sisaTotal:527250,
+      keterangan:'RETUR PEMBELIAN ATAS 26/PU/HO/08/00001 (PT SUMBER PANGAN NUSANTARA)',
+      jurnalAkun:[
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'RETUR PEMBELIAN ATAS 26/PU/HO/08/00001 (PT SUMBER PANGAN NUSANTARA)', debit:527250, kredit:0},
+        {kodeAkun:'1130001', namaAkun:'Persediaan Barang Dagang Jakarta', keterangan:'RETUR PEMBELIAN ATAS 26/PU/HO/08/00001 (PT SUMBER PANGAN NUSANTARA)', debit:0, kredit:475000},
+        {kodeAkun:'1140002', namaAkun:'PPN Masukan', keterangan:'RETUR PEMBELIAN ATAS 26/PU/HO/08/00001 (PT SUMBER PANGAN NUSANTARA)', debit:0, kredit:52250},
+      ]},
+  ],
   salesman:[
     {nama:'Budi Santoso', area:'Jakarta', target:80000000, realisasi:61250000},
     {nama:'Andi Wijaya', area:'Surabaya', target:60000000, realisasi:38940000},
@@ -941,7 +1398,7 @@ const DATA = {
       items:[{kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', um:'Karung', qty:100, hna1:15000, hnaXqty:1500000, potongan:0, dpp:1500000, typePpn:'PPN 11%', ppn:165000, biayaKirim:30000, noBatch:'BT-260702-02', tglKadaluarsa:'2027-05-15'}],
       totalDpp:1500000, totalPpn:165000, totalBiayaKirim:30000, jumlahAkhir:1695000,
       tglSO:'08/08/2026', tglInput:'08/08/2026 10:22:40', userInput:'sidik', tglEdit:'09/08/2026 08:05:11', userEdit:'sidik'},
-    {no:'26/SO/BDG/08/00005', noSP:'SP/BDG/08/00005', noSQ:'', noDSC:'', customer:'CV Berkah Abadi', wilayah:'Bandung', ts:'Dikirim', statusApproval:'Approved',
+    {no:'26/SO/BDG/08/00005', tutupSo:true, noSP:'SP/BDG/08/00005', noSQ:'', noDSC:'', customer:'CV Berkah Abadi', wilayah:'Bandung', ts:'Dikirim', statusApproval:'Approved',
       sOffice:'Bandung', area:'Bandung', layanan:'Ekspedisi Pihak Ketiga', orderVia:'Telepon', alamat:'Jl. Soekarno Hatta No. 88, Bandung', rayon:'Rayon Bandung Kota',
       principalKode:'', principalNama:'', cito:false, spAsli:false, skEd:true, cl:20000000, piutang:4300000, sisaCl:15700000,
       konsinyasi:false, keterangan:'Order beras premium', isGuarantee:false, pecahFaktur:false, ukuranBasis:'Dimensi',
@@ -990,7 +1447,7 @@ const DATA = {
       items:[{kode:'BRG-009', nama:'Kopi Kapal Api 165gr', um:'Dus', qty:80, hna1:14000, hnaXqty:1120000, potongan:0, dpp:1120000, typePpn:'PPN 11%', ppn:123200, biayaKirim:10000, noBatch:'BT-260709-09', tglKadaluarsa:'2027-09-30'}],
       totalDpp:1120000, totalPpn:123200, totalBiayaKirim:10000, jumlahAkhir:1253200,
       tglSO:'07/08/2026', tglInput:'07/08/2026 09:45:00', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/SO/BDG/08/00004', noSP:'SP/BDG/08/00004', noSQ:'', noDSC:'DSC/BDG/08/00001', customer:'CV Berkah Abadi', wilayah:'Bandung', ts:'Diproses', statusApproval:'Rejected',
+    {no:'26/SO/BDG/08/00004', tutupSo:true, noSP:'SP/BDG/08/00004', noSQ:'', noDSC:'DSC/BDG/08/00001', customer:'CV Berkah Abadi', wilayah:'Bandung', ts:'Diproses', statusApproval:'Rejected',
       sOffice:'Bandung', area:'Bandung', layanan:'Reguler', orderVia:'Telepon', alamat:'Jl. Soekarno Hatta No. 88, Bandung', rayon:'Rayon Bandung Kota',
       principalKode:'5018', principalNama:'CV Distribusi Sentosa', cito:false, spAsli:true, skEd:true, cl:20000000, piutang:4300000, sisaCl:15700000,
       konsinyasi:false, keterangan:'Ditolak - melebihi Sisa CL setelah PPN', isGuarantee:false, pecahFaktur:false, ukuranBasis:'Dimensi',
@@ -5119,7 +5576,7 @@ const DATA = {
      status upstream" yang sudah dipakai Picking List/Faktur
      Penjualan Via S.J./Terima Barang sendiri. */
   pembelianBPB:[
-    {no:'26/PU/HO/08/00001', noBPB:'26/BPB/HO/08/00001', noPO:'26/PO/HO/08/00011', noReturPB:'', supplier:'PT Sumber Pangan Nusantara',
+    {no:'26/PU/HO/08/00001', noBPB:'26/BPB/HO/08/00001', noPO:'26/PO/HO/08/00011', noReturPB:'26/RP-HO/08/00001', supplier:'PT Sumber Pangan Nusantara',
       keterangan:'PJK/SPN/08/0231 ; SJK SJ/SPN/08/0231 ; 26/BPB/HO/08/00001',
       cabang:'Head Office', noOtomatis:'PU001',
       tglFaktur:'09/08/2026', syaratBayar:'Kredit 60 Hari', tglJatuhTempo:'08/10/2026',
@@ -5133,7 +5590,7 @@ const DATA = {
          Utang 26/CL/HO/08/00001 (lihat DATA.pelunasanUtang, js/pages/
          pelunasan-utang.*), pembuktian mekanisme `pembayaran` end-to-end. */
       pembayaran:5258250, tglInput:'09/08/2026 15:10:00', userInput:'sidik', tglEdit:'', userEdit:''},
-    {no:'26/PU/HO/08/00002', noBPB:'26/BPB/HO/08/00002', noPO:'26/PO/HO/08/00010', noReturPB:'', supplier:'PT Wilmar Nabati Indonesia',
+    {no:'26/PU/HO/08/00002', noBPB:'26/BPB/HO/08/00002', noPO:'26/PO/HO/08/00010', noReturPB:'26/RP-HO/08/00002', supplier:'PT Wilmar Nabati Indonesia',
       keterangan:'PJK/WNI/08/0088 ; SJK SJ/WNI/08/0088 ; 26/BPB/HO/08/00002',
       cabang:'Head Office', noOtomatis:'PU001',
       tglFaktur:'10/08/2026', syaratBayar:'Kredit 45 Hari', tglJatuhTempo:'24/09/2026',
