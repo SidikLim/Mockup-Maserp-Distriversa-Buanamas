@@ -4763,6 +4763,220 @@ const DATA = {
     {kode:'RIM', nama:'Rim'},
   ],
 
+  /* Badan Usaha (Customer & Penjualan > Master & Setting > Badan
+     Usaha, page:'badanUsaha'), sesuai screenshot MASERP "Badan
+     Usaha" yang dikirim user 2026-09-01 (Total Record: 40, kolom
+     Kode/Nama Badan Usaha, page-size default 10, pager
+     First/Previous/1-4/Next/Last). 10 baris PERTAMA (urut kode:
+     APT-KEM) PERSIS sesuai halaman 1 screenshot; 30 baris sisanya
+     jenis badan usaha generik dunia distribusi farmasi (semua
+     kode > KEM secara alfabetis supaya halaman 1 tetap identik
+     dgn screenshot). Kode PRO/UD/PT/CV yang sudah dipakai field
+     `badanUsaha` di master Customer ikut disediakan di sini.
+     Kode DIKETIK MANUAL saat Tambah (bukan auto-generate). */
+  badanUsaha:[
+    {kode:'APT',  nama:'APOTEK'},
+    {kode:'BDN',  nama:'BIDAN'},
+    {kode:'BUMN', nama:'PT'},
+    {kode:'CV',   nama:'CV'},
+    {kode:'DAK',  nama:'PT'},
+    {kode:'DKS',  nama:'DINKES'},
+    {kode:'DR',   nama:'dr'},
+    {kode:'DSS',  nama:'DINAS SOSIAL'},
+    {kode:'GFK',  nama:'GFK'},
+    {kode:'KEM',  nama:'KEMENKES'},
+    {kode:'KLN',  nama:'KLINIK'},
+    {kode:'KOP',  nama:'KOPERASI'},
+    {kode:'LAB',  nama:'LABORATORIUM'},
+    {kode:'LSM',  nama:'LSM'},
+    {kode:'MIN',  nama:'MINIMARKET'},
+    {kode:'OPT',  nama:'OPTIK'},
+    {kode:'PAB',  nama:'PABRIK'},
+    {kode:'PBF',  nama:'PBF'},
+    {kode:'PDAM', nama:'PDAM'},
+    {kode:'PEM',  nama:'PEMDA'},
+    {kode:'PKM',  nama:'PUSKESMAS'},
+    {kode:'PMI',  nama:'PMI'},
+    {kode:'POL',  nama:'POLIKLINIK'},
+    {kode:'PRK',  nama:'PRAKTEK DOKTER'},
+    {kode:'PRO',  nama:'PERORANGAN'},
+    {kode:'PT',   nama:'PT'},
+    {kode:'RB',   nama:'RUMAH BERSALIN'},
+    {kode:'RS',   nama:'RUMAH SAKIT'},
+    {kode:'RSIA', nama:'RS IBU DAN ANAK'},
+    {kode:'RSJ',  nama:'RS JIWA'},
+    {kode:'RSU',  nama:'RS UMUM'},
+    {kode:'SEK',  nama:'SEKOLAH'},
+    {kode:'SPM',  nama:'SUPERMARKET'},
+    {kode:'SWA',  nama:'SWALAYAN'},
+    {kode:'TK',   nama:'TOKO'},
+    {kode:'TKO',  nama:'TOKO OBAT'},
+    {kode:'UD',   nama:'UD'},
+    {kode:'UNIV', nama:'UNIVERSITAS'},
+    {kode:'WRG',  nama:'WARUNG'},
+    {kode:'YAY',  nama:'YAYASAN'},
+  ],
+
+  /* Uang Muka Customer (Customer & Penjualan > Daftar Transaksi >
+     Uang Muka Customer, page:'uangMukaCustomer'), sesuai 2 screenshot
+     MASERP yang dikirim user 2026-09-01 (list "Uang Muka Customer 2"
+     chip September 2026 + form). Screenshot SDL kosong (Total Record:
+     0) — mockup DBM diberi 3 sample September 2026 yang KONSISTEN
+     dgn master DBM: customer/SQ dari DATA.salesQuotation, salesman
+     dari DATA.salesman, akun jurnal 1120001/2140001/2120002.
+     Aritmetika tiap baris konsisten: subtotal=Σ jumlah items;
+     dpAmount=subtotal x dpPersen%; dpp=dpAmount; ppn=11% dpp (mode
+     eksklusif, kode PPN11) / 0 (mode tidak); jumlahTotal=dpp+ppn.
+     Jurnal: D Piutang Usaha (jumlah) lawan K Uang Muka Penjualan
+     (dpp) + K PPN Keluaran (ppn). */
+  uangMukaCustomer:[
+    {no:'26/UMC-HO/09/00001', tgl:'01/09/2026', cabang:'Head Office',
+      customer:'Toko Sumber Rejeki', noSQ:'26/SQ-0000000001', kodeSales:'Budi Santoso',
+      keterangan:'DP 100% order rutin Sembako — di transfer via bank BCA',
+      syaratBayar:'Kredit 30 Hari', tglJthTempo:'01/10/2026', jurnal:'JURNAL PENJUALAN KREDIT (IDR)',
+      ppnMode:'eksklusif', ppnKode:'PPN11', ppnPersen:11, dpPersen:100, ongkosAngkut:40000,
+      items:[{keterangan:'Minyak Goreng Sunco 2L', qty:40, jumlah:980000}],
+      subtotal:980000, dpAmount:980000, dpp:980000, ppnAmount:107800, jumlahTotal:1087800,
+      jurnalAkun:[
+        {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'Uang Muka 26/SQ-0000000001', debit:1087800, kredit:0},
+        {kodeAkun:'2140001', namaAkun:'Uang Muka Penjualan', keterangan:'Uang Muka 26/SQ-0000000001', debit:0, kredit:980000},
+        {kodeAkun:'2120002', namaAkun:'PPN Keluaran', keterangan:'Uang Muka 26/SQ-0000000001', debit:0, kredit:107800},
+      ]},
+    {no:'26/UMC-SBY/09/00001', tgl:'03/09/2026', cabang:'Surabaya',
+      customer:'UD Makmur Jaya', noSQ:'26/SQ-0000000002', kodeSales:'Andi Wijaya',
+      keterangan:'DP 50% restock gudang Surabaya',
+      syaratBayar:'Kredit 14 Hari', tglJthTempo:'17/09/2026', jurnal:'JURNAL PENJUALAN KREDIT (IDR)',
+      ppnMode:'eksklusif', ppnKode:'PPN11', ppnPersen:11, dpPersen:50, ongkosAngkut:30000,
+      items:[{keterangan:'Gula Pasir Gulaku 1kg', qty:100, jumlah:1500000}],
+      subtotal:1500000, dpAmount:750000, dpp:750000, ppnAmount:82500, jumlahTotal:832500,
+      jurnalAkun:[
+        {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'Uang Muka 26/SQ-0000000002', debit:832500, kredit:0},
+        {kodeAkun:'2140001', namaAkun:'Uang Muka Penjualan', keterangan:'Uang Muka 26/SQ-0000000002', debit:0, kredit:750000},
+        {kodeAkun:'2120002', namaAkun:'PPN Keluaran', keterangan:'Uang Muka 26/SQ-0000000002', debit:0, kredit:82500},
+      ]},
+    {no:'26/UMC-BDG/09/00001', tgl:'05/09/2026', cabang:'Bandung',
+      customer:'CV Berkah Abadi', noSQ:'', kodeSales:'Citra Lestari',
+      keterangan:'DP booking stock tanpa SQ — tunai di kasir Bandung',
+      syaratBayar:'COD', tglJthTempo:'', jurnal:'JURNAL PENJUALAN KREDIT (IDR)',
+      ppnMode:'tidak', ppnKode:'', ppnPersen:0, dpPersen:100, ongkosAngkut:0,
+      items:[{keterangan:'DP booking Gula Pasir Gulaku 1kg (200 karung)', qty:1, jumlah:2000000}],
+      subtotal:2000000, dpAmount:2000000, dpp:2000000, ppnAmount:0, jumlahTotal:2000000,
+      jurnalAkun:[
+        {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'Uang Muka 26/UMC-BDG/09/00001', debit:2000000, kredit:0},
+        {kodeAkun:'2140001', namaAkun:'Uang Muka Penjualan', keterangan:'Uang Muka 26/UMC-BDG/09/00001', debit:0, kredit:2000000},
+      ]},
+  ],
+
+  /* Surat Pesanan Ekatalog & Khusus (Customer & Penjualan > Daftar
+     Transaksi, page:'spEcatKhusus'), sesuai 2 screenshot MASERP
+     instalasi AAA yang dikirim user 2026-09-01 (list "SP ECAT &
+     KHUSUS" chip September 2026 + form). Data AAA (customer A000xxx,
+     produk farmasi 04-xxxxx) dipetakan ke master DBM sendiri:
+     customer CUST-xxx, produk BRG-xxx (DATA.items), principal =
+     DATA.suppliers, SO/area/rayon DBM. 12 sample September 2026 =
+     2 halaman (screenshot AAA pager 1-2); Nilai list = DPP =
+     Σ(qty x harga) - potongan; PPN strip form = 11%. noId meniru
+     pola "EP-01M1{20 karakter}". Semua Status Open (toggle Closed
+     Manually di list yang mengubahnya). */
+  spEcatKhusus:[
+    {noId:'EP-01M1QD73H7181ZJ5N6ND1N9ZK', tgl:'01/09/2026', soNama:'SIDOARJO (DC)', areaNama:'Mataram , nusa tenggara barat',
+      customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', alamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat',
+      rayonKode:'BANTEN 1', rayonKota:'Jakarta', rayonSalesman:'Budi Santoso',
+      principalNama:'PT Sumber Pangan Nusantara', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:18250000, piutangJt:0, cl:50000000, sisaCl:31750000, dl:14310000, sisaDl:14310000,
+      sumberDana:'APBD 2026', metodeBayar:'Transfer', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', uom:'Dus', qty:240, harga:25000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1RSW63ZFHBSB28E751R8ED', tgl:'01/09/2026', soNama:'SIDOARJO', areaNama:'AREAOFFICE',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya', alamat:'Jl. Raya Darmo No. 45, Surabaya',
+      rayonKode:'BANTEN 1', rayonKota:'Surabaya', rayonSalesman:'Andi Wijaya',
+      principalNama:'PT Wilmar Nabati Indonesia', noKontrak:'KTR/SBY/09/011', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:9120000, piutangJt:0, cl:35000000, sisaCl:25880000, dl:0, sisaDl:0,
+      sumberDana:'', metodeBayar:'', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', uom:'Karung', qty:244, harga:60000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1KB3994Q5QHZSDS3RYZ2DH', tgl:'01/09/2026', soNama:'BANDUNG', areaNama:'AREAOFFICE',
+      customerKode:'CUST-003', customerNama:'CV Berkah Abadi', alamat:'Jl. Braga No. 88, Bandung',
+      rayonKode:'BANTEN 1', rayonKota:'Bandung', rayonSalesman:'Citra Lestari',
+      principalNama:'PT Sumber Pangan Nusantara', noKontrak:'', posisiPaket:'Menunggu SPK', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:0, piutangJt:0, cl:25000000, sisaCl:25000000, dl:0, sisaDl:0,
+      sumberDana:'Dana BLUD', metodeBayar:'Transfer', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-005', nama:'Mie Instan Indomie Goreng', uom:'Dus', qty:2000, harga:2500}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1AXFWM89WDG424CHVTWTJQ', tgl:'01/09/2026', soNama:'SEMARANG', areaNama:'AREAOFFICE',
+      customerKode:'CUST-004', customerNama:'Toko Anugrah', alamat:'Jl. Pandanaran No. 20, Semarang',
+      rayonKode:'BANTEN 1', rayonKota:'Semarang', rayonSalesman:'Fajar Nugroho',
+      principalNama:'PT Wilmar Nabati Indonesia', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:4200000, piutangJt:0, cl:20000000, sisaCl:15800000, dl:0, sisaDl:0,
+      sumberDana:'', metodeBayar:'', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', uom:'Karung', qty:800, harga:15000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1FA33JWN9RQTW28P4ZGN8D', tgl:'01/09/2026', soNama:'TANGERANG', areaNama:'AREAOFFICE',
+      customerKode:'CUST-005', customerNama:'UD Sinar Harapan', alamat:'Jl. MH Thamrin No. 5, Tangerang',
+      rayonKode:'BANTEN 1', rayonKota:'Tangerang', rayonSalesman:'M. Reza Wijaya',
+      principalNama:'PT Sumber Pangan Nusantara', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:2750000, piutangJt:0, cl:15000000, sisaCl:12250000, dl:0, sisaDl:0,
+      sumberDana:'APBD 2026', metodeBayar:'Transfer', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', uom:'Dus', qty:500, harga:16000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1ZQ4CR3D0CXCN1R9SY3TCW', tgl:'01/09/2026', soNama:'SIDOARJO (DC)', areaNama:'AREAOFFICE',
+      customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya', alamat:'Jl. A. Yani No. 31, Sidoarjo',
+      rayonKode:'BANTEN 1', rayonKota:'Sidoarjo', rayonSalesman:'Eka Putri',
+      principalNama:'PT Wilmar Nabati Indonesia', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:0, piutangJt:0, cl:18000000, sisaCl:18000000, dl:0, sisaDl:0,
+      sumberDana:'', metodeBayar:'', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-006', nama:'Kecap Manis ABC 600ml', uom:'Dus', qty:350, harga:14000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1B53D62CVAHE0V68G2P026R', tgl:'01/09/2026', soNama:'BANDUNG', areaNama:'AREAOFFICE',
+      customerKode:'CUST-007', customerNama:'CV Maju Terus', alamat:'Jl. Tuparev No. 9, Karawang',
+      rayonKode:'BANTEN 1', rayonKota:'Karawang', rayonSalesman:'Citra Lestari',
+      principalNama:'PT Sumber Pangan Nusantara', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:6350000, piutangJt:0, cl:22000000, sisaCl:15650000, dl:0, sisaDl:0,
+      sumberDana:'', metodeBayar:'', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-009', nama:'Kopi Kapal Api 165gr', uom:'Dus', qty:420, harga:14000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1BBHG9NVJSYFAQYW67KHSQ', tgl:'01/09/2026', soNama:'BANDUNG', areaNama:'AREAOFFICE',
+      customerKode:'CUST-007', customerNama:'CV Maju Terus', alamat:'Jl. Tuparev No. 9, Karawang',
+      rayonKode:'BANTEN 1', rayonKota:'Karawang', rayonSalesman:'Citra Lestari',
+      principalNama:'PT Wilmar Nabati Indonesia', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:6350000, piutangJt:0, cl:22000000, sisaCl:15650000, dl:0, sisaDl:0,
+      sumberDana:'', metodeBayar:'', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', uom:'Dus', qty:300, harga:10000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M14DAA9FDB8YY0XMP68437BF', tgl:'01/09/2026', soNama:'SEMARANG', areaNama:'AREAOFFICE',
+      customerKode:'CUST-008', customerNama:'Toko Sejahtera', alamat:'Jl. Gajah Mada No. 77, Semarang',
+      rayonKode:'BANTEN 1', rayonKota:'Semarang', rayonSalesman:'Fajar Nugroho',
+      principalNama:'PT Sumber Pangan Nusantara', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:1500000, piutangJt:0, cl:12000000, sisaCl:10500000, dl:0, sisaDl:0,
+      sumberDana:'', metodeBayar:'', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', uom:'Dus', qty:900, harga:5000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1B2YY9YFPPB600HW6RHJTP', tgl:'01/09/2026', soNama:'SIDOARJO', areaNama:'AREAOFFICE',
+      customerKode:'CUST-009', customerNama:'PT Family Mart Indonesia', alamat:'Jl. Sudirman Kav. 21, Jakarta Selatan',
+      rayonKode:'BANTEN 1', rayonKota:'Jakarta', rayonSalesman:'M. Reza Wijaya',
+      principalNama:'PT Wilmar Nabati Indonesia', noKontrak:'KTR/HO/09/004', posisiPaket:'Kontrak berjalan', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:12800000, piutangJt:0, cl:80000000, sisaCl:67200000, dl:0, sisaDl:0,
+      sumberDana:'APBN 2026', metodeBayar:'Transfer', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', uom:'Karung', qty:700, harga:60000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1C8PWT2XN0V5KJ3QDMEA74', tgl:'02/09/2026', soNama:'TANGERANG', areaNama:'AREAOFFICE',
+      customerKode:'CUST-010', customerNama:'Toko Family Mart Sentosa', alamat:'Jl. Serpong Raya No. 3, Tangerang Selatan',
+      rayonKode:'BANTEN 1', rayonKota:'Tangerang', rayonSalesman:'M. Reza Wijaya',
+      principalNama:'PT Sumber Pangan Nusantara', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:0, piutangJt:0, cl:10000000, sisaCl:10000000, dl:0, sisaDl:0,
+      sumberDana:'', metodeBayar:'', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', uom:'Dus', qty:120, harga:25000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1D4H6ZR8SWLB2Y7NKQF03M', tgl:'02/09/2026', soNama:'SIDOARJO', areaNama:'AREAOFFICE',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya', alamat:'Jl. Raya Darmo No. 45, Surabaya',
+      rayonKode:'BANTEN 1', rayonKota:'Surabaya', rayonSalesman:'Andi Wijaya',
+      principalNama:'PT Sumber Pangan Nusantara', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:9120000, piutangJt:0, cl:35000000, sisaCl:25880000, dl:0, sisaDl:0,
+      sumberDana:'Dana BLUD', metodeBayar:'Transfer', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', uom:'Karung', qty:950, harga:12000}],
+      closedManually:false, requestPdr:false},
+  ],
+
   /* Bentuk Sediaan (Persediaan Barang > Master & Setting > Bentuk
      Sediaan, page:'bentukSediaan'), sesuai screenshot MASERP
      "Daftar Bentuk Sediaan" yang dikirim user 2026-08-21 (Total

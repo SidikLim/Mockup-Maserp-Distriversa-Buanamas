@@ -131,6 +131,8 @@ const PAGE_MODULES={
   purchaseOrder:{srcs:['js/pages/purchase-order.template.js','js/pages/purchase-order.js'], fn:'renderPurchaseOrderPage'},
   tutupPendingPO:{srcs:['js/pages/tutup-pending-po.template.js','js/pages/tutup-pending-po.js'], fn:'renderTutupPendingPOPage'},
   uangMukaSupplier:{srcs:['js/pages/uang-muka-supplier.template.js','js/pages/uang-muka-supplier.js'], fn:'renderUangMukaSupplierPage'},
+  uangMukaCustomer:{srcs:['js/pages/uang-muka-customer.template.js','js/pages/uang-muka-customer.js'], fn:'renderUangMukaCustomerPage'},
+  spEcatKhusus:{srcs:['js/pages/sp-ecat-khusus.template.js','js/pages/sp-ecat-khusus.js'], fn:'renderSpEcatKhususPage'},
   permintaanPembelian:{srcs:['js/pages/permintaan-pembelian.template.js','js/pages/permintaan-pembelian.js'], fn:'renderPermintaanPembelianPage'},
   tutupPR:{srcs:['js/pages/tutup-pr.template.js','js/pages/tutup-pr.js'], fn:'renderTutupPRPage'},
   returPB:{srcs:['js/pages/retur-penerimaan-barang.template.js','js/pages/retur-penerimaan-barang.js'], fn:'renderReturPBPage'},
@@ -202,6 +204,7 @@ const PAGE_MODULES={
   revaluasiAsset:{srcs:['js/pages/revaluasi-asset.template.js','js/pages/revaluasi-asset.js'], fn:'renderRevaluasiAssetPage'},
   monitoringControlDelivery:{srcs:['js/pages/monitoring-control-delivery.template.js','js/pages/monitoring-control-delivery.js'], fn:'renderMonitoringControlDeliveryPage'},
   satuan:{srcs:['js/pages/satuan.template.js','js/pages/satuan.js'], fn:'renderSatuanPage'},
+  badanUsaha:{srcs:['js/pages/badan-usaha.template.js','js/pages/badan-usaha.js'], fn:'renderBadanUsahaPage'},
   masterStockOpname:{srcs:['js/pages/master-stock-opname.template.js','js/pages/master-stock-opname.js'], fn:'renderMasterStockOpnamePage'},
   stockOpname:{srcs:['js/pages/stock-opname.template.js','js/pages/stock-opname.js'], fn:'renderStockOpnamePage'},
 };

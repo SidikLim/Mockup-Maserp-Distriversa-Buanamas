@@ -5361,6 +5361,220 @@ const DATA = {
     {kode:'RIM', nama:'Rim'},
   ],
 
+  /* Badan Usaha (Customer & Penjualan > Master & Setting > Badan
+     Usaha, page:'badanUsaha'), sesuai screenshot MASERP "Badan
+     Usaha" yang dikirim user 2026-09-01 (Total Record: 40, kolom
+     Kode/Nama Badan Usaha, page-size default 10, pager
+     First/Previous/1-4/Next/Last). 10 baris PERTAMA (urut kode:
+     APT-KEM) PERSIS sesuai halaman 1 screenshot; 30 baris sisanya
+     jenis badan usaha generik dunia distribusi farmasi (semua
+     kode > KEM secara alfabetis supaya halaman 1 tetap identik
+     dgn screenshot). Kode PRO/UD/PT/CV yang sudah dipakai field
+     `badanUsaha` di master Customer ikut disediakan di sini.
+     Kode DIKETIK MANUAL saat Tambah (bukan auto-generate). */
+  badanUsaha:[
+    {kode:'APT',  nama:'APOTEK'},
+    {kode:'BDN',  nama:'BIDAN'},
+    {kode:'BUMN', nama:'PT'},
+    {kode:'CV',   nama:'CV'},
+    {kode:'DAK',  nama:'PT'},
+    {kode:'DKS',  nama:'DINKES'},
+    {kode:'DR',   nama:'dr'},
+    {kode:'DSS',  nama:'DINAS SOSIAL'},
+    {kode:'GFK',  nama:'GFK'},
+    {kode:'KEM',  nama:'KEMENKES'},
+    {kode:'KLN',  nama:'KLINIK'},
+    {kode:'KOP',  nama:'KOPERASI'},
+    {kode:'LAB',  nama:'LABORATORIUM'},
+    {kode:'LSM',  nama:'LSM'},
+    {kode:'MIN',  nama:'MINIMARKET'},
+    {kode:'OPT',  nama:'OPTIK'},
+    {kode:'PAB',  nama:'PABRIK'},
+    {kode:'PBF',  nama:'PBF'},
+    {kode:'PDAM', nama:'PDAM'},
+    {kode:'PEM',  nama:'PEMDA'},
+    {kode:'PKM',  nama:'PUSKESMAS'},
+    {kode:'PMI',  nama:'PMI'},
+    {kode:'POL',  nama:'POLIKLINIK'},
+    {kode:'PRK',  nama:'PRAKTEK DOKTER'},
+    {kode:'PRO',  nama:'PERORANGAN'},
+    {kode:'PT',   nama:'PT'},
+    {kode:'RB',   nama:'RUMAH BERSALIN'},
+    {kode:'RS',   nama:'RUMAH SAKIT'},
+    {kode:'RSIA', nama:'RS IBU DAN ANAK'},
+    {kode:'RSJ',  nama:'RS JIWA'},
+    {kode:'RSU',  nama:'RS UMUM'},
+    {kode:'SEK',  nama:'SEKOLAH'},
+    {kode:'SPM',  nama:'SUPERMARKET'},
+    {kode:'SWA',  nama:'SWALAYAN'},
+    {kode:'TK',   nama:'TOKO'},
+    {kode:'TKO',  nama:'TOKO OBAT'},
+    {kode:'UD',   nama:'UD'},
+    {kode:'UNIV', nama:'UNIVERSITAS'},
+    {kode:'WRG',  nama:'WARUNG'},
+    {kode:'YAY',  nama:'YAYASAN'},
+  ],
+
+  /* Uang Muka Customer (Customer & Penjualan > Daftar Transaksi >
+     Uang Muka Customer, page:'uangMukaCustomer'), sesuai 2 screenshot
+     MASERP yang dikirim user 2026-09-01 (list "Uang Muka Customer 2"
+     chip September 2026 + form). Screenshot SDL kosong (Total Record:
+     0) — mockup DBM diberi 3 sample September 2026 yang KONSISTEN
+     dgn master DBM: customer/SQ dari DATA.salesQuotation, salesman
+     dari DATA.salesman, akun jurnal 1120001/2140001/2120002.
+     Aritmetika tiap baris konsisten: subtotal=Σ jumlah items;
+     dpAmount=subtotal x dpPersen%; dpp=dpAmount; ppn=11% dpp (mode
+     eksklusif, kode PPN11) / 0 (mode tidak); jumlahTotal=dpp+ppn.
+     Jurnal: D Piutang Usaha (jumlah) lawan K Uang Muka Penjualan
+     (dpp) + K PPN Keluaran (ppn). */
+  uangMukaCustomer:[
+    {no:'26/UMC-HO/09/00001', tgl:'01/09/2026', cabang:'Head Office',
+      customer:'Toko Sumber Rejeki', noSQ:'26/SQ-0000000001', kodeSales:'Budi Santoso',
+      keterangan:'DP 100% order rutin Sembako — di transfer via bank BCA',
+      syaratBayar:'Kredit 30 Hari', tglJthTempo:'01/10/2026', jurnal:'JURNAL PENJUALAN KREDIT (IDR)',
+      ppnMode:'eksklusif', ppnKode:'PPN11', ppnPersen:11, dpPersen:100, ongkosAngkut:40000,
+      items:[{keterangan:'Minyak Goreng Sunco 2L', qty:40, jumlah:980000}],
+      subtotal:980000, dpAmount:980000, dpp:980000, ppnAmount:107800, jumlahTotal:1087800,
+      jurnalAkun:[
+        {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'Uang Muka 26/SQ-0000000001', debit:1087800, kredit:0},
+        {kodeAkun:'2140001', namaAkun:'Uang Muka Penjualan', keterangan:'Uang Muka 26/SQ-0000000001', debit:0, kredit:980000},
+        {kodeAkun:'2120002', namaAkun:'PPN Keluaran', keterangan:'Uang Muka 26/SQ-0000000001', debit:0, kredit:107800},
+      ]},
+    {no:'26/UMC-SBY/09/00001', tgl:'03/09/2026', cabang:'Surabaya',
+      customer:'UD Makmur Jaya', noSQ:'26/SQ-0000000002', kodeSales:'Andi Wijaya',
+      keterangan:'DP 50% restock gudang Surabaya',
+      syaratBayar:'Kredit 14 Hari', tglJthTempo:'17/09/2026', jurnal:'JURNAL PENJUALAN KREDIT (IDR)',
+      ppnMode:'eksklusif', ppnKode:'PPN11', ppnPersen:11, dpPersen:50, ongkosAngkut:30000,
+      items:[{keterangan:'Gula Pasir Gulaku 1kg', qty:100, jumlah:1500000}],
+      subtotal:1500000, dpAmount:750000, dpp:750000, ppnAmount:82500, jumlahTotal:832500,
+      jurnalAkun:[
+        {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'Uang Muka 26/SQ-0000000002', debit:832500, kredit:0},
+        {kodeAkun:'2140001', namaAkun:'Uang Muka Penjualan', keterangan:'Uang Muka 26/SQ-0000000002', debit:0, kredit:750000},
+        {kodeAkun:'2120002', namaAkun:'PPN Keluaran', keterangan:'Uang Muka 26/SQ-0000000002', debit:0, kredit:82500},
+      ]},
+    {no:'26/UMC-BDG/09/00001', tgl:'05/09/2026', cabang:'Bandung',
+      customer:'CV Berkah Abadi', noSQ:'', kodeSales:'Citra Lestari',
+      keterangan:'DP booking stock tanpa SQ — tunai di kasir Bandung',
+      syaratBayar:'COD', tglJthTempo:'', jurnal:'JURNAL PENJUALAN KREDIT (IDR)',
+      ppnMode:'tidak', ppnKode:'', ppnPersen:0, dpPersen:100, ongkosAngkut:0,
+      items:[{keterangan:'DP booking Gula Pasir Gulaku 1kg (200 karung)', qty:1, jumlah:2000000}],
+      subtotal:2000000, dpAmount:2000000, dpp:2000000, ppnAmount:0, jumlahTotal:2000000,
+      jurnalAkun:[
+        {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'Uang Muka 26/UMC-BDG/09/00001', debit:2000000, kredit:0},
+        {kodeAkun:'2140001', namaAkun:'Uang Muka Penjualan', keterangan:'Uang Muka 26/UMC-BDG/09/00001', debit:0, kredit:2000000},
+      ]},
+  ],
+
+  /* Surat Pesanan Ekatalog & Khusus (Customer & Penjualan > Daftar
+     Transaksi, page:'spEcatKhusus'), sesuai 2 screenshot MASERP
+     instalasi AAA yang dikirim user 2026-09-01 (list "SP ECAT &
+     KHUSUS" chip September 2026 + form). Data AAA (customer A000xxx,
+     produk farmasi 04-xxxxx) dipetakan ke master DBM sendiri:
+     customer CUST-xxx, produk BRG-xxx (DATA.items), principal =
+     DATA.suppliers, SO/area/rayon DBM. 12 sample September 2026 =
+     2 halaman (screenshot AAA pager 1-2); Nilai list = DPP =
+     Σ(qty x harga) - potongan; PPN strip form = 11%. noId meniru
+     pola "EP-01M1{20 karakter}". Semua Status Open (toggle Closed
+     Manually di list yang mengubahnya). */
+  spEcatKhusus:[
+    {noId:'EP-01M1QD73H7181ZJ5N6ND1N9ZK', tgl:'01/09/2026', soNama:'SIDOARJO (DC)', areaNama:'Mataram , nusa tenggara barat',
+      customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', alamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat',
+      rayonKode:'BANTEN 1', rayonKota:'Jakarta', rayonSalesman:'Budi Santoso',
+      principalNama:'PT Sumber Pangan Nusantara', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:18250000, piutangJt:0, cl:50000000, sisaCl:31750000, dl:14310000, sisaDl:14310000,
+      sumberDana:'APBD 2026', metodeBayar:'Transfer', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', uom:'Dus', qty:240, harga:25000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1RSW63ZFHBSB28E751R8ED', tgl:'01/09/2026', soNama:'SIDOARJO', areaNama:'AREAOFFICE',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya', alamat:'Jl. Raya Darmo No. 45, Surabaya',
+      rayonKode:'BANTEN 1', rayonKota:'Surabaya', rayonSalesman:'Andi Wijaya',
+      principalNama:'PT Wilmar Nabati Indonesia', noKontrak:'KTR/SBY/09/011', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:9120000, piutangJt:0, cl:35000000, sisaCl:25880000, dl:0, sisaDl:0,
+      sumberDana:'', metodeBayar:'', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', uom:'Karung', qty:244, harga:60000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1KB3994Q5QHZSDS3RYZ2DH', tgl:'01/09/2026', soNama:'BANDUNG', areaNama:'AREAOFFICE',
+      customerKode:'CUST-003', customerNama:'CV Berkah Abadi', alamat:'Jl. Braga No. 88, Bandung',
+      rayonKode:'BANTEN 1', rayonKota:'Bandung', rayonSalesman:'Citra Lestari',
+      principalNama:'PT Sumber Pangan Nusantara', noKontrak:'', posisiPaket:'Menunggu SPK', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:0, piutangJt:0, cl:25000000, sisaCl:25000000, dl:0, sisaDl:0,
+      sumberDana:'Dana BLUD', metodeBayar:'Transfer', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-005', nama:'Mie Instan Indomie Goreng', uom:'Dus', qty:2000, harga:2500}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1AXFWM89WDG424CHVTWTJQ', tgl:'01/09/2026', soNama:'SEMARANG', areaNama:'AREAOFFICE',
+      customerKode:'CUST-004', customerNama:'Toko Anugrah', alamat:'Jl. Pandanaran No. 20, Semarang',
+      rayonKode:'BANTEN 1', rayonKota:'Semarang', rayonSalesman:'Fajar Nugroho',
+      principalNama:'PT Wilmar Nabati Indonesia', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:4200000, piutangJt:0, cl:20000000, sisaCl:15800000, dl:0, sisaDl:0,
+      sumberDana:'', metodeBayar:'', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', uom:'Karung', qty:800, harga:15000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1FA33JWN9RQTW28P4ZGN8D', tgl:'01/09/2026', soNama:'TANGERANG', areaNama:'AREAOFFICE',
+      customerKode:'CUST-005', customerNama:'UD Sinar Harapan', alamat:'Jl. MH Thamrin No. 5, Tangerang',
+      rayonKode:'BANTEN 1', rayonKota:'Tangerang', rayonSalesman:'M. Reza Wijaya',
+      principalNama:'PT Sumber Pangan Nusantara', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:2750000, piutangJt:0, cl:15000000, sisaCl:12250000, dl:0, sisaDl:0,
+      sumberDana:'APBD 2026', metodeBayar:'Transfer', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', uom:'Dus', qty:500, harga:16000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1ZQ4CR3D0CXCN1R9SY3TCW', tgl:'01/09/2026', soNama:'SIDOARJO (DC)', areaNama:'AREAOFFICE',
+      customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya', alamat:'Jl. A. Yani No. 31, Sidoarjo',
+      rayonKode:'BANTEN 1', rayonKota:'Sidoarjo', rayonSalesman:'Eka Putri',
+      principalNama:'PT Wilmar Nabati Indonesia', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:0, piutangJt:0, cl:18000000, sisaCl:18000000, dl:0, sisaDl:0,
+      sumberDana:'', metodeBayar:'', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-006', nama:'Kecap Manis ABC 600ml', uom:'Dus', qty:350, harga:14000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1B53D62CVAHE0V68G2P026R', tgl:'01/09/2026', soNama:'BANDUNG', areaNama:'AREAOFFICE',
+      customerKode:'CUST-007', customerNama:'CV Maju Terus', alamat:'Jl. Tuparev No. 9, Karawang',
+      rayonKode:'BANTEN 1', rayonKota:'Karawang', rayonSalesman:'Citra Lestari',
+      principalNama:'PT Sumber Pangan Nusantara', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:6350000, piutangJt:0, cl:22000000, sisaCl:15650000, dl:0, sisaDl:0,
+      sumberDana:'', metodeBayar:'', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-009', nama:'Kopi Kapal Api 165gr', uom:'Dus', qty:420, harga:14000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1BBHG9NVJSYFAQYW67KHSQ', tgl:'01/09/2026', soNama:'BANDUNG', areaNama:'AREAOFFICE',
+      customerKode:'CUST-007', customerNama:'CV Maju Terus', alamat:'Jl. Tuparev No. 9, Karawang',
+      rayonKode:'BANTEN 1', rayonKota:'Karawang', rayonSalesman:'Citra Lestari',
+      principalNama:'PT Wilmar Nabati Indonesia', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:6350000, piutangJt:0, cl:22000000, sisaCl:15650000, dl:0, sisaDl:0,
+      sumberDana:'', metodeBayar:'', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', uom:'Dus', qty:300, harga:10000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M14DAA9FDB8YY0XMP68437BF', tgl:'01/09/2026', soNama:'SEMARANG', areaNama:'AREAOFFICE',
+      customerKode:'CUST-008', customerNama:'Toko Sejahtera', alamat:'Jl. Gajah Mada No. 77, Semarang',
+      rayonKode:'BANTEN 1', rayonKota:'Semarang', rayonSalesman:'Fajar Nugroho',
+      principalNama:'PT Sumber Pangan Nusantara', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:1500000, piutangJt:0, cl:12000000, sisaCl:10500000, dl:0, sisaDl:0,
+      sumberDana:'', metodeBayar:'', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', uom:'Dus', qty:900, harga:5000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1B2YY9YFPPB600HW6RHJTP', tgl:'01/09/2026', soNama:'SIDOARJO', areaNama:'AREAOFFICE',
+      customerKode:'CUST-009', customerNama:'PT Family Mart Indonesia', alamat:'Jl. Sudirman Kav. 21, Jakarta Selatan',
+      rayonKode:'BANTEN 1', rayonKota:'Jakarta', rayonSalesman:'M. Reza Wijaya',
+      principalNama:'PT Wilmar Nabati Indonesia', noKontrak:'KTR/HO/09/004', posisiPaket:'Kontrak berjalan', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:12800000, piutangJt:0, cl:80000000, sisaCl:67200000, dl:0, sisaDl:0,
+      sumberDana:'APBN 2026', metodeBayar:'Transfer', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', uom:'Karung', qty:700, harga:60000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1C8PWT2XN0V5KJ3QDMEA74', tgl:'02/09/2026', soNama:'TANGERANG', areaNama:'AREAOFFICE',
+      customerKode:'CUST-010', customerNama:'Toko Family Mart Sentosa', alamat:'Jl. Serpong Raya No. 3, Tangerang Selatan',
+      rayonKode:'BANTEN 1', rayonKota:'Tangerang', rayonSalesman:'M. Reza Wijaya',
+      principalNama:'PT Sumber Pangan Nusantara', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:0, piutangJt:0, cl:10000000, sisaCl:10000000, dl:0, sisaDl:0,
+      sumberDana:'', metodeBayar:'', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', uom:'Dus', qty:120, harga:25000}],
+      closedManually:false, requestPdr:false},
+    {noId:'EP-01M1D4H6ZR8SWLB2Y7NKQF03M', tgl:'02/09/2026', soNama:'SIDOARJO', areaNama:'AREAOFFICE',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya', alamat:'Jl. Raya Darmo No. 45, Surabaya',
+      rayonKode:'BANTEN 1', rayonKota:'Surabaya', rayonSalesman:'Andi Wijaya',
+      principalNama:'PT Sumber Pangan Nusantara', noKontrak:'', posisiPaket:'', uploadPo:false, files:[], noDsc:'', noDom:'',
+      piutangBjt:9120000, piutangJt:0, cl:35000000, sisaCl:25880000, dl:0, sisaDl:0,
+      sumberDana:'Dana BLUD', metodeBayar:'Transfer', potongan:0, biayaKirim:0,
+      items:[{kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', uom:'Karung', qty:950, harga:12000}],
+      closedManually:false, requestPdr:false},
+  ],
+
   /* Bentuk Sediaan (Persediaan Barang > Master & Setting > Bentuk
      Sediaan, page:'bentukSediaan'), sesuai screenshot MASERP
      "Daftar Bentuk Sediaan" yang dikirim user 2026-08-21 (Total
@@ -7327,14 +7541,14 @@ const MENU=[
    {label:'Weekday', page:'placeholder', title:'Weekday'},
    {label:'Rumus Komisi Salesman', page:'placeholder', title:'Rumus Komisi Salesman'},
    {label:'Komisi Per Item', page:'placeholder', title:'Komisi Per Item'},
-   {label:'Badan Usaha', page:'placeholder', title:'Badan Usaha'},
+   {label:'Badan Usaha', page:'badanUsaha'},
    {label:'Alasan Retur', page:'placeholder', title:'Alasan Retur'},
    {header:'Daftar Transaksi'},
    {label:'Tutup Pending SO', page:'tutupPendingSO'},
-   {label:'Uang Muka Customer', page:'placeholder', title:'Uang Muka Customer'},
+   {label:'Uang Muka Customer', page:'uangMukaCustomer'},
    {label:'Transaksi A.R.', page:'transaksiAR'},
    {label:'Transaksi A.R. SSP', page:'penerimaanSsp'},
-   {label:'Surat Pesanan Ekatalog & Khusus', page:'placeholder', title:'Surat Pesanan Ekatalog & Khusus'},
+   {label:'Surat Pesanan Ekatalog & Khusus', page:'spEcatKhusus'},
    {label:'Sales Quotation', page:'salesQuotation'},
    {label:'Tutup Sales Quotation', page:'tutupSalesQuotation'},
    {label:'Sales Order', page:'salesOrders'},
@@ -57048,6 +57262,2011 @@ function openMbpItemPicker(onPick){
 </script>
 <script>
 /* =========================================================
+   TEMPLATE (HTML saja) — Badan Usaha (Customer & Penjualan >
+   Master & Setting > Badan Usaha, page:'badanUsaha').
+   Semua fungsi di file ini HANYA menyusun & mengembalikan
+   markup HTML (string), TIDAK ada logic/DOM-binding di sini.
+   Logic-nya ada di file sebelah: badan-usaha.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Sebelumnya placeholder murni. Dibangun 2026-09-01 sesuai
+   screenshot MASERP "Badan Usaha" (Total Record: 40, kolom
+   Kode/Nama Badan Usaha dgn ikon sort, page-size DEFAULT 10
+   (beda dari Bentuk Sediaan yang default 25) + Pencarian
+   Global, pager First/Previous/1-4/Next/Last). Pola HTML/
+   CRUD/pager windowed/sort disalin dari Bentuk Sediaan.
+
+   BEDA dari Bentuk Sediaan: Kode Badan Usaha DIKETIK MANUAL
+   oleh user saat Tambah (bukan auto-generate — di screenshot
+   kodenya bebas: APT, BDN, BUMN, DAK, GFK, dst.), di-uppercase
+   otomatis, wajib & harus unik; saat Ubah kode readonly.
+   Data 40 baris di DATA.badanUsaha (js/data.js) — 10 baris
+   pertama persis screenshot, sisanya dipetakan ke dunia
+   distribusi farmasi DBM (kode PRO/UD/PT/CV yang sudah dipakai
+   field badanUsaha di master Customer ikut disediakan).
+========================================================= */
+
+function tplBuPage(){
+  return `
+    <div class="breadcrumb">Home / <b>Badan Usaha</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('users',15)} Badan Usaha</h3>
+        <button class="btn-primary" id="btnBuAdd">${icon('plus',14)} Tambah</button>
+      </div>
+      <div class="table-toolbar">
+        <select id="buPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="buSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>${tplBuSortHeader('Kode Badan Usaha','kode')}</th>
+          <th>${tplBuSortHeader('Nama Badan Usaha','nama')}</th>
+          <th style="width:70px;">Ubah</th>
+          <th style="width:70px;">Hapus</th>
+        </tr></thead>
+        <tbody id="buTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="buPager"></div><div id="buTotal"></div></div>
+    </div>`;
+}
+
+function tplBuSortHeader(label, field){
+  return `<span class="bu-sort-header" data-bu-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="buSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplBuRows(rows, page, pageSize){
+  if(!rows.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada data Badan Usaha</td></tr>`;
+  const start = (page-1)*pageSize;
+  return rows.slice(start, start+pageSize).map((r) => {
+    const idx = DATA.badanUsaha.indexOf(r);
+    return `
+    <tr>
+      <td><a href="#" class="row-link" data-edit="${idx}" style="color:var(--blue);font-weight:600;">${r.kode}</a></td>
+      <td>${r.nama || '-'}</td>
+      <td><button class="icon-btn edit" data-edit="${idx}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* Pager windowed maks. 7 nomor halaman — pola sama Bentuk
+   Sediaan (40 baris / 10 per halaman = 4 halaman, muat penuh). */
+function tplBuPager(page, totalPages){
+  if(totalPages <= 1) return '';
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+  let nums = '';
+  for(let p = start; p <= end; p++){
+    nums += `<button class="${p===page?'active':''}" data-bupage="${p}">${p}</button>`;
+  }
+  return `
+    <button data-bupage="1" ${page<=1?'disabled':''}>First</button>
+    <button data-bupage="${Math.max(1,page-1)}" ${page<=1?'disabled':''}>Previous</button>
+    ${nums}
+    <button data-bupage="${Math.min(totalPages,page+1)}" ${page>=totalPages?'disabled':''}>Next</button>
+    <button data-bupage="${totalPages}" ${page>=totalPages?'disabled':''}>Last</button>`;
+}
+
+function tplBuModal(mode, row){
+  const isEdit = mode === 'edit';
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${isEdit?'Ubah Badan Usaha':'Tambah Badan Usaha'}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Kode Badan Usaha</label>
+          <input type="text" id="fBuKode" value="${row.kode}" maxlength="10" ${isEdit?'readonly style="background:#f2f3f6;color:var(--text-light);"':'placeholder="Contoh: APT" style="text-transform:uppercase;"'}>
+          <div class="form-error" id="fBuKodeErr">Kode Badan Usaha wajib diisi</div>
+        </div>
+        <div class="form-group">
+          <label>Nama Badan Usaha</label>
+          <input type="text" id="fBuNama" value="${row.nama||''}" placeholder="Contoh: APOTEK">
+          <div class="form-error" id="fBuNamaErr">Nama Badan Usaha wajib diisi</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-primary" id="modalSave">Simpan</button>
+      </div>
+    </div>`;
+}
+
+function tplBuDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Badan Usaha</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Badan Usaha <b>${row.kode}</b> — ${row.nama||'-'}?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Badan Usaha (Customer & Penjualan >
+   Master & Setting > Badan Usaha, page:'badanUsaha'). Dimuat
+   otomatis (lazy-load) oleh core.js saat menu ini pertama kali
+   diklik — lihat PAGE_MODULES di js/core.js. Markup HTML-nya
+   ada di file sebelah: badan-usaha.template.js.
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Pola CRUD + pencarian/pagination/sort SAMA dengan Bentuk
+   Sediaan (bentuk-sediaan.js). BEDA: kode diketik manual saat
+   Tambah (di-uppercase, wajib, unik — bukan auto-generate) &
+   default page-size 10 (lihat buPageSize() + tplBuPage()).
+========================================================= */
+
+let buState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+
+function renderBadanUsahaPage(){
+  content.innerHTML = tplBuPage();
+  buState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+  document.getElementById('btnBuAdd').onclick = () => openBuModal('add');
+  document.getElementById('buPageSize').onchange = () => { buState.page = 1; renderBuTable(); };
+  document.getElementById('buSearch').oninput = (e) => {
+    buState.search = e.target.value.trim().toLowerCase();
+    buState.page = 1;
+    renderBuTable();
+  };
+  document.querySelectorAll('[data-bu-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.buSort;
+    if(buState.sortField === field){
+      buState.sortDir = buState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      buState.sortField = field;
+      buState.sortDir = 'asc';
+    }
+    buState.page = 1;
+    renderBuTable();
+  });
+  renderBuTable();
+}
+
+function buPageSize(){
+  const sel = document.getElementById('buPageSize');
+  return sel ? parseInt(sel.value, 10) : 10;
+}
+
+function buFilteredSortedRows(){
+  const q = buState.search;
+  let rows = !q ? DATA.badanUsaha.slice() : DATA.badanUsaha.filter(r =>
+    (r.kode||'').toLowerCase().includes(q) || (r.nama||'').toLowerCase().includes(q));
+  const field = buState.sortField;
+  const dir = buState.sortDir === 'desc' ? -1 : 1;
+  rows.sort((a,b) => (a[field]||'').localeCompare(b[field]||'', 'id') * dir);
+  return rows;
+}
+
+function renderBuTable(){
+  const perPage = buPageSize();
+  const filtered = buFilteredSortedRows();
+  const totalPages = Math.max(1, Math.ceil(filtered.length/perPage));
+  if(buState.page > totalPages) buState.page = totalPages;
+  if(buState.page < 1) buState.page = 1;
+
+  document.getElementById('buTbody').innerHTML = tplBuRows(filtered, buState.page, perPage);
+  document.getElementById('buTotal').textContent = `Total Record: ${filtered.length}`;
+  document.getElementById('buPager').innerHTML = tplBuPager(buState.page, totalPages);
+
+  ['kode','nama'].forEach(f => {
+    const el = document.getElementById(`buSortIcon_${f}`);
+    if(!el) return;
+    if(buState.sortField === f){
+      el.innerHTML = buState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+
+  const tbody = document.getElementById('buTbody');
+  tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = (e) => { e.preventDefault(); openBuModal('edit', +b.dataset.edit); });
+  tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => openBuDeleteConfirm(+b.dataset.del));
+
+  const pager = document.getElementById('buPager');
+  pager.querySelectorAll('[data-bupage]').forEach(b => b.onclick = () => { buState.page = +b.dataset.bupage; renderBuTable(); });
+}
+
+function openBuModal(mode, idx){
+  closeModal();
+  const row = mode === 'edit' ? DATA.badanUsaha[idx] : { kode:'', nama:'' };
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplBuModal(mode, row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalSave').onclick = () => {
+    const kodeEl = document.getElementById('fBuKode');
+    const kode = kodeEl.value.trim().toUpperCase();
+    const nama = document.getElementById('fBuNama').value.trim();
+    const kodeErr = document.getElementById('fBuKodeErr');
+    const namaErr = document.getElementById('fBuNamaErr');
+    kodeErr.style.display = 'none';
+    namaErr.style.display = 'none';
+    let ok = true;
+    if(mode === 'add'){
+      if(!kode){
+        kodeErr.textContent = 'Kode Badan Usaha wajib diisi';
+        kodeErr.style.display = 'block'; ok = false;
+      } else if(DATA.badanUsaha.some(r => (r.kode||'').toUpperCase() === kode)){
+        kodeErr.textContent = `Kode Badan Usaha "${kode}" sudah terdaftar`;
+        kodeErr.style.display = 'block'; ok = false;
+      }
+    }
+    if(!nama){ namaErr.style.display = 'block'; ok = false; }
+    if(!ok) return;
+    if(mode === 'add'){
+      DATA.badanUsaha.push({ kode, nama });
+    } else {
+      DATA.badanUsaha[idx].nama = nama;
+    }
+    closeModal();
+    renderBuTable();
+  };
+}
+
+function openBuDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.badanUsaha[idx];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplBuDeleteConfirm(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.badanUsaha.splice(idx, 1);
+    closeModal();
+    renderBuTable();
+  };
+}
+
+</script>
+<script>
+/* =========================================================
+   TEMPLATE (HTML saja) — Uang Muka Customer (Customer &
+   Penjualan > Daftar Transaksi > Uang Muka Customer, key
+   page:'uangMukaCustomer'). Semua fungsi di file ini HANYA
+   menyusun & mengembalikan markup HTML (string) atau helper
+   murni, TIDAK ada DOM-binding/data mutation di sini. Logic-nya
+   ada di file sebelah: uang-muka-customer.js
+
+   Sesuai 2 screenshot MASERP yang dikirim user 2026-09-01
+   (instalasi SDL — data dipetakan ke master DBM sendiri sesuai
+   konvensi):
+   1) List "Uang Muka Customer 2" (judul header PERSIS screenshot,
+      angka "2" quirk layar MASERP asli — label menu tetap "Uang
+      Muka Customer"): chip periode "September 2026" + Tambah;
+      kolom No. Uang Muka (link biru -> Lihat) / Tgl. Uang Muka /
+      Customer / No. SQ / Jumlah / Keterangan + aksi Lihat
+      Invoice / Cetak Invoice / Ubah / Hapus. Screenshot SDL
+      "Tidak Ada Data" (Total Record: 0) — mockup DBM diberi 3
+      sample September 2026 supaya list hidup; chip periode
+      FUNGSIONAL (September/Agustus, filter bulan di r.tgl).
+   2) Form "+ Uang Muka Customer 2": heading kiri + Cabang;
+      Customer (picker) + Sales Quotation (picker DATA.
+      salesQuotation, OPSIONAL — "--Sales Quotation (Opsional)--";
+      barang SQ jadi baris Rincian Transaksi, ongkos angkut ikut
+      biayaKirim SQ) + Kode Sales (dropdown DATA.salesman);
+      No. Otomatis "UMC01" (dekoratif) + No. Transaksi
+      "26/UMC-HO/09/00001" readonly + refresh + Keterangan
+      (placeholder "contoh: di transfer via bank BCA");
+      Tgl. Trn. / Syarat Bayar / Tgl. Jth. Tempo / Jurnal
+      (dropdown master Jurnal Penjualan, default kosong sesuai
+      screenshot). Tab "Rincian Transaksi": Keterangan / Qty /
+      Jumlah / Hapus + link "+Tambah Item Baru" (BEDA dari Uang
+      Muka Supplier: baris bisa DITAMBAH & DIEDIT MANUAL karena
+      SQ opsional). Panel kiri "Informasi PPN" HANYA 4 radio
+      (tanpa kotak faktur pajak — sesuai screenshot); label
+      radio terakhir "PPN Eksklusif (+{persen}%)" mengikuti PPN
+      terpilih (0% sebelum pilih PPN, sesuai screenshot). Panel
+      kanan "Rincian Transaksi": Customer Mata Uang/kurs 1,00,
+      Ongkos Angkut (readonly, dari SQ), Subtotal, Dp Tertagih
+      % (EDITABLE, default 100), DPP, "Pajak {p} %" + picker
+      "Pilih Ppn" (PPN11), Jumlah.
+   Footer: Cetak dan Simpan / Simpan / Batalkan. No. format
+   "26/UMC-{kode cabang}/09/{urut 5 digit}" (September 2026).
+   Aritmetika: Subtotal = Σ Jumlah baris rincian; DP = Subtotal
+   x %; DPP = DP (mode Eksklusif) / DP x 100/(100+p) (Inklusif);
+   PPN = p% DPP; Jumlah = DPP + PPN. Ongkos Angkut display-only
+   (informasi SQ, tidak ikut ditagih di uang muka).
+   Jurnal otomatis: D 1120001 Piutang Usaha (Jumlah) lawan
+   K 2140001 Uang Muka Penjualan (DPP) + K 2120002 PPN Keluaran
+   (PPN) — tagihan uang muka ke customer. */
+
+const UMC_CABANG_LIST = ['Head Office','Surabaya','Bandung','Medan','Makassar','Semarang','Tangerang','Sidoarjo'];
+const UMC_CABANG_CODE = {'Head Office':'HO','Surabaya':'SBY','Bandung':'BDG','Medan':'MDN','Makassar':'MKS','Semarang':'SMG','Tangerang':'TGR','Sidoarjo':'SDA'};
+const UMC_SYARAT_BAYAR_LIST = ['','COD','CBD','Kredit 14 Hari','Kredit 30 Hari'];
+const UMC_PPN_LIST = [
+  {kode:'PPN11', persen:11},
+];
+const UMC_BULAN_LIST = [
+  {label:'September 2026', mm:'09'},
+  {label:'Agustus 2026', mm:'08'},
+];
+
+function umcNum2(n){ return Number(n||0).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function umcAkunNama(kode){ const a = DATA.akunGL.find(x => x.kode === kode); return a ? a.nama : ''; }
+
+/* =====================================================================
+   LIST PAGE — "Uang Muka Customer 2"
+===================================================================== */
+function tplUangMukaCustomerListPage(bulan){
+  return `
+    <div class="breadcrumb">Home / Customer &amp; Penjualan / <b>Uang Muka Customer</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('alertTriangle',15)} Uang Muka Customer 2</h3>
+        <div class="toolbar-actions">
+          <select class="chip-btn" id="umcFilterBulan">${UMC_BULAN_LIST.map(b=>`<option ${bulan===b.mm?'selected':''} value="${b.mm}">${b.label}</option>`).join('')}</select>
+          <button class="btn-primary" id="btnUmcAdd">${icon('plus',14)} Tambah</button>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <select id="umcPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="umcSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th style="width:170px;">No. Uang Muka</th>
+          <th style="width:115px;">Tgl. Uang Muka</th>
+          <th>Customer</th>
+          <th style="width:150px;">No. SQ</th>
+          <th class="text-right" style="width:130px;">Jumlah</th>
+          <th style="width:170px;">Keterangan</th>
+          <th style="width:76px;">Lihat Invoice</th>
+          <th style="width:76px;">Cetak Invoice</th>
+          <th style="width:60px;">Ubah</th>
+          <th style="width:60px;">Hapus</th>
+        </tr></thead>
+        <tbody id="umcTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager"><button>First</button><button>Previous</button><button class="active">1</button><button>Next</button><button>Last</button></div><div id="umcTotal"></div></div>
+    </div>`;
+}
+
+function tplUmcRows(rows){
+  if(!rows.length) return `<tr><td colspan="10" style="color:var(--text-light);padding:14px;text-align:center;font-weight:600;">Tidak Ada Data</td></tr>`;
+  return rows.map((r,i)=>`
+    <tr>
+      <td><button class="link-pick" data-view-link="${i}">${r.no}</button></td>
+      <td>${r.tgl||''}</td>
+      <td>${(r.customer||'').toUpperCase()}</td>
+      <td>${r.noSQ||''}</td>
+      <td class="text-right">${umcNum2(r.jumlahTotal)}</td>
+      <td style="max-width:190px;"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${r.keterangan||''}">${r.keterangan||''}</div></td>
+      <td><button class="icon-btn view" data-invoice="${i}" title="Lihat Invoice">${icon('eye',15)}</button></td>
+      <td><button class="icon-btn view" data-print="${i}" title="Cetak Invoice">${icon('printer',15)}</button></td>
+      <td><button class="icon-btn edit" data-edit="${i}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del="${i}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`).join('');
+}
+
+/* =====================================================================
+   FORM (full page)
+===================================================================== */
+function tplUmcForm(mode, row){
+  const isAdd = mode === 'add';
+  const isView = mode === 'view';
+  const dis = isView ? 'disabled' : '';
+  return `
+    <div class="breadcrumb">Home / Uang Muka Customer / <b>${isAdd ? 'Tambah' : (isView ? 'Lihat' : 'Ubah')}</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('plus',15)} Uang Muka Customer 2</h3>
+        <button class="btn-danger" id="btnUmcTutorial">${icon('card',14)} Tutorial</button>
+      </div>
+      <div class="card-body">
+        <div class="form-grid-3" style="grid-template-columns:repeat(3,1fr);align-items:end;">
+          <h2 style="font-size:20px;font-weight:700;color:var(--navy);margin:0 0 10px;padding-bottom:10px;border-bottom:1px solid var(--border);">Uang Muka Customer</h2>
+          <div class="form-group">
+            <label>Cabang</label>
+            <select id="fUmcCabang" ${(!isAdd)?'disabled':dis}>${UMC_CABANG_LIST.map(c=>`<option ${row.cabang===c?'selected':''}>${c}</option>`).join('')}</select>
+          </div>
+          <div class="form-group"></div>
+        </div>
+
+        <div class="form-grid-3" style="grid-template-columns:repeat(3,1fr);">
+          <div class="form-group">
+            <label>Customer</label>
+            <div class="input-with-btn">
+              <input type="text" id="fUmcCustomer" value="${(row.customer||'').toUpperCase()}" placeholder="Pilih Customer" readonly>
+              ${!isView ? `<button type="button" class="icon-btn edit" id="umcCustomerSearch" title="Cari Customer">${icon('search',13)}</button>` : ''}
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Sales Quotation</label>
+            <div class="input-with-btn">
+              <input type="text" id="fUmcNoSQ" value="${row.noSQ||''}" placeholder="--Sales Quotation (Opsional)--" readonly>
+              ${!isView ? `<button type="button" class="icon-btn edit" id="umcSqSearch" title="Cari Sales Quotation">${icon('search',13)}</button>` : ''}
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Kode Sales</label>
+            <select id="fUmcKodeSales" ${dis}><option value=""></option>${DATA.salesman.map(s=>`<option ${row.kodeSales===s.nama?'selected':''}>${s.nama}</option>`).join('')}</select>
+          </div>
+        </div>
+
+        <div class="form-grid-3" style="grid-template-columns:repeat(3,1fr);">
+          <div class="form-group" style="max-width:220px;">
+            <label>No. Otomatis</label>
+            <select disabled><option>UMC01</option></select>
+          </div>
+          <div class="form-group">
+            <label>No. Transaksi</label>
+            <div class="input-with-btn">
+              <input type="text" id="fUmcNo" value="${row.no||''}" readonly>
+              ${isAdd ? `<button type="button" class="icon-btn edit" id="umcRefreshNo" title="Generate Ulang Nomor">${icon('refreshCw',13)}</button>` : ''}
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Keterangan</label>
+            <textarea id="fUmcKeterangan" class="po-textarea" rows="3" placeholder="contoh: di transfer via bank BCA" ${dis}>${row.keterangan||''}</textarea>
+          </div>
+        </div>
+
+        <div class="form-grid-3" style="grid-template-columns:repeat(4,1fr);">
+          <div class="form-group">
+            <label>Tgl. Trn.</label>
+            <div class="input-with-btn">
+              <input type="text" id="fUmcTgl" value="${row.tgl||''}" ${dis}>
+              <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',13)}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Syarat Bayar</label>
+            <select id="fUmcSyaratBayar" ${dis}>${UMC_SYARAT_BAYAR_LIST.map(s=>`<option ${row.syaratBayar===s?'selected':''}>${s}</option>`).join('')}</select>
+          </div>
+          <div class="form-group">
+            <label>Tgl. Jth. Tempo</label>
+            <div class="input-with-btn">
+              <input type="text" id="fUmcTglJthTempo" value="${row.tglJthTempo||''}" placeholder="Tgl. Jth. Tempo" ${dis}>
+              <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',13)}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Jurnal</label>
+            <select id="fUmcJurnal" ${dis}><option value=""></option>${DATA.jurnalPenjualan.map(j=>`<option ${row.jurnal===j.nama?'selected':''}>${j.nama}</option>`).join('')}</select>
+          </div>
+        </div>
+
+        <div class="inv-tabs">
+          <button type="button" class="inv-tab-btn active" id="umcTabRincianBtn">Rincian Transaksi</button>
+          <button type="button" class="inv-tab-btn" id="umcTabJurnalBtn">Rincian Jurnal Akun</button>
+        </div>
+
+        <div id="umcTabRincianContent">${tplUmcRincianTab(row, isView)}</div>
+        <div id="umcTabJurnalContent" style="display:none;">${tplUmcJurnalContent(row, isView)}</div>
+      </div>
+      <div class="card-footer" style="display:flex;gap:10px;justify-content:flex-end;align-items:center;padding:14px 20px;border-top:1px solid var(--border);">
+        ${!isView ? `
+          <button type="button" class="btn-teal" id="umcCetakSimpan">Cetak dan Simpan</button>
+          <button type="button" class="btn-primary" id="umcSimpan">Simpan</button>` : ''}
+        <a href="#" id="umcBatalkan" class="link-add" style="margin-top:0;">${isView?'Tutup':'Batalkan'}</a>
+      </div>
+    </div>`;
+}
+
+/* ===== Tab 1 — Rincian Transaksi + panel PPN & DP ===== */
+function tplUmcRincianTab(row, isView){
+  const p = Number(row.ppnPersen || 0);
+  return `
+    <div class="table-wrap" style="margin:10px 0 0;">
+      <table class="po-item-table">
+        <thead><tr>
+          <th>Keterangan</th>
+          <th class="text-right" style="width:100px;">Qty</th>
+          <th class="text-right" style="width:150px;">Jumlah</th>
+          <th style="width:60px;">Hapus</th>
+        </tr></thead>
+        <tbody id="umcItemsBody">${tplUmcItemRows(row.items, isView)}</tbody>
+      </table>
+    </div>
+    ${!isView ? `<a href="#" class="link-add" id="umcAddItem">${icon('plus',12)}Tambah Item Baru</a>` : ''}
+
+    <div class="form-grid" style="margin-top:24px;">
+      <div>
+        <div class="form-section">Informasi PPN</div>
+        <div class="radio-group">
+          <label><input type="radio" name="umcPpnMode" value="tidak" ${row.ppnMode==='tidak'?'checked':''} ${isView?'disabled':''}> Tidak ada PPN</label>
+          <label><input type="radio" name="umcPpnMode" value="tidakDipungut" ${row.ppnMode==='tidakDipungut'?'checked':''} ${isView?'disabled':''}> PPN Tidak Dipungut Pajak</label>
+          <label><input type="radio" name="umcPpnMode" value="inklusif" ${row.ppnMode==='inklusif'?'checked':''} ${isView?'disabled':''}> PPN Inklusif</label>
+          <label><input type="radio" name="umcPpnMode" value="eksklusif" ${row.ppnMode==='eksklusif'?'checked':''} ${isView?'disabled':''}> PPN Eksklusif (+<span id="umcPpnPersenRadio">${p}</span>%)</label>
+        </div>
+      </div>
+      <div>
+        <div class="form-section">Rincian Transaksi</div>
+        <table class="field-table po-rincian-table">
+          <tr><td class="flabel">Customer Mata Uang</td><td><input type="text" value="IDR" disabled></td><td class="flabel"></td><td><input type="text" value="${umcNum2(1)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">Ongkos Angkut</td><td colspan="3"><input type="text" id="fUmcOngkosAngkut" value="${umcNum2(row.ongkosAngkut||0)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">Subtotal</td><td colspan="3"><input type="text" id="fUmcSubtotal" value="${umcNum2(row.subtotal||0)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">Dp Tertagih</td><td><input type="number" min="0" max="100" id="fUmcDpPersen" value="${row.dpPersen!=null?row.dpPersen:100}" ${isView?'disabled':''}> %</td><td></td><td><input type="text" id="fUmcDpAmount" value="${umcNum2(row.dpAmount||0)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">DPP</td><td colspan="3"><input type="text" id="fUmcDpp" value="${umcNum2(row.dpp||0)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">Pajak <span id="umcPpnPersenLabel">${p}</span> %</td><td>
+              <div class="input-with-btn">
+                <input type="text" id="fUmcPpnKode" value="${row.ppnKode||''}" placeholder="Pilih Ppn" readonly>
+                ${!isView ? `<button type="button" class="icon-btn edit" id="umcPpnSearch" title="Cari Kode PPN">${icon('search',13)}</button>
+                <button type="button" class="icon-btn del" id="umcPpnClear" title="Hapus PPN">${icon('trash',13)}</button>` : ''}
+              </div>
+            </td><td></td><td><input type="text" id="fUmcPpnAmount" value="${umcNum2(row.ppnAmount||0)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">Jumlah</td><td colspan="3"><input type="text" id="fUmcJumlahTotal" value="${umcNum2(row.jumlahTotal||0)}" disabled style="text-align:right;font-weight:700;font-size:14px;"></td></tr>
+        </table>
+      </div>
+    </div>`;
+}
+
+function tplUmcItemRows(items, isView){
+  if(!items || !items.length) return `<tr><td colspan="4" style="color:var(--text-light);">Belum ada rincian — pilih Sales Quotation atau klik "Tambah Item Baru".</td></tr>`;
+  return items.map((it,idx)=>`
+    <tr>
+      <td><input type="text" data-umc-item-ket="${idx}" value="${it.keterangan||''}" ${isView?'readonly':''}></td>
+      <td style="width:100px;"><input type="number" min="0" data-umc-item-qty="${idx}" value="${it.qty||0}" ${isView?'readonly':''} style="text-align:right;"></td>
+      <td style="width:150px;"><input type="number" step="0.01" min="0" data-umc-item-jumlah="${idx}" value="${it.jumlah||0}" ${isView?'readonly':''} style="text-align:right;"></td>
+      <td style="width:60px;">${!isView ? `<button type="button" class="icon-btn del" data-umc-del="${idx}" title="Hapus Baris">${icon('trash',14)}</button>` : ''}</td>
+    </tr>`).join('');
+}
+
+/* ===== Tab 2 — Rincian Jurnal Akun (Buat Jurnal + tabel editable) ===== */
+function tplUmcJurnalContent(row, isView){
+  const totals = umcJurnalTotals(row);
+  const selisihColor = Math.abs(totals.selisih) > 0.004 ? 'var(--red)' : 'var(--text)';
+  return `
+    ${!isView ? `<div style="display:flex;justify-content:center;margin:14px 0;">
+      <button type="button" class="btn-secondary" id="umcBuatJurnal">${icon('refreshCw',13)} Buat Jurnal</button>
+    </div>` : '<div style="margin-top:14px;"></div>'}
+    <div class="card-header dark-header" style="border-radius:6px;">
+      <h3>${icon('settings',14)} Rincian Jurnal Akun</h3>
+      ${!isView ? `<button type="button" class="btn-primary" id="umcJurnalAddRow">${icon('plus',13)} Tambah</button>` : ''}
+    </div>
+    <div class="table-wrap" style="margin:6px 0 0;">
+      <table class="po-item-table">
+        <thead><tr>
+          <th>Kode Akun</th><th>Nama Akun</th><th>Keterangan</th><th class="text-right">Jumlah Debit</th><th class="text-right">Jumlah Kredit</th><th>Hapus</th>
+        </tr></thead>
+        <tbody id="umcJurnalBody">${tplUmcJurnalRows(row.jurnalAkun, isView)}</tbody>
+      </table>
+    </div>
+    <div style="max-width:280px;margin:16px 0 0 auto;">
+      <div style="font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:4px;">Jumlah Debit - Kredit</div>
+      <input type="text" id="umcJurnalSelisih" value="${umcNum2(totals.selisih)}" readonly style="text-align:right;font-weight:700;color:${selisihColor};">
+    </div>`;
+}
+
+function tplUmcJurnalRows(list, isView){
+  if(!list || !list.length) return `<tr><td colspan="6" style="color:var(--text-light);">Belum ada rincian jurnal — klik "Buat Jurnal".</td></tr>`;
+  return list.map((entry,idx)=>{
+    if(isView){
+      return `
+      <tr>
+        <td style="min-width:110px;"><input type="text" value="${entry.kodeAkun||''}" readonly></td>
+        <td style="min-width:180px;"><input type="text" value="${entry.namaAkun||''}" readonly></td>
+        <td style="min-width:160px;"><input type="text" value="${entry.keterangan||''}" readonly></td>
+        <td style="width:150px;"><input type="text" value="${umcNum2(entry.debit||0)}" readonly style="text-align:right;"></td>
+        <td style="width:150px;"><input type="text" value="${umcNum2(entry.kredit||0)}" readonly style="text-align:right;"></td>
+        <td style="width:50px;"></td>
+      </tr>`;
+    }
+    return `
+    <tr data-umc-jurnal-row="${idx}">
+      <td style="min-width:110px;">
+        <div class="input-with-btn">
+          <input type="text" data-umc-jurnal-kode="${idx}" value="${entry.kodeAkun||''}" readonly>
+          <button type="button" class="icon-btn edit" data-umc-jurnal-akun-search="${idx}" title="Cari Akun GL">${icon('search',12)}</button>
+        </div>
+      </td>
+      <td style="min-width:180px;"><input type="text" data-umc-jurnal-nama="${idx}" value="${entry.namaAkun||''}" readonly></td>
+      <td style="min-width:160px;"><input type="text" data-umc-jurnal-ket="${idx}" value="${entry.keterangan||''}"></td>
+      <td style="width:150px;"><input type="number" step="0.01" min="0" data-umc-jurnal-debit="${idx}" value="${entry.debit||0}" style="text-align:right;"></td>
+      <td style="width:150px;"><input type="number" step="0.01" min="0" data-umc-jurnal-kredit="${idx}" value="${entry.kredit||0}" style="text-align:right;"></td>
+      <td style="width:50px;"><button type="button" class="icon-btn del" data-umc-jurnal-del="${idx}" title="Hapus Baris">${icon('trash',14)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* Cetakan/preview "Invoice Uang Muka Customer" — dipakai tombol Lihat
+   Invoice & Cetak Invoice di list + "Cetak dan Simpan" di form (kop
+   DBM, pola sama Invoice Uang Muka Supplier). */
+function tplUmcInvoiceModal(row){
+  const ho = DATA.cabangMaster[0] || {};
+  const td = 'padding:3px 6px;font-size:11.5px;';
+  const itemRows = (row.items||[]).map((it,i)=>`
+    <tr>
+      <td style="${td}text-align:center;">${i+1}</td>
+      <td style="${td}">${it.keterangan}</td>
+      <td style="${td}text-align:right;">${umcNum2(it.qty)}</td>
+      <td style="${td}text-align:right;">${umcNum2(it.jumlah)}</td>
+    </tr>`).join('');
+  return `
+    <div class="modal-box" style="max-width:860px;width:96vw;">
+      <div class="modal-header"><span>${icon('printer',15)} Invoice Uang Muka — ${row.no}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body" style="max-height:72vh;overflow:auto;">
+        <div style="background:#fff;border:1px solid var(--border);padding:22px 26px;font-family:Arial,Helvetica,sans-serif;color:#111;">
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:64px;height:64px;border-radius:10px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;">DBM</div>
+            <div>
+              <div style="font-weight:800;font-size:14px;">${(ho.namaPerusahaan||'PT Distriversa Buanamas').toUpperCase()}</div>
+              <div style="font-size:11.5px;">${ho.alamat||''}, ${ho.kota||''} — Tlp: ${ho.telepon||''}</div>
+            </div>
+          </div>
+          <div style="text-align:center;font-weight:800;font-size:15px;margin:12px 0;">Invoice Uang Muka Customer</div>
+          <table style="border:none;font-size:11.5px;"><tbody>
+            <tr><td style="${td}">No. Uang Muka</td><td style="${td}">: ${row.no}</td><td style="${td}padding-left:40px;">Customer</td><td style="${td}">: ${(row.customer||'').toUpperCase()}</td></tr>
+            <tr><td style="${td}">Tgl. Trn.</td><td style="${td}">: ${row.tgl||''}</td><td style="${td}padding-left:40px;">No. SQ</td><td style="${td}">: ${row.noSQ||'-'}</td></tr>
+            <tr><td style="${td}">Tgl. Jth. Tempo</td><td style="${td}">: ${row.tglJthTempo||'-'}</td><td style="${td}padding-left:40px;">Syarat Bayar</td><td style="${td}">: ${row.syaratBayar||'-'}</td></tr>
+            <tr><td style="${td}">Kode Sales</td><td style="${td}">: ${row.kodeSales||'-'}</td><td style="${td}padding-left:40px;">Cabang</td><td style="${td}">: ${row.cabang||''}</td></tr>
+          </tbody></table>
+          <table style="width:100%;border-collapse:collapse;margin-top:10px;">
+            <thead><tr style="border-top:2px solid #111;border-bottom:2px solid #111;">
+              <th style="${td}width:34px;">No.</th><th style="${td}text-align:left;">Keterangan</th><th style="${td}text-align:right;">Qty</th><th style="${td}text-align:right;">Jumlah</th>
+            </tr></thead>
+            <tbody>${itemRows}</tbody>
+          </table>
+          <div style="border-top:2px solid #111;margin-top:30px;"></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+            <table style="border:none;min-width:280px;font-size:11.5px;"><tbody>
+              <tr><td style="${td}">Subtotal :</td><td style="${td}text-align:right;">${umcNum2(row.subtotal)}</td></tr>
+              <tr><td style="${td}">Dp Tertagih (${row.dpPersen!=null?row.dpPersen:100}%) / DPP :</td><td style="${td}text-align:right;">${umcNum2(row.dpp)}</td></tr>
+              <tr><td style="${td}">PPN :</td><td style="${td}text-align:right;">${umcNum2(row.ppnAmount)}</td></tr>
+              <tr style="border-top:2px solid #111;"><td style="${td}font-weight:800;">Jumlah :</td><td style="${td}text-align:right;font-weight:800;">${umcNum2(row.jumlahTotal)}</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+/* Picker Customer / SQ / PPN / Akun GL — salinan lokal pola modul lain. */
+function tplUmcCustomerPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Customer</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="umcCustomerPickerSearch" placeholder="Cari kode / nama customer..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Customer</th><th></th></tr></thead>
+            <tbody id="umcCustomerPickerBody">${tplUmcCustomerPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplUmcCustomerPickerRows(list){
+  if(!list.length) return `<tr><td colspan="3" style="color:var(--text-light);">Tidak ada customer ditemukan</td></tr>`;
+  return list.map(c=>`
+    <tr><td>${c.kode}</td><td>${c.nama}</td><td><button class="btn-pick" data-pick-customer="${c.nama}">Pilih</button></td></tr>`).join('');
+}
+
+function tplUmcSqPicker(list){
+  return `
+    <div class="modal-box" style="max-width:760px;">
+      <div class="modal-header"><span>Pilih Sales Quotation</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="umcSqPickerSearch" placeholder="Cari no. SQ / customer..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:340px;overflow:auto;">
+          <table>
+            <thead><tr><th>No. SQ</th><th>Tgl. SQ</th><th>Customer</th><th>Sales Office</th><th></th></tr></thead>
+            <tbody id="umcSqPickerBody">${tplUmcSqPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplUmcSqPickerRows(list){
+  if(!list.length) return `<tr><td colspan="5" style="color:var(--text-light);">Tidak ada Sales Quotation ditemukan</td></tr>`;
+  return list.map(q=>`
+    <tr><td>${q.no}</td><td>${q.tglSQ||''}</td><td>${q.customer||''}</td><td>${q.sOffice||''}</td><td><button class="btn-pick" data-pick-sq="${q.no}">Pilih</button></td></tr>`).join('');
+}
+
+function tplUmcPpnPicker(list){
+  return `
+    <div class="modal-box" style="max-width:400px;">
+      <div class="modal-header"><span>Pilih PPN</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="table-wrap"><table>
+          <thead><tr><th>Kode PPN</th><th>Persen</th><th></th></tr></thead>
+          <tbody>${list.map(p=>`<tr><td>${p.kode}</td><td>${p.persen}%</td><td><button class="btn-pick" data-pick-ppn="${p.kode}" data-pick-persen="${p.persen}">Pilih</button></td></tr>`).join('')}</tbody>
+        </table></div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplUmcAkunPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Akun GL</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="umcAkunPickerSearch" placeholder="Cari kode / nama akun..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Akun</th><th>Kat.</th><th></th></tr></thead>
+            <tbody id="umcAkunPickerBody">${tplUmcAkunPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplUmcAkunPickerRows(list){
+  if(!list.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada akun ditemukan</td></tr>`;
+  return list.map(a=>`
+    <tr><td>${a.kode}</td><td>${a.nama}</td><td>${a.kategori}</td><td><button class="btn-pick" data-umc-pick-akun="${a.kode}">Pilih</button></td></tr>`).join('');
+}
+
+function tplUmcDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Uang Muka Customer</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Uang Muka <b>${row.no}</b> — ${(row.customer||'').toUpperCase()} (${umcNum2(row.jumlahTotal)})?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+function tplUmcInfoModal(title,text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer"><button class="btn-primary" id="modalOk">Mengerti</button></div>
+    </div>`;
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Uang Muka Customer (Customer & Penjualan >
+   Daftar Transaksi). Dimuat otomatis (lazy-load) oleh core.js
+   saat menu ini pertama kali diklik — lihat PAGE_MODULES di
+   js/core.js. Markup HTML-nya ada di file sebelah:
+   uang-muka-customer.template.js (catatan desain di headernya).
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Alur inti (kembaran Uang Muka Supplier, sisi customer):
+   - Tambah -> pilih Customer, atau langsung pilih Sales
+     Quotation (OPSIONAL — picker DATA.salesQuotation): barang SQ
+     menjadi baris Rincian Transaksi (Keterangan = nama barang,
+     Qty, Jumlah), customer & ongkos angkut (biayaKirim SQ) ikut
+     SQ. Baris rincian bisa juga DITAMBAH MANUAL lewat link
+     "Tambah Item Baru" (keterangan/qty/jumlah editable) karena
+     SQ opsional. Nomor transaksi per cabang:
+     26/UMC-{kode}/09/{urut 5 digit}.
+   - Aritmetika (lihat header template): Subtotal = Σ jumlah
+     baris; DP = Subtotal x % (persen EDITABLE, default 100);
+     DPP = DP (Eksklusif) / DP x 100/(100+p) (Inklusif); PPN =
+     p% DPP; Jumlah = DPP + PPN. Persen PPN dari picker "Pilih
+     Ppn" (PPN11) — label "Pajak {p} %" + radio "PPN Eksklusif
+     (+{p}%)" ikut berubah. Ongkos Angkut display-only. Semua
+     di-recalc live (umcRecalc).
+   - "Buat Jurnal" (tab Rincian Jurnal Akun): D 1120001 Piutang
+     Usaha (Jumlah) lawan K 2140001 Uang Muka Penjualan (DPP) +
+     K 2120002 PPN Keluaran (PPN) — seimbang karena Jumlah =
+     DPP+PPN. Jurnal manual boleh diedit; Simpan menolak jurnal
+     tidak balance (modal info, bukan alert browser).
+   - Chip bulan di list FUNGSIONAL (September/Agustus 2026,
+     filter substring '/{mm}/' pada r.tgl).
+   - Lihat Invoice / Cetak Invoice di list & "Cetak dan Simpan"
+     di form membuka preview invoice (tplUmcInvoiceModal).
+   Data: DATA.uangMukaCustomer (3 sample September 2026). */
+
+var umcSearchQ = '';
+var umcBulan = '09';
+
+function renderUangMukaCustomerPage(){
+  umcSearchQ = '';
+  umcBulan = '09';
+  renderUmcList();
+}
+
+function renderUmcList(){
+  content.innerHTML = tplUangMukaCustomerListPage(umcBulan);
+  document.getElementById('btnUmcAdd').onclick = () => openUmcForm('add', null);
+  document.getElementById('umcSearch').oninput = (e) => { umcSearchQ = e.target.value; renderUmcTable(); };
+  document.getElementById('umcFilterBulan').onchange = (e) => { umcBulan = e.target.value; renderUmcTable(); };
+  renderUmcTable();
+}
+
+function umcFilteredRows(){
+  const q = umcSearchQ.trim().toLowerCase();
+  return (DATA.uangMukaCustomer || []).filter(r => {
+    if(umcBulan && !(r.tgl || '').includes(`/${umcBulan}/`)) return false;
+    if(!q) return true;
+    return r.no.toLowerCase().includes(q) ||
+      (r.customer||'').toLowerCase().includes(q) ||
+      (r.keterangan||'').toLowerCase().includes(q) ||
+      (r.noSQ||'').toLowerCase().includes(q);
+  });
+}
+
+function renderUmcTable(){
+  const rows = umcFilteredRows();
+  const tbody = document.getElementById('umcTbody');
+  tbody.innerHTML = tplUmcRows(rows);
+  document.getElementById('umcTotal').textContent = `Total Record: ${rows.length}`;
+  const idxOf = (r) => DATA.uangMukaCustomer.indexOf(r);
+  tbody.querySelectorAll('[data-view-link]').forEach(b => b.onclick = () => openUmcForm('view', idxOf(rows[+b.dataset.viewLink])));
+  tbody.querySelectorAll('[data-invoice]').forEach(b => b.onclick = () => openUmcInvoice(rows[+b.dataset.invoice]));
+  tbody.querySelectorAll('[data-print]').forEach(b => b.onclick = () => openUmcInvoice(rows[+b.dataset.print]));
+  tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openUmcForm('edit', idxOf(rows[+b.dataset.edit])));
+  tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => openUmcDelete(idxOf(rows[+b.dataset.del])));
+}
+
+/* Nomor otomatis per cabang: 26/UMC-HO/09/00001, 00002, ... */
+function umcGenerateNo(cabang){
+  const kode = UMC_CABANG_CODE[cabang] || 'HO';
+  const prefix = `26/UMC-${kode}/09/`;
+  let max = 0;
+  (DATA.uangMukaCustomer || []).forEach(r => {
+    if(r.no && r.no.startsWith(prefix)){
+      const n = parseInt(r.no.slice(prefix.length), 10);
+      if(!isNaN(n) && n > max) max = n;
+    }
+  });
+  return prefix + String(max + 1).padStart(5, '0');
+}
+
+/* Recalc seluruh angka panel Rincian dari state `row` + tulis ke DOM. */
+function umcRecalc(row){
+  row.subtotal = (row.items || []).reduce((a, it) => a + Number(it.jumlah || 0), 0);
+  const persen = Number(row.dpPersen != null ? row.dpPersen : 100);
+  const p = Number(row.ppnPersen || 0);
+  row.dpAmount = row.subtotal * persen / 100;
+  row.dpp = row.dpAmount;
+  if(row.ppnMode === 'eksklusif' && p > 0){
+    row.ppnAmount = row.dpp * p / 100;
+  } else if(row.ppnMode === 'inklusif' && p > 0){
+    row.dpp = row.dpAmount * 100 / (100 + p);
+    row.ppnAmount = row.dpAmount - row.dpp;
+  } else {
+    row.ppnAmount = 0;
+  }
+  row.jumlahTotal = row.dpp + row.ppnAmount;
+
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.value = v; };
+  set('fUmcSubtotal', umcNum2(row.subtotal));
+  set('fUmcOngkosAngkut', umcNum2(row.ongkosAngkut || 0));
+  set('fUmcDpAmount', umcNum2(row.dpAmount));
+  set('fUmcDpp', umcNum2(row.dpp));
+  set('fUmcPpnAmount', umcNum2(row.ppnAmount));
+  set('fUmcJumlahTotal', umcNum2(row.jumlahTotal));
+  const lbl = document.getElementById('umcPpnPersenLabel');
+  if(lbl) lbl.textContent = p;
+  const lblRadio = document.getElementById('umcPpnPersenRadio');
+  if(lblRadio) lblRadio.textContent = p;
+}
+
+function umcJurnalTotals(row){
+  let d = 0, k = 0;
+  (row.jurnalAkun || []).forEach(e => { d += Number(e.debit || 0); k += Number(e.kredit || 0); });
+  return { debit: d, kredit: k, selisih: d - k };
+}
+
+/* Jurnal otomatis tagihan uang muka ke customer. */
+function umcBuildJurnal(row){
+  const ket = `Uang Muka ${row.noSQ || row.no}`;
+  const list = [
+    { kodeAkun:'1120001', namaAkun: umcAkunNama('1120001'), keterangan: ket, debit: row.jumlahTotal, kredit: 0 },
+    { kodeAkun:'2140001', namaAkun: umcAkunNama('2140001'), keterangan: ket, debit: 0, kredit: row.dpp },
+  ];
+  if(row.ppnAmount > 0.004){
+    list.push({ kodeAkun:'2120002', namaAkun: umcAkunNama('2120002'), keterangan: ket, debit: 0, kredit: row.ppnAmount });
+  }
+  return list;
+}
+
+/* =====================================================================
+   FORM add / edit / view
+===================================================================== */
+function openUmcForm(mode, idx){
+  const src = idx != null ? DATA.uangMukaCustomer[idx] : null;
+  const row = src ? JSON.parse(JSON.stringify(src)) : {
+    no: umcGenerateNo('Head Office'), tgl: '01/09/2026', cabang: 'Head Office',
+    customer: '', noSQ: '', kodeSales: '', keterangan: '', syaratBayar: '',
+    tglJthTempo: '', jurnal: '',
+    ppnMode: 'tidak', ppnKode: '', ppnPersen: 0,
+    dpPersen: 100, ongkosAngkut: 0,
+    items: [], jurnalAkun: [],
+    subtotal: 0, dpAmount: 0, dpp: 0, ppnAmount: 0, jumlahTotal: 0,
+  };
+  const isView = mode === 'view';
+  content.innerHTML = tplUmcForm(mode, row);
+
+  const back = () => renderUmcList();
+  document.getElementById('umcBatalkan').onclick = (e) => { e.preventDefault(); back(); };
+  document.getElementById('btnUmcTutorial').onclick = () => openUmcInfo('Tutorial', 'Video tutorial Uang Muka Customer tersedia di portal MASERP (mockup).');
+
+  // Tabs
+  const tabR = document.getElementById('umcTabRincianBtn');
+  const tabJ = document.getElementById('umcTabJurnalBtn');
+  const contR = document.getElementById('umcTabRincianContent');
+  const contJ = document.getElementById('umcTabJurnalContent');
+  tabR.onclick = () => { tabR.classList.add('active'); tabJ.classList.remove('active'); contR.style.display = ''; contJ.style.display = 'none'; };
+  tabJ.onclick = () => { tabJ.classList.add('active'); tabR.classList.remove('active'); contJ.style.display = ''; contR.style.display = 'none'; };
+
+  wireUmcRincianTab(row, isView);
+  wireUmcJurnalTab(row, isView);
+  if(isView) return;
+
+  // Header fields
+  document.getElementById('fUmcCabang').onchange = (e) => {
+    row.cabang = e.target.value;
+    if(mode === 'add'){ row.no = umcGenerateNo(row.cabang); document.getElementById('fUmcNo').value = row.no; }
+  };
+  const refreshNoBtn = document.getElementById('umcRefreshNo');
+  if(refreshNoBtn) refreshNoBtn.onclick = () => { row.no = umcGenerateNo(row.cabang); document.getElementById('fUmcNo').value = row.no; };
+
+  document.getElementById('umcCustomerSearch').onclick = () => openUmcCustomerPicker((nama) => {
+    row.customer = nama;
+    document.getElementById('fUmcCustomer').value = nama.toUpperCase();
+  });
+
+  document.getElementById('umcSqSearch').onclick = () => openUmcSqPicker((sq) => {
+    row.noSQ = sq.no;
+    row.customer = sq.customer || row.customer;
+    row.ongkosAngkut = Number(sq.biayaKirim || 0);
+    row.items = (sq.items || []).map(it => ({ keterangan: it.nama, qty: it.qty, jumlah: it.jumlah }));
+    document.getElementById('fUmcNoSQ').value = row.noSQ;
+    document.getElementById('fUmcCustomer').value = (row.customer || '').toUpperCase();
+    renderUmcItems(row, isView);
+    umcRecalc(row);
+  });
+
+  document.getElementById('fUmcKodeSales').onchange = (e) => { row.kodeSales = e.target.value; };
+
+  // Simpan / Cetak dan Simpan
+  const doSave = () => umcSave(mode, idx, row);
+  document.getElementById('umcSimpan').onclick = () => { if(doSave()) back(); };
+  document.getElementById('umcCetakSimpan').onclick = () => {
+    if(doSave()){ back(); openUmcInvoice(row); }
+  };
+}
+
+/* ----- Tab Rincian Transaksi ----- */
+function renderUmcItems(row, isView){
+  document.getElementById('umcItemsBody').innerHTML = tplUmcItemRows(row.items, isView);
+  if(isView) return;
+  document.querySelectorAll('[data-umc-del]').forEach(b => b.onclick = () => {
+    row.items.splice(+b.dataset.umcDel, 1);
+    renderUmcItems(row, isView);
+    umcRecalc(row);
+  });
+  document.querySelectorAll('[data-umc-item-ket]').forEach(inp => inp.oninput = () => {
+    row.items[+inp.dataset.umcItemKet].keterangan = inp.value;
+  });
+  document.querySelectorAll('[data-umc-item-qty]').forEach(inp => inp.oninput = () => {
+    row.items[+inp.dataset.umcItemQty].qty = Number(inp.value) || 0;
+  });
+  document.querySelectorAll('[data-umc-item-jumlah]').forEach(inp => inp.oninput = () => {
+    row.items[+inp.dataset.umcItemJumlah].jumlah = Number(inp.value) || 0;
+    umcRecalc(row);
+  });
+}
+
+function wireUmcRincianTab(row, isView){
+  renderUmcItems(row, isView);
+  if(isView) return;
+
+  document.getElementById('umcAddItem').onclick = (e) => {
+    e.preventDefault();
+    row.items = row.items || [];
+    row.items.push({ keterangan:'', qty:1, jumlah:0 });
+    renderUmcItems(row, isView);
+    umcRecalc(row);
+  };
+  document.querySelectorAll('input[name="umcPpnMode"]').forEach(r => r.onchange = () => {
+    row.ppnMode = r.value;
+    umcRecalc(row);
+  });
+  document.getElementById('fUmcDpPersen').oninput = (e) => {
+    let v = Number(e.target.value);
+    if(isNaN(v) || v < 0) v = 0;
+    if(v > 100) v = 100;
+    row.dpPersen = v;
+    umcRecalc(row);
+  };
+  document.getElementById('umcPpnSearch').onclick = () => openUmcPpnPicker((p) => {
+    row.ppnKode = p.kode; row.ppnPersen = p.persen;
+    document.getElementById('fUmcPpnKode').value = p.kode;
+    umcRecalc(row);
+  });
+  document.getElementById('umcPpnClear').onclick = () => {
+    row.ppnKode = ''; row.ppnPersen = 0;
+    document.getElementById('fUmcPpnKode').value = '';
+    umcRecalc(row);
+  };
+}
+
+/* ----- Tab Rincian Jurnal Akun ----- */
+function wireUmcJurnalTab(row, isView){
+  const cont = document.getElementById('umcTabJurnalContent');
+  cont.innerHTML = tplUmcJurnalContent(row, isView);
+  if(isView) return;
+
+  const rerender = () => wireUmcJurnalTab(row, isView);
+  const refreshSelisih = () => {
+    const t = umcJurnalTotals(row);
+    const el = document.getElementById('umcJurnalSelisih');
+    el.value = umcNum2(t.selisih);
+    el.style.color = Math.abs(t.selisih) > 0.004 ? 'var(--red)' : 'var(--text)';
+  };
+
+  document.getElementById('umcBuatJurnal').onclick = () => {
+    umcRecalc(row);
+    row.jurnalAkun = umcBuildJurnal(row);
+    rerender();
+  };
+  document.getElementById('umcJurnalAddRow').onclick = () => {
+    row.jurnalAkun = row.jurnalAkun || [];
+    row.jurnalAkun.push({ kodeAkun:'', namaAkun:'', keterangan:'', debit:0, kredit:0 });
+    rerender();
+  };
+  cont.querySelectorAll('[data-umc-jurnal-del]').forEach(b => b.onclick = () => {
+    row.jurnalAkun.splice(+b.dataset.umcJurnalDel, 1);
+    rerender();
+  });
+  cont.querySelectorAll('[data-umc-jurnal-akun-search]').forEach(b => b.onclick = () => {
+    const i = +b.dataset.umcJurnalAkunSearch;
+    openUmcAkunPicker((akun) => {
+      row.jurnalAkun[i].kodeAkun = akun.kode;
+      row.jurnalAkun[i].namaAkun = akun.nama;
+      cont.querySelector(`[data-umc-jurnal-kode="${i}"]`).value = akun.kode;
+      cont.querySelector(`[data-umc-jurnal-nama="${i}"]`).value = akun.nama;
+    });
+  });
+  cont.querySelectorAll('[data-umc-jurnal-ket]').forEach(inp => inp.oninput = () => {
+    row.jurnalAkun[+inp.dataset.umcJurnalKet].keterangan = inp.value;
+  });
+  cont.querySelectorAll('[data-umc-jurnal-debit]').forEach(inp => inp.oninput = () => {
+    row.jurnalAkun[+inp.dataset.umcJurnalDebit].debit = Number(inp.value) || 0;
+    refreshSelisih();
+  });
+  cont.querySelectorAll('[data-umc-jurnal-kredit]').forEach(inp => inp.oninput = () => {
+    row.jurnalAkun[+inp.dataset.umcJurnalKredit].kredit = Number(inp.value) || 0;
+    refreshSelisih();
+  });
+}
+
+/* ----- Simpan + validasi ----- */
+function umcSave(mode, idx, row){
+  row.tgl = document.getElementById('fUmcTgl').value.trim();
+  row.keterangan = document.getElementById('fUmcKeterangan').value;
+  row.syaratBayar = document.getElementById('fUmcSyaratBayar').value;
+  row.tglJthTempo = document.getElementById('fUmcTglJthTempo').value.trim();
+  row.jurnal = document.getElementById('fUmcJurnal').value;
+  row.kodeSales = document.getElementById('fUmcKodeSales').value;
+  umcRecalc(row);
+
+  if(!row.customer){ openUmcInfo('Validasi', 'Customer wajib dipilih.'); return false; }
+  if(!row.tgl){ openUmcInfo('Validasi', 'Tgl. Trn. wajib diisi.'); return false; }
+  if(!row.items || !row.items.length){ openUmcInfo('Validasi', 'Rincian transaksi masih kosong — pilih Sales Quotation atau tambah item baru.'); return false; }
+  if(row.jurnalAkun && row.jurnalAkun.length){
+    const t = umcJurnalTotals(row);
+    if(Math.abs(t.selisih) > 0.004){
+      openUmcInfo('Jurnal Tidak Balance', `Total Debit (${umcNum2(t.debit)}) tidak sama dengan Total Kredit (${umcNum2(t.kredit)}). Selisih: ${umcNum2(t.selisih)}.`);
+      return false;
+    }
+  }
+
+  DATA.uangMukaCustomer = DATA.uangMukaCustomer || [];
+  if(mode === 'add') DATA.uangMukaCustomer.unshift(row);
+  else DATA.uangMukaCustomer[idx] = row;
+  return true;
+}
+
+/* =====================================================================
+   Modals: invoice, hapus, pickers, info
+===================================================================== */
+function umcOverlay(html){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  const cancel = document.getElementById('modalCancel');
+  if(cancel) cancel.onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  return overlay;
+}
+
+function openUmcInvoice(row){
+  umcOverlay(tplUmcInvoiceModal(row));
+}
+
+function openUmcDelete(idx){
+  const row = DATA.uangMukaCustomer[idx];
+  umcOverlay(tplUmcDeleteConfirm(row));
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.uangMukaCustomer.splice(idx, 1);
+    closeModal();
+    renderUmcTable();
+  };
+}
+
+function openUmcInfo(title, text){
+  umcOverlay(tplUmcInfoModal(title, text));
+  document.getElementById('modalOk').onclick = closeModal;
+}
+
+function openUmcCustomerPicker(onPick){
+  const overlay = umcOverlay(tplUmcCustomerPicker(DATA.customers));
+  const wire = () => overlay.querySelectorAll('[data-pick-customer]').forEach(b => b.onclick = () => {
+    onPick(b.dataset.pickCustomer);
+    closeModal();
+  });
+  wire();
+  document.getElementById('umcCustomerPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.customers.filter(c => !q || c.kode.toLowerCase().includes(q) || c.nama.toLowerCase().includes(q));
+    document.getElementById('umcCustomerPickerBody').innerHTML = tplUmcCustomerPickerRows(list);
+    wire();
+  };
+}
+
+function openUmcSqPicker(onPick){
+  const overlay = umcOverlay(tplUmcSqPicker(DATA.salesQuotation));
+  const wire = () => overlay.querySelectorAll('[data-pick-sq]').forEach(b => b.onclick = () => {
+    const sq = DATA.salesQuotation.find(q => q.no === b.dataset.pickSq);
+    if(sq) onPick(sq);
+    closeModal();
+  });
+  wire();
+  document.getElementById('umcSqPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.salesQuotation.filter(x => !q || x.no.toLowerCase().includes(q) || (x.customer||'').toLowerCase().includes(q));
+    document.getElementById('umcSqPickerBody').innerHTML = tplUmcSqPickerRows(list);
+    wire();
+  };
+}
+
+function openUmcPpnPicker(onPick){
+  const overlay = umcOverlay(tplUmcPpnPicker(UMC_PPN_LIST));
+  overlay.querySelectorAll('[data-pick-ppn]').forEach(b => b.onclick = () => {
+    onPick({ kode: b.dataset.pickPpn, persen: Number(b.dataset.pickPersen) });
+    closeModal();
+  });
+}
+
+function openUmcAkunPicker(onPick){
+  const overlay = umcOverlay(tplUmcAkunPicker(DATA.akunGL));
+  const wire = () => overlay.querySelectorAll('[data-umc-pick-akun]').forEach(b => b.onclick = () => {
+    const akun = DATA.akunGL.find(a => a.kode === b.dataset.umcPickAkun);
+    if(akun) onPick(akun);
+    closeModal();
+  });
+  wire();
+  document.getElementById('umcAkunPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.akunGL.filter(a => !q || a.kode.includes(q) || a.nama.toLowerCase().includes(q));
+    document.getElementById('umcAkunPickerBody').innerHTML = tplUmcAkunPickerRows(list);
+    wire();
+  };
+}
+
+</script>
+<script>
+/* =========================================================
+   TEMPLATE (HTML saja) — Surat Pesanan Ekatalog & Khusus
+   (Customer & Penjualan > Daftar Transaksi > Surat Pesanan
+   Ekatalog & Khusus, key page:'spEcatKhusus'). Semua fungsi di
+   file ini HANYA menyusun & mengembalikan markup HTML (string)
+   atau helper murni, TIDAK ada DOM-binding/data mutation.
+   Logic-nya ada di file sebelah: sp-ecat-khusus.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Sesuai 2 screenshot MASERP instalasi AAA (PT Adya Artha
+   Abadi) yang dikirim user 2026-09-01 — data dipetakan ke
+   master DBM sendiri sesuai konvensi (customer CUST-xxx,
+   barang BRG-xxx, principal = DATA.suppliers, rayon/area/
+   sales office DBM):
+   1) List "SP ECAT & KHUSUS": chip periode "September 2026" +
+      Tambah; kolom No. Ecat / Khusus (link biru -> Ubah, sort) /
+      Tanggal (dd/mm/yy, sort) / Customer ("{kode} - {NAMA}",
+      sort) / Nilai (kanan, sort) / Status (Open|Closed) /
+      Closed Manually (toggle) / Request PDR (toggle) / Ubah /
+      Hapus. Toggle Closed Manually FUNGSIONAL (status ikut
+      berubah), Request PDR toggle tersimpan di baris. Screenshot
+      AAA 2 halaman — mockup DBM diberi 12 sample September 2026
+      (10+2, pager 1-2 windowed fungsional).
+   2) Form "SP ECAT & KHUSUS" (satu halaman penuh + tombol
+      "Activity Log" di header): SO / Area (2 dropdown:
+      DATA.salesOffice + DATA.area); Customer (picker — mengisi
+      kode, Alamat, Rayon 3 baris (kode rayon/kota/salesman),
+      panel Piutang BJT/JT + CL/Sisa CL + DL/Sisa DL dari master
+      Customer & Dominasi); Principal (picker DATA.suppliers);
+      No.ID "EP-..." readonly auto-generate; Tgl Paket;
+      No.Kontrak / Posisi Paket / checkbox Upload PO + tombol
+      Upload File (mockup: modal info) ; No DSC / No DOM (picker
+      "Pilih Diskon Proposal Form" — DSC list lokal, DOM dari
+      DATA.dominasi); Sumber Dana / Metode Bayar. Strip
+      rekap: Harga Satuan x Qty / Potongan / DPP / PPN (11%) /
+      Biaya Kirim / Jumlah Tagihan — recalc live. Tabel item:
+      No / Produk (Kode picker DATA.items + Nama + UOM) / Qty
+      (editable) / Bo Order / Harga Satuan (editable) / Total
+      Harga / Hapus + link "+Tambah Item Baru".
+   Footer form: Simpan / Batalkan. Nilai di list = DPP
+   (Harga Satuan x Qty - Potongan). No.ID format
+   "EP-01M1{20 karakter A-Z/0-9}" meniru pola screenshot. */
+
+const SPE_DSC_LIST = [
+  {no:'DSC/HO/09/00001', keterangan:'Diskon Proposal Ekatalog Q3'},
+  {no:'DSC/SBY/09/00002', keterangan:'Diskon Proposal Khusus Instansi'},
+];
+
+function speNum2(n){ return Number(n||0).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function speNum0(n){ return Number(n||0).toLocaleString('id-ID'); }
+function speTgl2(t){ return (t||'').replace('/2026','/26'); }
+
+/* Rekap angka dari row — dipakai list (Nilai) & strip form. */
+function speTotals(r){
+  const hsxq = (r.items||[]).reduce((a,it)=> a + Number(it.qty||0)*Number(it.harga||0), 0);
+  const potongan = Number(r.potongan||0);
+  const dpp = hsxq - potongan;
+  const ppn = dpp * 0.11;
+  const kirim = Number(r.biayaKirim||0);
+  return { hsxq, potongan, dpp, ppn, kirim, tagihan: dpp + ppn + kirim };
+}
+
+/* =====================================================================
+   LIST PAGE — "SP ECAT & KHUSUS"
+===================================================================== */
+function tplSpeListPage(bulan){
+  return `
+    <div class="breadcrumb">Home / Customer &amp; Penjualan / <b>Surat Pesanan Ekatalog &amp; Khusus</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('alertTriangle',15)} SP ECAT &amp; KHUSUS</h3>
+        <div class="toolbar-actions">
+          <select class="chip-btn" id="speFilterBulan"><option value="09" ${bulan==='09'?'selected':''}>September 2026</option><option value="08" ${bulan==='08'?'selected':''}>Agustus 2026</option></select>
+          <button class="btn-primary" id="btnSpeAdd">${icon('plus',14)} Tambah</button>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <select id="spePageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="speSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>${tplSpeSortHeader('No. Ecat / Khusus','noId')}</th>
+          <th style="width:100px;">${tplSpeSortHeader('Tanggal','tgl')}</th>
+          <th>${tplSpeSortHeader('Customer','customerNama')}</th>
+          <th class="text-right" style="width:130px;">${tplSpeSortHeader('Nilai','nilai')}</th>
+          <th style="width:70px;">Status</th>
+          <th style="width:120px;">Closed Manually</th>
+          <th style="width:105px;">Request PDR</th>
+          <th style="width:60px;">Ubah</th>
+          <th style="width:60px;">Hapus</th>
+        </tr></thead>
+        <tbody id="speTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="spePager"></div><div id="speTotal"></div></div>
+    </div>`;
+}
+
+function tplSpeSortHeader(label, field){
+  return `<span data-spe-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="speSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplSpeRows(rows, page, pageSize){
+  if(!rows.length) return `<tr><td colspan="9" style="color:var(--text-light);padding:14px;text-align:center;font-weight:600;">Tidak Ada Data</td></tr>`;
+  const start = (page-1)*pageSize;
+  return rows.slice(start, start+pageSize).map((r) => {
+    const idx = DATA.spEcatKhusus.indexOf(r);
+    const t = speTotals(r);
+    return `
+    <tr>
+      <td><a href="javascript:void(0)" data-spe-edit="${idx}" style="color:var(--blue);font-weight:600;text-decoration:none;">${r.noId}</a></td>
+      <td>${speTgl2(r.tgl)}</td>
+      <td>${r.customerKode} - ${(r.customerNama||'').toUpperCase()}</td>
+      <td class="text-right">${speNum2(t.dpp)}</td>
+      <td>${r.closedManually ? 'Closed' : 'Open'}</td>
+      <td><label class="toggle-switch"><input type="checkbox" data-spe-closed="${idx}" ${r.closedManually?'checked':''}><span class="toggle-slider"></span></label></td>
+      <td><label class="toggle-switch"><input type="checkbox" data-spe-pdr="${idx}" ${r.requestPdr?'checked':''}><span class="toggle-slider"></span></label></td>
+      <td><button class="icon-btn edit" data-spe-edit="${idx}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-spe-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function tplSpePager(page, totalPages){
+  if(totalPages <= 1) return '';
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+  let nums = '';
+  for(let p = start; p <= end; p++){
+    nums += `<button class="${p===page?'active':''}" data-spepage="${p}">${p}</button>`;
+  }
+  return `
+    <button data-spepage="1" ${page<=1?'disabled':''}>First</button>
+    <button data-spepage="${Math.max(1,page-1)}" ${page<=1?'disabled':''}>Previous</button>
+    ${nums}
+    <button data-spepage="${Math.min(totalPages,page+1)}" ${page>=totalPages?'disabled':''}>Next</button>
+    <button data-spepage="${totalPages}" ${page>=totalPages?'disabled':''}>Last</button>`;
+}
+
+/* =====================================================================
+   FORM (full page)
+===================================================================== */
+function tplSpeForm(mode, row){
+  const isAdd = mode === 'add';
+  return `
+    <div class="breadcrumb">Home / Surat Pesanan Ekatalog &amp; Khusus / <b>${isAdd?'Tambah':'Ubah'}</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('alertTriangle',15)} SP ECAT &amp; KHUSUS</h3>
+        <button class="btn-primary" id="btnSpeActivityLog">${icon('search',13)} Activity Log</button>
+      </div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:1.1fr 1.1fr 1fr;gap:14px 26px;align-items:start;">
+          <div>
+            <table class="field-table po-rincian-table">
+              <tr><td class="flabel" style="width:92px;">SO / Area</td><td>
+                <div style="display:flex;gap:8px;">
+                  <select id="fSpeSO" style="flex:1;">${DATA.salesOffice.map(s=>`<option ${row.soNama===s.nama?'selected':''}>${s.nama}</option>`).join('')}</select>
+                  <select id="fSpeArea" style="flex:1;">${DATA.area.map(a=>`<option ${row.areaNama===a.nama?'selected':''}>${a.nama}</option>`).join('')}</select>
+                </div>
+              </td></tr>
+              <tr><td class="flabel">Customer</td><td>
+                <div class="input-with-btn">
+                  <input type="text" id="fSpeCustomer" value="${(row.customerNama||'').toUpperCase()}" placeholder="Pilih Customer" readonly>
+                  <button type="button" class="icon-btn edit" id="speCustomerSearch" title="Cari Customer">${icon('search',13)}</button>
+                </div>
+                <input type="text" id="fSpeCustomerKode" value="${row.customerKode||''}" readonly style="margin-top:6px;background:#f2f3f6;color:var(--text-light);">
+              </td></tr>
+              <tr><td class="flabel">Principal</td><td>
+                <div class="input-with-btn">
+                  <input type="text" id="fSpePrincipal" value="${row.principalNama||''}" placeholder="Pilih Principal" readonly>
+                  <button type="button" class="icon-btn edit" id="spePrincipalSearch" title="Cari Principal">${icon('search',13)}</button>
+                </div>
+              </td></tr>
+              <tr><td class="flabel">No.ID</td><td><input type="text" id="fSpeNoId" value="${row.noId||''}" readonly style="background:#f2f3f6;color:var(--text-light);"></td></tr>
+              <tr><td class="flabel">Tgl Paket</td><td>
+                <div class="input-with-btn">
+                  <input type="text" id="fSpeTgl" value="${row.tgl||''}">
+                  <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',13)}</span>
+                </div>
+              </td></tr>
+            </table>
+          </div>
+          <div>
+            <table class="field-table po-rincian-table">
+              <tr><td class="flabel" style="width:92px;">Alamat</td><td><textarea id="fSpeAlamat" class="po-textarea" rows="3" readonly style="background:#f2f3f6;">${row.alamat||''}</textarea></td></tr>
+              <tr><td class="flabel">No.Kontrak</td><td><input type="text" id="fSpeNoKontrak" value="${row.noKontrak||''}" placeholder="No.Kontrak"></td></tr>
+              <tr><td class="flabel">Posisi Paket</td><td><input type="text" id="fSpePosisiPaket" value="${row.posisiPaket||''}" placeholder="Posisi Paket"></td></tr>
+              <tr><td class="flabel">Upload PO</td><td>
+                <label style="display:flex;align-items:center;gap:6px;font-size:12px;"><input type="checkbox" id="fSpeUploadPo" ${row.uploadPo?'checked':''} style="width:auto;"></label>
+                <button type="button" class="btn-secondary" id="speUploadFile" style="margin-top:6px;">Upload File</button>
+                <div id="speFileBox" style="border:1px solid var(--border);border-radius:6px;min-height:44px;margin-top:6px;padding:6px 8px;font-size:11.8px;color:var(--text-light);overflow:auto;">${(row.files&&row.files.length)?row.files.map(f=>`<div>${f}</div>`).join(''):''}</div>
+              </td></tr>
+            </table>
+          </div>
+          <div>
+            <table class="field-table po-rincian-table">
+              <tr><td class="flabel" style="width:78px;">Rayon</td><td>
+                <input type="text" id="fSpeRayonKode" value="${row.rayonKode||''}" readonly style="background:#f2f3f6;">
+                <input type="text" id="fSpeRayonKota" value="${row.rayonKota||''}" readonly style="background:#f2f3f6;margin-top:6px;">
+                <input type="text" id="fSpeRayonSales" value="${row.rayonSalesman||''}" readonly style="background:#f2f3f6;margin-top:6px;">
+              </td></tr>
+              <tr><td class="flabel">No DSC</td><td>
+                <div class="input-with-btn">
+                  <input type="text" id="fSpeNoDsc" value="${row.noDsc||''}" placeholder="Pilih Diskon Proposal Form" readonly>
+                  <button type="button" class="icon-btn edit" id="speDscSearch" title="Cari DSC">${icon('search',13)}</button>
+                </div>
+              </td></tr>
+              <tr><td class="flabel">No DOM</td><td>
+                <div class="input-with-btn">
+                  <input type="text" id="fSpeNoDom" value="${row.noDom||''}" placeholder="Pilih Diskon Proposal Form" readonly>
+                  <button type="button" class="icon-btn edit" id="speDomSearch" title="Cari Dominasi">${icon('search',13)}</button>
+                </div>
+              </td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.1fr 1.1fr 1fr;gap:14px 26px;align-items:start;margin-top:14px;">
+          <div>
+            <table class="field-table po-rincian-table">
+              <tr><td class="flabel" style="width:92px;">Piutang</td><td>
+                <div style="display:flex;gap:8px;">
+                  <div style="flex:1;"><input type="text" id="fSpeBjt" value="${speNum0(row.piutangBjt||0)}" disabled style="text-align:right;"><div style="font-size:10.5px;color:var(--text-light);margin-top:2px;">BJT</div></div>
+                  <div style="flex:1;"><input type="text" id="fSpeJt" value="${speNum0(row.piutangJt||0)}" disabled style="text-align:right;"><div style="font-size:10.5px;color:var(--text-light);margin-top:2px;">JT</div></div>
+                </div>
+              </td></tr>
+              <tr><td class="flabel">Sumber Dana</td><td><input type="text" id="fSpeSumberDana" value="${row.sumberDana||''}" placeholder="Sumber Dana"></td></tr>
+            </table>
+          </div>
+          <div>
+            <table class="field-table po-rincian-table">
+              <tr><td class="flabel" style="width:92px;">CL</td><td>
+                <div style="display:flex;gap:8px;">
+                  <div style="flex:1;"><input type="text" id="fSpeCl" value="${speNum0(row.cl||0)}" disabled style="text-align:right;"><div style="font-size:10.5px;color:var(--text-light);margin-top:2px;">CL</div></div>
+                  <div style="flex:1;"><input type="text" id="fSpeSisaCl" value="${speNum0(row.sisaCl||0)}" disabled style="text-align:right;"><div style="font-size:10.5px;color:var(--text-light);margin-top:2px;">Sisa CL</div></div>
+                </div>
+              </td></tr>
+              <tr><td class="flabel">Metode Bayar</td><td><input type="text" id="fSpeMetodeBayar" value="${row.metodeBayar||''}" placeholder="Metode Bayar"></td></tr>
+            </table>
+          </div>
+          <div>
+            <table class="field-table po-rincian-table">
+              <tr><td class="flabel" style="width:78px;">DL</td><td>
+                <div style="display:flex;gap:8px;">
+                  <div style="flex:1;"><input type="text" id="fSpeDl" value="${speNum0(row.dl||0)}" disabled style="text-align:right;"><div style="font-size:10.5px;color:var(--text-light);margin-top:2px;">DL</div></div>
+                  <div style="flex:1;"><input type="text" id="fSpeSisaDl" value="${speNum0(row.sisaDl||0)}" disabled style="text-align:right;"><div style="font-size:10.5px;color:var(--text-light);margin-top:2px;">Sisa DL</div></div>
+                </div>
+              </td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="table-wrap" style="margin-top:20px;">
+          <table class="po-item-table">
+            <thead><tr>
+              <th class="text-right">Harga Satuan x Qty</th>
+              <th class="text-right">Potongan</th>
+              <th class="text-right">DPP</th>
+              <th class="text-right">PPN</th>
+              <th class="text-right">Biaya Kirim</th>
+              <th class="text-right">Jumlah Tagihan</th>
+            </tr></thead>
+            <tbody><tr>
+              <td class="text-right" id="speHsxq">0,00</td>
+              <td class="text-right" id="spePotongan">0,00</td>
+              <td class="text-right" id="speDpp">0,00</td>
+              <td class="text-right" id="spePpn">0,00</td>
+              <td class="text-right" id="speKirim">-</td>
+              <td class="text-right" id="speTagihan" style="font-weight:700;">0,00</td>
+            </tr></tbody>
+          </table>
+        </div>
+
+        <div class="table-wrap" style="margin-top:14px;">
+          <table class="po-item-table">
+            <thead>
+              <tr><th rowspan="2" style="width:36px;">No</th><th colspan="3" style="text-align:center;">Produk</th><th rowspan="2" class="text-right" style="width:120px;">Qty</th><th rowspan="2" class="text-right" style="width:80px;">Bo Order</th><th rowspan="2" class="text-right" style="width:130px;">Harga Satuan</th><th rowspan="2" class="text-right" style="width:130px;">Total Harga</th><th rowspan="2" style="width:56px;">Hapus</th></tr>
+              <tr><th style="width:170px;">Kode</th><th>Nama</th><th style="width:80px;">UOM</th></tr>
+            </thead>
+            <tbody id="speItemsBody">${tplSpeItemRows(row.items)}</tbody>
+          </table>
+        </div>
+        <a href="#" class="link-add" id="speAddItem">${icon('plus',12)}Tambah Item Baru</a>
+      </div>
+      <div class="card-footer" style="display:flex;gap:10px;justify-content:flex-end;align-items:center;padding:14px 20px;border-top:1px solid var(--border);">
+        <button type="button" class="btn-primary" id="speSimpan">Simpan</button>
+        <a href="#" id="speBatalkan" class="link-add" style="margin-top:0;">Batalkan</a>
+      </div>
+    </div>`;
+}
+
+function tplSpeItemRows(items){
+  if(!items || !items.length) return `<tr><td colspan="9" style="color:var(--text-light);">Belum ada produk — klik "Tambah Item Baru".</td></tr>`;
+  return items.map((it,idx)=>`
+    <tr>
+      <td style="text-align:center;">${idx+1}</td>
+      <td>
+        <div class="input-with-btn">
+          <input type="text" data-spe-item-kode="${idx}" value="${it.kode||''}" readonly>
+          <button type="button" class="icon-btn edit" data-spe-item-pick="${idx}" title="Cari Produk">${icon('search',12)}</button>
+        </div>
+      </td>
+      <td><span data-spe-item-nama="${idx}">${it.nama||''}</span></td>
+      <td><span data-spe-item-uom="${idx}">${it.uom||''}</span></td>
+      <td><input type="number" min="0" data-spe-item-qty="${idx}" value="${it.qty||0}" style="text-align:right;"></td>
+      <td class="text-right"><span data-spe-item-bo="${idx}">${speNum0(it.qty||0)}</span></td>
+      <td><input type="number" step="0.01" min="0" data-spe-item-harga="${idx}" value="${it.harga||0}" style="text-align:right;"></td>
+      <td class="text-right"><span data-spe-item-total="${idx}">${speNum2((it.qty||0)*(it.harga||0))}</span></td>
+      <td style="text-align:center;"><button type="button" class="icon-btn del" data-spe-item-del="${idx}" title="Hapus Baris">${icon('trash',14)}</button></td>
+    </tr>`).join('');
+}
+
+/* Picker Customer / Principal / Produk / DSC / DOM — salinan lokal. */
+function tplSpeCustomerPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Customer</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="speCustomerPickerSearch" placeholder="Cari kode / nama customer..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Customer</th><th>Kota</th><th></th></tr></thead>
+            <tbody id="speCustomerPickerBody">${tplSpeCustomerPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplSpeCustomerPickerRows(list){
+  if(!list.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada customer ditemukan</td></tr>`;
+  return list.map(c=>`
+    <tr><td>${c.kode}</td><td>${c.nama}</td><td>${c.kota||''}</td><td><button class="btn-pick" data-pick-customer="${c.kode}">Pilih</button></td></tr>`).join('');
+}
+
+function tplSpePrincipalPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Principal</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="spePrincipalPickerSearch" placeholder="Cari kode / nama principal..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Principal</th><th></th></tr></thead>
+            <tbody id="spePrincipalPickerBody">${tplSpePrincipalPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplSpePrincipalPickerRows(list){
+  if(!list.length) return `<tr><td colspan="3" style="color:var(--text-light);">Tidak ada principal ditemukan</td></tr>`;
+  return list.map(s=>`
+    <tr><td>${s.kode}</td><td>${s.nama}</td><td><button class="btn-pick" data-pick-principal="${s.kode}">Pilih</button></td></tr>`).join('');
+}
+
+function tplSpeProdukPicker(list){
+  return `
+    <div class="modal-box" style="max-width:700px;">
+      <div class="modal-header"><span>Pilih Produk</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="speProdukPickerSearch" placeholder="Cari kode / nama produk..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:340px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Produk</th><th>UOM</th><th class="text-right">Harga</th><th></th></tr></thead>
+            <tbody id="speProdukPickerBody">${tplSpeProdukPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplSpeProdukPickerRows(list){
+  if(!list.length) return `<tr><td colspan="5" style="color:var(--text-light);">Tidak ada produk ditemukan</td></tr>`;
+  return list.map(p=>`
+    <tr><td>${p.kode}</td><td>${p.nama}</td><td>${p.satuan||''}</td><td class="text-right">${speNum0(p.harga||0)}</td><td><button class="btn-pick" data-pick-produk="${p.kode}">Pilih</button></td></tr>`).join('');
+}
+
+function tplSpeDscPicker(list){
+  return `
+    <div class="modal-box" style="max-width:520px;">
+      <div class="modal-header"><span>Pilih Diskon Proposal Form (DSC)</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="table-wrap"><table>
+          <thead><tr><th>No DSC</th><th>Keterangan</th><th></th></tr></thead>
+          <tbody>${list.map(d=>`<tr><td>${d.no}</td><td>${d.keterangan}</td><td><button class="btn-pick" data-pick-dsc="${d.no}">Pilih</button></td></tr>`).join('')}</tbody>
+        </table></div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplSpeDomPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Dominasi (DOM)</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="table-wrap" style="max-height:340px;overflow:auto;"><table>
+          <thead><tr><th>No</th><th>Customer</th><th>Principal</th><th class="text-right">Nominal Max</th><th></th></tr></thead>
+          <tbody>${list.map(d=>`<tr><td>${d.no}</td><td>${d.customerNama||''}</td><td>${d.principalNama||''}</td><td class="text-right">${speNum0(d.nominalMax||0)}</td><td><button class="btn-pick" data-pick-dom="${d.no}">Pilih</button></td></tr>`).join('')}</tbody>
+        </table></div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplSpeDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus SP Ecat &amp; Khusus</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus SP <b>${row.noId}</b> — ${row.customerKode} - ${(row.customerNama||'').toUpperCase()} (${speNum2(speTotals(row).dpp)})?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+function tplSpeInfoModal(title,text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer"><button class="btn-primary" id="modalOk">Mengerti</button></div>
+    </div>`;
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Surat Pesanan Ekatalog & Khusus (Customer
+   & Penjualan > Daftar Transaksi, page:'spEcatKhusus'). Dimuat
+   otomatis (lazy-load) oleh core.js saat menu ini pertama kali
+   diklik — lihat PAGE_MODULES di js/core.js. Markup HTML-nya
+   ada di file sebelah: sp-ecat-khusus.template.js (catatan
+   desain & pemetaan screenshot AAA -> master DBM di headernya).
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Alur inti:
+   - List: chip bulan FUNGSIONAL (September/Agustus 2026, filter
+     substring '/{mm}/' pada r.tgl), pencarian, sort 4 kolom
+     (No/Tanggal/Customer/Nilai — Nilai = DPP dihitung via
+     speTotals), pagination windowed. Toggle "Closed Manually"
+     mengubah status Open<->Closed langsung dari list; toggle
+     "Request PDR" tersimpan di baris.
+   - Form: pilih Customer (picker) -> kode, alamat, rayon
+     (kode/kota/salesman dari master Customer), Piutang BJT
+     (= piutang customer) / JT (0), CL = creditLimit & Sisa CL =
+     CL - piutang, DL/Sisa DL dari DATA.dominasi milik customer
+     (nominalMax / sisa). Principal picker DATA.suppliers.
+     Produk picker DATA.items mengisi kode/nama/UOM/harga; Qty &
+     Harga Satuan editable, Bo Order mengikuti Qty, Total Harga
+     = Qty x Harga; strip rekap (HSxQty/Potongan/DPP/PPN 11%/
+     Biaya Kirim/Jumlah Tagihan) recalc live. Upload File &
+     Activity Log = modal info (mockup).
+   - Simpan validasi: Customer wajib, minimal 1 produk & semua
+     baris punya kode produk (modal info, bukan alert browser).
+   - No.ID auto: "EP-01M1" + 20 karakter acak A-Z/0-9 (pola
+     screenshot), di-generate saat Tambah.
+   Data: DATA.spEcatKhusus (12 sample September 2026). */
+
+var speState = { page:1, search:'', sortField:'', sortDir:'asc', bulan:'09' };
+
+function renderSpEcatKhususPage(){
+  speState = { page:1, search:'', sortField:'', sortDir:'asc', bulan:'09' };
+  renderSpeList();
+}
+
+function renderSpeList(){
+  content.innerHTML = tplSpeListPage(speState.bulan);
+  document.getElementById('btnSpeAdd').onclick = () => openSpeForm('add', null);
+  document.getElementById('speSearch').oninput = (e) => { speState.search = e.target.value.trim().toLowerCase(); speState.page = 1; renderSpeTable(); };
+  document.getElementById('speFilterBulan').onchange = (e) => { speState.bulan = e.target.value; speState.page = 1; renderSpeTable(); };
+  document.getElementById('spePageSize').onchange = () => { speState.page = 1; renderSpeTable(); };
+  document.querySelectorAll('[data-spe-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.speSort;
+    if(speState.sortField === field){
+      speState.sortDir = speState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      speState.sortField = field;
+      speState.sortDir = 'asc';
+    }
+    speState.page = 1;
+    renderSpeTable();
+  });
+  renderSpeTable();
+}
+
+function speFilteredSortedRows(){
+  const q = speState.search;
+  let rows = (DATA.spEcatKhusus || []).filter(r => {
+    if(speState.bulan && !(r.tgl || '').includes(`/${speState.bulan}/`)) return false;
+    if(!q) return true;
+    return r.noId.toLowerCase().includes(q) ||
+      (r.customerNama||'').toLowerCase().includes(q) ||
+      (r.customerKode||'').toLowerCase().includes(q) ||
+      (r.principalNama||'').toLowerCase().includes(q);
+  });
+  const f = speState.sortField;
+  if(f){
+    const dir = speState.sortDir === 'desc' ? -1 : 1;
+    rows.sort((a,b) => {
+      if(f === 'nilai') return (speTotals(a).dpp - speTotals(b).dpp) * dir;
+      return String(a[f]||'').localeCompare(String(b[f]||''), 'id') * dir;
+    });
+  }
+  return rows;
+}
+
+function spePageSizeVal(){
+  const sel = document.getElementById('spePageSize');
+  return sel ? parseInt(sel.value, 10) : 10;
+}
+
+function renderSpeTable(){
+  const perPage = spePageSizeVal();
+  const rows = speFilteredSortedRows();
+  const totalPages = Math.max(1, Math.ceil(rows.length/perPage));
+  if(speState.page > totalPages) speState.page = totalPages;
+
+  const tbody = document.getElementById('speTbody');
+  tbody.innerHTML = tplSpeRows(rows, speState.page, perPage);
+  document.getElementById('speTotal').textContent = `Total Record: ${rows.length}`;
+  document.getElementById('spePager').innerHTML = tplSpePager(speState.page, totalPages);
+
+  ['noId','tgl','customerNama','nilai'].forEach(f => {
+    const el = document.getElementById(`speSortIcon_${f}`);
+    if(!el) return;
+    if(speState.sortField === f){
+      el.innerHTML = speState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+
+  tbody.querySelectorAll('[data-spe-edit]').forEach(b => b.onclick = () => openSpeForm('edit', +b.dataset.speEdit));
+  tbody.querySelectorAll('[data-spe-del]').forEach(b => b.onclick = () => openSpeDelete(+b.dataset.speDel));
+  tbody.querySelectorAll('[data-spe-closed]').forEach(t => t.onchange = () => {
+    DATA.spEcatKhusus[+t.dataset.speClosed].closedManually = t.checked;
+    renderSpeTable();
+  });
+  tbody.querySelectorAll('[data-spe-pdr]').forEach(t => t.onchange = () => {
+    DATA.spEcatKhusus[+t.dataset.spePdr].requestPdr = t.checked;
+  });
+
+  document.getElementById('spePager').querySelectorAll('[data-spepage]').forEach(b => b.onclick = () => { speState.page = +b.dataset.spepage; renderSpeTable(); });
+}
+
+/* No.ID acak pola screenshot: EP-01M1 + 20 karakter A-Z/0-9. */
+function speGenerateNoId(){
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let s = 'EP-01M1';
+  for(let i = 0; i < 20; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
+
+/* Recalc strip rekap dari row + tulis ke DOM. */
+function speRecalcStrip(row){
+  const t = speTotals(row);
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+  set('speHsxq', speNum2(t.hsxq));
+  set('spePotongan', speNum2(t.potongan));
+  set('speDpp', speNum2(t.dpp));
+  set('spePpn', speNum2(t.ppn));
+  set('speKirim', t.kirim ? speNum2(t.kirim) : '-');
+  set('speTagihan', speNum2(t.tagihan));
+}
+
+/* =====================================================================
+   FORM add / edit
+===================================================================== */
+function openSpeForm(mode, idx){
+  const src = idx != null ? DATA.spEcatKhusus[idx] : null;
+  const row = src ? JSON.parse(JSON.stringify(src)) : {
+    noId: speGenerateNoId(), tgl: '01/09/2026',
+    soNama: (DATA.salesOffice[0]||{}).nama || '', areaNama: (DATA.area[0]||{}).nama || '',
+    customerKode: '', customerNama: '', alamat: '',
+    rayonKode: '', rayonKota: '', rayonSalesman: '',
+    principalNama: '', noKontrak: '', posisiPaket: '', uploadPo: false, files: [],
+    noDsc: '', noDom: '',
+    piutangBjt: 0, piutangJt: 0, cl: 0, sisaCl: 0, dl: 0, sisaDl: 0,
+    sumberDana: '', metodeBayar: '', potongan: 0, biayaKirim: 0,
+    items: [], closedManually: false, requestPdr: false,
+  };
+  content.innerHTML = tplSpeForm(mode, row);
+  speRecalcStrip(row);
+  wireSpeItems(row);
+
+  const back = () => renderSpeList();
+  document.getElementById('speBatalkan').onclick = (e) => { e.preventDefault(); back(); };
+  document.getElementById('btnSpeActivityLog').onclick = () => openSpeInfo('Activity Log', `Riwayat aktivitas dokumen ${row.noId} (mockup): dibuat oleh sidik.`);
+  document.getElementById('speUploadFile').onclick = () => {
+    row.files = row.files || [];
+    const nama = `PO_${row.customerKode || 'CUST'}_${row.files.length + 1}.pdf`;
+    row.files.push(nama);
+    document.getElementById('speFileBox').innerHTML = row.files.map(f=>`<div>${f}</div>`).join('');
+    openSpeInfo('Upload File', `File "${nama}" ditambahkan ke lampiran (mockup — tidak ada file sungguhan yang diunggah).`);
+  };
+  document.getElementById('fSpeUploadPo').onchange = (e) => { row.uploadPo = e.target.checked; };
+  document.getElementById('fSpeSO').onchange = (e) => { row.soNama = e.target.value; };
+  document.getElementById('fSpeArea').onchange = (e) => { row.areaNama = e.target.value; };
+
+  document.getElementById('speCustomerSearch').onclick = () => openSpeCustomerPicker((c) => {
+    row.customerKode = c.kode;
+    row.customerNama = c.nama;
+    row.alamat = c.alamat || '';
+    row.rayonKota = c.kota || '';
+    row.rayonSalesman = c.salesman || '';
+    const ray = (DATA.rayon || []).find(x => (x.salesman||'').toUpperCase() === (c.salesman||'').toUpperCase());
+    row.rayonKode = ray ? ray.kode : ((DATA.rayon[0]||{}).kode || '');
+    row.piutangBjt = Number(c.piutang || 0);
+    row.piutangJt = 0;
+    row.cl = Number(c.limit || 0);
+    row.sisaCl = Math.max(0, Number(c.limit || 0) - Number(c.piutang || 0));
+    const dom = (DATA.dominasi || []).find(d => d.customerKode === c.kode);
+    row.dl = dom ? Number(dom.nominalMax || 0) : 0;
+    row.sisaDl = dom ? Math.max(0, Number(dom.nominalMax || 0) - Number(dom.jumlahPakai || 0)) : 0;
+    document.getElementById('fSpeCustomer').value = c.nama.toUpperCase();
+    document.getElementById('fSpeCustomerKode').value = c.kode;
+    document.getElementById('fSpeAlamat').value = row.alamat;
+    document.getElementById('fSpeRayonKode').value = row.rayonKode;
+    document.getElementById('fSpeRayonKota').value = row.rayonKota;
+    document.getElementById('fSpeRayonSales').value = row.rayonSalesman;
+    document.getElementById('fSpeBjt').value = speNum0(row.piutangBjt);
+    document.getElementById('fSpeJt').value = speNum0(row.piutangJt);
+    document.getElementById('fSpeCl').value = speNum0(row.cl);
+    document.getElementById('fSpeSisaCl').value = speNum0(row.sisaCl);
+    document.getElementById('fSpeDl').value = speNum0(row.dl);
+    document.getElementById('fSpeSisaDl').value = speNum0(row.sisaDl);
+  });
+
+  document.getElementById('spePrincipalSearch').onclick = () => openSpePrincipalPicker((s) => {
+    row.principalNama = s.nama;
+    document.getElementById('fSpePrincipal').value = s.nama;
+  });
+
+  document.getElementById('speDscSearch').onclick = () => openSpeDscPicker((no) => {
+    row.noDsc = no;
+    document.getElementById('fSpeNoDsc').value = no;
+  });
+  document.getElementById('speDomSearch').onclick = () => openSpeDomPicker((no) => {
+    row.noDom = no;
+    document.getElementById('fSpeNoDom').value = no;
+  });
+
+  document.getElementById('speAddItem').onclick = (e) => {
+    e.preventDefault();
+    row.items = row.items || [];
+    row.items.push({ kode:'', nama:'', uom:'', qty:0, harga:0 });
+    wireSpeItems(row);
+    speRecalcStrip(row);
+  };
+
+  document.getElementById('speSimpan').onclick = () => {
+    row.tgl = document.getElementById('fSpeTgl').value.trim();
+    row.noKontrak = document.getElementById('fSpeNoKontrak').value.trim();
+    row.posisiPaket = document.getElementById('fSpePosisiPaket').value.trim();
+    row.sumberDana = document.getElementById('fSpeSumberDana').value.trim();
+    row.metodeBayar = document.getElementById('fSpeMetodeBayar').value.trim();
+    if(!row.customerKode){ openSpeInfo('Validasi', 'Customer wajib dipilih.'); return; }
+    if(!row.tgl){ openSpeInfo('Validasi', 'Tgl Paket wajib diisi.'); return; }
+    if(!row.items || !row.items.length){ openSpeInfo('Validasi', 'Rincian produk masih kosong — klik "Tambah Item Baru".'); return; }
+    if(row.items.some(it => !it.kode)){ openSpeInfo('Validasi', 'Ada baris produk yang belum dipilih kodenya.'); return; }
+    DATA.spEcatKhusus = DATA.spEcatKhusus || [];
+    if(mode === 'add') DATA.spEcatKhusus.unshift(row);
+    else DATA.spEcatKhusus[idx] = row;
+    back();
+  };
+}
+
+/* ----- Tabel item produk ----- */
+function wireSpeItems(row){
+  document.getElementById('speItemsBody').innerHTML = tplSpeItemRows(row.items);
+  const body = document.getElementById('speItemsBody');
+  body.querySelectorAll('[data-spe-item-del]').forEach(b => b.onclick = () => {
+    row.items.splice(+b.dataset.speItemDel, 1);
+    wireSpeItems(row);
+    speRecalcStrip(row);
+  });
+  body.querySelectorAll('[data-spe-item-pick]').forEach(b => b.onclick = () => {
+    const i = +b.dataset.speItemPick;
+    openSpeProdukPicker((p) => {
+      row.items[i] = { kode: p.kode, nama: p.nama, uom: p.satuan || '', qty: row.items[i].qty || 1, harga: p.harga || 0 };
+      wireSpeItems(row);
+      speRecalcStrip(row);
+    });
+  });
+  body.querySelectorAll('[data-spe-item-qty]').forEach(inp => inp.oninput = () => {
+    const i = +inp.dataset.speItemQty;
+    row.items[i].qty = Number(inp.value) || 0;
+    body.querySelector(`[data-spe-item-bo="${i}"]`).textContent = speNum0(row.items[i].qty);
+    body.querySelector(`[data-spe-item-total="${i}"]`).textContent = speNum2(row.items[i].qty * row.items[i].harga);
+    speRecalcStrip(row);
+  });
+  body.querySelectorAll('[data-spe-item-harga]').forEach(inp => inp.oninput = () => {
+    const i = +inp.dataset.speItemHarga;
+    row.items[i].harga = Number(inp.value) || 0;
+    body.querySelector(`[data-spe-item-total="${i}"]`).textContent = speNum2(row.items[i].qty * row.items[i].harga);
+    speRecalcStrip(row);
+  });
+}
+
+/* =====================================================================
+   Modals: hapus, pickers, info
+===================================================================== */
+function speOverlay(html){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  const cancel = document.getElementById('modalCancel');
+  if(cancel) cancel.onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  return overlay;
+}
+
+function openSpeDelete(idx){
+  const row = DATA.spEcatKhusus[idx];
+  speOverlay(tplSpeDeleteConfirm(row));
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.spEcatKhusus.splice(idx, 1);
+    closeModal();
+    renderSpeTable();
+  };
+}
+
+function openSpeInfo(title, text){
+  speOverlay(tplSpeInfoModal(title, text));
+  document.getElementById('modalOk').onclick = closeModal;
+}
+
+function openSpeCustomerPicker(onPick){
+  const overlay = speOverlay(tplSpeCustomerPicker(DATA.customers));
+  const wire = () => overlay.querySelectorAll('[data-pick-customer]').forEach(b => b.onclick = () => {
+    const c = DATA.customers.find(x => x.kode === b.dataset.pickCustomer);
+    if(c) onPick(c);
+    closeModal();
+  });
+  wire();
+  document.getElementById('speCustomerPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.customers.filter(c => !q || c.kode.toLowerCase().includes(q) || c.nama.toLowerCase().includes(q));
+    document.getElementById('speCustomerPickerBody').innerHTML = tplSpeCustomerPickerRows(list);
+    wire();
+  };
+}
+
+function openSpePrincipalPicker(onPick){
+  const overlay = speOverlay(tplSpePrincipalPicker(DATA.suppliers));
+  const wire = () => overlay.querySelectorAll('[data-pick-principal]').forEach(b => b.onclick = () => {
+    const s = DATA.suppliers.find(x => x.kode === b.dataset.pickPrincipal);
+    if(s) onPick(s);
+    closeModal();
+  });
+  wire();
+  document.getElementById('spePrincipalPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.suppliers.filter(s => !q || s.kode.toLowerCase().includes(q) || s.nama.toLowerCase().includes(q));
+    document.getElementById('spePrincipalPickerBody').innerHTML = tplSpePrincipalPickerRows(list);
+    wire();
+  };
+}
+
+function openSpeProdukPicker(onPick){
+  const overlay = speOverlay(tplSpeProdukPicker(DATA.items));
+  const wire = () => overlay.querySelectorAll('[data-pick-produk]').forEach(b => b.onclick = () => {
+    const p = DATA.items.find(x => x.kode === b.dataset.pickProduk);
+    if(p) onPick(p);
+    closeModal();
+  });
+  wire();
+  document.getElementById('speProdukPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.items.filter(p => !q || p.kode.toLowerCase().includes(q) || p.nama.toLowerCase().includes(q));
+    document.getElementById('speProdukPickerBody').innerHTML = tplSpeProdukPickerRows(list);
+    wire();
+  };
+}
+
+function openSpeDscPicker(onPick){
+  const overlay = speOverlay(tplSpeDscPicker(SPE_DSC_LIST));
+  overlay.querySelectorAll('[data-pick-dsc]').forEach(b => b.onclick = () => {
+    onPick(b.dataset.pickDsc);
+    closeModal();
+  });
+}
+
+function openSpeDomPicker(onPick){
+  const overlay = speOverlay(tplSpeDomPicker(DATA.dominasi || []));
+  overlay.querySelectorAll('[data-pick-dom]').forEach(b => b.onclick = () => {
+    onPick(b.dataset.pickDom);
+    closeModal();
+  });
+}
+
+</script>
+<script>
+/* =========================================================
    CORE — sidebar, navigasi, dan lazy-loader modul per menu
 
    File ini SENGAJA dibuat kecil dan selalu dimuat di awal
@@ -57180,6 +59399,8 @@ const PAGE_MODULES={
   purchaseOrder:{srcs:['js/pages/purchase-order.template.js','js/pages/purchase-order.js'], fn:'renderPurchaseOrderPage'},
   tutupPendingPO:{srcs:['js/pages/tutup-pending-po.template.js','js/pages/tutup-pending-po.js'], fn:'renderTutupPendingPOPage'},
   uangMukaSupplier:{srcs:['js/pages/uang-muka-supplier.template.js','js/pages/uang-muka-supplier.js'], fn:'renderUangMukaSupplierPage'},
+  uangMukaCustomer:{srcs:['js/pages/uang-muka-customer.template.js','js/pages/uang-muka-customer.js'], fn:'renderUangMukaCustomerPage'},
+  spEcatKhusus:{srcs:['js/pages/sp-ecat-khusus.template.js','js/pages/sp-ecat-khusus.js'], fn:'renderSpEcatKhususPage'},
   permintaanPembelian:{srcs:['js/pages/permintaan-pembelian.template.js','js/pages/permintaan-pembelian.js'], fn:'renderPermintaanPembelianPage'},
   tutupPR:{srcs:['js/pages/tutup-pr.template.js','js/pages/tutup-pr.js'], fn:'renderTutupPRPage'},
   returPB:{srcs:['js/pages/retur-penerimaan-barang.template.js','js/pages/retur-penerimaan-barang.js'], fn:'renderReturPBPage'},
@@ -57251,6 +59472,7 @@ const PAGE_MODULES={
   revaluasiAsset:{srcs:['js/pages/revaluasi-asset.template.js','js/pages/revaluasi-asset.js'], fn:'renderRevaluasiAssetPage'},
   monitoringControlDelivery:{srcs:['js/pages/monitoring-control-delivery.template.js','js/pages/monitoring-control-delivery.js'], fn:'renderMonitoringControlDeliveryPage'},
   satuan:{srcs:['js/pages/satuan.template.js','js/pages/satuan.js'], fn:'renderSatuanPage'},
+  badanUsaha:{srcs:['js/pages/badan-usaha.template.js','js/pages/badan-usaha.js'], fn:'renderBadanUsahaPage'},
   masterStockOpname:{srcs:['js/pages/master-stock-opname.template.js','js/pages/master-stock-opname.js'], fn:'renderMasterStockOpnamePage'},
   stockOpname:{srcs:['js/pages/stock-opname.template.js','js/pages/stock-opname.js'], fn:'renderStockOpnamePage'},
 };
