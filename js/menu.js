@@ -27,13 +27,6 @@ const MENU=[
    {label:'Pelunasan Utang', page:'pelunasanUtang'},
    {label:'Retur Pembelian', page:'returPembelian'},
    {label:'Pengajuan Pembayaran', page:'pengajuanPembayaran'},
-   {header:'Transaksi Konsinyasi'},
-   {label:'Inventory Target Restock Cabang', page:'placeholder', title:'Inventory Target Restock Cabang'},
-   {label:'Delivery Request (Cabang)', page:'placeholder', title:'Delivery Request (Cabang)'},
-   {label:'Delivery Request (HO)', page:'placeholder', title:'Delivery Request (HO)'},
-   {label:'Terima Barang DR', page:'placeholder', title:'Terima Barang DR'},
-   {label:'Po Konsinyasi', page:'placeholder', title:'Po Konsinyasi'},
-   {label:'Pembelian Konsinyasi', page:'placeholder', title:'Pembelian Konsinyasi'},
  ]},
  {label:'Customer & Penjualan', icon:'invoice', page:'salesDashboard', children:[
    {header:'Master & Setting'},
@@ -74,8 +67,8 @@ const MENU=[
    {label:'Retur Penjualan', page:'returPenjualan'},
    {label:'Document Status Retur Penjualan', page:'placeholder', title:'Document Status Retur Penjualan'},
    {label:'Consignment Refund', page:'placeholder', title:'Consignment Refund'},
-   {label:'T3F', page:'placeholder', title:'T3F'},
-   {label:'Daftar Tagih Piutang', page:'placeholder', title:'Daftar Tagih Piutang'},
+   {label:'T3F', page:'t3f'},
+   {label:'Daftar Tagih Piutang', page:'tagihanPiutang'},
    {label:'Opname Faktur, Retur & S.J.', page:'opnameDokumen'},
  ]},
  {label:'Persediaan Barang', icon:'box', page:'inventoryDashboard', children:[
@@ -172,7 +165,7 @@ const MENU=[
    {label:'Master Divisi', page:'divisi'},
    {label:'Picker & Packer', page:'placeholder', title:'Picker & Packer'},
    {label:'Master Template', page:'placeholder', title:'Master Template'},
-   {label:'Alasan Belum Tertagih', page:'placeholder', title:'Alasan Belum Tertagih'},
+   {label:'Alasan Belum Tertagih', page:'alasanBelumTertagih'},
    {label:'Documentation Open API', page:'placeholder', title:'Documentation Open API'},
  ]},
  {label:'Pengaturan', icon:'settings', children:[
@@ -214,6 +207,9 @@ const MENU=[
    {label:'Chart / Grafik', page:'placeholder', title:'Chart / Grafik'},
    {label:'Dashboard', page:'placeholder', title:'Dashboard Laporan'},
  ]},
- {label:'Profil Perusahaan', icon:'folder', page:'companyProfile'},
+ {label:'Profil Perusahaan', icon:'folder', children:[
+   {label:'Detail Perusahaan', page:'companyProfile'},
+   {label:'Daftar Perusahaan', page:'daftarPerusahaan'},
+ ]},
 ];
 

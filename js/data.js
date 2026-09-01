@@ -4934,6 +4934,117 @@ const DATA = {
         {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'Biaya FA 26/FAC-0000000002 — PT Indofood Distribusi', debit:0, kredit:8200000},
       ]},
   ],
+
+  /* T3F / Tanda Terima Tukar Faktur (Customer & Penjualan > Daftar
+     Transaksi, page:'t3f'), sesuai 4 screenshot MASERP SDL + 2 PDF
+     cetakan (Full Page & Half Page) yang dikirim user 2026-09-01.
+     SDL Total Record: 8331 — mockup DBM diberi 8 sample Agustus 2026
+     yang menaut ke faktur SUNGGUHAN di DATA.fakturPenjualanSJ
+     (no/noSJ/tgl/jth tempo/P.O./jumlahAkhir disnapshot ke `fakturs`;
+     jumlah akhir T3F = Σ fakturs.jumlah). Satu baris diberi
+     tglTerimaCustomer terisi (pola screenshot). Nomor
+     26/AL/{cab}/08/{urut}. */
+  t3f:[
+    {no:'26/AL/TGR/08/00001', tgl:'24/08/2026', cabang:'Tangerang',
+      customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya', customerAlamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
+      salesman:'Budi Santoso', keterangan:'', tglTerimaCustomer:'', attachFile:'',
+      fakturs:[{no:'26/SI/TGR/08/00142', noSJ:'26/SJ/TGR/08/00001', tglFaktur:'14/08/2026', tglJthTempo:'13/09/2026', kurs:'IDR', po:'PO/CUST-006/2026-08/0512', jumlah:1777110}]},
+    {no:'26/AL/HO/08/00002', tgl:'24/08/2026', cabang:'Head Office',
+      customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya', customerAlamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
+      salesman:'M. Reza Wijaya', keterangan:'', tglTerimaCustomer:'', attachFile:'',
+      fakturs:[{no:'26/SI/HO/08/00182', noSJ:'26/SJ/HO/08/00002', tglFaktur:'13/08/2026', tglJthTempo:'12/09/2026', kurs:'IDR', po:'PO/CUST-006/2026-08/0602', jumlah:388500}]},
+    {no:'26/AL/SBY/08/00002', tgl:'24/08/2026', cabang:'Surabaya',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya', customerAlamat:'Jl. Raya Darmo No. 45, Surabaya',
+      salesman:'Andi Wijaya', keterangan:'', tglTerimaCustomer:'', attachFile:'',
+      fakturs:[{no:'26/SI/SBY/08/00095', noSJ:'26/SJ/SBY/08/00001', tglFaktur:'10/08/2026', tglJthTempo:'24/08/2026', kurs:'IDR', po:'PO/CUST-002/2026-08/0287', jumlah:976800}]},
+    {no:'26/AL/MDN/08/00001', tgl:'22/08/2026', cabang:'Medan',
+      customerKode:'CUST-004', customerNama:'Toko Anugrah', customerAlamat:'Jl. Gatot Subroto No. 21, Medan',
+      salesman:'Dedi Kurniawan', keterangan:'', tglTerimaCustomer:'', attachFile:'',
+      fakturs:[{no:'26/SI/MDN/08/00077', noSJ:'26/SJ/MDN/08/00001', tglFaktur:'08/08/2026', tglJthTempo:'22/09/2026', kurs:'IDR', po:'PO/CUST-004/2026-08/0143', jumlah:666000}]},
+    {no:'26/AL/MKS/08/00001', tgl:'22/08/2026', cabang:'Makassar',
+      customerKode:'CUST-005', customerNama:'UD Sinar Harapan', customerAlamat:'Jl. Perintis Kemerdekaan No. 5, Makassar',
+      salesman:'Eka Putri', keterangan:'', tglTerimaCustomer:'', attachFile:'',
+      fakturs:[{no:'26/SI/MKS/08/00058', noSJ:'26/SJ/MKS/08/00001', tglFaktur:'08/08/2026', tglJthTempo:'08/08/2026', kurs:'IDR', po:'', jumlah:277500}]},
+    {no:'26/AL/HO/08/00001', tgl:'24/08/2026', cabang:'Head Office',
+      customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', customerAlamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat',
+      salesman:'M. Reza Wijaya', keterangan:'Tukar faktur rutin mingguan', tglTerimaCustomer:'26/08/2026', attachFile:'',
+      fakturs:[{no:'26/SI/HO/08/00181', noSJ:'26/SJ/HO/08/00001', tglFaktur:'10/08/2026', tglJthTempo:'09/09/2026', kurs:'IDR', po:'PO/CUST-001/2026-08/0518', jumlah:1243200}]},
+    {no:'26/AL/SMG/08/00001', tgl:'24/08/2026', cabang:'Semarang',
+      customerKode:'CUST-007', customerNama:'CV Maju Terus', customerAlamat:'Jl. Pandanaran No. 33, Semarang',
+      salesman:'Fajar Nugroho', keterangan:'', tglTerimaCustomer:'', attachFile:'',
+      fakturs:[{no:'26/SI/SMG/08/00064', noSJ:'26/SJ/SMG/08/00001', tglFaktur:'07/08/2026', tglJthTempo:'06/09/2026', kurs:'IDR', po:'PO/CUST-007/2026-08/0091', jumlah:444000}]},
+    {no:'26/AL/SBY/08/00001', tgl:'22/08/2026', cabang:'Surabaya',
+      customerKode:'CUST-008', customerNama:'Toko Sejahtera', customerAlamat:'Jl. Kertajaya No. 67, Surabaya',
+      salesman:'Andi Wijaya', keterangan:'', tglTerimaCustomer:'', attachFile:'',
+      fakturs:[{no:'26/SI/SBY/08/00096', noSJ:'26/SJ/SBY/08/00002', tglFaktur:'11/08/2026', tglJthTempo:'25/08/2026', kurs:'IDR', po:'PO/CUST-008/2026-08/0333', jumlah:388500}]},
+  ],
+
+  /* Alasan Belum Tertagih (Lain-lain > Alasan Belum Tertagih,
+     page:'alasanBelumTertagih'), sesuai screenshot MASERP SDL
+     "List Alasan Belum Tertagih" yang dikirim user 2026-09-01
+     (Total Record: 20). 20 baris BT01-BT20 dipertahankan APA
+     ADANYA — teks alasan generik proses penagihan distribusi
+     (bukan data rahasia instalasi lain). Kode auto BT{2 digit}
+     berurutan saat Tambah. */
+  alasanBelumTertagih:[
+    {kode:'BT01', nama:'Bayar Cicil'},
+    {kode:'BT02', nama:'Potongan SSP'},
+    {kode:'BT03', nama:'Outlet Tutup'},
+    {kode:'BT04', nama:'Tidak Dikunjungi'},
+    {kode:'BT05', nama:'Pemilik tidak ada'},
+    {kode:'BT06', nama:'T3F diterima'},
+    {kode:'BT07', nama:'Pemberkasan revisi'},
+    {kode:'BT08', nama:'Pemberkasan diterima'},
+    {kode:'BT09', nama:'Pemberkasan masih validasi oleh gudang'},
+    {kode:'BT10', nama:'Pemberkasan masih validasi oleh pengadaan'},
+    {kode:'BT11', nama:'Pemberkasan masih validasi oleh keuangan/pajak'},
+    {kode:'BT12', nama:'Persetujuan Kepala Keuangan & Direktur Keuangan'},
+    {kode:'BT13', nama:'Janji transfer'},
+    {kode:'BT14', nama:'Cek/Giro'},
+    {kode:'BT15', nama:'Bayar Cash'},
+    {kode:'BT16', nama:'Lunas'},
+    {kode:'BT17', nama:'Langsung Tagih'},
+    {kode:'BT18', nama:'Rumah sakit atau Outlet tidak punya dana'},
+    {kode:'BT19', nama:'Kasus Sales'},
+    {kode:'BT20', nama:'Kasus PKPU'},
+  ],
+
+  /* Daftar Perusahaan (Profil Perusahaan > Daftar Perusahaan,
+     page:'daftarPerusahaan'), sesuai screenshot MASERP SDL "Daftar
+     Perusahaan" yang dikirim user 2026-09-01 saat menu Profil
+     Perusahaan dipecah jadi 2 sub menu (Detail Perusahaan +
+     Daftar Perusahaan). Baris sample SDL (SDL/SDL/01/03/2025/002)
+     dipetakan ke DBM. */
+  daftarPerusahaan:[
+    {nama:'DBM', kode:'DBM', tglMulai:'01/03/2025', generasi:'002'},
+  ],
+
+  /* Tagihan Piutang / Daftar Tagih Piutang (Customer & Penjualan >
+     Daftar Transaksi, page:'tagihanPiutang'), sesuai 3 screenshot
+     MASERP SDL + 2 PDF cetakan (DAFTAR TAGIH full page + Kwitansi/
+     Perincian Nota Piutang) yang dikirim user 2026-09-01. Layar SDL
+     (customer KERTHA UTAMA MEDIKA/C001977, 2 faktur, kolektor OFFICE)
+     dipetakan ke DBM: 1 sample September 2026 berisi 2 faktur
+     SUNGGUHAN milik CUST-006 dari DATA.fakturPenjualanSJ. Jumlah
+     akhir = Σ items.jumlah. Alasan Belum Tertagih per faktur menaut
+     ke master DATA.alasanBelumTertagih (picker). */
+  tagihanPiutang:[
+    {no:'26/DC/HO/09/00001', tgl:'01/09/2026', jam:'03.42.05',
+      customerNama:'Toko Family Mart Jaya', customerAlamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
+      kolektor:'OFFICE', keterangan:'', closedManually:false,
+      items:[
+        {tglFaktur:'14/08/2026', jamFaktur:'09.20.00', customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya',
+          customerAlamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara', badanUsaha:'PT',
+          noFaktur:'26/SI/TGR/08/00142', jumlah:1777110, tglJthTempo:'13/09/2026', keterangan:'Jual Kredit',
+          alasan:'', tglVisit:'01/09/2026', kolektorSebelumnya:'', kolektorSaatIni:'OFFICE',
+          tglTagihSebelumnya:'01/09/2026', noPelunasan:'', alasanSebelumnya:''},
+        {tglFaktur:'13/08/2026', jamFaktur:'10.05.00', customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya',
+          customerAlamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara', badanUsaha:'PT',
+          noFaktur:'26/SI/HO/08/00182', jumlah:388500, tglJthTempo:'12/09/2026', keterangan:'Jual Kredit',
+          alasan:'', tglVisit:'01/09/2026', kolektorSebelumnya:'', kolektorSaatIni:'OFFICE',
+          tglTagihSebelumnya:'01/09/2026', noPelunasan:'', alasanSebelumnya:''},
+      ]},
+  ],
   /* Surat Pesanan Ekatalog & Khusus (Customer & Penjualan > Daftar
      Transaksi, page:'spEcatKhusus'), sesuai 2 screenshot MASERP
      instalasi AAA yang dikirim user 2026-09-01 (list "SP ECAT &

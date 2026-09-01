@@ -5532,6 +5532,117 @@ const DATA = {
         {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'Biaya FA 26/FAC-0000000002 — PT Indofood Distribusi', debit:0, kredit:8200000},
       ]},
   ],
+
+  /* T3F / Tanda Terima Tukar Faktur (Customer & Penjualan > Daftar
+     Transaksi, page:'t3f'), sesuai 4 screenshot MASERP SDL + 2 PDF
+     cetakan (Full Page & Half Page) yang dikirim user 2026-09-01.
+     SDL Total Record: 8331 — mockup DBM diberi 8 sample Agustus 2026
+     yang menaut ke faktur SUNGGUHAN di DATA.fakturPenjualanSJ
+     (no/noSJ/tgl/jth tempo/P.O./jumlahAkhir disnapshot ke `fakturs`;
+     jumlah akhir T3F = Σ fakturs.jumlah). Satu baris diberi
+     tglTerimaCustomer terisi (pola screenshot). Nomor
+     26/AL/{cab}/08/{urut}. */
+  t3f:[
+    {no:'26/AL/TGR/08/00001', tgl:'24/08/2026', cabang:'Tangerang',
+      customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya', customerAlamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
+      salesman:'Budi Santoso', keterangan:'', tglTerimaCustomer:'', attachFile:'',
+      fakturs:[{no:'26/SI/TGR/08/00142', noSJ:'26/SJ/TGR/08/00001', tglFaktur:'14/08/2026', tglJthTempo:'13/09/2026', kurs:'IDR', po:'PO/CUST-006/2026-08/0512', jumlah:1777110}]},
+    {no:'26/AL/HO/08/00002', tgl:'24/08/2026', cabang:'Head Office',
+      customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya', customerAlamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
+      salesman:'M. Reza Wijaya', keterangan:'', tglTerimaCustomer:'', attachFile:'',
+      fakturs:[{no:'26/SI/HO/08/00182', noSJ:'26/SJ/HO/08/00002', tglFaktur:'13/08/2026', tglJthTempo:'12/09/2026', kurs:'IDR', po:'PO/CUST-006/2026-08/0602', jumlah:388500}]},
+    {no:'26/AL/SBY/08/00002', tgl:'24/08/2026', cabang:'Surabaya',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya', customerAlamat:'Jl. Raya Darmo No. 45, Surabaya',
+      salesman:'Andi Wijaya', keterangan:'', tglTerimaCustomer:'', attachFile:'',
+      fakturs:[{no:'26/SI/SBY/08/00095', noSJ:'26/SJ/SBY/08/00001', tglFaktur:'10/08/2026', tglJthTempo:'24/08/2026', kurs:'IDR', po:'PO/CUST-002/2026-08/0287', jumlah:976800}]},
+    {no:'26/AL/MDN/08/00001', tgl:'22/08/2026', cabang:'Medan',
+      customerKode:'CUST-004', customerNama:'Toko Anugrah', customerAlamat:'Jl. Gatot Subroto No. 21, Medan',
+      salesman:'Dedi Kurniawan', keterangan:'', tglTerimaCustomer:'', attachFile:'',
+      fakturs:[{no:'26/SI/MDN/08/00077', noSJ:'26/SJ/MDN/08/00001', tglFaktur:'08/08/2026', tglJthTempo:'22/09/2026', kurs:'IDR', po:'PO/CUST-004/2026-08/0143', jumlah:666000}]},
+    {no:'26/AL/MKS/08/00001', tgl:'22/08/2026', cabang:'Makassar',
+      customerKode:'CUST-005', customerNama:'UD Sinar Harapan', customerAlamat:'Jl. Perintis Kemerdekaan No. 5, Makassar',
+      salesman:'Eka Putri', keterangan:'', tglTerimaCustomer:'', attachFile:'',
+      fakturs:[{no:'26/SI/MKS/08/00058', noSJ:'26/SJ/MKS/08/00001', tglFaktur:'08/08/2026', tglJthTempo:'08/08/2026', kurs:'IDR', po:'', jumlah:277500}]},
+    {no:'26/AL/HO/08/00001', tgl:'24/08/2026', cabang:'Head Office',
+      customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', customerAlamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat',
+      salesman:'M. Reza Wijaya', keterangan:'Tukar faktur rutin mingguan', tglTerimaCustomer:'26/08/2026', attachFile:'',
+      fakturs:[{no:'26/SI/HO/08/00181', noSJ:'26/SJ/HO/08/00001', tglFaktur:'10/08/2026', tglJthTempo:'09/09/2026', kurs:'IDR', po:'PO/CUST-001/2026-08/0518', jumlah:1243200}]},
+    {no:'26/AL/SMG/08/00001', tgl:'24/08/2026', cabang:'Semarang',
+      customerKode:'CUST-007', customerNama:'CV Maju Terus', customerAlamat:'Jl. Pandanaran No. 33, Semarang',
+      salesman:'Fajar Nugroho', keterangan:'', tglTerimaCustomer:'', attachFile:'',
+      fakturs:[{no:'26/SI/SMG/08/00064', noSJ:'26/SJ/SMG/08/00001', tglFaktur:'07/08/2026', tglJthTempo:'06/09/2026', kurs:'IDR', po:'PO/CUST-007/2026-08/0091', jumlah:444000}]},
+    {no:'26/AL/SBY/08/00001', tgl:'22/08/2026', cabang:'Surabaya',
+      customerKode:'CUST-008', customerNama:'Toko Sejahtera', customerAlamat:'Jl. Kertajaya No. 67, Surabaya',
+      salesman:'Andi Wijaya', keterangan:'', tglTerimaCustomer:'', attachFile:'',
+      fakturs:[{no:'26/SI/SBY/08/00096', noSJ:'26/SJ/SBY/08/00002', tglFaktur:'11/08/2026', tglJthTempo:'25/08/2026', kurs:'IDR', po:'PO/CUST-008/2026-08/0333', jumlah:388500}]},
+  ],
+
+  /* Alasan Belum Tertagih (Lain-lain > Alasan Belum Tertagih,
+     page:'alasanBelumTertagih'), sesuai screenshot MASERP SDL
+     "List Alasan Belum Tertagih" yang dikirim user 2026-09-01
+     (Total Record: 20). 20 baris BT01-BT20 dipertahankan APA
+     ADANYA — teks alasan generik proses penagihan distribusi
+     (bukan data rahasia instalasi lain). Kode auto BT{2 digit}
+     berurutan saat Tambah. */
+  alasanBelumTertagih:[
+    {kode:'BT01', nama:'Bayar Cicil'},
+    {kode:'BT02', nama:'Potongan SSP'},
+    {kode:'BT03', nama:'Outlet Tutup'},
+    {kode:'BT04', nama:'Tidak Dikunjungi'},
+    {kode:'BT05', nama:'Pemilik tidak ada'},
+    {kode:'BT06', nama:'T3F diterima'},
+    {kode:'BT07', nama:'Pemberkasan revisi'},
+    {kode:'BT08', nama:'Pemberkasan diterima'},
+    {kode:'BT09', nama:'Pemberkasan masih validasi oleh gudang'},
+    {kode:'BT10', nama:'Pemberkasan masih validasi oleh pengadaan'},
+    {kode:'BT11', nama:'Pemberkasan masih validasi oleh keuangan/pajak'},
+    {kode:'BT12', nama:'Persetujuan Kepala Keuangan & Direktur Keuangan'},
+    {kode:'BT13', nama:'Janji transfer'},
+    {kode:'BT14', nama:'Cek/Giro'},
+    {kode:'BT15', nama:'Bayar Cash'},
+    {kode:'BT16', nama:'Lunas'},
+    {kode:'BT17', nama:'Langsung Tagih'},
+    {kode:'BT18', nama:'Rumah sakit atau Outlet tidak punya dana'},
+    {kode:'BT19', nama:'Kasus Sales'},
+    {kode:'BT20', nama:'Kasus PKPU'},
+  ],
+
+  /* Daftar Perusahaan (Profil Perusahaan > Daftar Perusahaan,
+     page:'daftarPerusahaan'), sesuai screenshot MASERP SDL "Daftar
+     Perusahaan" yang dikirim user 2026-09-01 saat menu Profil
+     Perusahaan dipecah jadi 2 sub menu (Detail Perusahaan +
+     Daftar Perusahaan). Baris sample SDL (SDL/SDL/01/03/2025/002)
+     dipetakan ke DBM. */
+  daftarPerusahaan:[
+    {nama:'DBM', kode:'DBM', tglMulai:'01/03/2025', generasi:'002'},
+  ],
+
+  /* Tagihan Piutang / Daftar Tagih Piutang (Customer & Penjualan >
+     Daftar Transaksi, page:'tagihanPiutang'), sesuai 3 screenshot
+     MASERP SDL + 2 PDF cetakan (DAFTAR TAGIH full page + Kwitansi/
+     Perincian Nota Piutang) yang dikirim user 2026-09-01. Layar SDL
+     (customer KERTHA UTAMA MEDIKA/C001977, 2 faktur, kolektor OFFICE)
+     dipetakan ke DBM: 1 sample September 2026 berisi 2 faktur
+     SUNGGUHAN milik CUST-006 dari DATA.fakturPenjualanSJ. Jumlah
+     akhir = Σ items.jumlah. Alasan Belum Tertagih per faktur menaut
+     ke master DATA.alasanBelumTertagih (picker). */
+  tagihanPiutang:[
+    {no:'26/DC/HO/09/00001', tgl:'01/09/2026', jam:'03.42.05',
+      customerNama:'Toko Family Mart Jaya', customerAlamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
+      kolektor:'OFFICE', keterangan:'', closedManually:false,
+      items:[
+        {tglFaktur:'14/08/2026', jamFaktur:'09.20.00', customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya',
+          customerAlamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara', badanUsaha:'PT',
+          noFaktur:'26/SI/TGR/08/00142', jumlah:1777110, tglJthTempo:'13/09/2026', keterangan:'Jual Kredit',
+          alasan:'', tglVisit:'01/09/2026', kolektorSebelumnya:'', kolektorSaatIni:'OFFICE',
+          tglTagihSebelumnya:'01/09/2026', noPelunasan:'', alasanSebelumnya:''},
+        {tglFaktur:'13/08/2026', jamFaktur:'10.05.00', customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya',
+          customerAlamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara', badanUsaha:'PT',
+          noFaktur:'26/SI/HO/08/00182', jumlah:388500, tglJthTempo:'12/09/2026', keterangan:'Jual Kredit',
+          alasan:'', tglVisit:'01/09/2026', kolektorSebelumnya:'', kolektorSaatIni:'OFFICE',
+          tglTagihSebelumnya:'01/09/2026', noPelunasan:'', alasanSebelumnya:''},
+      ]},
+  ],
   /* Surat Pesanan Ekatalog & Khusus (Customer & Penjualan > Daftar
      Transaksi, page:'spEcatKhusus'), sesuai 2 screenshot MASERP
      instalasi AAA yang dikirim user 2026-09-01 (list "SP ECAT &
@@ -7583,13 +7694,6 @@ const MENU=[
    {label:'Pelunasan Utang', page:'pelunasanUtang'},
    {label:'Retur Pembelian', page:'returPembelian'},
    {label:'Pengajuan Pembayaran', page:'pengajuanPembayaran'},
-   {header:'Transaksi Konsinyasi'},
-   {label:'Inventory Target Restock Cabang', page:'placeholder', title:'Inventory Target Restock Cabang'},
-   {label:'Delivery Request (Cabang)', page:'placeholder', title:'Delivery Request (Cabang)'},
-   {label:'Delivery Request (HO)', page:'placeholder', title:'Delivery Request (HO)'},
-   {label:'Terima Barang DR', page:'placeholder', title:'Terima Barang DR'},
-   {label:'Po Konsinyasi', page:'placeholder', title:'Po Konsinyasi'},
-   {label:'Pembelian Konsinyasi', page:'placeholder', title:'Pembelian Konsinyasi'},
  ]},
  {label:'Customer & Penjualan', icon:'invoice', page:'salesDashboard', children:[
    {header:'Master & Setting'},
@@ -7630,8 +7734,8 @@ const MENU=[
    {label:'Retur Penjualan', page:'returPenjualan'},
    {label:'Document Status Retur Penjualan', page:'placeholder', title:'Document Status Retur Penjualan'},
    {label:'Consignment Refund', page:'placeholder', title:'Consignment Refund'},
-   {label:'T3F', page:'placeholder', title:'T3F'},
-   {label:'Daftar Tagih Piutang', page:'placeholder', title:'Daftar Tagih Piutang'},
+   {label:'T3F', page:'t3f'},
+   {label:'Daftar Tagih Piutang', page:'tagihanPiutang'},
    {label:'Opname Faktur, Retur & S.J.', page:'opnameDokumen'},
  ]},
  {label:'Persediaan Barang', icon:'box', page:'inventoryDashboard', children:[
@@ -7728,7 +7832,7 @@ const MENU=[
    {label:'Master Divisi', page:'divisi'},
    {label:'Picker & Packer', page:'placeholder', title:'Picker & Packer'},
    {label:'Master Template', page:'placeholder', title:'Master Template'},
-   {label:'Alasan Belum Tertagih', page:'placeholder', title:'Alasan Belum Tertagih'},
+   {label:'Alasan Belum Tertagih', page:'alasanBelumTertagih'},
    {label:'Documentation Open API', page:'placeholder', title:'Documentation Open API'},
  ]},
  {label:'Pengaturan', icon:'settings', children:[
@@ -7770,7 +7874,10 @@ const MENU=[
    {label:'Chart / Grafik', page:'placeholder', title:'Chart / Grafik'},
    {label:'Dashboard', page:'placeholder', title:'Dashboard Laporan'},
  ]},
- {label:'Profil Perusahaan', icon:'folder', page:'companyProfile'},
+ {label:'Profil Perusahaan', icon:'folder', children:[
+   {label:'Detail Perusahaan', page:'companyProfile'},
+   {label:'Daftar Perusahaan', page:'daftarPerusahaan'},
+ ]},
 ];
 </script>
 <script>
@@ -9746,23 +9853,6 @@ function tplSupplierDashboard(){
           <div class="flow-step" data-nav="pembelianLangsung" data-title="Pembelian Langsung" style="grid-column:5;grid-row:3;"><div class="flow-box quick">${icon('cart',28)}</div><div class="flow-label">Pembelian Langsung</div></div>
 
           <div class="flow-step" data-nav="masterSupplier" data-title="Supplier" style="grid-column:1;grid-row:3;"><div class="flow-box quick">${icon('users',28)}</div><div class="flow-label">Daftar Supplier</div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header"><h3>Consignment Transaction Flow</h3></div>
-      <div class="card-body">
-        <div class="flow-row">
-          <div class="flow-step"><div class="flow-box">${icon('file',28)}</div><div class="flow-label">Delivery Request (Cabang)</div></div>
-          <div class="flow-arrow">&#8594;</div>
-          <div class="flow-step"><div class="flow-box">${icon('truck',28)}</div><div class="flow-label">Delivery Request (Head Office)</div></div>
-          <div class="flow-arrow">&#8594;</div>
-          <div class="flow-step"><div class="flow-box">${icon('truck',28)}</div><div class="flow-label">Terima Barang DR</div></div>
-          <div class="flow-arrow">&#8594;</div>
-          <div class="flow-step"><div class="flow-box">${icon('cart',28)}</div><div class="flow-label">PO Konsinyasi</div></div>
-          <div class="flow-arrow">&#8594;</div>
-          <div class="flow-step"><div class="flow-box">${icon('card',28)}</div><div class="flow-label">Pembelian Konsinyasi</div></div>
         </div>
       </div>
     </div>
@@ -61045,6 +61135,2156 @@ function openFacAkunPicker(onPick){
 </script>
 <script>
 /* =========================================================
+   TEMPLATE (HTML saja) — T3F / Tanda Terima Tukar Faktur
+   (Customer & Penjualan > Daftar Transaksi > T3F, key
+   page:'t3f'). Semua fungsi di file ini HANYA menyusun &
+   mengembalikan markup HTML (string) atau helper murni, TIDAK
+   ada DOM-binding/mutation. Logic-nya di file sebelah: t3f.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Sesuai 4 screenshot MASERP SDL + 2 PDF cetakan yang dikirim
+   user 2026-09-01 (data SDL Total Record: 8331 dipetakan ke
+   master DBM — 8 sample dari DATA.fakturPenjualanSJ):
+   1) List "Daftar T3F": chip "Semua" (FUNGSIONAL:
+      Semua/September/Agustus 2026) + Tambah; kolom No.
+      Transaksi (link biru -> Ubah, sort) / Customer (sort) /
+      Tgl. Tanda Terima (sort) / No. Faktur (gabungan ';' bila
+      lebih dari satu, sort) / Jumlah Akhir (sort) / Tgl.
+      Terima Customer (sort) + aksi: Terima (tombol oranye
+      kalender -> modal "Update Tanggal Terima" + Submit Form,
+      mengisi kolom Tgl. Terima Customer), Attach File (modal
+      Choose File + Simpan — mockup, hanya nama file yang
+      tersimpan), Cetak (tombol eye + caret -> DROPDOWN dua
+      pilihan: Full Page / Half Page, membuka preview cetakan
+      replika PDF), Hapus. Pager windowed.
+   2) Form "+ T3F": Customer (picker — memuat faktur outstanding
+      customer dari DATA.fakturPenjualanSJ sebagai baris
+      ber-CHECKBOX); No. T3F "26/AL/HO/09/00001" readonly
+      (format 26/AL/{cab}/09/{urut}); Tgl. T3F; Salesman (auto
+      dari faktur/customer, editable); Keterangan. Tabel: cek /
+      No. Faktur / Tgl. Faktur / Tgl. Jth. Tempo / Kurs (IDR) /
+      P.O. Customer / Jumlah (semua readonly); Jumlah total =
+      Σ baris tercentang (recalc live). Footer: Cetak dan
+      Simpan (buka cetakan Full Page) / Simpan / Batalkan.
+   3) Cetakan FULL PAGE (replika "Tanda Terima Full Page.pdf",
+      kop SDL -> DBM): kop + "1/1", judul TANDA TERIMA, No.
+      Tanda Terima/Tanggal (format "24 Agustus 2026"), "Kami
+      adalah : {CUSTOMER}", "menyatakan telah terima tagihan
+      dari : {SALESMAN}", Alamat, tabel No./Nomor Invoice/No.
+      Surat Jalan/Tanggal Transaksi/Tanggal Jatuh Tempo/Jumlah,
+      body TINGGI (1 halaman penuh), footer Terbilang + Grand
+      Total, Catatan, "Yang Menerima," + ", {tanggal}", 2 garis
+      tanda tangan.
+   4) Cetakan HALF PAGE (replika "Tanda Terima.pdf"): ringkas,
+      TANPA kolom No. Surat Jalan, + baris "Pembayaran
+      ditujukan: PT DISTRIVERSA BUANAMAS  VA BCA : {va}" (VA
+      dari DATA.masterBank sesuai cabang, fallback baris
+      pertama), "Yang Menerima," + "Tgl Terima :", 2 garis
+      tanda tangan. */
+
+const T3F_BULAN_LIST = [
+  {label:'Semua', mm:''},
+  {label:'September 2026', mm:'09'},
+  {label:'Agustus 2026', mm:'08'},
+];
+const T3F_BULAN_NAMA = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+function t3fNum2(n){ return Number(n||0).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function t3fJumlahAkhir(r){ return (r.fakturs||[]).reduce((a,f)=> a + Number(f.jumlah||0), 0); }
+function t3fNoFakturJoin(r){ return (r.fakturs||[]).map(f=>f.no).join(';'); }
+
+/* "24/08/2026" -> "24 Agustus 2026" */
+function t3fTglLong(t){
+  const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(t||'');
+  if(!m) return t||'';
+  return `${parseInt(m[1],10)} ${T3F_BULAN_NAMA[parseInt(m[2],10)]||''} ${m[3]}`;
+}
+
+/* Terbilang id — salinan lokal (pola cetakan Retur Penjualan). */
+function t3fTerbilang(n){
+  const angka = ['','Satu','Dua','Tiga','Empat','Lima','Enam','Tujuh','Delapan','Sembilan','Sepuluh','Sebelas'];
+  function terb(x){
+    x = Math.floor(x);
+    if(x < 12) return angka[x];
+    if(x < 20) return terb(x-10) + ' Belas';
+    if(x < 100) return (terb(Math.floor(x/10)) + ' Puluh ' + terb(x%10)).trim();
+    if(x < 200) return ('Seratus ' + terb(x-100)).trim();
+    if(x < 1000) return (terb(Math.floor(x/100)) + ' Ratus ' + terb(x%100)).trim();
+    if(x < 2000) return ('Seribu ' + terb(x-1000)).trim();
+    if(x < 1e6) return (terb(Math.floor(x/1000)) + ' Ribu ' + terb(x%1000)).trim();
+    if(x < 1e9) return (terb(Math.floor(x/1e6)) + ' Juta ' + terb(x%1e6)).trim();
+    if(x < 1e12) return (terb(Math.floor(x/1e9)) + ' Milyar ' + terb(x%1e9)).trim();
+    return (terb(Math.floor(x/1e12)) + ' Triliun ' + terb(x%1e12)).trim();
+  }
+  const bulat = Math.floor(n);
+  const sen = Math.round((n - bulat) * 100);
+  let hasil = (terb(bulat) || 'Nol') + ' Rupiah';
+  if(sen > 0) hasil += ' koma ' + terb(sen);
+  return hasil.replace(/\s+/g,' ').trim();
+}
+
+/* =====================================================================
+   LIST PAGE — "Daftar T3F"
+===================================================================== */
+function tplT3fListPage(bulan){
+  return `
+    <div class="breadcrumb">Home / Customer &amp; Penjualan / <b>T3F</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('alertTriangle',15)} Daftar T3F</h3>
+        <div class="toolbar-actions">
+          <select class="chip-btn" id="t3fFilterBulan">${T3F_BULAN_LIST.map(b=>`<option value="${b.mm}" ${bulan===b.mm?'selected':''}>${b.label}</option>`).join('')}</select>
+          <button class="btn-primary" id="btnT3fAdd">${icon('plus',14)} Tambah</button>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <select id="t3fPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="t3fSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th style="width:170px;">${tplT3fSortHeader('No. Transaksi','no')}</th>
+          <th>${tplT3fSortHeader('Customer','customerNama')}</th>
+          <th style="width:130px;">${tplT3fSortHeader('Tgl. Tanda Terima','tgl')}</th>
+          <th>${tplT3fSortHeader('No. Faktur','noFaktur')}</th>
+          <th class="text-right" style="width:130px;">${tplT3fSortHeader('Jumlah Akhir','jumlahAkhir')}</th>
+          <th style="width:140px;">${tplT3fSortHeader('Tgl. Terima Customer','tglTerimaCustomer')}</th>
+          <th style="width:60px;">Terima</th>
+          <th style="width:78px;">Attach File</th>
+          <th style="width:66px;">Cetak</th>
+          <th style="width:60px;">Hapus</th>
+        </tr></thead>
+        <tbody id="t3fTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="t3fPager"></div><div id="t3fTotal"></div></div>
+    </div>`;
+}
+
+function tplT3fSortHeader(label, field){
+  return `<span data-t3f-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="t3fSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplT3fRows(rows, page, pageSize){
+  if(!rows.length) return `<tr><td colspan="10" style="color:var(--text-light);padding:14px;text-align:center;font-weight:600;">Tidak Ada Data</td></tr>`;
+  const start = (page-1)*pageSize;
+  return rows.slice(start, start+pageSize).map((r) => {
+    const idx = DATA.t3f.indexOf(r);
+    return `
+    <tr>
+      <td><a href="javascript:void(0)" data-t3f-edit="${idx}" style="color:var(--blue);font-weight:600;text-decoration:none;">${r.no}</a></td>
+      <td>${(r.customerNama||'').toUpperCase()}</td>
+      <td>${r.tgl||''}</td>
+      <td style="max-width:280px;word-break:break-all;">${t3fNoFakturJoin(r)}</td>
+      <td class="text-right">${t3fNum2(t3fJumlahAkhir(r))}</td>
+      <td>${r.tglTerimaCustomer||''}</td>
+      <td><button class="icon-btn" data-t3f-terima="${idx}" title="Update Tanggal Terima" style="background:#e8a33d;color:#fff;">${icon('calendar',15)}</button></td>
+      <td><button class="icon-btn view" data-t3f-attach="${idx}" title="Attach File${r.attachFile ? ' — ' + r.attachFile : ''}">${icon('file',15)}</button></td>
+      <td style="position:relative;">
+        <button class="icon-btn view" data-t3f-cetak="${idx}" title="Cetak">${icon('eye',15)} <span style="font-size:9px;">&#9662;</span></button>
+      </td>
+      <td><button class="icon-btn del" data-t3f-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function tplT3fPager(page, totalPages){
+  if(totalPages <= 1) return '';
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+  let nums = '';
+  for(let p = start; p <= end; p++){
+    nums += `<button class="${p===page?'active':''}" data-t3fpage="${p}">${p}</button>`;
+  }
+  return `
+    <button data-t3fpage="1" ${page<=1?'disabled':''}>First</button>
+    <button data-t3fpage="${Math.max(1,page-1)}" ${page<=1?'disabled':''}>Previous</button>
+    ${nums}
+    <button data-t3fpage="${Math.min(totalPages,page+1)}" ${page>=totalPages?'disabled':''}>Next</button>
+    <button data-t3fpage="${totalPages}" ${page>=totalPages?'disabled':''}>Last</button>`;
+}
+
+/* Dropdown kecil pilihan cetakan (Full Page / Half Page). */
+function tplT3fCetakMenu(idx){
+  return `
+    <div id="t3fCetakMenu" style="position:absolute;z-index:200;background:#fff;border:1px solid var(--border);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.16);min-width:120px;overflow:hidden;">
+      <button data-t3f-cetak-full="${idx}" style="display:block;width:100%;border:none;background:none;padding:8px 14px;text-align:left;font-size:12.5px;cursor:pointer;">Full Page</button>
+      <button data-t3f-cetak-half="${idx}" style="display:block;width:100%;border:none;background:none;padding:8px 14px;text-align:left;font-size:12.5px;cursor:pointer;border-top:1px solid var(--border);">Half Page</button>
+    </div>`;
+}
+
+/* =====================================================================
+   FORM (full page)
+===================================================================== */
+function tplT3fForm(mode, row, fakturList){
+  const isAdd = mode === 'add';
+  return `
+    <div class="breadcrumb">Home / T3F / <b>${isAdd?'Tambah':'Ubah'}</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('plus',15)} T3F</h3>
+        <button class="btn-danger" id="btnT3fTutorial">${icon('card',14)} Tutorial</button>
+      </div>
+      <div class="card-body">
+        <div class="form-grid-3" style="grid-template-columns:repeat(3,1fr);align-items:end;">
+          <h2 style="font-size:20px;font-weight:700;color:var(--navy);margin:0 0 10px;padding-bottom:10px;border-bottom:1px solid var(--border);">T3F</h2>
+          <div class="form-group"></div>
+          <div class="form-group"></div>
+        </div>
+        <div class="form-grid-3" style="grid-template-columns:1.4fr 1fr 1fr;">
+          <div class="form-group">
+            <label>Customer</label>
+            <div class="input-with-btn">
+              <input type="text" id="fT3fCustomer" value="${(row.customerNama||'').toUpperCase()}" placeholder="Pilih Customer" readonly style="background:#f2f3f6;">
+              <button type="button" class="icon-btn edit" id="t3fCustomerSearch" title="Cari Customer">${icon('search',13)}</button>
+            </div>
+          </div>
+          <div class="form-group"></div>
+          <div class="form-group"></div>
+        </div>
+        <div class="form-grid-3" style="grid-template-columns:repeat(4,1fr);">
+          <div class="form-group"></div>
+          <div class="form-group">
+            <label>No. T3F</label>
+            <input type="text" id="fT3fNo" value="${row.no||''}" readonly style="background:#f2f3f6;color:var(--text-light);">
+          </div>
+          <div class="form-group">
+            <label>Tgl. T3F</label>
+            <div class="input-with-btn">
+              <input type="text" id="fT3fTgl" value="${row.tgl||''}" style="background:#f2f3f6;">
+              <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',13)}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Salesman</label>
+            <input type="text" id="fT3fSalesman" value="${row.salesman||''}">
+          </div>
+        </div>
+        <div class="form-grid-3" style="grid-template-columns:2fr 1.4fr;">
+          <div class="form-group"></div>
+          <div class="form-group">
+            <label>Keterangan</label>
+            <textarea id="fT3fKeterangan" class="po-textarea" rows="3">${row.keterangan||''}</textarea>
+          </div>
+        </div>
+
+        <div class="table-wrap" style="margin-top:14px;">
+          <table class="po-item-table">
+            <thead><tr>
+              <th style="width:36px;"></th>
+              <th>No. Faktur</th>
+              <th style="width:110px;">Tgl. Faktur</th>
+              <th style="width:110px;">Tgl. Jth. Tempo</th>
+              <th style="width:60px;">Kurs</th>
+              <th>P.O. Customer</th>
+              <th class="text-right" style="width:150px;">Jumlah</th>
+            </tr></thead>
+            <tbody id="t3fFakturBody">${tplT3fFakturRows(fakturList, row)}</tbody>
+          </table>
+        </div>
+        <div style="display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:14px;">
+          <span style="font-size:12.5px;font-weight:600;">Jumlah</span>
+          <input type="text" id="fT3fJumlah" value="${t3fNum2(t3fJumlahAkhir(row))}" disabled style="max-width:300px;text-align:right;font-weight:700;">
+        </div>
+      </div>
+      <div class="card-footer" style="display:flex;gap:10px;justify-content:flex-end;align-items:center;padding:14px 20px;border-top:1px solid var(--border);">
+        <button type="button" class="btn-teal" id="t3fCetakSimpan">Cetak dan Simpan</button>
+        <button type="button" class="btn-primary" id="t3fSimpan">Simpan</button>
+        <a href="#" id="t3fBatalkan" class="link-add" style="margin-top:0;">Batalkan</a>
+      </div>
+    </div>`;
+}
+
+function tplT3fFakturRows(fakturList, row){
+  if(!fakturList || !fakturList.length) return `<tr><td colspan="7" style="color:var(--text-light);">Pilih Customer terlebih dahulu — faktur outstanding customer itu akan tampil di sini.</td></tr>`;
+  const checked = new Set((row.fakturs||[]).map(f=>f.no));
+  return fakturList.map((f,idx)=>`
+    <tr>
+      <td style="text-align:center;"><input type="checkbox" data-t3f-cek="${idx}" ${checked.has(f.no)?'checked':''} style="width:auto;"></td>
+      <td><input type="text" value="${f.no}" readonly style="background:#f2f3f6;"></td>
+      <td><input type="text" value="${f.tglFaktur||''}" readonly style="background:#f2f3f6;"></td>
+      <td><input type="text" value="${f.tglJthTempo||''}" readonly style="background:#f2f3f6;"></td>
+      <td><input type="text" value="${f.kurs||'IDR'}" readonly style="background:#f2f3f6;text-align:center;"></td>
+      <td><input type="text" value="${f.po||''}" readonly style="background:#f2f3f6;"></td>
+      <td><input type="text" value="${t3fNum2(f.jumlah||0)}" readonly style="background:#f2f3f6;text-align:right;"></td>
+    </tr>`).join('');
+}
+
+/* Modal "Update Tanggal Terima" (tombol oranye kolom Terima). */
+function tplT3fTerimaModal(row){
+  return `
+    <div class="modal-box" style="max-width:560px;">
+      <div class="modal-header"><span></span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div style="font-weight:800;font-size:15px;margin-bottom:6px;">Update Tanggal Terima:</div>
+        <label style="font-size:12.5px;font-weight:600;">Tanggal Terima</label>
+        <div class="input-with-btn" style="margin-top:4px;">
+          <input type="text" id="fT3fTglTerima" value="${row.tglTerimaCustomer||'01/09/2026'}" style="background:#f2f3f6;">
+          <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',13)}</span>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-primary" id="t3fSubmitTerima">Submit Form</button></div>
+    </div>`;
+}
+
+/* Modal "Attach File" (kolom Attach File). */
+function tplT3fAttachModal(row){
+  return `
+    <div class="modal-box" style="max-width:560px;">
+      <div class="modal-header"><span></span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div style="font-weight:800;font-size:15px;margin-bottom:10px;">Attach File</div>
+        <div style="display:flex;gap:10px;align-items:center;border:1px solid var(--border);border-radius:6px;padding:10px;">
+          <input type="file" id="fT3fFile" style="flex:1;font-size:12.5px;">
+          <button class="btn-primary" id="t3fSimpanFile">Simpan</button>
+        </div>
+        ${row.attachFile ? `<div style="font-size:12px;color:var(--text-light);margin-top:8px;">Lampiran saat ini: <b>${row.attachFile}</b></div>` : ''}
+      </div>
+    </div>`;
+}
+
+/* ===== Cetakan — replika 2 PDF ===== */
+function tplT3fKop(){
+  const ho = DATA.cabangMaster[0] || {};
+  return `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div style="font-weight:800;font-size:16px;padding-left:60px;">DBM</div>
+      <div style="font-size:10.5px;">1/1</div>
+    </div>`;
+}
+
+function tplT3fCetakHeaderRows(row, compact){
+  const td = 'padding:2px 4px;font-size:11.5px;vertical-align:top;';
+  return `
+    <table style="border:none;width:100%;font-size:11.5px;"><tbody>
+      <tr>
+        <td style="${td}width:140px;">No. Tanda Terima</td><td style="${td}width:6px;">:</td><td style="${td}">${row.no}</td>
+        <td style="${td}width:70px;">Tanggal</td><td style="${td}width:6px;">:</td><td style="${td}">${t3fTglLong(row.tgl)}</td>
+      </tr>
+      <tr>
+        <td style="${td}">Kami adalah</td><td style="${td}">:</td><td style="${td}"><b>${(row.customerNama||'').toUpperCase()}</b></td>
+        <td style="${td}">Alamat</td><td style="${td}">:</td><td style="${td}">${(row.customerAlamat||'').toUpperCase()}</td>
+      </tr>
+      <tr>
+        <td style="${td}" colspan="2">menyatakan telah terima tagihan dari :</td><td style="${td}">${(row.salesman||'').toUpperCase()}</td>
+        <td style="${td}" colspan="3"></td>
+      </tr>
+    </tbody></table>
+    <div style="font-size:11.5px;margin:6px 0 4px;">dengan perincian sebagai berikut</div>`;
+}
+
+function tplT3fCetakFull(row){
+  const td = 'padding:3px 6px;font-size:11.5px;';
+  const total = t3fJumlahAkhir(row);
+  const rows = (row.fakturs||[]).map((f,i)=>`
+    <tr>
+      <td style="${td}text-align:center;width:34px;">${i+1}</td>
+      <td style="${td}">${f.no}</td>
+      <td style="${td}">${f.noSJ||''}</td>
+      <td style="${td}">${f.tglFaktur||''}</td>
+      <td style="${td}">${f.tglJthTempo||''}</td>
+      <td style="${td}text-align:right;">${t3fNum2(f.jumlah)}</td>
+    </tr>`).join('');
+  return `
+    <div class="modal-box" style="max-width:880px;width:96vw;">
+      <div class="modal-header"><span>${icon('printer',15)} Tanda Terima (Full Page) — ${row.no}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body" style="max-height:76vh;overflow:auto;">
+        <div style="background:#fff;border:1px solid var(--border);padding:24px 30px;font-family:Arial,Helvetica,sans-serif;color:#111;">
+          ${tplT3fKop()}
+          <div style="text-align:center;font-weight:800;font-size:14px;margin:8px 0 10px;">TANDA TERIMA</div>
+          ${tplT3fCetakHeaderRows(row)}
+          <table style="width:100%;border-collapse:collapse;margin-top:4px;">
+            <thead><tr style="border-top:2px solid #111;border-bottom:2px solid #111;">
+              <th style="${td}width:34px;text-align:left;">No.</th>
+              <th style="${td}text-align:left;">Nomor Invoice</th>
+              <th style="${td}text-align:left;">No. Surat Jalan</th>
+              <th style="${td}text-align:left;width:120px;">Tanggal Transaksi</th>
+              <th style="${td}text-align:left;width:130px;">Tanggal Jatuh Tempo</th>
+              <th style="${td}text-align:right;width:110px;">Jumlah</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+          <div style="min-height:430px;"></div>
+          <div style="border-top:2px solid #111;"></div>
+          <table style="border:none;width:100%;font-size:11.5px;margin-top:6px;"><tbody>
+            <tr>
+              <td style="padding:2px 4px;width:64px;vertical-align:top;"><b>Terbilang</b></td>
+              <td style="padding:2px 4px;width:8px;vertical-align:top;">:</td>
+              <td style="padding:2px 4px;vertical-align:top;max-width:380px;">${t3fTerbilang(total)}</td>
+              <td style="padding:2px 4px;text-align:right;vertical-align:top;width:100px;">Grand Total :</td>
+              <td style="padding:2px 4px;text-align:right;vertical-align:top;width:110px;"><b>${t3fNum2(total)}</b></td>
+            </tr>
+            <tr><td style="padding:2px 4px;"><b>Catatan</b></td><td style="padding:2px 4px;">:</td><td colspan="3" style="padding:2px 4px;">${row.keterangan||''}</td></tr>
+          </tbody></table>
+          <div style="display:flex;justify-content:space-between;margin-top:14px;font-size:11.5px;">
+            <div style="padding-left:60px;"><b>Yang&nbsp; Menerima,</b></div>
+            <div style="padding-right:60px;"><b>, ${t3fTglLong(row.tgl)}</b></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:40px;font-size:11.5px;">
+            <div style="padding-left:40px;">(&nbsp;<span style="display:inline-block;width:150px;border-bottom:1px solid #111;"></span>&nbsp;)</div>
+            <div style="padding-right:40px;">(&nbsp;<span style="display:inline-block;width:150px;border-bottom:1px solid #111;"></span>&nbsp;)</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplT3fCetakHalf(row){
+  const td = 'padding:3px 6px;font-size:11.5px;';
+  const total = t3fJumlahAkhir(row);
+  const cab = (row.cabang||'').toUpperCase();
+  const bank = (DATA.masterBank||[]).find(b => cab && b.nama.toUpperCase().includes(cab)) || (DATA.masterBank||[])[0] || {};
+  const rows = (row.fakturs||[]).map((f,i)=>`
+    <tr>
+      <td style="${td}text-align:center;width:34px;">${i+1}</td>
+      <td style="${td}">${f.no}</td>
+      <td style="${td}">${f.tglFaktur||''}</td>
+      <td style="${td}">${f.tglJthTempo||''}</td>
+      <td style="${td}text-align:right;">${t3fNum2(f.jumlah)}</td>
+    </tr>`).join('');
+  return `
+    <div class="modal-box" style="max-width:880px;width:96vw;">
+      <div class="modal-header"><span>${icon('printer',15)} Tanda Terima (Half Page) — ${row.no}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body" style="max-height:76vh;overflow:auto;">
+        <div style="background:#fff;border:1px solid var(--border);padding:20px 26px;font-family:Arial,Helvetica,sans-serif;color:#111;">
+          ${tplT3fKop()}
+          <div style="text-align:center;font-weight:800;font-size:13.5px;margin:6px 0 8px;">Tanda Terima</div>
+          ${tplT3fCetakHeaderRows(row, true)}
+          <table style="width:100%;border-collapse:collapse;margin-top:4px;">
+            <thead><tr style="border-top:2px solid #111;border-bottom:2px solid #111;">
+              <th style="${td}width:34px;text-align:left;">No.</th>
+              <th style="${td}text-align:left;">Nomor Invoice</th>
+              <th style="${td}text-align:left;width:130px;">Tgl Transaksi</th>
+              <th style="${td}text-align:left;width:150px;">Tanggal Jatuh Tempo</th>
+              <th style="${td}text-align:right;width:110px;">Jumlah</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+          <div style="min-height:50px;"></div>
+          <div style="border-top:2px solid #111;"></div>
+          <table style="border:none;width:100%;font-size:11.5px;margin-top:6px;"><tbody>
+            <tr>
+              <td style="padding:2px 4px;width:64px;vertical-align:top;"><b>Terbilang</b></td>
+              <td style="padding:2px 4px;width:8px;vertical-align:top;">:</td>
+              <td style="padding:2px 4px;vertical-align:top;max-width:380px;">${t3fTerbilang(total)}</td>
+              <td style="padding:2px 4px;text-align:right;vertical-align:top;width:100px;">Grand Total :</td>
+              <td style="padding:2px 4px;text-align:right;vertical-align:top;width:110px;"><b>${t3fNum2(total)}</b></td>
+            </tr>
+            <tr><td style="padding:2px 4px;"><b>Catatan</b></td><td style="padding:2px 4px;">:</td><td colspan="3" style="padding:2px 4px;">${row.keterangan||''}</td></tr>
+          </tbody></table>
+          <div style="font-size:11.5px;margin-top:8px;">Pembayaran ditujukan:<b>PT DISTRIVERSA BUANAMAS</b> <b>VA BCA : ${bank.va||'-'}</b></div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11.5px;">
+            <div style="padding-left:60px;"><b>Yang&nbsp; Menerima,</b></div>
+          </div>
+          <div style="font-size:10.5px;margin-top:2px;">Tgl Terima : ${row.tglTerimaCustomer||''}</div>
+          <div style="display:flex;justify-content:flex-start;gap:180px;margin-top:26px;font-size:11.5px;">
+            <div style="padding-left:40px;">(&nbsp;<span style="display:inline-block;width:140px;border-bottom:1px solid #111;"></span>&nbsp;)</div>
+            <div>(&nbsp;<span style="display:inline-block;width:140px;border-bottom:1px solid #111;"></span>&nbsp;)</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+/* Picker Customer — salinan lokal. */
+function tplT3fCustomerPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Customer</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="t3fCustomerPickerSearch" placeholder="Cari kode / nama customer..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Customer</th><th></th></tr></thead>
+            <tbody id="t3fCustomerPickerBody">${tplT3fCustomerPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplT3fCustomerPickerRows(list){
+  if(!list.length) return `<tr><td colspan="3" style="color:var(--text-light);">Tidak ada customer ditemukan</td></tr>`;
+  return list.map(c=>`
+    <tr><td>${c.kode}</td><td>${c.nama}</td><td><button class="btn-pick" data-pick-customer="${c.kode}">Pilih</button></td></tr>`).join('');
+}
+
+function tplT3fDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus T3F</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus T3F <b>${row.no}</b> — ${(row.customerNama||'').toUpperCase()} (${t3fNum2(t3fJumlahAkhir(row))})?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+function tplT3fInfoModal(title,text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer"><button class="btn-primary" id="modalOk">Mengerti</button></div>
+    </div>`;
+}
+
+/* =========================================================
+   LOGIC (JS saja) — T3F / Tanda Terima Tukar Faktur (Customer
+   & Penjualan > Daftar Transaksi, key page:'t3f'). Dimuat
+   otomatis (lazy-load) oleh core.js — lihat PAGE_MODULES di
+   js/core.js. Markup di file sebelah: t3f.template.js (catatan
+   desain, pemetaan screenshot SDL -> DBM & rincian 2 cetakan
+   di headernya).
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Alur inti:
+   - List: chip Semua/September/Agustus fungsional, sort 6
+     kolom, pagination windowed, pencarian. Aksi per baris:
+     Terima (modal Update Tanggal Terima -> isi kolom Tgl.
+     Terima Customer), Attach File (modal Choose File + Simpan
+     — nama file tersimpan di baris, mockup), Cetak (dropdown
+     Full Page / Half Page -> preview cetakan replika PDF),
+     Hapus (konfirmasi), link No. Transaksi -> Ubah.
+   - Form: pilih Customer -> faktur outstanding customer dari
+     DATA.fakturPenjualanSJ tampil ber-checkbox (snapshot no/
+     noSJ (dariSJ)/tglFaktur/tglJatuhTempo/kurs IDR/poCustomer/
+     jumlahAkhir); salesman auto dari faktur pertama customer;
+     Jumlah = Σ tercentang, recalc live; Simpan validasi
+     customer + minimal 1 faktur tercentang; Cetak dan Simpan
+     membuka cetakan Full Page setelah tersimpan. Nomor
+     26/AL/HO/09/{urut 5 digit} (form selalu HO Sept seperti
+     screenshot; sample data memakai cabang faktur masing2).
+   Data: DATA.t3f (8 sample Agustus 2026 dari faktur DBM). */
+
+var t3fState = { page:1, search:'', sortField:'', sortDir:'asc', bulan:'' };
+
+function renderT3fPage(){
+  t3fState = { page:1, search:'', sortField:'', sortDir:'asc', bulan:'' };
+  renderT3fList();
+}
+
+function renderT3fList(){
+  content.innerHTML = tplT3fListPage(t3fState.bulan);
+  document.getElementById('btnT3fAdd').onclick = () => openT3fForm('add', null);
+  document.getElementById('t3fSearch').oninput = (e) => { t3fState.search = e.target.value.trim().toLowerCase(); t3fState.page = 1; renderT3fTable(); };
+  document.getElementById('t3fFilterBulan').onchange = (e) => { t3fState.bulan = e.target.value; t3fState.page = 1; renderT3fTable(); };
+  document.getElementById('t3fPageSize').onchange = () => { t3fState.page = 1; renderT3fTable(); };
+  document.querySelectorAll('[data-t3f-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.t3fSort;
+    if(t3fState.sortField === field){
+      t3fState.sortDir = t3fState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      t3fState.sortField = field;
+      t3fState.sortDir = 'asc';
+    }
+    t3fState.page = 1;
+    renderT3fTable();
+  });
+  renderT3fTable();
+}
+
+function t3fFilteredSortedRows(){
+  const q = t3fState.search;
+  let rows = (DATA.t3f || []).filter(r => {
+    if(t3fState.bulan && !(r.tgl || '').includes(`/${t3fState.bulan}/`)) return false;
+    if(!q) return true;
+    return r.no.toLowerCase().includes(q) ||
+      (r.customerNama||'').toLowerCase().includes(q) ||
+      t3fNoFakturJoin(r).toLowerCase().includes(q) ||
+      (r.keterangan||'').toLowerCase().includes(q);
+  });
+  const f = t3fState.sortField;
+  if(f){
+    const dir = t3fState.sortDir === 'desc' ? -1 : 1;
+    rows.sort((a,b) => {
+      if(f === 'jumlahAkhir') return (t3fJumlahAkhir(a) - t3fJumlahAkhir(b)) * dir;
+      if(f === 'noFaktur') return t3fNoFakturJoin(a).localeCompare(t3fNoFakturJoin(b), 'id') * dir;
+      return String(a[f]||'').localeCompare(String(b[f]||''), 'id') * dir;
+    });
+  }
+  return rows;
+}
+
+function t3fPageSizeVal(){
+  const sel = document.getElementById('t3fPageSize');
+  return sel ? parseInt(sel.value, 10) : 10;
+}
+
+function renderT3fTable(){
+  const perPage = t3fPageSizeVal();
+  const rows = t3fFilteredSortedRows();
+  const totalPages = Math.max(1, Math.ceil(rows.length/perPage));
+  if(t3fState.page > totalPages) t3fState.page = totalPages;
+
+  const tbody = document.getElementById('t3fTbody');
+  tbody.innerHTML = tplT3fRows(rows, t3fState.page, perPage);
+  document.getElementById('t3fTotal').textContent = `Total Record: ${rows.length}`;
+  document.getElementById('t3fPager').innerHTML = tplT3fPager(t3fState.page, totalPages);
+
+  ['no','customerNama','tgl','noFaktur','jumlahAkhir','tglTerimaCustomer'].forEach(f => {
+    const el = document.getElementById(`t3fSortIcon_${f}`);
+    if(!el) return;
+    if(t3fState.sortField === f){
+      el.innerHTML = t3fState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+
+  tbody.querySelectorAll('[data-t3f-edit]').forEach(b => b.onclick = () => openT3fForm('edit', +b.dataset.t3fEdit));
+  tbody.querySelectorAll('[data-t3f-del]').forEach(b => b.onclick = () => openT3fDelete(+b.dataset.t3fDel));
+  tbody.querySelectorAll('[data-t3f-terima]').forEach(b => b.onclick = () => openT3fTerima(+b.dataset.t3fTerima));
+  tbody.querySelectorAll('[data-t3f-attach]').forEach(b => b.onclick = () => openT3fAttach(+b.dataset.t3fAttach));
+  tbody.querySelectorAll('[data-t3f-cetak]').forEach(b => b.onclick = (e) => { e.stopPropagation(); openT3fCetakMenu(b, +b.dataset.t3fCetak); });
+
+  document.getElementById('t3fPager').querySelectorAll('[data-t3fpage]').forEach(b => b.onclick = () => { t3fState.page = +b.dataset.t3fpage; renderT3fTable(); });
+}
+
+/* Dropdown kecil Full Page / Half Page di kolom Cetak. */
+function closeT3fCetakMenu(){
+  const m = document.getElementById('t3fCetakMenu');
+  if(m) m.remove();
+  document.removeEventListener('click', closeT3fCetakMenu);
+}
+
+function openT3fCetakMenu(btn, idx){
+  closeT3fCetakMenu();
+  const wrap = document.createElement('div');
+  wrap.innerHTML = tplT3fCetakMenu(idx);
+  const menu = wrap.firstElementChild;
+  document.body.appendChild(menu);
+  const rect = btn.getBoundingClientRect();
+  menu.style.position = 'fixed';
+  menu.style.top = (rect.bottom + 4) + 'px';
+  menu.style.left = Math.max(8, rect.right - 120) + 'px';
+  menu.querySelector('[data-t3f-cetak-full]').onclick = () => { closeT3fCetakMenu(); openT3fCetak(DATA.t3f[idx], 'full'); };
+  menu.querySelector('[data-t3f-cetak-half]').onclick = () => { closeT3fCetakMenu(); openT3fCetak(DATA.t3f[idx], 'half'); };
+  setTimeout(() => document.addEventListener('click', closeT3fCetakMenu), 0);
+}
+
+/* Nomor otomatis: 26/AL/HO/09/00001, ... (form selalu HO/09). */
+function t3fGenerateNo(){
+  const prefix = '26/AL/HO/09/';
+  let max = 0;
+  (DATA.t3f || []).forEach(r => {
+    if(r.no && r.no.startsWith(prefix)){
+      const n = parseInt(r.no.slice(prefix.length), 10);
+      if(!isNaN(n) && n > max) max = n;
+    }
+  });
+  return prefix + String(max + 1).padStart(5, '0');
+}
+
+/* Faktur outstanding milik customer utk tabel form. */
+function t3fFakturListFor(customerKode){
+  return (DATA.fakturPenjualanSJ || []).filter(f => f.customerKode === customerKode).map(f => ({
+    no: f.no, noSJ: f.dariSJ || '', tglFaktur: f.tglFaktur || '', tglJthTempo: f.tglJatuhTempo || '',
+    kurs: 'IDR', po: f.poCustomer || '', jumlah: Number(f.jumlahAkhir || 0),
+  }));
+}
+
+/* =====================================================================
+   FORM add / edit
+===================================================================== */
+function openT3fForm(mode, idx){
+  const src = idx != null ? DATA.t3f[idx] : null;
+  const row = src ? JSON.parse(JSON.stringify(src)) : {
+    no: t3fGenerateNo(), tgl: '01/09/2026', cabang: 'Head Office',
+    customerKode: '', customerNama: '', customerAlamat: '', salesman: '',
+    keterangan: '', fakturs: [], tglTerimaCustomer: '', attachFile: '',
+  };
+  let fakturList = row.customerKode ? t3fFakturListFor(row.customerKode) : [];
+  // baris tersimpan yang tidak ada lagi di sumber tetap ditampilkan (tercentang)
+  (row.fakturs||[]).forEach(f => { if(!fakturList.some(x => x.no === f.no)) fakturList.push(f); });
+  content.innerHTML = tplT3fForm(mode, row, fakturList);
+
+  const back = () => renderT3fList();
+  document.getElementById('t3fBatalkan').onclick = (e) => { e.preventDefault(); back(); };
+  document.getElementById('btnT3fTutorial').onclick = () => openT3fInfo('Tutorial', 'Video tutorial T3F (Tanda Terima Tukar Faktur) tersedia di portal MASERP (mockup).');
+
+  const wireFakturs = () => {
+    document.getElementById('t3fFakturBody').innerHTML = tplT3fFakturRows(fakturList, row);
+    document.querySelectorAll('[data-t3f-cek]').forEach(cb => cb.onchange = () => {
+      const f = fakturList[+cb.dataset.t3fCek];
+      if(cb.checked){
+        if(!row.fakturs.some(x => x.no === f.no)) row.fakturs.push(JSON.parse(JSON.stringify(f)));
+      } else {
+        row.fakturs = row.fakturs.filter(x => x.no !== f.no);
+      }
+      document.getElementById('fT3fJumlah').value = t3fNum2(t3fJumlahAkhir(row));
+    });
+  };
+  wireFakturs();
+
+  document.getElementById('t3fCustomerSearch').onclick = () => openT3fCustomerPicker((c) => {
+    row.customerKode = c.kode;
+    row.customerNama = c.nama;
+    row.customerAlamat = c.alamat || '';
+    row.fakturs = [];
+    fakturList = t3fFakturListFor(c.kode);
+    row.salesman = fakturList.length ? '' : (c.salesman || '');
+    // salesman default: dari faktur pertama customer (kolom salesman DATA.fakturPenjualanSJ), fallback salesman master customer
+    const src0 = (DATA.fakturPenjualanSJ || []).find(f => f.customerKode === c.kode);
+    row.salesman = (src0 && src0.salesman) || c.salesman || '';
+    document.getElementById('fT3fCustomer').value = c.nama.toUpperCase();
+    document.getElementById('fT3fSalesman').value = row.salesman;
+    document.getElementById('fT3fJumlah').value = t3fNum2(0);
+    wireFakturs();
+  });
+
+  const doSave = () => {
+    row.tgl = document.getElementById('fT3fTgl').value.trim();
+    row.salesman = document.getElementById('fT3fSalesman').value.trim();
+    row.keterangan = document.getElementById('fT3fKeterangan').value;
+    if(!row.customerKode){ openT3fInfo('Validasi', 'Customer wajib dipilih.'); return false; }
+    if(!row.tgl){ openT3fInfo('Validasi', 'Tgl. T3F wajib diisi.'); return false; }
+    if(!row.fakturs || !row.fakturs.length){ openT3fInfo('Validasi', 'Belum ada faktur yang dicentang.'); return false; }
+    DATA.t3f = DATA.t3f || [];
+    if(mode === 'add') DATA.t3f.unshift(row);
+    else DATA.t3f[idx] = row;
+    return true;
+  };
+  document.getElementById('t3fSimpan').onclick = () => { if(doSave()) back(); };
+  document.getElementById('t3fCetakSimpan').onclick = () => {
+    if(doSave()){ back(); openT3fCetak(row, 'full'); }
+  };
+}
+
+/* =====================================================================
+   Modals: terima, attach, cetak, hapus, picker, info
+===================================================================== */
+function t3fOverlay(html){
+  closeModal();
+  closeT3fCetakMenu();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  const cancel = document.getElementById('modalCancel');
+  if(cancel) cancel.onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  return overlay;
+}
+
+function openT3fTerima(idx){
+  const row = DATA.t3f[idx];
+  t3fOverlay(tplT3fTerimaModal(row));
+  document.getElementById('t3fSubmitTerima').onclick = () => {
+    row.tglTerimaCustomer = document.getElementById('fT3fTglTerima').value.trim();
+    closeModal();
+    renderT3fTable();
+  };
+}
+
+function openT3fAttach(idx){
+  const row = DATA.t3f[idx];
+  t3fOverlay(tplT3fAttachModal(row));
+  document.getElementById('t3fSimpanFile').onclick = () => {
+    const inp = document.getElementById('fT3fFile');
+    if(!inp.files || !inp.files.length){
+      openT3fInfo('Attach File', 'Pilih file terlebih dahulu.');
+      return;
+    }
+    row.attachFile = inp.files[0].name;
+    closeModal();
+    openT3fInfo('Attach File', `File "${row.attachFile}" dilampirkan ke ${row.no} (mockup — file tidak benar-benar diunggah).`);
+    renderT3fTable();
+  };
+}
+
+function openT3fCetak(row, tipe){
+  t3fOverlay(tipe === 'half' ? tplT3fCetakHalf(row) : tplT3fCetakFull(row));
+}
+
+function openT3fDelete(idx){
+  const row = DATA.t3f[idx];
+  t3fOverlay(tplT3fDeleteConfirm(row));
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.t3f.splice(idx, 1);
+    closeModal();
+    renderT3fTable();
+  };
+}
+
+function openT3fInfo(title, text){
+  t3fOverlay(tplT3fInfoModal(title, text));
+  document.getElementById('modalOk').onclick = closeModal;
+}
+
+function openT3fCustomerPicker(onPick){
+  const overlay = t3fOverlay(tplT3fCustomerPicker(DATA.customers));
+  const wire = () => overlay.querySelectorAll('[data-pick-customer]').forEach(b => b.onclick = () => {
+    const c = DATA.customers.find(x => x.kode === b.dataset.pickCustomer);
+    if(c) onPick(c);
+    closeModal();
+  });
+  wire();
+  document.getElementById('t3fCustomerPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.customers.filter(c => !q || c.kode.toLowerCase().includes(q) || c.nama.toLowerCase().includes(q));
+    document.getElementById('t3fCustomerPickerBody').innerHTML = tplT3fCustomerPickerRows(list);
+    wire();
+  };
+}
+
+</script>
+<script>
+/* =========================================================
+   TEMPLATE (HTML saja) — Alasan Belum Tertagih (Lain-lain >
+   Alasan Belum Tertagih, page:'alasanBelumTertagih').
+   Semua fungsi di file ini HANYA menyusun & mengembalikan
+   markup HTML (string), TIDAK ada logic/DOM-binding di sini.
+   Logic-nya ada di file sebelah: alasan-belum-tertagih.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Sebelumnya placeholder murni. Dibangun 2026-09-01 sesuai
+   screenshot MASERP SDL "List Alasan Belum Tertagih" (Total
+   Record: 20, kolom Reason Code / Reason Name dgn ikon sort —
+   label kolom BAHASA INGGRIS persis screenshot, page-size
+   default 1000 (opsi 10/25/50/1000) + Pencarian Global, pager
+   First/Previous/1/Next/Last, tombol +Tambah). 20 baris
+   BT01-BT20 dipertahankan APA ADANYA (teks alasan generik
+   proses penagihan, bukan data rahasia instalasi lain). Pola
+   HTML/CRUD/pager windowed/sort disalin dari Badan Usaha.
+
+   BEDA dari Badan Usaha: Reason Code AUTO-GENERATE "BT{2
+   digit}" berurutan saat Tambah (readonly — pola kode
+   sekuensial di screenshot), readonly juga saat Ubah. */
+
+function tplAbtPage(){
+  return `
+    <div class="breadcrumb">Home / <b>Alasan Belum Tertagih</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('alertTriangle',15)} List Alasan Belum Tertagih</h3>
+        <button class="btn-primary" id="btnAbtAdd">${icon('plus',14)}Tambah</button>
+      </div>
+      <div class="table-toolbar">
+        <select id="abtPageSize"><option>10</option><option>25</option><option>50</option><option selected>1000</option></select>
+        <input type="text" id="abtSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>${tplAbtSortHeader('Reason Code','kode')}</th>
+          <th>${tplAbtSortHeader('Reason Name','nama')}</th>
+          <th style="width:70px;">Ubah</th>
+          <th style="width:70px;">Hapus</th>
+        </tr></thead>
+        <tbody id="abtTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="abtPager"></div><div id="abtTotal"></div></div>
+    </div>`;
+}
+
+function tplAbtSortHeader(label, field){
+  return `<span data-abt-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="abtSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplAbtRows(rows, page, pageSize){
+  if(!rows.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada data Alasan Belum Tertagih</td></tr>`;
+  const start = (page-1)*pageSize;
+  return rows.slice(start, start+pageSize).map((r) => {
+    const idx = DATA.alasanBelumTertagih.indexOf(r);
+    return `
+    <tr>
+      <td><a href="#" class="row-link" data-edit="${idx}" style="color:var(--blue);font-weight:600;">${r.kode}</a></td>
+      <td>${r.nama || '-'}</td>
+      <td><button class="icon-btn edit" data-edit="${idx}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* Pager windowed maks. 7 nomor halaman — pola sama Badan Usaha. */
+function tplAbtPager(page, totalPages){
+  if(totalPages <= 1) return `
+    <button disabled>First</button>
+    <button disabled>Previous</button>
+    <button class="active">1</button>
+    <button disabled>Next</button>
+    <button disabled>Last</button>`;
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+  let nums = '';
+  for(let p = start; p <= end; p++){
+    nums += `<button class="${p===page?'active':''}" data-abtpage="${p}">${p}</button>`;
+  }
+  return `
+    <button data-abtpage="1" ${page<=1?'disabled':''}>First</button>
+    <button data-abtpage="${Math.max(1,page-1)}" ${page<=1?'disabled':''}>Previous</button>
+    ${nums}
+    <button data-abtpage="${Math.min(totalPages,page+1)}" ${page>=totalPages?'disabled':''}>Next</button>
+    <button data-abtpage="${totalPages}" ${page>=totalPages?'disabled':''}>Last</button>`;
+}
+
+function tplAbtModal(mode, row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${mode==='edit'?'Ubah Alasan Belum Tertagih':'Tambah Alasan Belum Tertagih'}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Reason Code</label>
+          <input type="text" id="fAbtKode" value="${row.kode}" readonly style="background:#f2f3f6;color:var(--text-light);">
+        </div>
+        <div class="form-group">
+          <label>Reason Name</label>
+          <input type="text" id="fAbtNama" value="${row.nama||''}" placeholder="Contoh: Janji transfer">
+          <div class="form-error" id="fAbtNamaErr">Reason Name wajib diisi</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-primary" id="modalSave">Simpan</button>
+      </div>
+    </div>`;
+}
+
+function tplAbtDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Alasan Belum Tertagih</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Alasan <b>${row.kode}</b> — ${row.nama||'-'}?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Alasan Belum Tertagih (Lain-lain >
+   Alasan Belum Tertagih, page:'alasanBelumTertagih'). Dimuat
+   otomatis (lazy-load) oleh core.js saat menu ini pertama kali
+   diklik — lihat PAGE_MODULES di js/core.js. Markup HTML-nya
+   ada di file sebelah: alasan-belum-tertagih.template.js.
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Pola CRUD + pencarian/pagination/sort SAMA dengan Badan
+   Usaha (badan-usaha.js). BEDA: Reason Code AUTO-GENERATE
+   BT{2 digit} berurutan (abtNextKode) & default page-size
+   1000 sesuai screenshot (lihat abtPageSize()). */
+
+let abtState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+
+function renderAlasanBelumTertagihPage(){
+  content.innerHTML = tplAbtPage();
+  abtState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+  document.getElementById('btnAbtAdd').onclick = () => openAbtModal('add');
+  document.getElementById('abtPageSize').onchange = () => { abtState.page = 1; renderAbtTable(); };
+  document.getElementById('abtSearch').oninput = (e) => {
+    abtState.search = e.target.value.trim().toLowerCase();
+    abtState.page = 1;
+    renderAbtTable();
+  };
+  document.querySelectorAll('[data-abt-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.abtSort;
+    if(abtState.sortField === field){
+      abtState.sortDir = abtState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      abtState.sortField = field;
+      abtState.sortDir = 'asc';
+    }
+    abtState.page = 1;
+    renderAbtTable();
+  });
+  renderAbtTable();
+}
+
+function abtPageSize(){
+  const sel = document.getElementById('abtPageSize');
+  return sel ? parseInt(sel.value, 10) : 1000;
+}
+
+function abtFilteredSortedRows(){
+  const q = abtState.search;
+  let rows = !q ? DATA.alasanBelumTertagih.slice() : DATA.alasanBelumTertagih.filter(r =>
+    (r.kode||'').toLowerCase().includes(q) || (r.nama||'').toLowerCase().includes(q));
+  const field = abtState.sortField;
+  const dir = abtState.sortDir === 'desc' ? -1 : 1;
+  rows.sort((a,b) => (a[field]||'').localeCompare(b[field]||'', 'id') * dir);
+  return rows;
+}
+
+function renderAbtTable(){
+  const perPage = abtPageSize();
+  const filtered = abtFilteredSortedRows();
+  const totalPages = Math.max(1, Math.ceil(filtered.length/perPage));
+  if(abtState.page > totalPages) abtState.page = totalPages;
+  if(abtState.page < 1) abtState.page = 1;
+
+  document.getElementById('abtTbody').innerHTML = tplAbtRows(filtered, abtState.page, perPage);
+  document.getElementById('abtTotal').textContent = `Total Record: ${filtered.length}`;
+  document.getElementById('abtPager').innerHTML = tplAbtPager(abtState.page, totalPages);
+
+  ['kode','nama'].forEach(f => {
+    const el = document.getElementById(`abtSortIcon_${f}`);
+    if(!el) return;
+    if(abtState.sortField === f){
+      el.innerHTML = abtState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+
+  const tbody = document.getElementById('abtTbody');
+  tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = (e) => { e.preventDefault(); openAbtModal('edit', +b.dataset.edit); });
+  tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => openAbtDeleteConfirm(+b.dataset.del));
+
+  const pager = document.getElementById('abtPager');
+  pager.querySelectorAll('[data-abtpage]').forEach(b => b.onclick = () => { abtState.page = +b.dataset.abtpage; renderAbtTable(); });
+}
+
+function abtNextKode(){
+  const nums = DATA.alasanBelumTertagih
+    .map(r => /^BT(\d{2,})$/i.exec(r.kode))
+    .filter(Boolean)
+    .map(m => parseInt(m[1], 10));
+  const next = nums.length ? Math.max(...nums) + 1 : 1;
+  return 'BT' + String(next).padStart(2, '0');
+}
+
+function openAbtModal(mode, idx){
+  closeModal();
+  const row = mode === 'edit' ? DATA.alasanBelumTertagih[idx] : { kode: abtNextKode(), nama: '' };
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplAbtModal(mode, row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalSave').onclick = () => {
+    const nama = document.getElementById('fAbtNama').value.trim();
+    if(!nama){ document.getElementById('fAbtNamaErr').style.display = 'block'; return; }
+    if(mode === 'add'){
+      DATA.alasanBelumTertagih.push({ kode: row.kode, nama });
+    } else {
+      DATA.alasanBelumTertagih[idx].nama = nama;
+    }
+    closeModal();
+    renderAbtTable();
+  };
+}
+
+function openAbtDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.alasanBelumTertagih[idx];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplAbtDeleteConfirm(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.alasanBelumTertagih.splice(idx, 1);
+    closeModal();
+    renderAbtTable();
+  };
+}
+
+</script>
+<script>
+/* =========================================================
+   TEMPLATE (HTML saja) — Tagihan Piutang / "Daftar Tagih
+   Piutang" (Customer & Penjualan > Daftar Transaksi > Daftar
+   Tagih Piutang, key page:'tagihanPiutang'). Semua fungsi di
+   file ini HANYA menyusun & mengembalikan markup HTML (string)
+   atau helper murni, TIDAK ada DOM-binding/mutation. Logic-nya
+   di file sebelah: tagihan-piutang.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Sesuai 3 screenshot MASERP SDL + 2 PDF cetakan yang dikirim
+   user 2026-09-01 (data SDL "KERTHA UTAMA MEDIKA/C001977"
+   dipetakan ke master DBM — faktur dari DATA.fakturPenjualanSJ,
+   alasan dari DATA.alasanBelumTertagih):
+   1) List "Daftar Tagih Piutang": chip "September 2026"
+      (FUNGSIONAL Sept/Agust) + Tambah; page-size default 20;
+      kolom No. Tagih Piutang / Tgl. Tagih / Customer / Nama
+      Kolektor / Keterangan / Jumlah Akhir / Status (OPEN hijau
+      | CLOSED merah) / Closed Manually (toggle FUNGSIONAL) +
+      aksi: Ubah, "Ubah Alasan Belum Tagih" (tombol teal ->
+      modal "Daftar Tagih Piutang Item": tabel No. Faktur +
+      Alasan Belum Tertagih readonly + picker master Alasan
+      Belum Tertagih, tombol Simpan), Cetak (tombol printer +
+      caret -> DROPDOWN: Daftar Tagih Full Page / Kwitansi),
+      Lihat (form view), Hapus.
+   2) Form "+ Daftar Tagih Piutang": No. Otomatis "DC001"
+      (dekoratif) + No. Tagih Piutang "26/DC/HO/09/00001"
+      readonly + refresh; Tgl. Tagih; Salesman/Kolektor
+      (picker: OFFICE + DATA.salesman); Keterangan. Tabel
+      faktur: Tgl. Faktur / Nama Customer / Badan Usaha / No.
+      Faktur / Jumlah / Keterangan ("Jual Kredit") / Alasan
+      Belum Tertagih (readonly + picker) / Tgl. Visit
+      (editable) / Kolektor Sebelumnya / Kolektor Saat Ini /
+      Tgl. Tagih Sebelumnya / No. Pelunasan / Alasan Belum
+      Tertagih Sebelumnya / Hapus + link "+ Tambah Faktur Baru"
+      (picker DATA.fakturPenjualanSJ). Jumlah = Σ faktur,
+      recalc live. Simpan / Batalkan.
+   3) Cetakan "DAFTAR TAGIH" Full Page (replika PDF, kop SDL ->
+      PT DISTRIVERSA BUANAMAS): kop + "Tgl Print : {tgl}  1/1",
+      judul DAFTAR TAGIH digarisbawahi, Nomor/Tanggal (dgn
+      jam)/Sales, tabel Kode Customer/Nama Customer/Badan
+      Usaha/No. Faktur/Tgl. Faktur/Tgl. Jth. Tempo/Jumlah/Cash
+      + grup "Pembayaran" (Giro/Transfer, Bank) + grup
+      "Potongan" (Bank, SSP) + Kembali + Keterangan (kolom
+      pembayaran KOSONG utk diisi manual), ttd Penerima, /
+      Penanggung Jawab ,.
+   4) Cetakan "Kwitansi" (replika PDF "Perincian Nota Piutang &
+      Tanda Terima Pembayaran"): kop DBM + kotak Nama/Alamat/
+      Tanggal customer; tabel kiri "Perincian Sisa Piutang"
+      (No/No Nota/Tgl Nota/Tgl Tempo/Sisa Nota) + tabel kanan
+      "Pembayaran" (Bank/Tanggal/No Ac/Giro/Jumlah KOSONG +
+      Total + Terbilang kosong); ttd Dibuat Oleh / Konsumen /
+      Sales/Collector; 2 catatan kaki (cek/giro & retur/
+      refaksi). */
+
+function dtpNum2(n){ return Number(n||0).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function dtpJumlahAkhir(r){ return (r.items||[]).reduce((a,it)=> a + Number(it.jumlah||0), 0); }
+
+/* =====================================================================
+   LIST PAGE — "Daftar Tagih Piutang"
+===================================================================== */
+function tplDtpListPage(bulan){
+  return `
+    <div class="breadcrumb">Home / Customer &amp; Penjualan / <b>Daftar Tagih Piutang</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('alertTriangle',15)} Daftar Tagih Piutang</h3>
+        <div class="toolbar-actions">
+          <select class="chip-btn" id="dtpFilterBulan"><option value="09" ${bulan==='09'?'selected':''}>September 2026</option><option value="08" ${bulan==='08'?'selected':''}>Agustus 2026</option></select>
+          <button class="btn-primary" id="btnDtpAdd">${icon('plus',14)} Tambah</button>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <select id="dtpPageSize"><option>10</option><option selected>20</option><option>25</option><option>50</option></select>
+        <input type="text" id="dtpSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th style="width:170px;">No. Tagih Piutang</th>
+          <th style="width:100px;">Tgl. Tagih</th>
+          <th>Customer</th>
+          <th style="width:130px;">Nama Kolektor</th>
+          <th style="width:120px;">Keterangan</th>
+          <th class="text-right" style="width:120px;">Jumlah Akhir</th>
+          <th style="width:64px;">Status</th>
+          <th style="width:120px;">Closed Manually</th>
+          <th style="width:56px;">Ubah</th>
+          <th style="width:76px;">Ubah Alasan Belum Tagih</th>
+          <th style="width:64px;">Cetak</th>
+          <th style="width:56px;">Lihat</th>
+          <th style="width:56px;">Hapus</th>
+        </tr></thead>
+        <tbody id="dtpTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="dtpPager"><button>First</button><button>Previous</button><button class="active">1</button><button>Next</button><button>Last</button></div><div id="dtpTotal"></div></div>
+    </div>`;
+}
+
+function tplDtpRows(rows){
+  if(!rows.length) return `<tr><td colspan="13" style="color:var(--text-light);padding:14px;text-align:center;font-weight:600;">Tidak Ada Data</td></tr>`;
+  return rows.map((r) => {
+    const idx = DATA.tagihanPiutang.indexOf(r);
+    const closed = !!r.closedManually;
+    return `
+    <tr>
+      <td>${r.no}</td>
+      <td>${r.tgl||''}</td>
+      <td>${(r.customerNama||'').toUpperCase()}</td>
+      <td>${r.kolektor||''}</td>
+      <td style="max-width:130px;"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${r.keterangan||''}">${r.keterangan||''}</div></td>
+      <td class="text-right">${dtpNum2(dtpJumlahAkhir(r))}</td>
+      <td style="font-weight:700;color:${closed?'var(--red)':'#1d9a6c'};">${closed?'CLOSED':'OPEN'}</td>
+      <td><label class="toggle-switch"><input type="checkbox" data-dtp-closed="${idx}" ${closed?'checked':''}><span class="toggle-slider"></span></label></td>
+      <td><button class="icon-btn edit" data-dtp-edit="${idx}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn" data-dtp-alasan="${idx}" title="Ubah Alasan Belum Tagih" style="background:#2fb5a8;color:#fff;">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn edit" data-dtp-cetak="${idx}" title="Cetak">${icon('printer',15)} <span style="font-size:9px;">&#9662;</span></button></td>
+      <td><button class="icon-btn view" data-dtp-view="${idx}" title="Lihat">${icon('eye',15)}</button></td>
+      <td><button class="icon-btn del" data-dtp-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* Dropdown pilihan cetakan (Daftar Tagih Full Page / Kwitansi). */
+function tplDtpCetakMenu(idx){
+  return `
+    <div id="dtpCetakMenu" style="position:fixed;z-index:200;background:#fff;border:1px solid var(--border);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.16);min-width:170px;overflow:hidden;">
+      <button data-dtp-cetak-full="${idx}" style="display:block;width:100%;border:none;background:none;padding:8px 14px;text-align:left;font-size:12.5px;cursor:pointer;">Daftar Tagih Full Page</button>
+      <button data-dtp-cetak-kwitansi="${idx}" style="display:block;width:100%;border:none;background:none;padding:8px 14px;text-align:left;font-size:12.5px;cursor:pointer;border-top:1px solid var(--border);">Kwitansi</button>
+    </div>`;
+}
+
+/* =====================================================================
+   FORM (full page)
+===================================================================== */
+function tplDtpForm(mode, row){
+  const isAdd = mode === 'add';
+  const isView = mode === 'view';
+  const dis = isView ? 'disabled' : '';
+  return `
+    <div class="breadcrumb">Home / Daftar Tagih Piutang / <b>${isAdd?'Tambah':(isView?'Lihat':'Ubah')}</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('plus',15)} Daftar Tagih Piutang</h3>
+        <button class="btn-danger" id="btnDtpTutorial">${icon('card',14)} Tutorial</button>
+      </div>
+      <div class="card-body">
+        <div class="form-grid-3" style="grid-template-columns:repeat(3,1fr);align-items:end;">
+          <h2 style="font-size:20px;font-weight:700;color:var(--navy);margin:0 0 10px;padding-bottom:10px;border-bottom:1px solid var(--border);">Daftar Tagih Piutang</h2>
+          <div class="form-group"></div>
+          <div class="form-group"></div>
+        </div>
+        <div class="form-grid-3" style="grid-template-columns:220px 1fr 1fr;">
+          <div class="form-group">
+            <label>No. Otomatis</label>
+            <select disabled><option>DC001</option></select>
+          </div>
+          <div class="form-group">
+            <label>No. Tagih Piutang</label>
+            <div class="input-with-btn">
+              <input type="text" id="fDtpNo" value="${row.no||''}" readonly style="background:#f2f3f6;">
+              ${isAdd ? `<button type="button" class="icon-btn edit" id="dtpRefreshNo" title="Generate Ulang Nomor">${icon('refreshCw',13)}</button>` : ''}
+            </div>
+          </div>
+          <div class="form-group"></div>
+        </div>
+        <div class="form-grid-3" style="grid-template-columns:1fr 1fr 1fr;">
+          <div class="form-group">
+            <label>Tgl. Tagih</label>
+            <div class="input-with-btn">
+              <input type="text" id="fDtpTgl" value="${row.tgl||''}" ${dis}>
+              <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',13)}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Salesman</label>
+            <div class="input-with-btn">
+              <input type="text" id="fDtpKolektor" value="${row.kolektor||''}" placeholder="Pilih Kolektor" readonly>
+              ${!isView ? `<button type="button" class="icon-btn edit" id="dtpKolektorSearch" title="Cari Kolektor">${icon('search',13)}</button>` : ''}
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Keterangan</label>
+            <textarea id="fDtpKeterangan" class="po-textarea" rows="2" ${dis}>${row.keterangan||''}</textarea>
+          </div>
+        </div>
+
+        <div class="table-wrap" style="margin-top:12px;">
+          <table class="po-item-table">
+            <thead><tr>
+              <th style="width:92px;">Tgl. Faktur</th>
+              <th style="min-width:120px;">Nama Customer</th>
+              <th style="width:74px;">Badan Usaha</th>
+              <th style="min-width:140px;">No. Faktur</th>
+              <th class="text-right" style="width:110px;">Jumlah</th>
+              <th style="width:86px;">Keterangan</th>
+              <th style="min-width:150px;">Alasan Belum Tertagih</th>
+              <th style="width:130px;">Tgl. Visit</th>
+              <th style="width:100px;">Kolektor Sebelumnya</th>
+              <th style="width:100px;">Kolektor Saat Ini</th>
+              <th style="width:100px;">Tgl. Tagih Sebelumnya</th>
+              <th style="width:100px;">No. Pelunasan</th>
+              <th style="min-width:130px;">Alasan Belum Tertagih Sebelumnya</th>
+              <th style="width:50px;">Hapus</th>
+            </tr></thead>
+            <tbody id="dtpItemsBody">${tplDtpItemRows(row.items, isView)}</tbody>
+          </table>
+        </div>
+        ${!isView ? `<a href="#" class="link-add" id="dtpAddFaktur">${icon('plus',12)} Tambah Faktur Baru</a>` : ''}
+
+        <div style="display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:16px;">
+          <span style="font-size:12.5px;font-weight:600;">Jumlah</span>
+          <input type="text" id="fDtpJumlah" value="${dtpNum2(dtpJumlahAkhir(row))}" disabled style="max-width:300px;text-align:right;font-weight:700;">
+        </div>
+      </div>
+      <div class="card-footer" style="display:flex;gap:10px;justify-content:flex-end;align-items:center;padding:14px 20px;border-top:1px solid var(--border);">
+        ${!isView ? `<button type="button" class="btn-primary" id="dtpSimpan">Simpan</button>` : ''}
+        <a href="#" id="dtpBatalkan" class="link-add" style="margin-top:0;">${isView?'Tutup':'Batalkan'}</a>
+      </div>
+    </div>`;
+}
+
+function tplDtpItemRows(items, isView){
+  if(!items || !items.length) return `<tr><td colspan="14" style="color:var(--text-light);">Belum ada faktur — klik "Tambah Faktur Baru".</td></tr>`;
+  return items.map((it,idx)=>`
+    <tr>
+      <td>${it.tglFaktur||''}</td>
+      <td>${(it.customerNama||'').toUpperCase()}</td>
+      <td>${it.badanUsaha||''}</td>
+      <td>${it.noFaktur||''}</td>
+      <td class="text-right">${dtpNum2(it.jumlah||0)}</td>
+      <td>${it.keterangan||'Jual Kredit'}</td>
+      <td>
+        <div class="input-with-btn">
+          <input type="text" data-dtp-item-alasan="${idx}" value="${it.alasan||''}" readonly style="background:#f2f3f6;">
+          ${!isView ? `<button type="button" class="icon-btn edit" data-dtp-item-alasan-pick="${idx}" title="Cari Alasan">${icon('search',12)}</button>` : ''}
+        </div>
+      </td>
+      <td>
+        <div class="input-with-btn">
+          <input type="text" data-dtp-item-visit="${idx}" value="${it.tglVisit||''}" ${isView?'readonly':''}>
+          <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',12)}</span>
+        </div>
+      </td>
+      <td>${it.kolektorSebelumnya||''}</td>
+      <td data-dtp-item-kolektor="${idx}">${it.kolektorSaatIni||''}</td>
+      <td>${it.tglTagihSebelumnya||''}</td>
+      <td>${it.noPelunasan||''}</td>
+      <td>${it.alasanSebelumnya||''}</td>
+      <td style="text-align:center;">${!isView ? `<button type="button" class="icon-btn del" data-dtp-item-del="${idx}" title="Hapus Baris">${icon('trash',14)}</button>` : ''}</td>
+    </tr>`).join('');
+}
+
+/* Modal "Daftar Tagih Piutang Item" — Ubah Alasan Belum Tagih dari list. */
+function tplDtpAlasanModal(row){
+  return `
+    <div class="modal-box" style="max-width:620px;">
+      <div class="modal-header"><span></span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div style="font-weight:800;font-size:17px;margin-bottom:10px;">Daftar Tagih Piutang Item</div>
+        <div style="display:flex;gap:10px;margin-bottom:8px;">
+          <select id="dtpAlasanModalSize" style="max-width:90px;"><option selected>10</option><option>25</option></select>
+          <input type="text" id="dtpAlasanModalSearch" placeholder="Pencarian Global" style="flex:1;border:1px solid var(--blue);border-radius:6px;padding:7px 10px;font-size:12.5px;">
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th style="width:170px;">No. Faktur</th><th>Alasan Belum Tertagih</th></tr></thead>
+          <tbody id="dtpAlasanModalBody">${tplDtpAlasanModalRows(row.items)}</tbody>
+        </table></div>
+        <div class="pager" style="margin-top:10px;"><button>First</button><button>Previous</button><button class="active">1</button><button>Next</button><button>Last</button></div>
+      </div>
+      <div class="modal-footer"><button class="btn-primary" id="dtpAlasanSimpan">Simpan</button></div>
+    </div>`;
+}
+
+function tplDtpAlasanModalRows(items, q){
+  const list = (items||[]).map((it,idx)=>({it,idx})).filter(x => !q || x.it.noFaktur.toLowerCase().includes(q) || (x.it.alasan||'').toLowerCase().includes(q));
+  if(!list.length) return `<tr><td colspan="2" style="color:var(--text-light);">Tidak ada faktur</td></tr>`;
+  return list.map(({it,idx})=>`
+    <tr>
+      <td>${it.noFaktur}</td>
+      <td>
+        <div class="input-with-btn">
+          <input type="text" data-dtp-modal-alasan="${idx}" value="${it._alasanBaru!=null?it._alasanBaru:(it.alasan||'')}" readonly style="background:#f2f3f6;">
+          <button type="button" class="icon-btn edit" data-dtp-modal-alasan-pick="${idx}" title="Cari Alasan">${icon('search',12)}</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+/* Picker Alasan Belum Tertagih / Kolektor / Faktur — salinan lokal. */
+function tplDtpAlasanPicker(list){
+  return `
+    <div class="modal-box" style="max-width:560px;">
+      <div class="modal-header"><span>Pilih Alasan Belum Tertagih</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="dtpAlasanPickerSearch" placeholder="Cari kode / nama alasan..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:340px;overflow:auto;">
+          <table>
+            <thead><tr><th style="width:90px;">Kode</th><th>Alasan</th><th></th></tr></thead>
+            <tbody id="dtpAlasanPickerBody">${tplDtpAlasanPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplDtpAlasanPickerRows(list){
+  if(!list.length) return `<tr><td colspan="3" style="color:var(--text-light);">Tidak ada alasan ditemukan</td></tr>`;
+  return list.map(a=>`
+    <tr><td>${a.kode}</td><td>${a.nama}</td><td><button class="btn-pick" data-pick-alasan="${a.kode}">Pilih</button></td></tr>`).join('');
+}
+
+function tplDtpKolektorPicker(list){
+  return `
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header"><span>Pilih Kolektor</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="table-wrap" style="max-height:340px;overflow:auto;"><table>
+          <thead><tr><th>Nama</th><th>Area</th><th></th></tr></thead>
+          <tbody>${list.map(k=>`<tr><td>${k.nama}</td><td>${k.area||''}</td><td><button class="btn-pick" data-pick-kolektor="${k.nama}">Pilih</button></td></tr>`).join('')}</tbody>
+        </table></div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplDtpFakturPicker(list){
+  return `
+    <div class="modal-box" style="max-width:760px;">
+      <div class="modal-header"><span>Pilih Faktur Penjualan</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="dtpFakturPickerSearch" placeholder="Cari no. faktur / customer..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:340px;overflow:auto;">
+          <table>
+            <thead><tr><th>No. Faktur</th><th>Tgl. Faktur</th><th>Customer</th><th class="text-right">Jumlah</th><th></th></tr></thead>
+            <tbody id="dtpFakturPickerBody">${tplDtpFakturPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplDtpFakturPickerRows(list){
+  if(!list.length) return `<tr><td colspan="5" style="color:var(--text-light);">Tidak ada faktur ditemukan</td></tr>`;
+  return list.map(f=>`
+    <tr><td>${f.no}</td><td>${f.tglFaktur||''}</td><td>${f.customerNama||''}</td><td class="text-right">${dtpNum2(f.jumlahAkhir||0)}</td><td><button class="btn-pick" data-pick-faktur="${f.no}">Pilih</button></td></tr>`).join('');
+}
+
+/* ===== Cetakan 1 — "DAFTAR TAGIH" Full Page (replika PDF) ===== */
+function tplDtpCetakFull(row){
+  const td = 'border:1px solid #111;padding:3px 5px;font-size:10.5px;';
+  const kodeOf = (nama) => { const c = (DATA.customers||[]).find(x => x.nama === nama); return c ? c.kode : ''; };
+  const rows = (row.items||[]).map((it)=>`
+    <tr>
+      <td style="${td}text-align:center;">${kodeOf(it.customerNama)||it.customerKode||''}</td>
+      <td style="${td}">${(it.customerNama||'').toUpperCase()}</td>
+      <td style="${td}text-align:center;">${it.badanUsaha||''}</td>
+      <td style="${td}text-align:center;">${it.noFaktur}</td>
+      <td style="${td}text-align:center;">${it.tglFaktur||''}<br>${it.jamFaktur||''}</td>
+      <td style="${td}text-align:center;">${it.tglJthTempo||''}<br>${it.jamFaktur||''}</td>
+      <td style="${td}text-align:right;">${dtpNum2(it.jumlah)}</td>
+      <td style="${td}"></td><td style="${td}"></td><td style="${td}"></td>
+      <td style="${td}"></td><td style="${td}"></td><td style="${td}"></td><td style="${td}"></td>
+    </tr>`).join('');
+  return `
+    <div class="modal-box" style="max-width:1060px;width:97vw;">
+      <div class="modal-header"><span>${icon('printer',15)} Daftar Tagih (Full Page) — ${row.no}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body" style="max-height:76vh;overflow:auto;">
+        <div style="background:#fff;border:1px solid var(--border);padding:20px 24px;font-family:Arial,Helvetica,sans-serif;color:#111;min-width:960px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div style="font-weight:800;font-size:14px;">PT. DISTRIVERSA BUANAMAS</div>
+            <div style="font-size:11px;"><b>Tgl Print : ${row.tgl||''}</b> &nbsp;&nbsp; <span style="font-size:10px;">1/1</span></div>
+          </div>
+          <div style="text-align:center;font-weight:800;font-size:13.5px;text-decoration:underline;margin:2px 0 10px;">DAFTAR TAGIH</div>
+          <table style="border:none;font-size:11px;"><tbody>
+            <tr><td style="padding:1px 4px;width:64px;"><b>Nomor</b></td><td style="padding:1px 4px;">: ${row.no}</td></tr>
+            <tr><td style="padding:1px 4px;"><b>Tanggal</b></td><td style="padding:1px 4px;">: ${row.tgl||''} ${row.jam||''}</td></tr>
+            <tr><td style="padding:1px 4px;"><b>Sales</b></td><td style="padding:1px 4px;">: ${row.kolektor||''}</td></tr>
+          </tbody></table>
+          <table style="width:100%;border-collapse:collapse;margin-top:4px;">
+            <thead>
+              <tr>
+                <th rowspan="2" style="${td}width:56px;">Kode<br>Customer</th>
+                <th rowspan="2" style="${td}">Nama Customer</th>
+                <th rowspan="2" style="${td}width:66px;">Badan Usaha</th>
+                <th rowspan="2" style="${td}width:120px;">No. Faktur</th>
+                <th rowspan="2" style="${td}width:80px;">Tgl. Faktur</th>
+                <th rowspan="2" style="${td}width:84px;">Tgl. Jth. Tempo</th>
+                <th rowspan="2" style="${td}width:88px;">Jumlah</th>
+                <th rowspan="2" style="${td}width:40px;">Cash</th>
+                <th colspan="2" style="${td}text-align:center;">Pembayaran</th>
+                <th colspan="2" style="${td}text-align:center;">Potongan</th>
+                <th rowspan="2" style="${td}width:52px;">Kembali</th>
+                <th rowspan="2" style="${td}width:72px;">Keterangan</th>
+              </tr>
+              <tr>
+                <th style="${td}width:70px;">Giro/Transfer</th>
+                <th style="${td}width:40px;">Bank</th>
+                <th style="${td}width:56px;">Bank</th>
+                <th style="${td}width:40px;">SSP</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+          <div style="display:flex;justify-content:space-between;margin-top:26px;font-size:11.5px;">
+            <div style="padding-left:70px;"><b>Penerima,</b></div>
+            <div style="padding-right:60px;"><b>Penanggung Jawab ,</b></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:48px;font-size:11.5px;">
+            <div style="padding-left:20px;">(&nbsp;<span style="display:inline-block;width:150px;border-bottom:1px solid #111;"></span>&nbsp;)</div>
+            <div style="padding-right:16px;">(&nbsp;<span style="display:inline-block;width:150px;border-bottom:1px solid #111;"></span>&nbsp;)</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+/* ===== Cetakan 2 — "Kwitansi" / Perincian Nota Piutang (replika PDF) ===== */
+function tplDtpCetakKwitansi(row){
+  const td = 'border:1px solid #111;padding:3px 6px;font-size:11px;';
+  const cust = (DATA.customers||[]).find(c => c.nama === row.customerNama) || {};
+  const rows = (row.items||[]).map((it,i)=>`
+    <tr>
+      <td style="${td}text-align:center;width:28px;">${i+1}</td>
+      <td style="${td}">${it.noFaktur}</td>
+      <td style="${td}text-align:center;">${it.tglFaktur||''}</td>
+      <td style="${td}text-align:center;">${it.tglJthTempo||''}<br>${it.jamFaktur||''}</td>
+      <td style="${td}text-align:right;">${dtpNum2(it.jumlah)}</td>
+    </tr>`).join('');
+  return `
+    <div class="modal-box" style="max-width:1000px;width:97vw;">
+      <div class="modal-header"><span>${icon('printer',15)} Kwitansi — ${row.no}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body" style="max-height:76vh;overflow:auto;">
+        <div style="background:#fff;border:1px solid var(--border);padding:22px 28px;font-family:Arial,Helvetica,sans-serif;color:#111;min-width:900px;">
+          <div style="text-align:center;font-weight:800;font-size:14px;margin-bottom:8px;">Perincian Nota Piutang &amp; Tanda Terima Pembayaran</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div style="font-weight:800;font-size:15px;padding-left:60px;">DBM</div>
+            <table style="border-collapse:collapse;min-width:440px;"><tbody>
+              <tr><td style="${td}width:70px;">Nama</td><td style="${td}">${(row.customerNama||'').toUpperCase()}</td></tr>
+              <tr><td style="${td}">Alamat</td><td style="${td}">${(row.customerAlamat||cust.alamat||'').toUpperCase()}</td></tr>
+              <tr><td style="${td}">Tanggal</td><td style="${td}">${row.tgl||''}</td></tr>
+            </tbody></table>
+          </div>
+          <div style="display:flex;gap:26px;margin-top:18px;align-items:flex-start;">
+            <table style="border-collapse:collapse;flex:1;">
+              <thead>
+                <tr><th colspan="5" style="${td}text-align:center;">Perincian Sisa Piutang</th></tr>
+                <tr>
+                  <th style="${td}width:28px;">No</th><th style="${td}">No Nota</th><th style="${td}width:80px;">Tgl Nota</th><th style="${td}width:84px;">Tgl Tempo</th><th style="${td}width:104px;">Sisa Nota</th>
+                </tr>
+              </thead>
+              <tbody>${rows}
+                <tr><td colspan="5" style="border:1px solid #111;height:14px;"></td></tr>
+              </tbody>
+            </table>
+            <table style="border-collapse:collapse;flex:1;">
+              <thead>
+                <tr><th colspan="4" style="${td}text-align:center;">Pembayaran</th></tr>
+                <tr><th style="${td}">Bank</th><th style="${td}">Tanggal</th><th style="${td}">No Ac/Giro</th><th style="${td}width:104px;">Jumlah</th></tr>
+              </thead>
+              <tbody>
+                <tr><td style="${td}height:26px;"></td><td style="${td}"></td><td style="${td}"></td><td style="${td}"></td></tr>
+                <tr><td style="${td}height:26px;"></td><td style="${td}"></td><td style="${td}"></td><td style="${td}"></td></tr>
+                <tr><td colspan="3" style="${td}text-align:right;font-weight:800;">Total</td><td style="${td}"></td></tr>
+                <tr><td colspan="4" style="${td}height:34px;vertical-align:top;font-size:10px;">Terbilang</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:20px;font-size:11.5px;">
+            <div style="padding-left:90px;"><b>Dibuat Oleh</b></div>
+            <div><b>Konsumen</b></div>
+            <div style="padding-right:70px;"><b>Sales/Collector</b></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:46px;font-size:11.5px;">
+            <div style="padding-left:56px;">(&nbsp;<span style="display:inline-block;width:130px;border-bottom:1px solid #111;"></span>&nbsp;)</div>
+            <div>(&nbsp;<span style="display:inline-block;width:130px;border-bottom:1px solid #111;"></span>&nbsp;)</div>
+            <div style="padding-right:36px;">(&nbsp;<span style="display:inline-block;width:130px;border-bottom:1px solid #111;"></span>&nbsp;)</div>
+          </div>
+          <div style="font-size:10.5px;margin-top:16px;">- Pembayaran dianggap lunas bila cek/ giro sudah diuangkan</div>
+          <div style="font-size:10.5px;margin-top:6px;">- Retur / Refaksi tanpa ada bukti yang sudah disetujui oleh pihak perusahaan, tidak dapat dipotongkan</div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplDtpDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Daftar Tagih Piutang</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus <b>${row.no}</b> — ${(row.customerNama||'').toUpperCase()} (${dtpNum2(dtpJumlahAkhir(row))})?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+function tplDtpInfoModal(title,text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer"><button class="btn-primary" id="modalOk">Mengerti</button></div>
+    </div>`;
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Tagihan Piutang / "Daftar Tagih Piutang"
+   (Customer & Penjualan > Daftar Transaksi, key
+   page:'tagihanPiutang'). Dimuat otomatis (lazy-load) oleh
+   core.js — lihat PAGE_MODULES di js/core.js. Markup di file
+   sebelah: tagihan-piutang.template.js (catatan desain,
+   pemetaan screenshot SDL -> DBM & rincian 2 cetakan di
+   headernya).
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Alur inti:
+   - List: chip bulan fungsional, pencarian, page-size default
+     20. Toggle "Closed Manually" mengubah Status OPEN<->CLOSED
+     langsung dari list. Aksi: Ubah (form), "Ubah Alasan Belum
+     Tagih" (modal "Daftar Tagih Piutang Item" — alasan per
+     faktur via picker master DATA.alasanBelumTertagih,
+     perubahan baru tersimpan saat tombol Simpan modal), Cetak
+     (dropdown: Daftar Tagih Full Page / Kwitansi — preview
+     replika PDF), Lihat (form view), Hapus.
+   - Form: No. 26/DC/HO/09/{urut 5 digit} + refresh; Kolektor
+     picker (OFFICE + DATA.salesman); "Tambah Faktur Baru" =
+     picker DATA.fakturPenjualanSJ (faktur yang sudah ada di
+     daftar disembunyikan) — baris menyimpan snapshot tglFaktur/
+     customer/badanUsaha (dari master Customer)/noFaktur/jumlah
+     (jumlahAkhir)/tglJthTempo + keterangan "Jual Kredit",
+     Kolektor Saat Ini = kolektor header, Tgl. Tagih Sebelumnya
+     = Tgl. Tagih, Tgl. Visit editable, Alasan Belum Tertagih
+     via picker; Jumlah = Σ baris, recalc live. Customer header
+     record = customer faktur pertama.
+   Data: DATA.tagihanPiutang (1 sample September 2026 —
+   kembaran layar SDL: 2 faktur CUST-006, kolektor OFFICE). */
+
+var dtpState = { search:'', bulan:'09' };
+
+function renderTagihanPiutangPage(){
+  dtpState = { search:'', bulan:'09' };
+  renderDtpList();
+}
+
+function renderDtpList(){
+  content.innerHTML = tplDtpListPage(dtpState.bulan);
+  document.getElementById('btnDtpAdd').onclick = () => openDtpForm('add', null);
+  document.getElementById('dtpSearch').oninput = (e) => { dtpState.search = e.target.value.trim().toLowerCase(); renderDtpTable(); };
+  document.getElementById('dtpFilterBulan').onchange = (e) => { dtpState.bulan = e.target.value; renderDtpTable(); };
+  document.getElementById('dtpPageSize').onchange = () => renderDtpTable();
+  renderDtpTable();
+}
+
+function dtpFilteredRows(){
+  const q = dtpState.search;
+  return (DATA.tagihanPiutang || []).filter(r => {
+    if(dtpState.bulan && !(r.tgl || '').includes(`/${dtpState.bulan}/`)) return false;
+    if(!q) return true;
+    return r.no.toLowerCase().includes(q) ||
+      (r.customerNama||'').toLowerCase().includes(q) ||
+      (r.kolektor||'').toLowerCase().includes(q) ||
+      (r.keterangan||'').toLowerCase().includes(q);
+  });
+}
+
+function renderDtpTable(){
+  const rows = dtpFilteredRows();
+  const tbody = document.getElementById('dtpTbody');
+  tbody.innerHTML = tplDtpRows(rows);
+  document.getElementById('dtpTotal').textContent = `Total Record: ${rows.length}`;
+  tbody.querySelectorAll('[data-dtp-closed]').forEach(t => t.onchange = () => {
+    DATA.tagihanPiutang[+t.dataset.dtpClosed].closedManually = t.checked;
+    renderDtpTable();
+  });
+  tbody.querySelectorAll('[data-dtp-edit]').forEach(b => b.onclick = () => openDtpForm('edit', +b.dataset.dtpEdit));
+  tbody.querySelectorAll('[data-dtp-view]').forEach(b => b.onclick = () => openDtpForm('view', +b.dataset.dtpView));
+  tbody.querySelectorAll('[data-dtp-del]').forEach(b => b.onclick = () => openDtpDelete(+b.dataset.dtpDel));
+  tbody.querySelectorAll('[data-dtp-alasan]').forEach(b => b.onclick = () => openDtpAlasanModal(+b.dataset.dtpAlasan));
+  tbody.querySelectorAll('[data-dtp-cetak]').forEach(b => b.onclick = (e) => { e.stopPropagation(); openDtpCetakMenu(b, +b.dataset.dtpCetak); });
+}
+
+/* Dropdown pilihan cetakan di kolom Cetak. */
+function closeDtpCetakMenu(){
+  const m = document.getElementById('dtpCetakMenu');
+  if(m) m.remove();
+  document.removeEventListener('click', closeDtpCetakMenu);
+}
+
+function openDtpCetakMenu(btn, idx){
+  closeDtpCetakMenu();
+  const wrap = document.createElement('div');
+  wrap.innerHTML = tplDtpCetakMenu(idx);
+  const menu = wrap.firstElementChild;
+  document.body.appendChild(menu);
+  const rect = btn.getBoundingClientRect();
+  menu.style.top = (rect.bottom + 4) + 'px';
+  menu.style.left = Math.max(8, rect.right - 170) + 'px';
+  menu.querySelector('[data-dtp-cetak-full]').onclick = () => { closeDtpCetakMenu(); dtpOverlay(tplDtpCetakFull(DATA.tagihanPiutang[idx])); };
+  menu.querySelector('[data-dtp-cetak-kwitansi]').onclick = () => { closeDtpCetakMenu(); dtpOverlay(tplDtpCetakKwitansi(DATA.tagihanPiutang[idx])); };
+  setTimeout(() => document.addEventListener('click', closeDtpCetakMenu), 0);
+}
+
+/* Nomor otomatis: 26/DC/HO/09/00001, ... */
+function dtpGenerateNo(){
+  const prefix = '26/DC/HO/09/';
+  let max = 0;
+  (DATA.tagihanPiutang || []).forEach(r => {
+    if(r.no && r.no.startsWith(prefix)){
+      const n = parseInt(r.no.slice(prefix.length), 10);
+      if(!isNaN(n) && n > max) max = n;
+    }
+  });
+  return prefix + String(max + 1).padStart(5, '0');
+}
+
+/* =====================================================================
+   FORM add / edit / view
+===================================================================== */
+function openDtpForm(mode, idx){
+  const src = idx != null ? DATA.tagihanPiutang[idx] : null;
+  const row = src ? JSON.parse(JSON.stringify(src)) : {
+    no: dtpGenerateNo(), tgl: '01/09/2026', jam: '08.15.00',
+    customerNama: '', customerAlamat: '', kolektor: 'OFFICE', keterangan: '',
+    closedManually: false, items: [],
+  };
+  const isView = mode === 'view';
+  content.innerHTML = tplDtpForm(mode, row);
+
+  const back = () => renderDtpList();
+  document.getElementById('dtpBatalkan').onclick = (e) => { e.preventDefault(); back(); };
+  document.getElementById('btnDtpTutorial').onclick = () => openDtpInfo('Tutorial', 'Video tutorial Daftar Tagih Piutang tersedia di portal MASERP (mockup).');
+
+  const wireItems = () => {
+    document.getElementById('dtpItemsBody').innerHTML = tplDtpItemRows(row.items, isView);
+    document.getElementById('fDtpJumlah').value = dtpNum2(dtpJumlahAkhir(row));
+    if(isView) return;
+    const body = document.getElementById('dtpItemsBody');
+    body.querySelectorAll('[data-dtp-item-del]').forEach(b => b.onclick = () => {
+      row.items.splice(+b.dataset.dtpItemDel, 1);
+      wireItems();
+    });
+    body.querySelectorAll('[data-dtp-item-alasan-pick]').forEach(b => b.onclick = () => {
+      const i = +b.dataset.dtpItemAlasanPick;
+      openDtpAlasanPicker((a) => {
+        row.items[i].alasan = a.nama;
+        body.querySelector(`[data-dtp-item-alasan="${i}"]`).value = a.nama;
+      });
+    });
+    body.querySelectorAll('[data-dtp-item-visit]').forEach(inp => inp.oninput = () => {
+      row.items[+inp.dataset.dtpItemVisit].tglVisit = inp.value;
+    });
+  };
+  wireItems();
+  if(isView) return;
+
+  const refreshNoBtn = document.getElementById('dtpRefreshNo');
+  if(refreshNoBtn) refreshNoBtn.onclick = () => { row.no = dtpGenerateNo(); document.getElementById('fDtpNo').value = row.no; };
+
+  document.getElementById('dtpKolektorSearch').onclick = () => openDtpKolektorPicker((nama) => {
+    row.kolektor = nama;
+    document.getElementById('fDtpKolektor').value = nama;
+    row.items.forEach((it,i) => {
+      it.kolektorSaatIni = nama;
+      const cell = document.querySelector(`[data-dtp-item-kolektor="${i}"]`);
+      if(cell) cell.textContent = nama;
+    });
+  });
+
+  document.getElementById('dtpAddFaktur').onclick = (e) => {
+    e.preventDefault();
+    openDtpFakturPicker(row, (f) => {
+      const cust = (DATA.customers||[]).find(c => c.kode === f.customerKode) || {};
+      row.items.push({
+        tglFaktur: f.tglFaktur || '', jamFaktur: (f.tglInput||'').split(' ')[1] ? (f.tglInput.split(' ')[1].replace(/:/g,'.')) : '',
+        customerKode: f.customerKode, customerNama: f.customerNama, customerAlamat: f.customerAlamat || cust.alamat || '',
+        badanUsaha: cust.badanUsaha || 'PT', noFaktur: f.no, jumlah: Number(f.jumlahAkhir || 0),
+        tglJthTempo: f.tglJatuhTempo || '', keterangan: 'Jual Kredit',
+        alasan: '', tglVisit: row.tgl, kolektorSebelumnya: '', kolektorSaatIni: row.kolektor,
+        tglTagihSebelumnya: row.tgl, noPelunasan: '', alasanSebelumnya: '',
+      });
+      if(!row.customerNama){ row.customerNama = f.customerNama; row.customerAlamat = f.customerAlamat || cust.alamat || ''; }
+      wireItems();
+    });
+  };
+
+  document.getElementById('dtpSimpan').onclick = () => {
+    row.tgl = document.getElementById('fDtpTgl').value.trim();
+    row.keterangan = document.getElementById('fDtpKeterangan').value;
+    if(!row.tgl){ openDtpInfo('Validasi', 'Tgl. Tagih wajib diisi.'); return; }
+    if(!row.kolektor){ openDtpInfo('Validasi', 'Kolektor wajib dipilih.'); return; }
+    if(!row.items || !row.items.length){ openDtpInfo('Validasi', 'Belum ada faktur — klik "Tambah Faktur Baru".'); return; }
+    row.customerNama = row.items[0].customerNama;
+    row.customerAlamat = row.items[0].customerAlamat || '';
+    DATA.tagihanPiutang = DATA.tagihanPiutang || [];
+    if(mode === 'add') DATA.tagihanPiutang.unshift(row);
+    else DATA.tagihanPiutang[idx] = row;
+    back();
+  };
+}
+
+/* =====================================================================
+   Modal "Ubah Alasan Belum Tagih" (Daftar Tagih Piutang Item)
+===================================================================== */
+function openDtpAlasanModal(idx){
+  const row = DATA.tagihanPiutang[idx];
+  row.items.forEach(it => { delete it._alasanBaru; });
+  const overlay = dtpOverlay(tplDtpAlasanModal(row));
+  const wire = () => {
+    const q = (document.getElementById('dtpAlasanModalSearch').value || '').trim().toLowerCase();
+    document.getElementById('dtpAlasanModalBody').innerHTML = tplDtpAlasanModalRows(row.items, q);
+    overlay.querySelectorAll('[data-dtp-modal-alasan-pick]').forEach(b => b.onclick = () => {
+      const i = +b.dataset.dtpModalAlasanPick;
+      openDtpAlasanPicker((a) => {
+        row.items[i]._alasanBaru = a.nama;
+        // picker menutup modal item — buka ulang dgn nilai baru tertahan
+        const ov2 = dtpOverlay(tplDtpAlasanModal(row));
+        rewire(ov2);
+      });
+    });
+    document.getElementById('dtpAlasanSimpan').onclick = () => {
+      row.items.forEach(it => {
+        if(it._alasanBaru != null){ it.alasan = it._alasanBaru; delete it._alasanBaru; }
+      });
+      closeModal();
+      renderDtpTable();
+    };
+    document.getElementById('dtpAlasanModalSearch').oninput = wire;
+  };
+  const rewire = (ov) => {
+    ov.querySelectorAll('[data-dtp-modal-alasan-pick]').forEach(b => b.onclick = () => {
+      const i = +b.dataset.dtpModalAlasanPick;
+      openDtpAlasanPicker((a) => {
+        row.items[i]._alasanBaru = a.nama;
+        const ov3 = dtpOverlay(tplDtpAlasanModal(row));
+        rewire(ov3);
+      });
+    });
+    document.getElementById('dtpAlasanSimpan').onclick = () => {
+      row.items.forEach(it => {
+        if(it._alasanBaru != null){ it.alasan = it._alasanBaru; delete it._alasanBaru; }
+      });
+      closeModal();
+      renderDtpTable();
+    };
+    document.getElementById('dtpAlasanModalSearch').oninput = () => {
+      const q = (document.getElementById('dtpAlasanModalSearch').value || '').trim().toLowerCase();
+      document.getElementById('dtpAlasanModalBody').innerHTML = tplDtpAlasanModalRows(row.items, q);
+      rewire(ov);
+    };
+  };
+  wire();
+}
+
+/* =====================================================================
+   Modals umum & picker
+===================================================================== */
+function dtpOverlay(html){
+  closeModal();
+  closeDtpCetakMenu();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  const cancel = document.getElementById('modalCancel');
+  if(cancel) cancel.onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  return overlay;
+}
+
+function openDtpDelete(idx){
+  const row = DATA.tagihanPiutang[idx];
+  dtpOverlay(tplDtpDeleteConfirm(row));
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.tagihanPiutang.splice(idx, 1);
+    closeModal();
+    renderDtpTable();
+  };
+}
+
+function openDtpInfo(title, text){
+  dtpOverlay(tplDtpInfoModal(title, text));
+  document.getElementById('modalOk').onclick = closeModal;
+}
+
+function openDtpAlasanPicker(onPick){
+  const overlay = dtpOverlay(tplDtpAlasanPicker(DATA.alasanBelumTertagih));
+  const wire = () => overlay.querySelectorAll('[data-pick-alasan]').forEach(b => b.onclick = () => {
+    const a = DATA.alasanBelumTertagih.find(x => x.kode === b.dataset.pickAlasan);
+    closeModal(); // tutup picker DULU — onPick boleh membuka modal lain (modal Item)
+    if(a) onPick(a);
+  });
+  wire();
+  document.getElementById('dtpAlasanPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.alasanBelumTertagih.filter(a => !q || a.kode.toLowerCase().includes(q) || a.nama.toLowerCase().includes(q));
+    document.getElementById('dtpAlasanPickerBody').innerHTML = tplDtpAlasanPickerRows(list);
+    wire();
+  };
+}
+
+function openDtpKolektorPicker(onPick){
+  const list = [{nama:'OFFICE', area:'Head Office'}].concat(DATA.salesman || []);
+  const overlay = dtpOverlay(tplDtpKolektorPicker(list));
+  overlay.querySelectorAll('[data-pick-kolektor]').forEach(b => b.onclick = () => {
+    onPick(b.dataset.pickKolektor);
+    closeModal();
+  });
+}
+
+function openDtpFakturPicker(row, onPick){
+  const dipakai = new Set((row.items||[]).map(it => it.noFaktur));
+  const src = (DATA.fakturPenjualanSJ || []).filter(f => !dipakai.has(f.no));
+  const overlay = dtpOverlay(tplDtpFakturPicker(src));
+  const wire = () => overlay.querySelectorAll('[data-pick-faktur]').forEach(b => b.onclick = () => {
+    const f = (DATA.fakturPenjualanSJ || []).find(x => x.no === b.dataset.pickFaktur);
+    if(f) onPick(f);
+    closeModal();
+  });
+  wire();
+  document.getElementById('dtpFakturPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = src.filter(f => !q || f.no.toLowerCase().includes(q) || (f.customerNama||'').toLowerCase().includes(q));
+    document.getElementById('dtpFakturPickerBody').innerHTML = tplDtpFakturPickerRows(list);
+    wire();
+  };
+}
+
+</script>
+<script>
+/* =========================================================
+   TEMPLATE (HTML saja) — Daftar Perusahaan (Profil Perusahaan
+   > Daftar Perusahaan, page:'daftarPerusahaan'). Semua fungsi
+   di file ini HANYA menyusun & mengembalikan markup HTML
+   (string), TIDAK ada logic/DOM-binding di sini. Logic-nya di
+   file sebelah: daftar-perusahaan.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Dibangun 2026-09-01 sesuai screenshot MASERP SDL "Daftar
+   Perusahaan" saat menu Profil Perusahaan dipecah jadi 2 sub
+   menu (Detail Perusahaan = halaman companyProfile lama +
+   Daftar Perusahaan = modul ini): dark header + tombol
+   +Tambah (biru) + Tutorial (merah), toolbar page-size 10 +
+   Pencarian Global, kolom Nama Perusahaan / Kode Data /
+   Tanggal Mulai Pakai / Generasi Data (semua sort) + Hapus,
+   pager First/Previous/1/Next/Last, Total Record: 1. Baris
+   sample SDL (SDL/SDL/01/03/2025/002) dipetakan ke DBM
+   (DBM/DBM/01/03/2025/002). Tambah = modal form 4 field
+   (Kode Data uppercase & unik); TIDAK ada tombol Ubah
+   (sesuai screenshot — hanya Hapus). */
+
+function tplDprPage(){
+  return `
+    <div class="breadcrumb">Home / Profil Perusahaan / <b>Daftar Perusahaan</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('alertTriangle',15)} Daftar Perusahaan</h3>
+        <div class="toolbar-actions">
+          <button class="btn-primary" id="btnDprAdd">${icon('plus',14)}Tambah</button>
+          <button class="btn-danger" id="btnDprTutorial">${icon('card',14)} Tutorial</button>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <select id="dprPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="dprSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th style="text-align:center;">${tplDprSortHeader('Nama Perusahaan','nama')}</th>
+          <th style="text-align:center;">${tplDprSortHeader('Kode Data','kode')}</th>
+          <th style="text-align:center;">${tplDprSortHeader('Tanggal Mulai Pakai','tglMulai')}</th>
+          <th style="text-align:center;">${tplDprSortHeader('Generasi Data','generasi')}</th>
+          <th style="width:70px;">Hapus</th>
+        </tr></thead>
+        <tbody id="dprTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="dprPager"><button disabled>First</button><button disabled>Previous</button><button class="active">1</button><button disabled>Next</button><button disabled>Last</button></div><div id="dprTotal"></div></div>
+    </div>`;
+}
+
+function tplDprSortHeader(label, field){
+  return `<span data-dpr-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="dprSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplDprRows(rows){
+  if(!rows.length) return `<tr><td colspan="5" style="color:var(--text-light);padding:14px;text-align:center;font-weight:600;">Tidak Ada Data</td></tr>`;
+  return rows.map((r) => {
+    const idx = DATA.daftarPerusahaan.indexOf(r);
+    return `
+    <tr>
+      <td>${r.nama}</td>
+      <td>${r.kode}</td>
+      <td>${r.tglMulai||''}</td>
+      <td>${r.generasi||''}</td>
+      <td><button class="icon-btn del" data-dpr-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function tplDprModal(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Tambah Perusahaan</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Nama Perusahaan</label>
+          <input type="text" id="fDprNama" value="${row.nama||''}" placeholder="Contoh: DBM">
+          <div class="form-error" id="fDprNamaErr">Nama Perusahaan wajib diisi</div>
+        </div>
+        <div class="form-group">
+          <label>Kode Data</label>
+          <input type="text" id="fDprKode" value="${row.kode||''}" maxlength="10" placeholder="Contoh: DBM" style="text-transform:uppercase;">
+          <div class="form-error" id="fDprKodeErr">Kode Data wajib diisi</div>
+        </div>
+        <div class="form-group">
+          <label>Tanggal Mulai Pakai</label>
+          <div class="input-with-btn">
+            <input type="text" id="fDprTgl" value="${row.tglMulai||'01/09/2026'}">
+            <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',13)}</span>
+          </div>
+          <div class="form-error" id="fDprTglErr">Tanggal Mulai Pakai wajib diisi</div>
+        </div>
+        <div class="form-group">
+          <label>Generasi Data</label>
+          <input type="text" id="fDprGenerasi" value="${row.generasi||''}" maxlength="6" placeholder="Contoh: 002">
+          <div class="form-error" id="fDprGenerasiErr">Generasi Data wajib diisi</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-primary" id="modalSave">Simpan</button>
+      </div>
+    </div>`;
+}
+
+function tplDprDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Perusahaan</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus perusahaan <b>${row.nama}</b> (Kode Data: ${row.kode}, Generasi: ${row.generasi||'-'})?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+function tplDprInfoModal(title,text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer"><button class="btn-primary" id="modalOk">Mengerti</button></div>
+    </div>`;
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Daftar Perusahaan (Profil Perusahaan >
+   Daftar Perusahaan, page:'daftarPerusahaan'). Dimuat otomatis
+   (lazy-load) oleh core.js — lihat PAGE_MODULES di js/core.js.
+   Markup HTML-nya ada di file sebelah:
+   daftar-perusahaan.template.js (catatan desain di headernya).
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Menu Profil Perusahaan kini punya 2 sub menu (lihat
+   js/menu.js): Detail Perusahaan (halaman companyProfile lama)
+   + Daftar Perusahaan (modul ini). Pola CRUD ringkas: Tambah =
+   modal 4 field (Kode Data uppercase & unik), Hapus =
+   konfirmasi (tanpa Ubah, sesuai screenshot), sort 4 kolom +
+   pencarian + page-size. Data: DATA.daftarPerusahaan. */
+
+let dprState = { search:'', sortField:'', sortDir:'asc' };
+
+function renderDaftarPerusahaanPage(){
+  dprState = { search:'', sortField:'', sortDir:'asc' };
+  content.innerHTML = tplDprPage();
+  document.getElementById('btnDprAdd').onclick = () => openDprModal();
+  document.getElementById('btnDprTutorial').onclick = () => openDprInfo('Tutorial', 'Video tutorial Daftar Perusahaan tersedia di portal MASERP (mockup).');
+  document.getElementById('dprSearch').oninput = (e) => { dprState.search = e.target.value.trim().toLowerCase(); renderDprTable(); };
+  document.getElementById('dprPageSize').onchange = () => renderDprTable();
+  document.querySelectorAll('[data-dpr-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.dprSort;
+    if(dprState.sortField === field){
+      dprState.sortDir = dprState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      dprState.sortField = field;
+      dprState.sortDir = 'asc';
+    }
+    renderDprTable();
+  });
+  renderDprTable();
+}
+
+function dprFilteredSortedRows(){
+  const q = dprState.search;
+  let rows = (DATA.daftarPerusahaan || []).filter(r => !q ||
+    (r.nama||'').toLowerCase().includes(q) ||
+    (r.kode||'').toLowerCase().includes(q) ||
+    (r.tglMulai||'').toLowerCase().includes(q) ||
+    (r.generasi||'').toLowerCase().includes(q));
+  const f = dprState.sortField;
+  if(f){
+    const dir = dprState.sortDir === 'desc' ? -1 : 1;
+    rows.sort((a,b) => String(a[f]||'').localeCompare(String(b[f]||''), 'id') * dir);
+  }
+  return rows;
+}
+
+function renderDprTable(){
+  const rows = dprFilteredSortedRows();
+  document.getElementById('dprTbody').innerHTML = tplDprRows(rows);
+  document.getElementById('dprTotal').textContent = `Total Record: ${rows.length}`;
+  ['nama','kode','tglMulai','generasi'].forEach(f => {
+    const el = document.getElementById(`dprSortIcon_${f}`);
+    if(!el) return;
+    if(dprState.sortField === f){
+      el.innerHTML = dprState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+  document.getElementById('dprTbody').querySelectorAll('[data-dpr-del]').forEach(b => b.onclick = () => openDprDeleteConfirm(+b.dataset.dprDel));
+}
+
+function dprOverlay(html){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  const cancel = document.getElementById('modalCancel');
+  if(cancel) cancel.onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  return overlay;
+}
+
+function openDprModal(){
+  dprOverlay(tplDprModal({}));
+  document.getElementById('modalSave').onclick = () => {
+    const nama = document.getElementById('fDprNama').value.trim();
+    const kode = document.getElementById('fDprKode').value.trim().toUpperCase();
+    const tgl = document.getElementById('fDprTgl').value.trim();
+    const generasi = document.getElementById('fDprGenerasi').value.trim();
+    let ok = true;
+    const err = (id, show, text) => {
+      const el = document.getElementById(id);
+      if(text) el.textContent = text;
+      el.style.display = show ? 'block' : 'none';
+      if(show) ok = false;
+    };
+    err('fDprNamaErr', !nama);
+    if(!kode) err('fDprKodeErr', true, 'Kode Data wajib diisi');
+    else if((DATA.daftarPerusahaan||[]).some(r => (r.kode||'').toUpperCase() === kode)) err('fDprKodeErr', true, `Kode Data "${kode}" sudah terdaftar`);
+    else err('fDprKodeErr', false);
+    err('fDprTglErr', !tgl);
+    err('fDprGenerasiErr', !generasi);
+    if(!ok) return;
+    DATA.daftarPerusahaan.push({ nama, kode, tglMulai: tgl, generasi });
+    closeModal();
+    renderDprTable();
+  };
+}
+
+function openDprDeleteConfirm(idx){
+  const row = DATA.daftarPerusahaan[idx];
+  dprOverlay(tplDprDeleteConfirm(row));
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.daftarPerusahaan.splice(idx, 1);
+    closeModal();
+    renderDprTable();
+  };
+}
+
+function openDprInfo(title, text){
+  dprOverlay(tplDprInfoModal(title, text));
+  document.getElementById('modalOk').onclick = closeModal;
+}
+
+</script>
+<script>
+/* =========================================================
    CORE — sidebar, navigasi, dan lazy-loader modul per menu
 
    File ini SENGAJA dibuat kecil dan selalu dimuat di awal
@@ -61181,6 +63421,9 @@ const PAGE_MODULES={
   spEcatKhusus:{srcs:['js/pages/sp-ecat-khusus.template.js','js/pages/sp-ecat-khusus.js'], fn:'renderSpEcatKhususPage'},
   penjualanAktivaTetap:{srcs:['js/pages/penjualan-aktiva-tetap.template.js','js/pages/penjualan-aktiva-tetap.js'], fn:'renderPenjualanAktivaTetapPage'},
   biayaAsset:{srcs:['js/pages/biaya-asset.template.js','js/pages/biaya-asset.js'], fn:'renderBiayaAssetPage'},
+  t3f:{srcs:['js/pages/t3f.template.js','js/pages/t3f.js'], fn:'renderT3fPage'},
+  alasanBelumTertagih:{srcs:['js/pages/alasan-belum-tertagih.template.js','js/pages/alasan-belum-tertagih.js'], fn:'renderAlasanBelumTertagihPage'},
+  tagihanPiutang:{srcs:['js/pages/tagihan-piutang.template.js','js/pages/tagihan-piutang.js'], fn:'renderTagihanPiutangPage'},
   permintaanPembelian:{srcs:['js/pages/permintaan-pembelian.template.js','js/pages/permintaan-pembelian.js'], fn:'renderPermintaanPembelianPage'},
   tutupPR:{srcs:['js/pages/tutup-pr.template.js','js/pages/tutup-pr.js'], fn:'renderTutupPRPage'},
   returPB:{srcs:['js/pages/retur-penerimaan-barang.template.js','js/pages/retur-penerimaan-barang.js'], fn:'renderReturPBPage'},
@@ -61223,6 +63466,7 @@ const PAGE_MODULES={
   reportPenjualan:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportPenjualan'},
   reportCetakanTransaksi:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportCetakanTransaksi'},
   companyProfile:{srcs:['js/pages/company-profile.template.js','js/pages/company-profile.js'], fn:'renderCompanyProfile'},
+  daftarPerusahaan:{srcs:['js/pages/daftar-perusahaan.template.js','js/pages/daftar-perusahaan.js'], fn:'renderDaftarPerusahaanPage'},
   masterRayon:{srcs:['js/pages/master-rayon.template.js','js/pages/master-rayon.js'], fn:'renderMasterRayonPage'},
   masterWilayah:{srcs:['js/pages/master-wilayah.template.js','js/pages/master-wilayah.js'], fn:'renderMasterWilayahPage'},
   groupUser:{srcs:['js/pages/group-user.template.js','js/pages/group-user.js'], fn:'renderGroupUserPage'},

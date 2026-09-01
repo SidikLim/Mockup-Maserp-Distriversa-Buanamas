@@ -38,23 +38,6 @@ function tplSupplierDashboard(){
     </div>
 
     <div class="card">
-      <div class="card-header"><h3>Consignment Transaction Flow</h3></div>
-      <div class="card-body">
-        <div class="flow-row">
-          <div class="flow-step"><div class="flow-box">${icon('file',28)}</div><div class="flow-label">Delivery Request (Cabang)</div></div>
-          <div class="flow-arrow">&#8594;</div>
-          <div class="flow-step"><div class="flow-box">${icon('truck',28)}</div><div class="flow-label">Delivery Request (Head Office)</div></div>
-          <div class="flow-arrow">&#8594;</div>
-          <div class="flow-step"><div class="flow-box">${icon('truck',28)}</div><div class="flow-label">Terima Barang DR</div></div>
-          <div class="flow-arrow">&#8594;</div>
-          <div class="flow-step"><div class="flow-box">${icon('cart',28)}</div><div class="flow-label">PO Konsinyasi</div></div>
-          <div class="flow-arrow">&#8594;</div>
-          <div class="flow-step"><div class="flow-box">${icon('card',28)}</div><div class="flow-label">Pembelian Konsinyasi</div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
       <div class="card-header"><h3>Average Cycle Purchasing (in Days)</h3><span class="chip">Agustus 2026</span></div>
       <div class="card-body">
         <div class="cycle-row">
