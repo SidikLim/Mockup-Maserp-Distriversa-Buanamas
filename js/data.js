@@ -5019,6 +5019,51 @@ const DATA = {
     {nama:'DBM', kode:'DBM', tglMulai:'01/03/2025', generasi:'002'},
   ],
 
+  /* Setting Hak Akses Group (User Security > Hak Akses Group,
+     page:'hakAksesGroup'), sesuai screenshot MASERP SDL yang
+     dikirim user 2026-09-01. Array key "MODUL|ITEM|GROUP" yang
+     TERCENTANG pada matriks hak akses (modul & item didefinisikan
+     di HAG_MODULES, hak-akses-group.template.js; kolom group =
+     DATA.groupUser non-admin). Sample default disesuaikan peran
+     group DBM. */
+  hakAksesGroup:[
+    'GENERALLEDGER|Akun GL|ACC','GENERALLEDGER|Jurnal Umum|ACC','GENERALLEDGER|Cost Center|ACC','GENERALLEDGER|Budget vs Actual|ACC','BANK|Rekonsiliasi|ACC',
+    'INVENTORY|Persediaan Barang|ADG','INVENTORY|Stock Request|ADG','INVENTORY|Stock Opname|ADG','PURCHASING|Terima Barang|ADG',
+    'INVENTORY|Persediaan Barang|ADG-HO','INVENTORY|Stock Opname|ADG-HO',
+    'PURCHASING|Purchase Order|PURCH','PURCHASING|Permintaan Pembelian|PURCH','PURCHASING|Terima Barang|PURCH','PURCHASING|Pembelian Melalui BPB|PURCH','PURCHASING|Pembelian dari PO|PURCH',
+    'SALES|Sales Quotation|SALES','SALES|Sales Order|SALES','SALES|Invoice|SALES',
+    'BANK|Transaksi Kas|KAS','BANK|Jurnal Kas Lain-Lain|KAS','BANK|Master Bank|KAS',
+    'SALES|Daftar Tagih Piutang|KOL','SALES|T3F|KOL','SALES|Penerimaan Piutang|KOL',
+    'PURCHASING|Pelunasan Utang|FIN','PURCHASING|Pengajuan Pembayaran|FIN','BANK|Daftar Giro Mundur|FIN',
+    'DASHBOARD|Dashboard Utama|MNGR','DASHBOARD|Dashboard Supplier & Pembelian|MNGR','DASHBOARD|Dashboard Customer & Penjualan|MNGR','DASHBOARD|Dashboard General Ledger|MNGR',
+    'SHELL|Login Multi Cabang|MNGR','SHELL|Ganti Password|MNGR',
+  ],
+
+  /* Setting Hak Akses Group Report (User Security > Hak Akses Group
+     Report, page:'hakAksesGroupReport'), sesuai screenshot MASERP SDL
+     01/09. Array key "MODUL|LAPORAN|GROUP" yang tercentang — nama
+     laporan menaut ke katalog REPORT_CENTERS_DATA (Report Center
+     DBM). Sample default: ACC & FIN laporan finance AP/AR, KOL
+     laporan piutang. */
+  hakAksesGroupReport:[
+    'ACCOUNTPAYABLE|FA-02 Lap Hutang|ACC','ACCOUNTPAYABLE|FA-03 Lap Hutang Per Faktur|ACC','ACCOUNTPAYABLE|FA-04 Lap Umur Hutang|ACC',
+    'ACCOUNTRECEIVABLE|FA-05 Lap Piutang|ACC','ACCOUNTRECEIVABLE|FA-06 Lap Piutang Per Faktur|ACC','ACCOUNTRECEIVABLE|FA-10 Lap Umur Piutang|ACC',
+    'ACCOUNTPAYABLE|Laporan Kartu Supplier|FIN','ACCOUNTPAYABLE|Laporan Rekap Umur Hutang|FIN',
+    'ACCOUNTRECEIVABLE|FA-05 Lap Piutang|KOL','ACCOUNTRECEIVABLE|FA-10 Lap Umur Piutang|KOL',
+  ],
+
+  /* Budgeting (General Ledger > Master & Setting > Budgeting,
+     page:'budgeting'), sesuai screenshot MASERP SDL "Daftar
+     Budgeting" 01/09 (SDL 282 akun 6-digit → DBM memakai
+     DATA.akunGL 7-digit sendiri). Object per kode akun:
+     {po:boolean (toggle Budgeting PO), bulan:[12 nominal
+     JANUARI-DESEMBER]}. Sample budget 2026 akun biaya. */
+  budgeting:{
+    '5210001':{po:false, bulan:[185000000,185000000,185000000,185000000,192500000,192500000,192500000,192500000,192500000,192500000,192500000,210000000]},
+    '5210004':{po:true, bulan:[42000000,42000000,42000000,45000000,45000000,45000000,45000000,45000000,45000000,45000000,45000000,48000000]},
+    '5210002':{po:true, bulan:[65000000,65000000,65000000,68000000,68000000,68000000,70000000,70000000,70000000,70000000,70000000,75000000]},
+  },
+
   /* Tagihan Piutang / Daftar Tagih Piutang (Customer & Penjualan >
      Daftar Transaksi, page:'tagihanPiutang'), sesuai 3 screenshot
      MASERP SDL + 2 PDF cetakan (DAFTAR TAGIH full page + Kwitansi/

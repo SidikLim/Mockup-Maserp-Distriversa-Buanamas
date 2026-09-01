@@ -5617,6 +5617,51 @@ const DATA = {
     {nama:'DBM', kode:'DBM', tglMulai:'01/03/2025', generasi:'002'},
   ],
 
+  /* Setting Hak Akses Group (User Security > Hak Akses Group,
+     page:'hakAksesGroup'), sesuai screenshot MASERP SDL yang
+     dikirim user 2026-09-01. Array key "MODUL|ITEM|GROUP" yang
+     TERCENTANG pada matriks hak akses (modul & item didefinisikan
+     di HAG_MODULES, hak-akses-group.template.js; kolom group =
+     DATA.groupUser non-admin). Sample default disesuaikan peran
+     group DBM. */
+  hakAksesGroup:[
+    'GENERALLEDGER|Akun GL|ACC','GENERALLEDGER|Jurnal Umum|ACC','GENERALLEDGER|Cost Center|ACC','GENERALLEDGER|Budget vs Actual|ACC','BANK|Rekonsiliasi|ACC',
+    'INVENTORY|Persediaan Barang|ADG','INVENTORY|Stock Request|ADG','INVENTORY|Stock Opname|ADG','PURCHASING|Terima Barang|ADG',
+    'INVENTORY|Persediaan Barang|ADG-HO','INVENTORY|Stock Opname|ADG-HO',
+    'PURCHASING|Purchase Order|PURCH','PURCHASING|Permintaan Pembelian|PURCH','PURCHASING|Terima Barang|PURCH','PURCHASING|Pembelian Melalui BPB|PURCH','PURCHASING|Pembelian dari PO|PURCH',
+    'SALES|Sales Quotation|SALES','SALES|Sales Order|SALES','SALES|Invoice|SALES',
+    'BANK|Transaksi Kas|KAS','BANK|Jurnal Kas Lain-Lain|KAS','BANK|Master Bank|KAS',
+    'SALES|Daftar Tagih Piutang|KOL','SALES|T3F|KOL','SALES|Penerimaan Piutang|KOL',
+    'PURCHASING|Pelunasan Utang|FIN','PURCHASING|Pengajuan Pembayaran|FIN','BANK|Daftar Giro Mundur|FIN',
+    'DASHBOARD|Dashboard Utama|MNGR','DASHBOARD|Dashboard Supplier & Pembelian|MNGR','DASHBOARD|Dashboard Customer & Penjualan|MNGR','DASHBOARD|Dashboard General Ledger|MNGR',
+    'SHELL|Login Multi Cabang|MNGR','SHELL|Ganti Password|MNGR',
+  ],
+
+  /* Setting Hak Akses Group Report (User Security > Hak Akses Group
+     Report, page:'hakAksesGroupReport'), sesuai screenshot MASERP SDL
+     01/09. Array key "MODUL|LAPORAN|GROUP" yang tercentang — nama
+     laporan menaut ke katalog REPORT_CENTERS_DATA (Report Center
+     DBM). Sample default: ACC & FIN laporan finance AP/AR, KOL
+     laporan piutang. */
+  hakAksesGroupReport:[
+    'ACCOUNTPAYABLE|FA-02 Lap Hutang|ACC','ACCOUNTPAYABLE|FA-03 Lap Hutang Per Faktur|ACC','ACCOUNTPAYABLE|FA-04 Lap Umur Hutang|ACC',
+    'ACCOUNTRECEIVABLE|FA-05 Lap Piutang|ACC','ACCOUNTRECEIVABLE|FA-06 Lap Piutang Per Faktur|ACC','ACCOUNTRECEIVABLE|FA-10 Lap Umur Piutang|ACC',
+    'ACCOUNTPAYABLE|Laporan Kartu Supplier|FIN','ACCOUNTPAYABLE|Laporan Rekap Umur Hutang|FIN',
+    'ACCOUNTRECEIVABLE|FA-05 Lap Piutang|KOL','ACCOUNTRECEIVABLE|FA-10 Lap Umur Piutang|KOL',
+  ],
+
+  /* Budgeting (General Ledger > Master & Setting > Budgeting,
+     page:'budgeting'), sesuai screenshot MASERP SDL "Daftar
+     Budgeting" 01/09 (SDL 282 akun 6-digit → DBM memakai
+     DATA.akunGL 7-digit sendiri). Object per kode akun:
+     {po:boolean (toggle Budgeting PO), bulan:[12 nominal
+     JANUARI-DESEMBER]}. Sample budget 2026 akun biaya. */
+  budgeting:{
+    '5210001':{po:false, bulan:[185000000,185000000,185000000,185000000,192500000,192500000,192500000,192500000,192500000,192500000,192500000,210000000]},
+    '5210004':{po:true, bulan:[42000000,42000000,42000000,45000000,45000000,45000000,45000000,45000000,45000000,45000000,45000000,48000000]},
+    '5210002':{po:true, bulan:[65000000,65000000,65000000,68000000,68000000,68000000,70000000,70000000,70000000,70000000,70000000,75000000]},
+  },
+
   /* Tagihan Piutang / Daftar Tagih Piutang (Customer & Penjualan >
      Daftar Transaksi, page:'tagihanPiutang'), sesuai 3 screenshot
      MASERP SDL + 2 PDF cetakan (DAFTAR TAGIH full page + Kwitansi/
@@ -7786,7 +7831,7 @@ const MENU=[
    {label:'GL Kategori', page:'glKategori'},
    {label:'Cabang', page:'cabang'},
    {label:'Cost Center', page:'costCenter'},
-   {label:'Budgeting', page:'placeholder', title:'Budgeting'},
+   {label:'Budgeting', page:'budgeting'},
    {label:'Budgeting Cc.', page:'placeholder', title:'Budgeting Cc.'},
    {label:'Rumus Rasio Keuangan', page:'placeholder', title:'Rumus Rasio Keuangan'},
    {label:'G.L. Template', page:'placeholder', title:'G.L. Template'},
@@ -7852,8 +7897,8 @@ const MENU=[
  {label:'User Security', icon:'shield', children:[
    {label:'Master User', page:'users'},
    {label:'Group User', page:'groupUser'},
-   {label:'Hak Akses Group', page:'placeholder', title:'Hak Akses Group'},
-   {label:'Hak Akses Group Report', page:'placeholder', title:'Hak Akses Group Report'},
+   {label:'Hak Akses Group', page:'hakAksesGroup'},
+   {label:'Hak Akses Group Report', page:'hakAksesGroupReport'},
    {label:'Activity Log', page:'placeholder', title:'Activity Log'},
    {label:'Hak Approval', page:'placeholder', title:'Hak Approval'},
    {label:'User Aktif', page:'placeholder', title:'User Aktif'},
@@ -63285,6 +63330,711 @@ function openDprInfo(title, text){
 </script>
 <script>
 /* =========================================================
+   TEMPLATE (HTML saja) — Setting Hak Akses Group (User
+   Security > Hak Akses Group, page:'hakAksesGroup'). Semua
+   fungsi di file ini HANYA menyusun & mengembalikan markup
+   HTML (string) atau helper murni, TIDAK ada DOM-binding/
+   mutation. Logic-nya di file sebelah: hak-akses-group.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Dibangun 2026-09-01 sesuai screenshot MASERP SDL "Setting
+   Hak Akses Group": banner kuning info administrator, dark
+   header + tombol Reset Hak Akses (merah) / Save (biru) /
+   Tutorial (merah), input "search hak akses ...", MATRIKS:
+   kolom pertama "Nama Hak Akses" berupa TREE modul yang bisa
+   di-expand (+/-) — SHELL, DASHBOARD, PURCHASING, SALES,
+   INVENTORY, BANK, MANUFACTURING, FIXEDASSET, GENERALLEDGER,
+   PROJECTMANAGEMENT — kolom berikutnya = kode Group User
+   (DBM: dari DATA.groupUser, group isAdmin DIKECUALIKAN sesuai
+   banner "administrator bisa mengakses semua"). Baris modul =
+   sel kosong (checkbox hanya di baris anak, seperti
+   screenshot yang modulnya belum di-expand). Expand modul
+   menampilkan baris hak akses anak dgn CHECKBOX per group;
+   pencarian memfilter nama hak akses & auto-expand modul yang
+   cocok. Save = tulis balik ke DATA.hakAksesGroup + modal
+   info; Reset Hak Akses = konfirmasi lalu kosongkan semua
+   centang. Isi anak tiap modul dipetakan ke menu mockup DBM.
+   Tabel dibungkus .table-wrap (scroll horizontal utk banyak
+   kolom group, seperti screenshot yang terpotong di APJA-HO). */
+
+const HAG_MODULES = [
+  {nama:'SHELL', items:['Login Multi Cabang','Ganti Password','Kunci Layar','Notifikasi']},
+  {nama:'DASHBOARD', items:['Dashboard Utama','Dashboard Supplier & Pembelian','Dashboard Customer & Penjualan','Dashboard Persediaan Barang','Dashboard Kas/Bank','Dashboard General Ledger']},
+  {nama:'PURCHASING', items:['Purchase Order','Permintaan Pembelian','Terima Barang','Pembelian Melalui BPB','Pembelian Langsung','Pembelian dari PO','Retur Pembelian','Pelunasan Utang','Pengajuan Pembayaran','Uang Muka Supplier']},
+  {nama:'SALES', items:['Sales Quotation','Sales Order','Picking List','Invoice','Retur Penjualan','Uang Muka Customer','Surat Pesanan Ekatalog & Khusus','T3F','Daftar Tagih Piutang','Penerimaan Piutang']},
+  {nama:'INVENTORY', items:['Persediaan Barang','Stock Request','Transaksi Persediaan','Master Stock Opname','Stock Opname','Reordering Sheet']},
+  {nama:'BANK', items:['Master Bank','Transaksi Kas','Jurnal Kas Lain-Lain','Daftar Giro Mundur','Rekonsiliasi']},
+  {nama:'MANUFACTURING', items:['Work Order','Bill of Material','Hasil Produksi']},
+  {nama:'FIXEDASSET', items:['Fixed Asset','Pembelian Aktiva Tetap','Penjualan Aktiva Tetap','Biaya Asset','Disposal Asset','Revaluasi Asset']},
+  {nama:'GENERALLEDGER', items:['Akun GL','Jurnal Umum','Cost Center','Budget vs Actual']},
+  {nama:'PROJECTMANAGEMENT', items:['Project','Task Project','Timeline Project']},
+];
+
+function hagGroups(){
+  return (DATA.groupUser || []).filter(g => !g.isAdmin).map(g => g.kode);
+}
+
+function hagKey(modul, item, group){ return `${modul}|${item}|${group}`; }
+
+function tplHagPage(){
+  const groups = hagGroups();
+  return `
+    <div style="background:#faedb9;border-left:4px solid #e2b93b;border-radius:4px;padding:12px 16px;font-size:12.8px;font-weight:700;color:#4a3f12;margin-bottom:14px;">
+      Jika jabatannya adalah administrator , maka administrator bisa mengakses semua sehingga tidak diperlu di setting .
+    </div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('alertTriangle',15)} Setting Hak Akses Group</h3>
+        <div class="toolbar-actions">
+          <button class="btn-danger" id="btnHagReset">${icon('refreshCw',13)} Reset Hak Akses</button>
+          <button class="btn-primary" id="btnHagSave">${icon('save',13)} Save</button>
+          <button class="btn-danger" id="btnHagTutorial">${icon('card',13)} Tutorial</button>
+        </div>
+      </div>
+      <div style="padding:12px 14px 0;">
+        <input type="text" id="hagSearch" placeholder="search hak akses ..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:9px 12px;font-size:12.8px;">
+      </div>
+      <div class="table-wrap" style="margin:10px 14px 14px;overflow-x:auto;">
+        <table style="min-width:${300 + groups.length*90}px;">
+          <thead><tr>
+            <th style="min-width:260px;text-align:left;">Nama Hak Akses</th>
+            ${groups.map(g=>`<th style="min-width:82px;text-align:center;">${g}</th>`).join('')}
+          </tr></thead>
+          <tbody id="hagTbody"></tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+/* Baris matriks: modul (expandable, sel group kosong) + anak (checkbox per group).
+   `checks` = Set key "MODUL|ITEM|GROUP"; `expanded` = Set nama modul; `q` = filter. */
+function tplHagRows(checks, expanded, q){
+  const groups = hagGroups();
+  let html = '';
+  HAG_MODULES.forEach(m => {
+    const items = q ? m.items.filter(it => it.toLowerCase().includes(q)) : m.items;
+    if(q && !items.length && !m.nama.toLowerCase().includes(q)) return;
+    const isOpen = expanded.has(m.nama) || (!!q && items.length > 0);
+    html += `
+    <tr style="border-top:1px solid var(--border);">
+      <td style="font-weight:700;">
+        <span data-hag-toggle="${m.nama}" style="cursor:pointer;color:var(--blue);font-weight:800;display:inline-block;width:20px;text-align:center;">${isOpen?'&minus;':'+'}</span>
+        ${m.nama}
+      </td>
+      ${groups.map(()=>'<td></td>').join('')}
+    </tr>`;
+    if(isOpen){
+      (q ? items : m.items).forEach(it => {
+        html += `
+        <tr>
+          <td style="padding-left:44px;color:var(--text);">${it}</td>
+          ${groups.map(g=>`<td style="text-align:center;"><input type="checkbox" data-hag-cek="${hagKey(m.nama,it,g)}" ${checks.has(hagKey(m.nama,it,g))?'checked':''} style="width:auto;"></td>`).join('')}
+        </tr>`;
+      });
+    }
+  });
+  if(!html) html = `<tr><td colspan="${groups.length+1}" style="color:var(--text-light);padding:14px;">Tidak ada hak akses yang cocok dengan pencarian.</td></tr>`;
+  return html;
+}
+
+function tplHagResetConfirm(){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Reset Hak Akses</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin me-reset SELURUH hak akses group? Semua centang akan dikosongkan.</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalReset">Reset</button>
+      </div>
+    </div>`;
+}
+
+function tplHagInfoModal(title,text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer"><button class="btn-primary" id="modalOk">Mengerti</button></div>
+    </div>`;
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Setting Hak Akses Group (User Security >
+   Hak Akses Group, page:'hakAksesGroup'). Dimuat otomatis
+   (lazy-load) oleh core.js — lihat PAGE_MODULES di js/core.js.
+   Markup di file sebelah: hak-akses-group.template.js (catatan
+   desain & pemetaan screenshot SDL -> DBM di headernya).
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   State halaman: `hagChecks` (Set key "MODUL|ITEM|GROUP",
+   diinisialisasi dari DATA.hakAksesGroup — array key yang
+   tercentang, sample default per peran group), `hagExpanded`
+   (Set modul terbuka), `hagQ` (filter — saat terisi, modul yg
+   punya item cocok auto-expand). Centang/lepas langsung
+   mengubah hagChecks; tombol Save menulis balik ke
+   DATA.hakAksesGroup + modal info; Reset Hak Akses =
+   konfirmasi lalu kosongkan semua. Group isAdmin tidak tampil
+   (administrator akses semua — banner kuning). */
+
+let hagChecks = null;
+let hagExpanded = null;
+let hagQ = '';
+
+function renderHakAksesGroupPage(){
+  hagChecks = new Set(DATA.hakAksesGroup || []);
+  hagExpanded = new Set();
+  hagQ = '';
+  content.innerHTML = tplHagPage();
+  document.getElementById('btnHagTutorial').onclick = () => openHagInfo('Tutorial', 'Video tutorial Setting Hak Akses Group tersedia di portal MASERP (mockup).');
+  document.getElementById('btnHagSave').onclick = () => {
+    DATA.hakAksesGroup = Array.from(hagChecks);
+    openHagInfo('Simpan Hak Akses', `Hak akses group berhasil disimpan (${hagChecks.size} hak akses tercentang).`);
+  };
+  document.getElementById('btnHagReset').onclick = () => openHagResetConfirm();
+  document.getElementById('hagSearch').oninput = (e) => {
+    hagQ = e.target.value.trim().toLowerCase();
+    renderHagTable();
+  };
+  renderHagTable();
+}
+
+function renderHagTable(){
+  const tbody = document.getElementById('hagTbody');
+  tbody.innerHTML = tplHagRows(hagChecks, hagExpanded, hagQ);
+  tbody.querySelectorAll('[data-hag-toggle]').forEach(el => el.onclick = () => {
+    const m = el.dataset.hagToggle;
+    if(hagExpanded.has(m)) hagExpanded.delete(m);
+    else hagExpanded.add(m);
+    renderHagTable();
+  });
+  tbody.querySelectorAll('[data-hag-cek]').forEach(cb => cb.onchange = () => {
+    if(cb.checked) hagChecks.add(cb.dataset.hagCek);
+    else hagChecks.delete(cb.dataset.hagCek);
+  });
+}
+
+function hagOverlay(html){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  const cancel = document.getElementById('modalCancel');
+  if(cancel) cancel.onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  return overlay;
+}
+
+function openHagResetConfirm(){
+  hagOverlay(tplHagResetConfirm());
+  document.getElementById('modalReset').onclick = () => {
+    hagChecks = new Set();
+    DATA.hakAksesGroup = [];
+    closeModal();
+    renderHagTable();
+    openHagInfo('Reset Hak Akses', 'Seluruh hak akses group berhasil di-reset.');
+  };
+}
+
+function openHagInfo(title, text){
+  hagOverlay(tplHagInfoModal(title, text));
+  document.getElementById('modalOk').onclick = closeModal;
+}
+
+</script>
+<script>
+/* =========================================================
+   TEMPLATE (HTML saja) — Setting Hak Akses Group Report (User
+   Security > Hak Akses Group Report, page:'hakAksesGroupReport').
+   Semua fungsi di file ini HANYA menyusun & mengembalikan
+   markup HTML (string) atau helper murni, TIDAK ada DOM-
+   binding/mutation. Logic-nya di file sebelah:
+   hak-akses-group-report.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Dibangun 2026-09-01 sesuai screenshot MASERP SDL "Setting
+   Hak Akses Group Report" — kembaran Setting Hak Akses Group
+   (pola sama: header + Reset Hak Akses/Save/Tutorial, input
+   "search hak akses ...", matriks tree modul x kolom group)
+   dengan BEDA: (1) TANPA banner kuning administrator, (2)
+   kolom group TERMASUK ADM (di screenshot report kolom ADM
+   ikut tampil, beda dari layar Hak Akses Group), (3) modul =
+   kategori LAPORAN (CETAKANTRANSAKSI, ACCOUNTRECEIVABLE,
+   SALES, ACCOUNTPAYABLE, PURCHASING, INVENTORY, CASHANDBANK,
+   GENERALLEDGER — urutan persis screenshot), dan (4) item
+   anak per modul DIAMBIL DINAMIS dari katalog laporan Report
+   Center DBM (REPORT_CENTERS_DATA di js/data.js — nama-nama
+   laporan sungguhan modul Daftar Laporan), bukan daftar
+   statis. */
+
+const HGR_MODULES = [
+  {nama:'CETAKANTRANSAKSI', key:'cetakanTransaksi'},
+  {nama:'ACCOUNTRECEIVABLE', key:'ar'},
+  {nama:'SALES', key:'penjualan'},
+  {nama:'ACCOUNTPAYABLE', key:'ap'},
+  {nama:'PURCHASING', key:'purchasing'},
+  {nama:'INVENTORY', key:'persediaan'},
+  {nama:'CASHANDBANK', key:'kasBank'},
+  {nama:'GENERALLEDGER', key:'gl'},
+];
+
+function hgrGroups(){
+  return (DATA.groupUser || []).map(g => g.kode);
+}
+
+/* Nama laporan per modul — flatten groups Report Center, dedupe. */
+function hgrItems(modKey){
+  const cat = (typeof REPORT_CENTERS_DATA !== 'undefined') ? REPORT_CENTERS_DATA[modKey] : null;
+  if(!cat || !cat.groups) return [];
+  const seen = new Set();
+  const out = [];
+  cat.groups.forEach(g => (g.rows||[]).forEach(r => {
+    if(r.report && !seen.has(r.report)){ seen.add(r.report); out.push(r.report); }
+  }));
+  return out;
+}
+
+function hgrKey(modul, item, group){ return `${modul}|${item}|${group}`; }
+
+function tplHgrPage(){
+  const groups = hgrGroups();
+  return `
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('alertTriangle',15)} Setting Hak Akses Group Report</h3>
+        <div class="toolbar-actions">
+          <button class="btn-danger" id="btnHgrReset">${icon('refreshCw',13)} Reset Hak Akses</button>
+          <button class="btn-primary" id="btnHgrSave">${icon('save',13)} Save</button>
+          <button class="btn-danger" id="btnHgrTutorial">${icon('card',13)} Tutorial</button>
+        </div>
+      </div>
+      <div style="padding:12px 14px 0;">
+        <input type="text" id="hgrSearch" placeholder="search hak akses ..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:9px 12px;font-size:12.8px;">
+      </div>
+      <div class="table-wrap" style="margin:10px 14px 14px;overflow-x:auto;">
+        <table style="min-width:${300 + groups.length*90}px;">
+          <thead><tr>
+            <th style="min-width:260px;text-align:left;">Nama Hak Akses</th>
+            ${groups.map(g=>`<th style="min-width:82px;text-align:center;">${g}</th>`).join('')}
+          </tr></thead>
+          <tbody id="hgrTbody"></tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function tplHgrRows(checks, expanded, q){
+  const groups = hgrGroups();
+  let html = '';
+  HGR_MODULES.forEach(m => {
+    const all = hgrItems(m.key);
+    const items = q ? all.filter(it => it.toLowerCase().includes(q)) : all;
+    if(q && !items.length && !m.nama.toLowerCase().includes(q)) return;
+    const isOpen = expanded.has(m.nama) || (!!q && items.length > 0);
+    html += `
+    <tr style="border-top:1px solid var(--border);">
+      <td style="font-weight:700;">
+        <span data-hgr-toggle="${m.nama}" style="cursor:pointer;color:var(--blue);font-weight:800;display:inline-block;width:20px;text-align:center;">${isOpen?'&minus;':'+'}</span>
+        ${m.nama}
+      </td>
+      ${groups.map(()=>'<td></td>').join('')}
+    </tr>`;
+    if(isOpen){
+      (q ? items : all).forEach(it => {
+        html += `
+        <tr>
+          <td style="padding-left:44px;color:var(--text);">${it}</td>
+          ${groups.map(g=>`<td style="text-align:center;"><input type="checkbox" data-hgr-cek="${hgrKey(m.nama,it,g)}" ${checks.has(hgrKey(m.nama,it,g))?'checked':''} style="width:auto;"></td>`).join('')}
+        </tr>`;
+      });
+    }
+  });
+  if(!html) html = `<tr><td colspan="${groups.length+1}" style="color:var(--text-light);padding:14px;">Tidak ada hak akses laporan yang cocok dengan pencarian.</td></tr>`;
+  return html;
+}
+
+function tplHgrResetConfirm(){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Reset Hak Akses</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin me-reset SELURUH hak akses laporan group? Semua centang akan dikosongkan.</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalReset">Reset</button>
+      </div>
+    </div>`;
+}
+
+function tplHgrInfoModal(title,text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer"><button class="btn-primary" id="modalOk">Mengerti</button></div>
+    </div>`;
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Setting Hak Akses Group Report (User
+   Security > Hak Akses Group Report, page:'hakAksesGroupReport').
+   Dimuat otomatis (lazy-load) oleh core.js — lihat
+   PAGE_MODULES di js/core.js. Markup di file sebelah:
+   hak-akses-group-report.template.js (catatan desain &
+   pemetaan screenshot SDL -> DBM di headernya).
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Kembaran hak-akses-group.js utk matriks LAPORAN: state
+   `hgrChecks` (Set key "MODUL|LAPORAN|GROUP", init dari
+   DATA.hakAksesGroupReport), `hgrExpanded`, `hgrQ`. Item anak
+   diambil dinamis dari REPORT_CENTERS_DATA (katalog Report
+   Center DBM). Save menulis balik ke DATA.hakAksesGroupReport
+   + modal info; Reset Hak Akses = konfirmasi lalu kosongkan
+   semua centang. Kolom group TERMASUK ADM (sesuai screenshot
+   report — beda dari layar Hak Akses Group). */
+
+let hgrChecks = null;
+let hgrExpanded = null;
+let hgrQ = '';
+
+function renderHakAksesGroupReportPage(){
+  hgrChecks = new Set(DATA.hakAksesGroupReport || []);
+  hgrExpanded = new Set();
+  hgrQ = '';
+  content.innerHTML = tplHgrPage();
+  document.getElementById('btnHgrTutorial').onclick = () => openHgrInfo('Tutorial', 'Video tutorial Setting Hak Akses Group Report tersedia di portal MASERP (mockup).');
+  document.getElementById('btnHgrSave').onclick = () => {
+    DATA.hakAksesGroupReport = Array.from(hgrChecks);
+    openHgrInfo('Simpan Hak Akses', `Hak akses laporan group berhasil disimpan (${hgrChecks.size} hak akses tercentang).`);
+  };
+  document.getElementById('btnHgrReset').onclick = () => openHgrResetConfirm();
+  document.getElementById('hgrSearch').oninput = (e) => {
+    hgrQ = e.target.value.trim().toLowerCase();
+    renderHgrTable();
+  };
+  renderHgrTable();
+}
+
+function renderHgrTable(){
+  const tbody = document.getElementById('hgrTbody');
+  tbody.innerHTML = tplHgrRows(hgrChecks, hgrExpanded, hgrQ);
+  tbody.querySelectorAll('[data-hgr-toggle]').forEach(el => el.onclick = () => {
+    const m = el.dataset.hgrToggle;
+    if(hgrExpanded.has(m)) hgrExpanded.delete(m);
+    else hgrExpanded.add(m);
+    renderHgrTable();
+  });
+  tbody.querySelectorAll('[data-hgr-cek]').forEach(cb => cb.onchange = () => {
+    if(cb.checked) hgrChecks.add(cb.dataset.hgrCek);
+    else hgrChecks.delete(cb.dataset.hgrCek);
+  });
+}
+
+function hgrOverlay(html){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  const cancel = document.getElementById('modalCancel');
+  if(cancel) cancel.onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  return overlay;
+}
+
+function openHgrResetConfirm(){
+  hgrOverlay(tplHgrResetConfirm());
+  document.getElementById('modalReset').onclick = () => {
+    hgrChecks = new Set();
+    DATA.hakAksesGroupReport = [];
+    closeModal();
+    renderHgrTable();
+    openHgrInfo('Reset Hak Akses', 'Seluruh hak akses laporan group berhasil di-reset.');
+  };
+}
+
+function openHgrInfo(title, text){
+  hgrOverlay(tplHgrInfoModal(title, text));
+  document.getElementById('modalOk').onclick = closeModal;
+}
+
+</script>
+<script>
+/* =========================================================
+   TEMPLATE (HTML saja) — Budgeting (General Ledger > Master &
+   Setting > Budgeting, page:'budgeting'). Semua fungsi di file
+   ini HANYA menyusun & mengembalikan markup HTML (string) atau
+   helper murni, TIDAK ada DOM-binding/mutation. Logic-nya di
+   file sebelah: budgeting.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Dibangun 2026-09-01 sesuai screenshot MASERP SDL "Daftar
+   Budgeting" (Total Record: 282, akun 6-digit SDL → dipetakan
+   ke DATA.akunGL DBM 7-digit): dark header + tombol Simpan
+   (biru) + Tutorial (merah); checkbox "Munculkan Akun Neraca"
+   (default TERCENTANG — bila dilepas, akun neraca kode 1/2/3
+   disembunyikan dan hanya akun laba-rugi 4/5/6 yang tampil);
+   input pencarian; tabel: Budgeting PO (toggle per baris) /
+   Kode GL (sort) / Nama GL (sort) / kolom nominal budget
+   JANUARI s.d. DESEMBER (12 input angka per akun — sesuai
+   permintaan user; screenshot ter-scroll mulai April) /
+   Delete (mengosongkan nilai budget + toggle baris). Tabel
+   scroll horizontal (.table-wrap), pager windowed, Total
+   Record = jumlah akun terfilter. Nilai diedit ke DRAFT dulu
+   (bgtDraft) supaya awet pindah halaman; tombol Simpan menulis
+   draft ke DATA.budgeting + modal info. Data sample: budget
+   2026 beberapa akun biaya (Gaji, Listrik & Air, Transportasi)
+   di DATA.budgeting. */
+
+const BGT_BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+function bgtIsNeraca(kode){ return /^[123]/.test(kode || ''); }
+
+function tplBgtPage(showNeraca){
+  return `
+    <div class="breadcrumb">Home / General Ledger / <b>Budgeting</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('alertTriangle',15)} Daftar Budgeting</h3>
+        <div class="toolbar-actions">
+          <button class="btn-primary" id="btnBgtSimpan">${icon('save',13)} Simpan</button>
+          <button class="btn-danger" id="btnBgtTutorial">${icon('card',13)} Tutorial</button>
+        </div>
+      </div>
+      <div style="padding:12px 14px 0;">
+        <label style="display:flex;align-items:center;gap:7px;font-size:12.8px;font-weight:600;"><input type="checkbox" id="bgtNeraca" ${showNeraca?'checked':''} style="width:auto;"> Munculkan Akun Neraca</label>
+        <input type="text" id="bgtSearch" placeholder="Cari kode / nama akun GL ..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:9px 12px;font-size:12.8px;margin-top:10px;">
+      </div>
+      <div class="table-wrap" style="margin:10px 14px 0;overflow-x:auto;">
+        <table style="min-width:${480 + 12*128 + 70}px;">
+          <thead><tr>
+            <th style="min-width:86px;">Budgeting PO</th>
+            <th style="min-width:96px;">${tplBgtSortHeader('Kode GL','kode')}</th>
+            <th style="min-width:200px;">${tplBgtSortHeader('Nama GL','nama')}</th>
+            ${BGT_BULAN.map(b=>`<th class="text-right" style="min-width:120px;">${b}</th>`).join('')}
+            <th style="width:64px;">Delete</th>
+          </tr></thead>
+          <tbody id="bgtTbody"></tbody>
+        </table>
+      </div>
+      <div class="table-footer" style="padding:12px 14px;"><div class="pager" id="bgtPager"></div><div id="bgtTotal"></div></div>
+    </div>`;
+}
+
+function tplBgtSortHeader(label, field){
+  return `<span data-bgt-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="bgtSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+/* Baris akun: toggle PO + 12 input nominal (nilai dari draft). */
+function tplBgtRows(rows, draft){
+  if(!rows.length) return `<tr><td colspan="${3 + BGT_BULAN.length + 1}" style="color:var(--text-light);padding:14px;text-align:center;font-weight:600;">Tidak Ada Data</td></tr>`;
+  return rows.map(a => {
+    const d = draft[a.kode] || { po:false, bulan:[] };
+    return `
+    <tr>
+      <td style="text-align:center;"><label class="toggle-switch"><input type="checkbox" data-bgt-po="${a.kode}" ${d.po?'checked':''}><span class="toggle-slider"></span></label></td>
+      <td>${a.kode}</td>
+      <td>${a.nama}</td>
+      ${BGT_BULAN.map((b,i)=>`<td><input type="number" step="0.01" min="0" data-bgt-val="${a.kode}|${i}" value="${d.bulan[i]!=null && d.bulan[i]!=='' ? d.bulan[i] : ''}" placeholder="" style="text-align:right;min-width:106px;"></td>`).join('')}
+      <td style="text-align:center;"><button type="button" class="icon-btn del" data-bgt-del="${a.kode}" title="Kosongkan Budget">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function tplBgtPager(page, totalPages){
+  if(totalPages <= 1) return `
+    <button disabled>First</button><button disabled>Previous</button><button class="active">1</button><button disabled>Next</button><button disabled>Last</button>`;
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+  let nums = '';
+  for(let p = start; p <= end; p++){
+    nums += `<button class="${p===page?'active':''}" data-bgtpage="${p}">${p}</button>`;
+  }
+  return `
+    <button data-bgtpage="1" ${page<=1?'disabled':''}>First</button>
+    <button data-bgtpage="${Math.max(1,page-1)}" ${page<=1?'disabled':''}>Previous</button>
+    ${nums}
+    <button data-bgtpage="${Math.min(totalPages,page+1)}" ${page>=totalPages?'disabled':''}>Next</button>
+    <button data-bgtpage="${totalPages}" ${page>=totalPages?'disabled':''}>Last</button>`;
+}
+
+function tplBgtInfoModal(title,text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer"><button class="btn-primary" id="modalOk">Mengerti</button></div>
+    </div>`;
+}
+
+function tplBgtDeleteConfirm(akun){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Kosongkan Budget</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin mengosongkan seluruh nominal budget akun <b>${akun.kode}</b> — ${akun.nama}?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Kosongkan</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Budgeting (General Ledger > Master &
+   Setting > Budgeting, page:'budgeting'). Dimuat otomatis
+   (lazy-load) oleh core.js — lihat PAGE_MODULES di js/core.js.
+   Markup di file sebelah: budgeting.template.js (catatan
+   desain & pemetaan screenshot SDL -> DBM di headernya).
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Alur inti:
+   - Baris = seluruh DATA.akunGL jenis 'Detail'; checkbox
+     "Munculkan Akun Neraca" (default ON) — bila OFF, akun kode
+     awalan 1/2/3 disembunyikan (tinggal akun laba-rugi 4/5/6).
+   - Nominal budget JANUARI-DESEMBER per akun + toggle
+     "Budgeting PO" per baris. Semua edit masuk DRAFT
+     (bgtDraft, object per kode akun {po, bulan[12]}) sehingga
+     nilai awet saat pindah halaman/filter; tombol Simpan
+     menulis draft ke DATA.budgeting + modal info jumlah akun
+     yang punya budget. Delete per baris = konfirmasi lalu
+     kosongkan nilai + toggle akun itu.
+   - Pencarian kode/nama, sort Kode GL & Nama GL, pager
+     windowed page-size 10, Total Record = akun terfilter.
+   Data: DATA.budgeting (object {kode:{po,bulan[12]}}, sample
+   budget 2026 akun biaya). */
+
+let bgtState = { page:1, search:'', sortField:'kode', sortDir:'asc', showNeraca:true };
+let bgtDraft = null;
+const BGT_PAGE_SIZE = 10;
+
+function renderBudgetingPage(){
+  bgtState = { page:1, search:'', sortField:'kode', sortDir:'asc', showNeraca:true };
+  bgtDraft = JSON.parse(JSON.stringify(DATA.budgeting || {}));
+  content.innerHTML = tplBgtPage(bgtState.showNeraca);
+  document.getElementById('btnBgtTutorial').onclick = () => openBgtInfo('Tutorial', 'Video tutorial Budgeting tersedia di portal MASERP (mockup).');
+  document.getElementById('btnBgtSimpan').onclick = () => {
+    // buang entry kosong (tanpa nilai & tanpa toggle) agar DATA rapi
+    const bersih = {};
+    Object.keys(bgtDraft).forEach(k => {
+      const d = bgtDraft[k];
+      const adaNilai = (d.bulan || []).some(v => v !== '' && v != null && Number(v) !== 0);
+      if(d.po || adaNilai) bersih[k] = d;
+    });
+    DATA.budgeting = JSON.parse(JSON.stringify(bersih));
+    openBgtInfo('Simpan Budgeting', `Budget berhasil disimpan — ${Object.keys(bersih).length} akun GL punya budget/toggle aktif.`);
+  };
+  document.getElementById('bgtNeraca').onchange = (e) => {
+    bgtState.showNeraca = e.target.checked;
+    bgtState.page = 1;
+    renderBgtTable();
+  };
+  document.getElementById('bgtSearch').oninput = (e) => {
+    bgtState.search = e.target.value.trim().toLowerCase();
+    bgtState.page = 1;
+    renderBgtTable();
+  };
+  document.querySelectorAll('[data-bgt-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.bgtSort;
+    if(bgtState.sortField === field){
+      bgtState.sortDir = bgtState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      bgtState.sortField = field;
+      bgtState.sortDir = 'asc';
+    }
+    bgtState.page = 1;
+    renderBgtTable();
+  });
+  renderBgtTable();
+}
+
+function bgtFilteredSortedRows(){
+  const q = bgtState.search;
+  let rows = (DATA.akunGL || []).filter(a => a.jenis === 'Detail');
+  if(!bgtState.showNeraca) rows = rows.filter(a => !bgtIsNeraca(a.kode));
+  if(q) rows = rows.filter(a => a.kode.toLowerCase().includes(q) || (a.nama||'').toLowerCase().includes(q));
+  const f = bgtState.sortField;
+  const dir = bgtState.sortDir === 'desc' ? -1 : 1;
+  rows.sort((a,b) => String(a[f]||'').localeCompare(String(b[f]||''), 'id') * dir);
+  return rows;
+}
+
+function bgtDraftRow(kode){
+  if(!bgtDraft[kode]) bgtDraft[kode] = { po:false, bulan:[] };
+  return bgtDraft[kode];
+}
+
+function renderBgtTable(){
+  const rows = bgtFilteredSortedRows();
+  const totalPages = Math.max(1, Math.ceil(rows.length/BGT_PAGE_SIZE));
+  if(bgtState.page > totalPages) bgtState.page = totalPages;
+  const start = (bgtState.page-1)*BGT_PAGE_SIZE;
+  const pageRows = rows.slice(start, start+BGT_PAGE_SIZE);
+
+  document.getElementById('bgtTbody').innerHTML = tplBgtRows(pageRows, bgtDraft);
+  document.getElementById('bgtTotal').textContent = `Total Record: ${rows.length}`;
+  document.getElementById('bgtPager').innerHTML = tplBgtPager(bgtState.page, totalPages);
+
+  ['kode','nama'].forEach(f => {
+    const el = document.getElementById(`bgtSortIcon_${f}`);
+    if(!el) return;
+    if(bgtState.sortField === f){
+      el.innerHTML = bgtState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+
+  const tbody = document.getElementById('bgtTbody');
+  tbody.querySelectorAll('[data-bgt-po]').forEach(t => t.onchange = () => {
+    bgtDraftRow(t.dataset.bgtPo).po = t.checked;
+  });
+  tbody.querySelectorAll('[data-bgt-val]').forEach(inp => inp.oninput = () => {
+    const [kode, i] = inp.dataset.bgtVal.split('|');
+    const d = bgtDraftRow(kode);
+    d.bulan = d.bulan || [];
+    d.bulan[+i] = inp.value === '' ? '' : Number(inp.value);
+  });
+  tbody.querySelectorAll('[data-bgt-del]').forEach(b => b.onclick = () => openBgtDelete(b.dataset.bgtDel));
+
+  document.getElementById('bgtPager').querySelectorAll('[data-bgtpage]').forEach(b => b.onclick = () => { bgtState.page = +b.dataset.bgtpage; renderBgtTable(); });
+}
+
+function bgtOverlay(html){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  const cancel = document.getElementById('modalCancel');
+  if(cancel) cancel.onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  return overlay;
+}
+
+function openBgtDelete(kode){
+  const akun = (DATA.akunGL || []).find(a => a.kode === kode) || { kode, nama:'' };
+  bgtOverlay(tplBgtDeleteConfirm(akun));
+  document.getElementById('modalDelete').onclick = () => {
+    delete bgtDraft[kode];
+    closeModal();
+    renderBgtTable();
+  };
+}
+
+function openBgtInfo(title, text){
+  bgtOverlay(tplBgtInfoModal(title, text));
+  document.getElementById('modalOk').onclick = closeModal;
+}
+
+</script>
+<script>
+/* =========================================================
    CORE — sidebar, navigasi, dan lazy-loader modul per menu
 
    File ini SENGAJA dibuat kecil dan selalu dimuat di awal
@@ -63467,6 +64217,9 @@ const PAGE_MODULES={
   reportCetakanTransaksi:{srcs:['js/pages/reports.template.js','js/pages/reports.js'], fn:'renderReportCetakanTransaksi'},
   companyProfile:{srcs:['js/pages/company-profile.template.js','js/pages/company-profile.js'], fn:'renderCompanyProfile'},
   daftarPerusahaan:{srcs:['js/pages/daftar-perusahaan.template.js','js/pages/daftar-perusahaan.js'], fn:'renderDaftarPerusahaanPage'},
+  hakAksesGroup:{srcs:['js/pages/hak-akses-group.template.js','js/pages/hak-akses-group.js'], fn:'renderHakAksesGroupPage'},
+  hakAksesGroupReport:{srcs:['js/pages/hak-akses-group-report.template.js','js/pages/hak-akses-group-report.js'], fn:'renderHakAksesGroupReportPage'},
+  budgeting:{srcs:['js/pages/budgeting.template.js','js/pages/budgeting.js'], fn:'renderBudgetingPage'},
   masterRayon:{srcs:['js/pages/master-rayon.template.js','js/pages/master-rayon.js'], fn:'renderMasterRayonPage'},
   masterWilayah:{srcs:['js/pages/master-wilayah.template.js','js/pages/master-wilayah.js'], fn:'renderMasterWilayahPage'},
   groupUser:{srcs:['js/pages/group-user.template.js','js/pages/group-user.js'], fn:'renderGroupUserPage'},
