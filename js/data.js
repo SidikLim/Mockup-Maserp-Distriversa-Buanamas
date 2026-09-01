@@ -3203,6 +3203,8 @@ const DATA = {
     {kode:16, keterangan:'Jurnal Perabotan Kantor (Pembelian Kredit)', tipe:'Pembelian Kredit', golongan:'Perabotan Kantor', glDebit:'', glKredit:''},
     {kode:17, keterangan:'Jurnal Kendaraan Bermotor (Penjualan)', tipe:'Penjualan', golongan:'Kendaraan Bermotor', glDebit:'', glKredit:''},
     {kode:18, keterangan:'Jurnal Kendaraan Bermotor (Revaluasi)', tipe:'Revaluasi', golongan:'Kendaraan Bermotor', glDebit:'1510003', glKredit:'3110002'},
+    {kode:19, keterangan:'Jurnal Kendaraan Bermotor (Biaya)', tipe:'Biaya', golongan:'Kendaraan Bermotor', glDebit:'5210002', glKredit:'2110001'},
+    {kode:20, keterangan:'Jurnal Gedung (Biaya)', tipe:'Biaya', golongan:'Gedung', glDebit:'5210004', glKredit:'2110001'},
   ],
   /* Disposal Asset (Aktiva Tetap > Daftar Transaksi > Disposal Asset,
      page:'disposalAsset') — BARU 2026-08-26 (lanjutan lagi), sebelumnya
@@ -4867,6 +4869,71 @@ const DATA = {
       ]},
   ],
 
+  /* Penjualan Fixed Asset (Aktiva Tetap > Daftar Transaksi >
+     Penjualan Aktiva Tetap, page:'penjualanAktivaTetap') & Biaya
+     Fixed Asset (page:'biayaAsset'), sesuai 4 screenshot MASERP SDL
+     yang dikirim user 2026-09-01. Screenshot SDL kosong (Total
+     Record: 0) — mockup DBM diberi masing-masing 2 sample September
+     2026 KONSISTEN dgn master DBM (customer/supplier/aset/akun).
+     Aritmetika penjualan per baris: itemNet = hargaJual x (1-disc%);
+     dpp = Σ itemNet - diskon berjenjang; ppn = 11% dpp (eksklusif);
+     total = dpp + ppn; sisaTotal = total - pakaiUangMuka. Jurnal
+     penjualan: D 1120001 Piutang lawan K 1510003 Kendaraan + K
+     2120002 PPN Keluaran. Grand Total biaya = Σ jumlah x kursVendor;
+     jurnal biaya: D akun biaya per item lawan K 2110001 Hutang. */
+  penjualanFixedAsset:[
+    {no:'26/FAS/HO/09/00001', tgl:'01/09/2026', tglJthTmp:'01/10/2026', cabang:'Head Office',
+      customer:'PT Family Mart Indonesia', customerKode:'CUST-009', syaratBayar:'Kredit 30 Hari',
+      salesman:'M. Reza Wijaya', alamatPengirim:'Jl. Sudirman Kav. 21, Jakarta Selatan',
+      memo:'Penjualan unit operasional lama', tipeTransaksi:'Kredit',
+      ppnMode:'eksklusif', ppnKode:'PPN11', ppnPersen:11,
+      diskon1:0, diskon2:0, diskon1Amt:0, diskon2Amt:0,
+      sisaUangMuka:0, pakaiUangMuka:0,
+      items:[{kodeAset:'00-KDR002', namaAset:'Suzuki Ertiga th 2013', jurnal:'Jurnal Kendaraan Bermotor (Penjualan)', hargaJual:95000000, discPersen:0}],
+      dpp:95000000, ppnAmount:10450000, total:105450000, sisaTotal:105450000,
+      jurnalAkun:[
+        {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'Penjualan FA 26/FAS/HO/09/00001', debit:105450000, kredit:0},
+        {kodeAkun:'1510003', namaAkun:'Kendaraan', keterangan:'00-KDR002 Suzuki Ertiga th 2013', debit:0, kredit:95000000},
+        {kodeAkun:'2120002', namaAkun:'PPN Keluaran', keterangan:'Penjualan FA 26/FAS/HO/09/00001', debit:0, kredit:10450000},
+      ]},
+    {no:'26/FAS/HO/09/00002', tgl:'03/09/2026', tglJthTmp:'03/09/2026', cabang:'Head Office',
+      customer:'CV Berkah Abadi', customerKode:'CUST-003', syaratBayar:'COD',
+      salesman:'Citra Lestari', alamatPengirim:'Jl. Braga No. 88, Bandung',
+      memo:'', tipeTransaksi:'Tunai',
+      ppnMode:'tidak', ppnKode:'', ppnPersen:0,
+      diskon1:0, diskon2:0, diskon1Amt:0, diskon2Amt:0,
+      sisaUangMuka:0, pakaiUangMuka:0,
+      items:[{kodeAset:'00-KDR004', namaAset:'Mitsubishi L 300 + Box, th 2013', jurnal:'Jurnal Kendaraan Bermotor (Penjualan)', hargaJual:65000000, discPersen:0}],
+      dpp:65000000, ppnAmount:0, total:65000000, sisaTotal:65000000,
+      jurnalAkun:[
+        {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'Penjualan FA 26/FAS/HO/09/00002', debit:65000000, kredit:0},
+        {kodeAkun:'1510003', namaAkun:'Kendaraan', keterangan:'00-KDR004 Mitsubishi L 300 + Box, th 2013', debit:0, kredit:65000000},
+      ]},
+  ],
+  biayaFixedAsset:[
+    {no:'26/FAC-0000000001', tgl:'01/09/2026', tglJthTmp:'01/09/2026',
+      supplier:'PT Roda Mas Trading', supplierKode:'5026', syaratBayar:'CBD.', tipeTransaksi:'Perbaikan',
+      mataUangVendor:'IDR', kursVendor:1, memo:'Service besar armada pengiriman',
+      items:[
+        {kodeAset:'00-KDR006', namaAset:'Mitsubishi Colt Diesel FE 71 L + Box, th 2014', keterangan:'Service besar + ganti kampas rem', jurnal:'Jurnal Kendaraan Bermotor (Biaya)', jumlah:4500000},
+        {kodeAset:'00-KDR007', namaAset:'Mitsubishi L 300 + Box, th 2016', keterangan:'Ganti oli mesin + tune up', jurnal:'Jurnal Kendaraan Bermotor (Biaya)', jumlah:1750000},
+      ],
+      jurnalAkun:[
+        {kodeAkun:'5210002', namaAkun:'Biaya Transportasi & Logistik', keterangan:'Service besar + ganti kampas rem', debit:4500000, kredit:0},
+        {kodeAkun:'5210002', namaAkun:'Biaya Transportasi & Logistik', keterangan:'Ganti oli mesin + tune up', debit:1750000, kredit:0},
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'Biaya FA 26/FAC-0000000001 — PT Roda Mas Trading', debit:0, kredit:6250000},
+      ]},
+    {no:'26/FAC-0000000002', tgl:'04/09/2026', tglJthTmp:'04/09/2026',
+      supplier:'PT Indofood Distribusi', supplierKode:'5020', syaratBayar:'Kredit 30 Hari', tipeTransaksi:'Maintenance',
+      mataUangVendor:'IDR', kursVendor:1, memo:'Perawatan gedung gudang HO',
+      items:[
+        {kodeAset:'00-GDG002', namaAset:'Gudang Cabang Head Office (Semi Permanen)', keterangan:'Perbaikan atap & cat ulang', jurnal:'Jurnal Gedung (Biaya)', jumlah:8200000},
+      ],
+      jurnalAkun:[
+        {kodeAkun:'5210004', namaAkun:'Biaya Listrik & Air', keterangan:'Perbaikan atap & cat ulang', debit:8200000, kredit:0},
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'Biaya FA 26/FAC-0000000002 — PT Indofood Distribusi', debit:0, kredit:8200000},
+      ]},
+  ],
   /* Surat Pesanan Ekatalog & Khusus (Customer & Penjualan > Daftar
      Transaksi, page:'spEcatKhusus'), sesuai 2 screenshot MASERP
      instalasi AAA yang dikirim user 2026-09-01 (list "SP ECAT &

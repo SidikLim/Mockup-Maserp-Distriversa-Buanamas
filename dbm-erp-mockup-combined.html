@@ -3801,6 +3801,8 @@ const DATA = {
     {kode:16, keterangan:'Jurnal Perabotan Kantor (Pembelian Kredit)', tipe:'Pembelian Kredit', golongan:'Perabotan Kantor', glDebit:'', glKredit:''},
     {kode:17, keterangan:'Jurnal Kendaraan Bermotor (Penjualan)', tipe:'Penjualan', golongan:'Kendaraan Bermotor', glDebit:'', glKredit:''},
     {kode:18, keterangan:'Jurnal Kendaraan Bermotor (Revaluasi)', tipe:'Revaluasi', golongan:'Kendaraan Bermotor', glDebit:'1510003', glKredit:'3110002'},
+    {kode:19, keterangan:'Jurnal Kendaraan Bermotor (Biaya)', tipe:'Biaya', golongan:'Kendaraan Bermotor', glDebit:'5210002', glKredit:'2110001'},
+    {kode:20, keterangan:'Jurnal Gedung (Biaya)', tipe:'Biaya', golongan:'Gedung', glDebit:'5210004', glKredit:'2110001'},
   ],
   /* Disposal Asset (Aktiva Tetap > Daftar Transaksi > Disposal Asset,
      page:'disposalAsset') — BARU 2026-08-26 (lanjutan lagi), sebelumnya
@@ -5465,6 +5467,71 @@ const DATA = {
       ]},
   ],
 
+  /* Penjualan Fixed Asset (Aktiva Tetap > Daftar Transaksi >
+     Penjualan Aktiva Tetap, page:'penjualanAktivaTetap') & Biaya
+     Fixed Asset (page:'biayaAsset'), sesuai 4 screenshot MASERP SDL
+     yang dikirim user 2026-09-01. Screenshot SDL kosong (Total
+     Record: 0) — mockup DBM diberi masing-masing 2 sample September
+     2026 KONSISTEN dgn master DBM (customer/supplier/aset/akun).
+     Aritmetika penjualan per baris: itemNet = hargaJual x (1-disc%);
+     dpp = Σ itemNet - diskon berjenjang; ppn = 11% dpp (eksklusif);
+     total = dpp + ppn; sisaTotal = total - pakaiUangMuka. Jurnal
+     penjualan: D 1120001 Piutang lawan K 1510003 Kendaraan + K
+     2120002 PPN Keluaran. Grand Total biaya = Σ jumlah x kursVendor;
+     jurnal biaya: D akun biaya per item lawan K 2110001 Hutang. */
+  penjualanFixedAsset:[
+    {no:'26/FAS/HO/09/00001', tgl:'01/09/2026', tglJthTmp:'01/10/2026', cabang:'Head Office',
+      customer:'PT Family Mart Indonesia', customerKode:'CUST-009', syaratBayar:'Kredit 30 Hari',
+      salesman:'M. Reza Wijaya', alamatPengirim:'Jl. Sudirman Kav. 21, Jakarta Selatan',
+      memo:'Penjualan unit operasional lama', tipeTransaksi:'Kredit',
+      ppnMode:'eksklusif', ppnKode:'PPN11', ppnPersen:11,
+      diskon1:0, diskon2:0, diskon1Amt:0, diskon2Amt:0,
+      sisaUangMuka:0, pakaiUangMuka:0,
+      items:[{kodeAset:'00-KDR002', namaAset:'Suzuki Ertiga th 2013', jurnal:'Jurnal Kendaraan Bermotor (Penjualan)', hargaJual:95000000, discPersen:0}],
+      dpp:95000000, ppnAmount:10450000, total:105450000, sisaTotal:105450000,
+      jurnalAkun:[
+        {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'Penjualan FA 26/FAS/HO/09/00001', debit:105450000, kredit:0},
+        {kodeAkun:'1510003', namaAkun:'Kendaraan', keterangan:'00-KDR002 Suzuki Ertiga th 2013', debit:0, kredit:95000000},
+        {kodeAkun:'2120002', namaAkun:'PPN Keluaran', keterangan:'Penjualan FA 26/FAS/HO/09/00001', debit:0, kredit:10450000},
+      ]},
+    {no:'26/FAS/HO/09/00002', tgl:'03/09/2026', tglJthTmp:'03/09/2026', cabang:'Head Office',
+      customer:'CV Berkah Abadi', customerKode:'CUST-003', syaratBayar:'COD',
+      salesman:'Citra Lestari', alamatPengirim:'Jl. Braga No. 88, Bandung',
+      memo:'', tipeTransaksi:'Tunai',
+      ppnMode:'tidak', ppnKode:'', ppnPersen:0,
+      diskon1:0, diskon2:0, diskon1Amt:0, diskon2Amt:0,
+      sisaUangMuka:0, pakaiUangMuka:0,
+      items:[{kodeAset:'00-KDR004', namaAset:'Mitsubishi L 300 + Box, th 2013', jurnal:'Jurnal Kendaraan Bermotor (Penjualan)', hargaJual:65000000, discPersen:0}],
+      dpp:65000000, ppnAmount:0, total:65000000, sisaTotal:65000000,
+      jurnalAkun:[
+        {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'Penjualan FA 26/FAS/HO/09/00002', debit:65000000, kredit:0},
+        {kodeAkun:'1510003', namaAkun:'Kendaraan', keterangan:'00-KDR004 Mitsubishi L 300 + Box, th 2013', debit:0, kredit:65000000},
+      ]},
+  ],
+  biayaFixedAsset:[
+    {no:'26/FAC-0000000001', tgl:'01/09/2026', tglJthTmp:'01/09/2026',
+      supplier:'PT Roda Mas Trading', supplierKode:'5026', syaratBayar:'CBD.', tipeTransaksi:'Perbaikan',
+      mataUangVendor:'IDR', kursVendor:1, memo:'Service besar armada pengiriman',
+      items:[
+        {kodeAset:'00-KDR006', namaAset:'Mitsubishi Colt Diesel FE 71 L + Box, th 2014', keterangan:'Service besar + ganti kampas rem', jurnal:'Jurnal Kendaraan Bermotor (Biaya)', jumlah:4500000},
+        {kodeAset:'00-KDR007', namaAset:'Mitsubishi L 300 + Box, th 2016', keterangan:'Ganti oli mesin + tune up', jurnal:'Jurnal Kendaraan Bermotor (Biaya)', jumlah:1750000},
+      ],
+      jurnalAkun:[
+        {kodeAkun:'5210002', namaAkun:'Biaya Transportasi & Logistik', keterangan:'Service besar + ganti kampas rem', debit:4500000, kredit:0},
+        {kodeAkun:'5210002', namaAkun:'Biaya Transportasi & Logistik', keterangan:'Ganti oli mesin + tune up', debit:1750000, kredit:0},
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'Biaya FA 26/FAC-0000000001 — PT Roda Mas Trading', debit:0, kredit:6250000},
+      ]},
+    {no:'26/FAC-0000000002', tgl:'04/09/2026', tglJthTmp:'04/09/2026',
+      supplier:'PT Indofood Distribusi', supplierKode:'5020', syaratBayar:'Kredit 30 Hari', tipeTransaksi:'Maintenance',
+      mataUangVendor:'IDR', kursVendor:1, memo:'Perawatan gedung gudang HO',
+      items:[
+        {kodeAset:'00-GDG002', namaAset:'Gudang Cabang Head Office (Semi Permanen)', keterangan:'Perbaikan atap & cat ulang', jurnal:'Jurnal Gedung (Biaya)', jumlah:8200000},
+      ],
+      jurnalAkun:[
+        {kodeAkun:'5210004', namaAkun:'Biaya Listrik & Air', keterangan:'Perbaikan atap & cat ulang', debit:8200000, kredit:0},
+        {kodeAkun:'2110001', namaAkun:'Hutang Usaha', keterangan:'Biaya FA 26/FAC-0000000002 — PT Indofood Distribusi', debit:0, kredit:8200000},
+      ]},
+  ],
   /* Surat Pesanan Ekatalog & Khusus (Customer & Penjualan > Daftar
      Transaksi, page:'spEcatKhusus'), sesuai 2 screenshot MASERP
      instalasi AAA yang dikirim user 2026-09-01 (list "SP ECAT &
@@ -7630,8 +7697,8 @@ const MENU=[
    {label:'Rumus Penyusutan', page:'aktivaTetapDeprRule'},
    {header:'Daftar Transaksi'},
    {label:'Pembelian Aktiva Tetap', page:'pembelianAktivaTetap'},
-   {label:'Penjualan Aktiva Tetap', page:'placeholder', title:'Penjualan Aktiva Tetap'},
-   {label:'Biaya Asset', page:'placeholder', title:'Biaya Asset'},
+   {label:'Penjualan Aktiva Tetap', page:'penjualanAktivaTetap'},
+   {label:'Biaya Asset', page:'biayaAsset'},
    {label:'Disposal Asset', page:'disposalAsset'},
    {label:'Revaluasi Asset', page:'revaluasiAsset'},
  ]},
@@ -59267,6 +59334,1717 @@ function openSpeDomPicker(onPick){
 </script>
 <script>
 /* =========================================================
+   TEMPLATE (HTML saja) — Penjualan Aktiva Tetap / "Penjualan
+   Fixed Asset" (Aktiva Tetap > Daftar Transaksi > Penjualan
+   Aktiva Tetap, key page:'penjualanAktivaTetap'). Semua fungsi
+   di file ini HANYA menyusun & mengembalikan markup HTML
+   (string) atau helper murni, TIDAK ada DOM-binding/mutation.
+   Logic-nya di file sebelah: penjualan-aktiva-tetap.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Sesuai 2 screenshot MASERP SDL yang dikirim user 2026-09-01
+   (data dipetakan ke master DBM: customer CUST-xxx, aset
+   DATA.aktivaTetap, jurnal DATA.jurnalFixedAsset, salesman
+   DATA.salesman, akun 7-digit DBM):
+   1) List "Daftar Penjualan Fixed Asset": chip "Semua"
+      (FUNGSIONAL: Semua/September 2026/Agustus 2026) + Add;
+      kolom No.Transaksi / Tanggal Transaksi / Customer / Type
+      Transaksi / Grand Total (semua sort) + aksi Edit / Delete
+      / Lihat (form view) / Print (cetakan invoice modal).
+      Screenshot SDL kosong — mockup DBM diberi 2 sample
+      September 2026. Type Transaksi = Tunai|Kredit (dari
+      Syarat Bayar).
+   2) Form "+ Penjualan Fixed Asset": Customer (picker,
+      mengisi Alamat Pengirim + Sisa U. Muka dari master) +
+      Cabang; Auto Number "FAS01" (dekoratif) + No. Transaksi
+      "26/FAS/HO/09/00001" readonly + refresh; Tgl. Transaksi /
+      Syarat Bayar / Tgl. Jth. Tmp. (disabled, ikut Tgl) /
+      Salesman (dropdown DATA.salesman) / Alamat Pengirim.
+      Tab "Detail Transaksi": panel gelap "Fixed Asset Item" +
+      Add — kolom Kode Aset (picker DATA.aktivaTetap) / Nama
+      Aset / Jurnal (dropdown DATA.jurnalFixedAsset) / Harga
+      Jual / Disc(%) / Discount / Total / hapus. Panel
+      "Informasi PPN" 3 radio (Tidak ada PPN / PPN Inklusif /
+      PPN Eksklusif (+{p}%)) + panel "Rincian Transaksi":
+      Mata Uang IDR / Kurs 1,00; Diskon 1 % & Diskon 2 %
+      (BERJENJANG: D2 dihitung setelah D1); DPP; Sisa U. Muka
+      (readonly, uangMuka customer) + Pakai (editable, di-clamp
+      <= min(sisa UM, Total)); "Pajak {p} %" + picker Pilih Ppn
+      (PPN11); Total; Sisa Total = Total - Pakai. Memo.
+      Tab "Account Journal Details": pola Buat Jurnal + tabel
+      editable (D 1120001 Piutang Usaha (Sisa Total) + D
+      2140001 Uang Muka Penjualan (Pakai) lawan K akun aset per
+      item (glKredit jurnal item, fallback 1510003 Kendaraan,
+      proporsional DPP, sisa pembulatan ke baris terakhir) +
+      K 2120002 PPN Keluaran). Simpan menolak jurnal tak
+      balance (modal info).
+   Footer: Simpan / Cancel. No. format "26/FAS/{kode cabang}/
+   09/{urut 5 digit}" per cabang. */
+
+const FAS_CABANG_LIST = ['','Head Office','Surabaya','Bandung','Medan','Makassar','Semarang','Tangerang','Sidoarjo'];
+const FAS_CABANG_CODE = {'Head Office':'HO','Surabaya':'SBY','Bandung':'BDG','Medan':'MDN','Makassar':'MKS','Semarang':'SMG','Tangerang':'TGR','Sidoarjo':'SDA'};
+const FAS_SYARAT_BAYAR_LIST = ['','COD','CBD','Kredit 14 Hari','Kredit 30 Hari'];
+const FAS_PPN_LIST = [ {kode:'PPN11', persen:11} ];
+const FAS_BULAN_LIST = [
+  {label:'Semua', mm:''},
+  {label:'September 2026', mm:'09'},
+  {label:'Agustus 2026', mm:'08'},
+];
+
+function fasNum2(n){ return Number(n||0).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function fasAkunNama(kode){ const a = DATA.akunGL.find(x => x.kode === kode); return a ? a.nama : ''; }
+
+/* =====================================================================
+   LIST PAGE — "Daftar Penjualan Fixed Asset"
+===================================================================== */
+function tplFasListPage(bulan){
+  return `
+    <div class="breadcrumb">Home / Aktiva Tetap / <b>Penjualan Aktiva Tetap</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('alertTriangle',15)} Daftar Penjualan Fixed Asset</h3>
+        <div class="toolbar-actions">
+          <select class="chip-btn" id="fasFilterBulan">${FAS_BULAN_LIST.map(b=>`<option value="${b.mm}" ${bulan===b.mm?'selected':''}>${b.label}</option>`).join('')}</select>
+          <button class="btn-primary" id="btnFasAdd">${icon('plus',14)} Add</button>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <select id="fasPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="fasSearch" placeholder="Global Search">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>${tplFasSortHeader('No.Transaksi','no')}</th>
+          <th style="width:130px;">${tplFasSortHeader('Tanggal Transaksi','tgl')}</th>
+          <th>${tplFasSortHeader('Customer','customer')}</th>
+          <th style="width:130px;">${tplFasSortHeader('Type Transaksi','tipeTransaksi')}</th>
+          <th class="text-right" style="width:140px;">${tplFasSortHeader('Grand Total','grandTotal')}</th>
+          <th style="width:60px;">Edit</th>
+          <th style="width:66px;">Delete</th>
+          <th style="width:60px;">Lihat</th>
+          <th style="width:60px;">Print</th>
+        </tr></thead>
+        <tbody id="fasTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="fasPager"><button>First</button><button>Previous</button><button>Next</button><button>Last</button></div><div id="fasTotal"></div></div>
+    </div>`;
+}
+
+function tplFasSortHeader(label, field){
+  return `<span data-fas-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="fasSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplFasRows(rows){
+  if(!rows.length) return `<tr><td colspan="9" style="color:var(--text-light);padding:14px;text-align:center;font-weight:600;">Tidak Ada Data</td></tr>`;
+  return rows.map((r) => {
+    const idx = DATA.penjualanFixedAsset.indexOf(r);
+    return `
+    <tr>
+      <td><a href="javascript:void(0)" data-fas-view="${idx}" style="color:var(--blue);font-weight:600;text-decoration:none;">${r.no}</a></td>
+      <td>${r.tgl||''}</td>
+      <td>${(r.customer||'').toUpperCase()}</td>
+      <td>${r.tipeTransaksi||''}</td>
+      <td class="text-right">${fasNum2(r.total)}</td>
+      <td><button class="icon-btn edit" data-fas-edit="${idx}" title="Edit">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-fas-del="${idx}" title="Delete">${icon('trash',15)}</button></td>
+      <td><button class="icon-btn view" data-fas-view="${idx}" title="Lihat">${icon('eye',15)}</button></td>
+      <td><button class="icon-btn view" data-fas-print="${idx}" title="Print">${icon('printer',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* =====================================================================
+   FORM (full page)
+===================================================================== */
+function tplFasForm(mode, row){
+  const isAdd = mode === 'add';
+  const isView = mode === 'view';
+  const dis = isView ? 'disabled' : '';
+  return `
+    <div class="breadcrumb">Home / Penjualan Aktiva Tetap / <b>${isAdd?'Tambah':(isView?'Lihat':'Ubah')}</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('plus',15)} Penjualan Fixed Asset</h3>
+        <button class="btn-danger" id="btnFasTutorial">${icon('card',14)} Tutorial</button>
+      </div>
+      <div class="card-body">
+        <div class="form-grid-3" style="grid-template-columns:repeat(3,1fr);align-items:end;">
+          <h2 style="font-size:20px;font-weight:700;color:var(--navy);margin:0 0 10px;padding-bottom:10px;border-bottom:1px solid var(--border);">Penjualan Fixed Asset</h2>
+          <div class="form-group"></div>
+          <div class="form-group"></div>
+        </div>
+        <div class="form-grid-3" style="grid-template-columns:repeat(3,1fr);">
+          <div class="form-group">
+            <label>Customer</label>
+            <div class="input-with-btn">
+              <input type="text" id="fFasCustomer" value="${(row.customer||'').toUpperCase()}" placeholder="Pilih Customer" readonly>
+              ${!isView ? `<button type="button" class="icon-btn edit" id="fasCustomerSearch" title="Cari Customer">${icon('search',13)}</button>` : ''}
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Cabang</label>
+            <select id="fFasCabang" ${dis}>${FAS_CABANG_LIST.map(c=>`<option ${row.cabang===c?'selected':''}>${c}</option>`).join('')}</select>
+          </div>
+          <div class="form-group"></div>
+        </div>
+        <div class="form-grid-3" style="grid-template-columns:repeat(6,1fr);">
+          <div class="form-group">
+            <label>Auto Number</label>
+            <select disabled><option>FAS01</option></select>
+          </div>
+          <div class="form-group">
+            <label>No. Transaksi</label>
+            <div class="input-with-btn">
+              <input type="text" id="fFasNo" value="${row.no||''}" readonly>
+              ${isAdd ? `<button type="button" class="icon-btn edit" id="fasRefreshNo" title="Generate Ulang Nomor">${icon('refreshCw',13)}</button>` : ''}
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Tgl. Transaksi</label>
+            <div class="input-with-btn">
+              <input type="text" id="fFasTgl" value="${row.tgl||''}" ${dis}>
+              <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',13)}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Syarat Bayar</label>
+            <select id="fFasSyaratBayar" ${dis}>${FAS_SYARAT_BAYAR_LIST.map(sb=>`<option ${row.syaratBayar===sb?'selected':''}>${sb}</option>`).join('')}</select>
+          </div>
+          <div class="form-group">
+            <label>Tgl. Jth. Tmp.</label>
+            <input type="text" id="fFasTglJthTmp" value="${row.tglJthTmp||row.tgl||''}" disabled style="background:#f2f3f6;">
+          </div>
+          <div class="form-group">
+            <label>Salesman</label>
+            <select id="fFasSalesman" ${dis}>${DATA.salesman.map(sm=>`<option ${row.salesman===sm.nama?'selected':''}>${sm.nama}</option>`).join('')}</select>
+          </div>
+        </div>
+        <div class="form-grid-3" style="grid-template-columns:2fr 1fr;">
+          <div class="form-group"></div>
+          <div class="form-group">
+            <label>Alamat Pengirim</label>
+            <textarea id="fFasAlamat" class="po-textarea" rows="3" ${dis}>${row.alamatPengirim||''}</textarea>
+          </div>
+        </div>
+
+        <div class="inv-tabs">
+          <button type="button" class="inv-tab-btn active" id="fasTabDetailBtn">Detail Transaksi</button>
+          <button type="button" class="inv-tab-btn" id="fasTabJurnalBtn">Account Journal Details</button>
+        </div>
+
+        <div id="fasTabDetailContent">${tplFasDetailTab(row, isView)}</div>
+        <div id="fasTabJurnalContent" style="display:none;">${tplFasJurnalContent(row, isView)}</div>
+
+        <div class="form-group" style="max-width:640px;margin-top:18px;">
+          <label>Memo</label>
+          <textarea id="fFasMemo" class="po-textarea" rows="3" ${dis}>${row.memo||''}</textarea>
+        </div>
+      </div>
+      <div class="card-footer" style="display:flex;gap:10px;justify-content:flex-end;align-items:center;padding:14px 20px;border-top:1px solid var(--border);">
+        ${!isView ? `<button type="button" class="btn-primary" id="fasSimpan">Simpan</button>` : ''}
+        <a href="#" id="fasBatalkan" class="link-add" style="margin-top:0;">${isView?'Tutup':'Cancel'}</a>
+      </div>
+    </div>`;
+}
+
+/* ===== Tab 1 — Detail Transaksi ===== */
+function tplFasDetailTab(row, isView){
+  const p = Number(row.ppnPersen || 0);
+  return `
+    <div class="card-header dark-header" style="border-radius:6px;margin-top:10px;">
+      <h3>${icon('alertTriangle',14)} Fixed Asset Item</h3>
+      ${!isView ? `<button type="button" class="btn-primary" id="fasItemAdd">${icon('plus',13)} Add</button>` : ''}
+    </div>
+    <div class="table-wrap" style="margin:6px 0 0;">
+      <table class="po-item-table">
+        <thead><tr>
+          <th style="width:180px;">Kode Aset</th>
+          <th>Nama Aset</th>
+          <th style="width:220px;">Jurnal</th>
+          <th class="text-right" style="width:130px;">Harga Jual</th>
+          <th class="text-right" style="width:90px;">Disc(%)</th>
+          <th class="text-right" style="width:120px;">Discount</th>
+          <th class="text-right" style="width:130px;">Total</th>
+          <th style="width:50px;"></th>
+        </tr></thead>
+        <tbody id="fasItemsBody">${tplFasItemRows(row.items, isView)}</tbody>
+      </table>
+    </div>
+
+    <div class="form-grid" style="margin-top:24px;">
+      <div>
+        <div class="form-section">Informasi PPN</div>
+        <div class="radio-group" style="display:flex;gap:18px;flex-wrap:wrap;">
+          <label><input type="radio" name="fasPpnMode" value="tidak" ${row.ppnMode==='tidak'?'checked':''} ${isView?'disabled':''}> Tidak ada PPN</label>
+          <label><input type="radio" name="fasPpnMode" value="inklusif" ${row.ppnMode==='inklusif'?'checked':''} ${isView?'disabled':''}> PPN Inklusif</label>
+          <label><input type="radio" name="fasPpnMode" value="eksklusif" ${row.ppnMode==='eksklusif'?'checked':''} ${isView?'disabled':''}> PPN Eksklusif (+<span id="fasPpnPersenRadio">${p}</span>%)</label>
+        </div>
+      </div>
+      <div>
+        <div class="form-section">Rincian Transaksi</div>
+        <table class="field-table po-rincian-table">
+          <tr><td class="flabel">Mata Uang</td><td><input type="text" value="IDR" disabled></td><td class="flabel">Kurs</td><td><input type="text" value="${fasNum2(1)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">Diskon 1</td><td><input type="number" min="0" max="100" id="fFasDiskon1" value="${row.diskon1!=null?row.diskon1:0}" ${isView?'disabled':''}> %</td><td></td><td><input type="text" id="fFasDiskon1Amt" value="${fasNum2(row.diskon1Amt||0)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">Diskon 2</td><td><input type="number" min="0" max="100" id="fFasDiskon2" value="${row.diskon2!=null?row.diskon2:0}" ${isView?'disabled':''}> %</td><td></td><td><input type="text" id="fFasDiskon2Amt" value="${fasNum2(row.diskon2Amt||0)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">DPP</td><td colspan="3"><input type="text" id="fFasDpp" value="${fasNum2(row.dpp||0)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">Sisa U. Muka</td><td><input type="text" id="fFasSisaUm" value="${fasNum2(row.sisaUangMuka||0)}" disabled style="text-align:right;"></td><td class="flabel">Pakai:</td><td><input type="number" step="0.01" min="0" id="fFasPakai" value="${row.pakaiUangMuka||0}" ${isView?'disabled':''} style="text-align:right;"></td></tr>
+          <tr><td class="flabel">Pajak <span id="fasPpnPersenLabel">${p}</span> %</td><td>
+              <div class="input-with-btn">
+                <input type="text" id="fFasPpnKode" value="${row.ppnKode||''}" placeholder="Pilih Ppn" readonly>
+                ${!isView ? `<button type="button" class="icon-btn edit" id="fasPpnSearch" title="Cari Kode PPN">${icon('search',13)}</button>
+                <button type="button" class="icon-btn del" id="fasPpnClear" title="Hapus PPN">${icon('trash',13)}</button>` : ''}
+              </div>
+            </td><td></td><td><input type="text" id="fFasPpnAmount" value="${fasNum2(row.ppnAmount||0)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">Total</td><td colspan="3"><input type="text" id="fFasTotal" value="${fasNum2(row.total||0)}" disabled style="text-align:right;font-weight:700;font-size:14px;"></td></tr>
+          <tr><td class="flabel">Sisa Total</td><td colspan="3"><input type="text" id="fFasSisaTotal" value="${fasNum2(row.sisaTotal||0)}" disabled style="text-align:right;"></td></tr>
+        </table>
+      </div>
+    </div>`;
+}
+
+function tplFasItemRows(items, isView){
+  if(!items || !items.length) return `<tr><td colspan="8" style="color:var(--text-light);">Belum ada Fixed Asset Item — klik "Add".</td></tr>`;
+  return items.map((it,idx)=>`
+    <tr>
+      <td>
+        <div class="input-with-btn">
+          <input type="text" data-fas-item-kode="${idx}" value="${it.kodeAset||''}" readonly style="background:#f2f3f6;">
+          ${!isView ? `<button type="button" class="icon-btn edit" data-fas-item-pick="${idx}" title="Cari Aset">${icon('search',12)}</button>` : ''}
+        </div>
+      </td>
+      <td><input type="text" data-fas-item-nama="${idx}" value="${it.namaAset||''}" readonly></td>
+      <td><select data-fas-item-jurnal="${idx}" ${isView?'disabled':''}><option value=""></option>${DATA.jurnalFixedAsset.map(j=>`<option ${it.jurnal===j.keterangan?'selected':''}>${j.keterangan}</option>`).join('')}</select></td>
+      <td><input type="number" step="0.01" min="0" data-fas-item-harga="${idx}" value="${it.hargaJual||0}" ${isView?'readonly':''} style="text-align:right;"></td>
+      <td><input type="number" step="0.01" min="0" max="100" data-fas-item-disc="${idx}" value="${it.discPersen||0}" ${isView?'readonly':''} style="text-align:right;"></td>
+      <td class="text-right"><span data-fas-item-discamt="${idx}">${fasNum2((it.hargaJual||0)*(it.discPersen||0)/100)}</span></td>
+      <td class="text-right"><span data-fas-item-total="${idx}">${fasNum2((it.hargaJual||0)*(1-(it.discPersen||0)/100))}</span></td>
+      <td style="text-align:center;">${!isView ? `<button type="button" class="icon-btn del" data-fas-item-del="${idx}" title="Hapus Baris">${icon('trash',14)}</button>` : ''}</td>
+    </tr>`).join('');
+}
+
+/* ===== Tab 2 — Account Journal Details ===== */
+function tplFasJurnalContent(row, isView){
+  const totals = fasJurnalTotals(row);
+  const selisihColor = Math.abs(totals.selisih) > 0.004 ? 'var(--red)' : 'var(--text)';
+  return `
+    ${!isView ? `<div style="display:flex;justify-content:center;margin:14px 0;">
+      <button type="button" class="btn-secondary" id="fasBuatJurnal">${icon('refreshCw',13)} Buat Jurnal</button>
+    </div>` : '<div style="margin-top:14px;"></div>'}
+    <div class="card-header dark-header" style="border-radius:6px;">
+      <h3>${icon('settings',14)} Account Journal Details</h3>
+      ${!isView ? `<button type="button" class="btn-primary" id="fasJurnalAddRow">${icon('plus',13)} Tambah</button>` : ''}
+    </div>
+    <div class="table-wrap" style="margin:6px 0 0;">
+      <table class="po-item-table">
+        <thead><tr>
+          <th>Kode Akun</th><th>Nama Akun</th><th>Keterangan</th><th class="text-right">Jumlah Debit</th><th class="text-right">Jumlah Kredit</th><th>Hapus</th>
+        </tr></thead>
+        <tbody id="fasJurnalBody">${tplFasJurnalRows(row.jurnalAkun, isView)}</tbody>
+      </table>
+    </div>
+    <div style="max-width:280px;margin:16px 0 0 auto;">
+      <div style="font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:4px;">Jumlah Debit - Kredit</div>
+      <input type="text" id="fasJurnalSelisih" value="${fasNum2(totals.selisih)}" readonly style="text-align:right;font-weight:700;color:${selisihColor};">
+    </div>`;
+}
+
+function tplFasJurnalRows(list, isView){
+  if(!list || !list.length) return `<tr><td colspan="6" style="color:var(--text-light);">Belum ada rincian jurnal — klik "Buat Jurnal".</td></tr>`;
+  return list.map((entry,idx)=>{
+    if(isView){
+      return `
+      <tr>
+        <td style="min-width:110px;"><input type="text" value="${entry.kodeAkun||''}" readonly></td>
+        <td style="min-width:180px;"><input type="text" value="${entry.namaAkun||''}" readonly></td>
+        <td style="min-width:160px;"><input type="text" value="${entry.keterangan||''}" readonly></td>
+        <td style="width:150px;"><input type="text" value="${fasNum2(entry.debit||0)}" readonly style="text-align:right;"></td>
+        <td style="width:150px;"><input type="text" value="${fasNum2(entry.kredit||0)}" readonly style="text-align:right;"></td>
+        <td style="width:50px;"></td>
+      </tr>`;
+    }
+    return `
+    <tr>
+      <td style="min-width:110px;">
+        <div class="input-with-btn">
+          <input type="text" data-fas-jurnal-kode="${idx}" value="${entry.kodeAkun||''}" readonly>
+          <button type="button" class="icon-btn edit" data-fas-jurnal-akun-search="${idx}" title="Cari Akun GL">${icon('search',12)}</button>
+        </div>
+      </td>
+      <td style="min-width:180px;"><input type="text" data-fas-jurnal-nama="${idx}" value="${entry.namaAkun||''}" readonly></td>
+      <td style="min-width:160px;"><input type="text" data-fas-jurnal-ket="${idx}" value="${entry.keterangan||''}"></td>
+      <td style="width:150px;"><input type="number" step="0.01" min="0" data-fas-jurnal-debit="${idx}" value="${entry.debit||0}" style="text-align:right;"></td>
+      <td style="width:150px;"><input type="number" step="0.01" min="0" data-fas-jurnal-kredit="${idx}" value="${entry.kredit||0}" style="text-align:right;"></td>
+      <td style="width:50px;"><button type="button" class="icon-btn del" data-fas-jurnal-del="${idx}" title="Hapus Baris">${icon('trash',14)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* Cetakan/preview invoice Penjualan Fixed Asset — tombol Print di list. */
+function tplFasInvoiceModal(row){
+  const ho = DATA.cabangMaster[0] || {};
+  const td = 'padding:3px 6px;font-size:11.5px;';
+  const itemRows = (row.items||[]).map((it,i)=>`
+    <tr>
+      <td style="${td}text-align:center;">${i+1}</td>
+      <td style="${td}">${it.kodeAset}</td>
+      <td style="${td}">${it.namaAset}</td>
+      <td style="${td}text-align:right;">${fasNum2(it.hargaJual)}</td>
+      <td style="${td}text-align:right;">${fasNum2((it.hargaJual||0)*(it.discPersen||0)/100)}</td>
+      <td style="${td}text-align:right;">${fasNum2((it.hargaJual||0)*(1-(it.discPersen||0)/100))}</td>
+    </tr>`).join('');
+  return `
+    <div class="modal-box" style="max-width:860px;width:96vw;">
+      <div class="modal-header"><span>${icon('printer',15)} Penjualan Fixed Asset — ${row.no}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body" style="max-height:72vh;overflow:auto;">
+        <div style="background:#fff;border:1px solid var(--border);padding:22px 26px;font-family:Arial,Helvetica,sans-serif;color:#111;">
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:64px;height:64px;border-radius:10px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;">DBM</div>
+            <div>
+              <div style="font-weight:800;font-size:14px;">${(ho.namaPerusahaan||'PT Distriversa Buanamas').toUpperCase()}</div>
+              <div style="font-size:11.5px;">${ho.alamat||''}, ${ho.kota||''} — Tlp: ${ho.telepon||''}</div>
+            </div>
+          </div>
+          <div style="text-align:center;font-weight:800;font-size:15px;margin:12px 0;">Invoice Penjualan Fixed Asset</div>
+          <table style="border:none;font-size:11.5px;"><tbody>
+            <tr><td style="${td}">No. Transaksi</td><td style="${td}">: ${row.no}</td><td style="${td}padding-left:40px;">Customer</td><td style="${td}">: ${(row.customer||'').toUpperCase()}</td></tr>
+            <tr><td style="${td}">Tgl. Transaksi</td><td style="${td}">: ${row.tgl||''}</td><td style="${td}padding-left:40px;">Syarat Bayar</td><td style="${td}">: ${row.syaratBayar||'-'}</td></tr>
+            <tr><td style="${td}">Salesman</td><td style="${td}">: ${row.salesman||'-'}</td><td style="${td}padding-left:40px;">Cabang</td><td style="${td}">: ${row.cabang||''}</td></tr>
+          </tbody></table>
+          <table style="width:100%;border-collapse:collapse;margin-top:10px;">
+            <thead><tr style="border-top:2px solid #111;border-bottom:2px solid #111;">
+              <th style="${td}width:34px;">No.</th><th style="${td}text-align:left;">Kode Aset</th><th style="${td}text-align:left;">Nama Aset</th><th style="${td}text-align:right;">Harga Jual</th><th style="${td}text-align:right;">Discount</th><th style="${td}text-align:right;">Total</th>
+            </tr></thead>
+            <tbody>${itemRows}</tbody>
+          </table>
+          <div style="border-top:2px solid #111;margin-top:30px;"></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+            <table style="border:none;min-width:280px;font-size:11.5px;"><tbody>
+              <tr><td style="${td}">DPP :</td><td style="${td}text-align:right;">${fasNum2(row.dpp)}</td></tr>
+              <tr><td style="${td}">PPN :</td><td style="${td}text-align:right;">${fasNum2(row.ppnAmount)}</td></tr>
+              ${row.pakaiUangMuka ? `<tr><td style="${td}">Uang Muka Dipakai :</td><td style="${td}text-align:right;">(${fasNum2(row.pakaiUangMuka)})</td></tr>` : ''}
+              <tr style="border-top:2px solid #111;"><td style="${td}font-weight:800;">Grand Total :</td><td style="${td}text-align:right;font-weight:800;">${fasNum2(row.total)}</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+/* Picker Customer / Aset / PPN / Akun GL — salinan lokal. */
+function tplFasCustomerPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Customer</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="fasCustomerPickerSearch" placeholder="Cari kode / nama customer..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Customer</th><th></th></tr></thead>
+            <tbody id="fasCustomerPickerBody">${tplFasCustomerPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplFasCustomerPickerRows(list){
+  if(!list.length) return `<tr><td colspan="3" style="color:var(--text-light);">Tidak ada customer ditemukan</td></tr>`;
+  return list.map(c=>`
+    <tr><td>${c.kode}</td><td>${c.nama}</td><td><button class="btn-pick" data-pick-customer="${c.kode}">Pilih</button></td></tr>`).join('');
+}
+
+function tplFasAsetPicker(list){
+  return `
+    <div class="modal-box" style="max-width:720px;">
+      <div class="modal-header"><span>Pilih Fixed Asset</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="fasAsetPickerSearch" placeholder="Cari kode / nama aset..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:340px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Aset</th><th>Cabang</th><th class="text-right">Harga Beli</th><th></th></tr></thead>
+            <tbody id="fasAsetPickerBody">${tplFasAsetPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplFasAsetPickerRows(list){
+  if(!list.length) return `<tr><td colspan="5" style="color:var(--text-light);">Tidak ada aset ditemukan</td></tr>`;
+  return list.map(a=>`
+    <tr><td>${a.kode}</td><td>${a.nama}</td><td>${a.cabang||''}</td><td class="text-right">${fasNum2(a.hargaBeli||0)}</td><td><button class="btn-pick" data-pick-aset="${a.kode}">Pilih</button></td></tr>`).join('');
+}
+
+function tplFasPpnPicker(list){
+  return `
+    <div class="modal-box" style="max-width:400px;">
+      <div class="modal-header"><span>Pilih PPN</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="table-wrap"><table>
+          <thead><tr><th>Kode PPN</th><th>Persen</th><th></th></tr></thead>
+          <tbody>${list.map(p=>`<tr><td>${p.kode}</td><td>${p.persen}%</td><td><button class="btn-pick" data-pick-ppn="${p.kode}" data-pick-persen="${p.persen}">Pilih</button></td></tr>`).join('')}</tbody>
+        </table></div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplFasAkunPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Akun GL</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="fasAkunPickerSearch" placeholder="Cari kode / nama akun..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Akun</th><th>Kat.</th><th></th></tr></thead>
+            <tbody id="fasAkunPickerBody">${tplFasAkunPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplFasAkunPickerRows(list){
+  if(!list.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada akun ditemukan</td></tr>`;
+  return list.map(a=>`
+    <tr><td>${a.kode}</td><td>${a.nama}</td><td>${a.kategori}</td><td><button class="btn-pick" data-fas-pick-akun="${a.kode}">Pilih</button></td></tr>`).join('');
+}
+
+function tplFasDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Penjualan Fixed Asset</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus transaksi <b>${row.no}</b> — ${(row.customer||'').toUpperCase()} (${fasNum2(row.total)})?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+function tplFasInfoModal(title,text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer"><button class="btn-primary" id="modalOk">Mengerti</button></div>
+    </div>`;
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Penjualan Aktiva Tetap / "Penjualan Fixed
+   Asset" (Aktiva Tetap > Daftar Transaksi, key
+   page:'penjualanAktivaTetap'). Dimuat otomatis (lazy-load)
+   oleh core.js — lihat PAGE_MODULES di js/core.js. Markup di
+   file sebelah: penjualan-aktiva-tetap.template.js (catatan
+   desain & pemetaan screenshot SDL -> DBM di headernya).
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Aritmetika: itemNet = Harga Jual x (1 - Disc%); Subtotal =
+   Σ itemNet; Diskon 1 = Subtotal x d1%; Diskon 2 BERJENJANG =
+   (Subtotal - D1) x d2%; base = Subtotal - D1 - D2; Eksklusif:
+   DPP = base & PPN = p% DPP; Inklusif: DPP = base x 100/(100+p)
+   & PPN = base - DPP; Tidak ada PPN: DPP = base, PPN = 0.
+   Total = DPP + PPN; Pakai (uang muka) di-clamp <=
+   min(Sisa U. Muka customer, Total); Sisa Total = Total-Pakai.
+   Buat Jurnal: D 1120001 Piutang Usaha (Sisa Total) + D
+   2140001 Uang Muka Penjualan (Pakai) lawan K akun aset per
+   item (glKredit jurnal item || 1510003 Kendaraan,
+   proporsional DPP, pembulatan disesuaikan di baris terakhir)
+   + K 2120002 PPN Keluaran. Simpan menolak jurnal tak balance.
+   Data: DATA.penjualanFixedAsset (2 sample September 2026). */
+
+var fasState = { search:'', sortField:'', sortDir:'asc', bulan:'' };
+
+function renderPenjualanAktivaTetapPage(){
+  fasState = { search:'', sortField:'', sortDir:'asc', bulan:'' };
+  renderFasList();
+}
+
+function renderFasList(){
+  content.innerHTML = tplFasListPage(fasState.bulan);
+  document.getElementById('btnFasAdd').onclick = () => openFasForm('add', null);
+  document.getElementById('fasSearch').oninput = (e) => { fasState.search = e.target.value.trim().toLowerCase(); renderFasTable(); };
+  document.getElementById('fasFilterBulan').onchange = (e) => { fasState.bulan = e.target.value; renderFasTable(); };
+  document.getElementById('fasPageSize').onchange = () => renderFasTable();
+  document.querySelectorAll('[data-fas-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.fasSort;
+    if(fasState.sortField === field){
+      fasState.sortDir = fasState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      fasState.sortField = field;
+      fasState.sortDir = 'asc';
+    }
+    renderFasTable();
+  });
+  renderFasTable();
+}
+
+function fasFilteredRows(){
+  const q = fasState.search;
+  let rows = (DATA.penjualanFixedAsset || []).filter(r => {
+    if(fasState.bulan && !(r.tgl || '').includes(`/${fasState.bulan}/`)) return false;
+    if(!q) return true;
+    return r.no.toLowerCase().includes(q) ||
+      (r.customer||'').toLowerCase().includes(q) ||
+      (r.tipeTransaksi||'').toLowerCase().includes(q);
+  });
+  const f = fasState.sortField;
+  if(f){
+    const dir = fasState.sortDir === 'desc' ? -1 : 1;
+    rows.sort((a,b) => {
+      if(f === 'grandTotal') return ((a.total||0) - (b.total||0)) * dir;
+      return String(a[f]||'').localeCompare(String(b[f]||''), 'id') * dir;
+    });
+  }
+  return rows;
+}
+
+function renderFasTable(){
+  const rows = fasFilteredRows();
+  const tbody = document.getElementById('fasTbody');
+  tbody.innerHTML = tplFasRows(rows);
+  document.getElementById('fasTotal').textContent = `Total Record: ${rows.length}`;
+  ['no','tgl','customer','tipeTransaksi','grandTotal'].forEach(f => {
+    const el = document.getElementById(`fasSortIcon_${f}`);
+    if(!el) return;
+    if(fasState.sortField === f){
+      el.innerHTML = fasState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+  tbody.querySelectorAll('[data-fas-edit]').forEach(b => b.onclick = () => openFasForm('edit', +b.dataset.fasEdit));
+  tbody.querySelectorAll('[data-fas-view]').forEach(b => b.onclick = () => openFasForm('view', +b.dataset.fasView));
+  tbody.querySelectorAll('[data-fas-del]').forEach(b => b.onclick = () => openFasDelete(+b.dataset.fasDel));
+  tbody.querySelectorAll('[data-fas-print]').forEach(b => b.onclick = () => openFasInvoice(DATA.penjualanFixedAsset[+b.dataset.fasPrint]));
+}
+
+/* Nomor otomatis per cabang: 26/FAS/HO/09/00001, ... */
+function fasGenerateNo(cabang){
+  const kode = FAS_CABANG_CODE[cabang] || 'HO';
+  const prefix = `26/FAS/${kode}/09/`;
+  let max = 0;
+  (DATA.penjualanFixedAsset || []).forEach(r => {
+    if(r.no && r.no.startsWith(prefix)){
+      const n = parseInt(r.no.slice(prefix.length), 10);
+      if(!isNaN(n) && n > max) max = n;
+    }
+  });
+  return prefix + String(max + 1).padStart(5, '0');
+}
+
+function fasItemNet(it){ return Number(it.hargaJual||0) * (1 - Number(it.discPersen||0)/100); }
+
+/* Recalc seluruh angka panel Rincian dari state `row` + tulis ke DOM. */
+function fasRecalc(row){
+  const subtotal = (row.items || []).reduce((a, it) => a + fasItemNet(it), 0);
+  const d1 = Number(row.diskon1 || 0), d2 = Number(row.diskon2 || 0);
+  const p = Number(row.ppnPersen || 0);
+  row.diskon1Amt = subtotal * d1 / 100;
+  row.diskon2Amt = (subtotal - row.diskon1Amt) * d2 / 100;
+  const base = subtotal - row.diskon1Amt - row.diskon2Amt;
+  if(row.ppnMode === 'eksklusif' && p > 0){
+    row.dpp = base;
+    row.ppnAmount = base * p / 100;
+  } else if(row.ppnMode === 'inklusif' && p > 0){
+    row.dpp = base * 100 / (100 + p);
+    row.ppnAmount = base - row.dpp;
+  } else {
+    row.dpp = base;
+    row.ppnAmount = 0;
+  }
+  row.total = row.dpp + row.ppnAmount;
+  let pakai = Number(row.pakaiUangMuka || 0);
+  const maxPakai = Math.min(Number(row.sisaUangMuka || 0), row.total);
+  if(pakai > maxPakai) pakai = maxPakai;
+  if(pakai < 0) pakai = 0;
+  row.pakaiUangMuka = pakai;
+  row.sisaTotal = row.total - pakai;
+  row.tipeTransaksi = (row.syaratBayar === 'COD' || row.syaratBayar === 'CBD') ? 'Tunai' : 'Kredit';
+
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.value = v; };
+  set('fFasDiskon1Amt', fasNum2(row.diskon1Amt));
+  set('fFasDiskon2Amt', fasNum2(row.diskon2Amt));
+  set('fFasDpp', fasNum2(row.dpp));
+  set('fFasSisaUm', fasNum2(row.sisaUangMuka || 0));
+  set('fFasPpnAmount', fasNum2(row.ppnAmount));
+  set('fFasTotal', fasNum2(row.total));
+  set('fFasSisaTotal', fasNum2(row.sisaTotal));
+  const l1 = document.getElementById('fasPpnPersenLabel'); if(l1) l1.textContent = p;
+  const l2 = document.getElementById('fasPpnPersenRadio'); if(l2) l2.textContent = p;
+}
+
+function fasJurnalTotals(row){
+  let d = 0, k = 0;
+  (row.jurnalAkun || []).forEach(e => { d += Number(e.debit || 0); k += Number(e.kredit || 0); });
+  return { debit: d, kredit: k, selisih: d - k };
+}
+
+/* Jurnal otomatis penjualan aktiva tetap. */
+function fasBuildJurnal(row){
+  const ket = `Penjualan FA ${row.no}`;
+  const list = [
+    { kodeAkun:'1120001', namaAkun: fasAkunNama('1120001'), keterangan: ket, debit: row.sisaTotal, kredit: 0 },
+  ];
+  if(row.pakaiUangMuka > 0.004){
+    list.push({ kodeAkun:'2140001', namaAkun: fasAkunNama('2140001'), keterangan: `Pakai Uang Muka ${row.no}`, debit: row.pakaiUangMuka, kredit: 0 });
+  }
+  const subtotal = (row.items || []).reduce((a, it) => a + fasItemNet(it), 0);
+  let sisa = row.dpp;
+  (row.items || []).forEach((it, i) => {
+    const j = DATA.jurnalFixedAsset.find(x => x.keterangan === it.jurnal);
+    const akun = (j && j.glKredit) ? j.glKredit : '1510003';
+    let amt = (i === row.items.length - 1) ? sisa : (subtotal > 0 ? row.dpp * fasItemNet(it) / subtotal : 0);
+    sisa -= amt;
+    list.push({ kodeAkun: akun, namaAkun: fasAkunNama(akun), keterangan: `${it.kodeAset} ${it.namaAset}`, debit: 0, kredit: amt });
+  });
+  if(row.ppnAmount > 0.004){
+    list.push({ kodeAkun:'2120002', namaAkun: fasAkunNama('2120002'), keterangan: ket, debit: 0, kredit: row.ppnAmount });
+  }
+  return list;
+}
+
+/* =====================================================================
+   FORM add / edit / view
+===================================================================== */
+function openFasForm(mode, idx){
+  const src = idx != null ? DATA.penjualanFixedAsset[idx] : null;
+  const row = src ? JSON.parse(JSON.stringify(src)) : {
+    no: fasGenerateNo('Head Office'), tgl: '01/09/2026', tglJthTmp: '01/09/2026', cabang: '',
+    customer: '', customerKode: '', syaratBayar: '', salesman: (DATA.salesman[0]||{}).nama || '',
+    alamatPengirim: '', memo: '', tipeTransaksi: 'Kredit',
+    ppnMode: 'tidak', ppnKode: '', ppnPersen: 0,
+    diskon1: 0, diskon2: 0, diskon1Amt: 0, diskon2Amt: 0,
+    sisaUangMuka: 0, pakaiUangMuka: 0,
+    items: [], jurnalAkun: [],
+    dpp: 0, ppnAmount: 0, total: 0, sisaTotal: 0,
+  };
+  const isView = mode === 'view';
+  content.innerHTML = tplFasForm(mode, row);
+
+  const back = () => renderFasList();
+  document.getElementById('fasBatalkan').onclick = (e) => { e.preventDefault(); back(); };
+  document.getElementById('btnFasTutorial').onclick = () => openFasInfo('Tutorial', 'Video tutorial Penjualan Fixed Asset tersedia di portal MASERP (mockup).');
+
+  const tabD = document.getElementById('fasTabDetailBtn');
+  const tabJ = document.getElementById('fasTabJurnalBtn');
+  const contD = document.getElementById('fasTabDetailContent');
+  const contJ = document.getElementById('fasTabJurnalContent');
+  tabD.onclick = () => { tabD.classList.add('active'); tabJ.classList.remove('active'); contD.style.display = ''; contJ.style.display = 'none'; };
+  tabJ.onclick = () => { tabJ.classList.add('active'); tabD.classList.remove('active'); contJ.style.display = ''; contD.style.display = 'none'; };
+
+  wireFasDetailTab(row, isView);
+  wireFasJurnalTab(row, isView);
+  if(isView) return;
+
+  document.getElementById('fFasCabang').onchange = (e) => {
+    row.cabang = e.target.value;
+    if(mode === 'add' && row.cabang){ row.no = fasGenerateNo(row.cabang); document.getElementById('fFasNo').value = row.no; }
+  };
+  const refreshNoBtn = document.getElementById('fasRefreshNo');
+  if(refreshNoBtn) refreshNoBtn.onclick = () => { row.no = fasGenerateNo(row.cabang || 'Head Office'); document.getElementById('fFasNo').value = row.no; };
+
+  document.getElementById('fFasTgl').oninput = (e) => {
+    row.tgl = e.target.value;
+    row.tglJthTmp = e.target.value;
+    document.getElementById('fFasTglJthTmp').value = e.target.value;
+  };
+  document.getElementById('fFasSyaratBayar').onchange = (e) => { row.syaratBayar = e.target.value; fasRecalc(row); };
+  document.getElementById('fFasSalesman').onchange = (e) => { row.salesman = e.target.value; };
+
+  document.getElementById('fasCustomerSearch').onclick = () => openFasCustomerPicker((c) => {
+    row.customer = c.nama;
+    row.customerKode = c.kode;
+    row.alamatPengirim = c.alamat || '';
+    row.sisaUangMuka = Number(c.uangMuka || 0);
+    document.getElementById('fFasCustomer').value = c.nama.toUpperCase();
+    document.getElementById('fFasAlamat').value = row.alamatPengirim;
+    fasRecalc(row);
+  });
+
+  document.getElementById('fasSimpan').onclick = () => {
+    row.tgl = document.getElementById('fFasTgl').value.trim();
+    row.alamatPengirim = document.getElementById('fFasAlamat').value;
+    row.memo = document.getElementById('fFasMemo').value;
+    row.syaratBayar = document.getElementById('fFasSyaratBayar').value;
+    row.salesman = document.getElementById('fFasSalesman').value;
+    fasRecalc(row);
+    if(!row.customer){ openFasInfo('Validasi', 'Customer wajib dipilih.'); return; }
+    if(!row.tgl){ openFasInfo('Validasi', 'Tgl. Transaksi wajib diisi.'); return; }
+    if(!row.items || !row.items.length){ openFasInfo('Validasi', 'Fixed Asset Item masih kosong — klik "Add".'); return; }
+    if(row.items.some(it => !it.kodeAset)){ openFasInfo('Validasi', 'Ada baris item yang belum dipilih Kode Aset-nya.'); return; }
+    if(row.jurnalAkun && row.jurnalAkun.length){
+      const t = fasJurnalTotals(row);
+      if(Math.abs(t.selisih) > 0.004){
+        openFasInfo('Jurnal Tidak Balance', `Total Debit (${fasNum2(t.debit)}) tidak sama dengan Total Kredit (${fasNum2(t.kredit)}). Selisih: ${fasNum2(t.selisih)}.`);
+        return;
+      }
+    }
+    DATA.penjualanFixedAsset = DATA.penjualanFixedAsset || [];
+    if(mode === 'add') DATA.penjualanFixedAsset.unshift(row);
+    else DATA.penjualanFixedAsset[idx] = row;
+    back();
+  };
+}
+
+/* ----- Tab Detail Transaksi ----- */
+function renderFasItems(row, isView){
+  document.getElementById('fasItemsBody').innerHTML = tplFasItemRows(row.items, isView);
+  const body = document.getElementById('fasItemsBody');
+  if(isView) return;
+  body.querySelectorAll('[data-fas-item-del]').forEach(b => b.onclick = () => {
+    row.items.splice(+b.dataset.fasItemDel, 1);
+    renderFasItems(row, isView);
+    fasRecalc(row);
+  });
+  body.querySelectorAll('[data-fas-item-pick]').forEach(b => b.onclick = () => {
+    const i = +b.dataset.fasItemPick;
+    openFasAsetPicker((a) => {
+      row.items[i].kodeAset = a.kode;
+      row.items[i].namaAset = a.nama;
+      if(!row.items[i].hargaJual) row.items[i].hargaJual = a.hargaBeli || 0;
+      renderFasItems(row, isView);
+      fasRecalc(row);
+    });
+  });
+  body.querySelectorAll('[data-fas-item-jurnal]').forEach(sel => sel.onchange = () => {
+    row.items[+sel.dataset.fasItemJurnal].jurnal = sel.value;
+  });
+  const refreshRow = (i) => {
+    body.querySelector(`[data-fas-item-discamt="${i}"]`).textContent = fasNum2((row.items[i].hargaJual||0)*(row.items[i].discPersen||0)/100);
+    body.querySelector(`[data-fas-item-total="${i}"]`).textContent = fasNum2(fasItemNet(row.items[i]));
+    fasRecalc(row);
+  };
+  body.querySelectorAll('[data-fas-item-harga]').forEach(inp => inp.oninput = () => {
+    const i = +inp.dataset.fasItemHarga;
+    row.items[i].hargaJual = Number(inp.value) || 0;
+    refreshRow(i);
+  });
+  body.querySelectorAll('[data-fas-item-disc]').forEach(inp => inp.oninput = () => {
+    const i = +inp.dataset.fasItemDisc;
+    let v = Number(inp.value) || 0;
+    if(v < 0) v = 0; if(v > 100) v = 100;
+    row.items[i].discPersen = v;
+    refreshRow(i);
+  });
+}
+
+function wireFasDetailTab(row, isView){
+  renderFasItems(row, isView);
+  fasRecalc(row);
+  if(isView) return;
+
+  document.getElementById('fasItemAdd').onclick = () => {
+    row.items = row.items || [];
+    row.items.push({ kodeAset:'', namaAset:'', jurnal:'', hargaJual:0, discPersen:0 });
+    renderFasItems(row, isView);
+    fasRecalc(row);
+  };
+  document.querySelectorAll('input[name="fasPpnMode"]').forEach(r => r.onchange = () => {
+    row.ppnMode = r.value;
+    fasRecalc(row);
+  });
+  document.getElementById('fFasDiskon1').oninput = (e) => {
+    let v = Number(e.target.value); if(isNaN(v)||v<0) v=0; if(v>100) v=100;
+    row.diskon1 = v; fasRecalc(row);
+  };
+  document.getElementById('fFasDiskon2').oninput = (e) => {
+    let v = Number(e.target.value); if(isNaN(v)||v<0) v=0; if(v>100) v=100;
+    row.diskon2 = v; fasRecalc(row);
+  };
+  document.getElementById('fFasPakai').oninput = (e) => {
+    row.pakaiUangMuka = Number(e.target.value) || 0;
+    fasRecalc(row);
+    e.target.value = row.pakaiUangMuka;
+  };
+  document.getElementById('fasPpnSearch').onclick = () => openFasPpnPicker((pp) => {
+    row.ppnKode = pp.kode; row.ppnPersen = pp.persen;
+    document.getElementById('fFasPpnKode').value = pp.kode;
+    fasRecalc(row);
+  });
+  document.getElementById('fasPpnClear').onclick = () => {
+    row.ppnKode = ''; row.ppnPersen = 0;
+    document.getElementById('fFasPpnKode').value = '';
+    fasRecalc(row);
+  };
+}
+
+/* ----- Tab Account Journal Details ----- */
+function wireFasJurnalTab(row, isView){
+  const cont = document.getElementById('fasTabJurnalContent');
+  cont.innerHTML = tplFasJurnalContent(row, isView);
+  if(isView) return;
+
+  const rerender = () => wireFasJurnalTab(row, isView);
+  const refreshSelisih = () => {
+    const t = fasJurnalTotals(row);
+    const el = document.getElementById('fasJurnalSelisih');
+    el.value = fasNum2(t.selisih);
+    el.style.color = Math.abs(t.selisih) > 0.004 ? 'var(--red)' : 'var(--text)';
+  };
+
+  document.getElementById('fasBuatJurnal').onclick = () => {
+    fasRecalc(row);
+    row.jurnalAkun = fasBuildJurnal(row);
+    rerender();
+  };
+  document.getElementById('fasJurnalAddRow').onclick = () => {
+    row.jurnalAkun = row.jurnalAkun || [];
+    row.jurnalAkun.push({ kodeAkun:'', namaAkun:'', keterangan:'', debit:0, kredit:0 });
+    rerender();
+  };
+  cont.querySelectorAll('[data-fas-jurnal-del]').forEach(b => b.onclick = () => {
+    row.jurnalAkun.splice(+b.dataset.fasJurnalDel, 1);
+    rerender();
+  });
+  cont.querySelectorAll('[data-fas-jurnal-akun-search]').forEach(b => b.onclick = () => {
+    const i = +b.dataset.fasJurnalAkunSearch;
+    openFasAkunPicker((akun) => {
+      row.jurnalAkun[i].kodeAkun = akun.kode;
+      row.jurnalAkun[i].namaAkun = akun.nama;
+      cont.querySelector(`[data-fas-jurnal-kode="${i}"]`).value = akun.kode;
+      cont.querySelector(`[data-fas-jurnal-nama="${i}"]`).value = akun.nama;
+    });
+  });
+  cont.querySelectorAll('[data-fas-jurnal-ket]').forEach(inp => inp.oninput = () => {
+    row.jurnalAkun[+inp.dataset.fasJurnalKet].keterangan = inp.value;
+  });
+  cont.querySelectorAll('[data-fas-jurnal-debit]').forEach(inp => inp.oninput = () => {
+    row.jurnalAkun[+inp.dataset.fasJurnalDebit].debit = Number(inp.value) || 0;
+    refreshSelisih();
+  });
+  cont.querySelectorAll('[data-fas-jurnal-kredit]').forEach(inp => inp.oninput = () => {
+    row.jurnalAkun[+inp.dataset.fasJurnalKredit].kredit = Number(inp.value) || 0;
+    refreshSelisih();
+  });
+}
+
+/* =====================================================================
+   Modals
+===================================================================== */
+function fasOverlay(html){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  const cancel = document.getElementById('modalCancel');
+  if(cancel) cancel.onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  return overlay;
+}
+
+function openFasInvoice(row){ fasOverlay(tplFasInvoiceModal(row)); }
+
+function openFasDelete(idx){
+  const row = DATA.penjualanFixedAsset[idx];
+  fasOverlay(tplFasDeleteConfirm(row));
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.penjualanFixedAsset.splice(idx, 1);
+    closeModal();
+    renderFasTable();
+  };
+}
+
+function openFasInfo(title, text){
+  fasOverlay(tplFasInfoModal(title, text));
+  document.getElementById('modalOk').onclick = closeModal;
+}
+
+function openFasCustomerPicker(onPick){
+  const overlay = fasOverlay(tplFasCustomerPicker(DATA.customers));
+  const wire = () => overlay.querySelectorAll('[data-pick-customer]').forEach(b => b.onclick = () => {
+    const c = DATA.customers.find(x => x.kode === b.dataset.pickCustomer);
+    if(c) onPick(c);
+    closeModal();
+  });
+  wire();
+  document.getElementById('fasCustomerPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.customers.filter(c => !q || c.kode.toLowerCase().includes(q) || c.nama.toLowerCase().includes(q));
+    document.getElementById('fasCustomerPickerBody').innerHTML = tplFasCustomerPickerRows(list);
+    wire();
+  };
+}
+
+function openFasAsetPicker(onPick){
+  const overlay = fasOverlay(tplFasAsetPicker(DATA.aktivaTetap));
+  const wire = () => overlay.querySelectorAll('[data-pick-aset]').forEach(b => b.onclick = () => {
+    const a = DATA.aktivaTetap.find(x => x.kode === b.dataset.pickAset);
+    if(a) onPick(a);
+    closeModal();
+  });
+  wire();
+  document.getElementById('fasAsetPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.aktivaTetap.filter(a => !q || a.kode.toLowerCase().includes(q) || a.nama.toLowerCase().includes(q));
+    document.getElementById('fasAsetPickerBody').innerHTML = tplFasAsetPickerRows(list);
+    wire();
+  };
+}
+
+function openFasPpnPicker(onPick){
+  const overlay = fasOverlay(tplFasPpnPicker(FAS_PPN_LIST));
+  overlay.querySelectorAll('[data-pick-ppn]').forEach(b => b.onclick = () => {
+    onPick({ kode: b.dataset.pickPpn, persen: Number(b.dataset.pickPersen) });
+    closeModal();
+  });
+}
+
+function openFasAkunPicker(onPick){
+  const overlay = fasOverlay(tplFasAkunPicker(DATA.akunGL));
+  const wire = () => overlay.querySelectorAll('[data-fas-pick-akun]').forEach(b => b.onclick = () => {
+    const akun = DATA.akunGL.find(a => a.kode === b.dataset.fasPickAkun);
+    if(akun) onPick(akun);
+    closeModal();
+  });
+  wire();
+  document.getElementById('fasAkunPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.akunGL.filter(a => !q || a.kode.includes(q) || a.nama.toLowerCase().includes(q));
+    document.getElementById('fasAkunPickerBody').innerHTML = tplFasAkunPickerRows(list);
+    wire();
+  };
+}
+
+/* =========================================================
+   TEMPLATE (HTML saja) — Biaya Asset / "Biaya Fixed Asset"
+   (Aktiva Tetap > Daftar Transaksi > Biaya Asset, key
+   page:'biayaAsset'). Semua fungsi di file ini HANYA menyusun
+   & mengembalikan markup HTML (string) atau helper murni,
+   TIDAK ada DOM-binding/mutation. Logic-nya di file sebelah:
+   biaya-asset.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Sesuai 2 screenshot MASERP SDL yang dikirim user 2026-09-01
+   (data dipetakan ke master DBM: supplier DATA.suppliers, aset
+   DATA.aktivaTetap, jurnal DATA.jurnalFixedAsset — dua entry
+   tipe "Biaya" DITAMBAHKAN ke master utk keperluan modul ini,
+   lihat komentar di atas DATA.jurnalFixedAsset):
+   1) List "Daftar Biaya Fixed Asset": chip periode "September
+      2026" (FUNGSIONAL September/Agustus) + Add; kolom
+      No.Transaksi / Tanggal Transaksi / Type Transaksi /
+      Supplier / Grand Total (semua sort) + aksi Edit / Delete.
+      Screenshot SDL kosong — mockup DBM diberi 2 sample
+      September 2026 (Type Transaksi: Perbaikan / Maintenance).
+   2) Form "+ Biaya Fixed Asset": Supplier (picker); Auto
+      Number "FAC01" (dekoratif) + No. Transaksi GLOBAL
+      "26/FAC-0000000001" readonly + refresh; Tgl. Transaksi /
+      Syarat Bayar (default CBD.) / Tgl. Jth. Tmp. (disabled,
+      ikut Tgl). Tab "Detail Transaksi": panel gelap "Fixed
+      Asset Item" + Add — kolom Kode Aset (picker) / Nama Aset
+      / Keterangan (editable) / Jurnal (dropdown master Jurnal
+      Aktiva Tetap) / Jumlah (editable) / hapus; Total = Σ
+      Jumlah x Kurs Vendor. Panel "Currency Supplier": Mata
+      Uang Vendor (readonly, IDR setelah pilih supplier) +
+      Kurs Vendor (EDITABLE, default 1,00). Memo.
+      Tab "Account Journal Details": pola Buat Jurnal + tabel
+      editable (D akun biaya per item — glDebit jurnal item,
+      fallback 5210006 — lawan K 2110001 Hutang Usaha total).
+      Simpan menolak jurnal tak balance (modal info).
+   Footer: Simpan / Cancel. No. format GLOBAL
+   "26/FAC-{urut 10 digit}" (bukan per cabang). */
+
+const FAC_SYARAT_BAYAR_LIST = ['CBD.','COD','Kredit 14 Hari','Kredit 30 Hari'];
+const FAC_TIPE_LIST = ['Perbaikan','Maintenance','Sparepart','Lain-lain'];
+
+function facNum2(n){ return Number(n||0).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function facAkunNama(kode){ const a = DATA.akunGL.find(x => x.kode === kode); return a ? a.nama : ''; }
+
+/* =====================================================================
+   LIST PAGE — "Daftar Biaya Fixed Asset"
+===================================================================== */
+function tplFacListPage(bulan){
+  return `
+    <div class="breadcrumb">Home / Aktiva Tetap / <b>Biaya Asset</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('alertTriangle',15)} Daftar Biaya Fixed Asset</h3>
+        <div class="toolbar-actions">
+          <select class="chip-btn" id="facFilterBulan"><option value="09" ${bulan==='09'?'selected':''}>September 2026</option><option value="08" ${bulan==='08'?'selected':''}>Agustus 2026</option></select>
+          <button class="btn-primary" id="btnFacAdd">${icon('plus',14)} Add</button>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <select id="facPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="facSearch" placeholder="Global Search">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>${tplFacSortHeader('No.Transaksi','no')}</th>
+          <th style="width:140px;">${tplFacSortHeader('Tanggal Transaksi','tgl')}</th>
+          <th style="width:140px;">${tplFacSortHeader('Type Transaksi','tipeTransaksi')}</th>
+          <th>${tplFacSortHeader('Supplier','supplier')}</th>
+          <th class="text-right" style="width:140px;">${tplFacSortHeader('Grand Total','grandTotal')}</th>
+          <th style="width:60px;">Edit</th>
+          <th style="width:66px;">Delete</th>
+        </tr></thead>
+        <tbody id="facTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager"><button>First</button><button>Previous</button><button>Next</button><button>Last</button></div><div id="facTotal"></div></div>
+    </div>`;
+}
+
+function tplFacSortHeader(label, field){
+  return `<span data-fac-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="facSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplFacRows(rows){
+  if(!rows.length) return `<tr><td colspan="7" style="color:var(--text-light);padding:14px;text-align:center;font-weight:600;">Tidak Ada Data</td></tr>`;
+  return rows.map((r) => {
+    const idx = DATA.biayaFixedAsset.indexOf(r);
+    return `
+    <tr>
+      <td><a href="javascript:void(0)" data-fac-edit="${idx}" style="color:var(--blue);font-weight:600;text-decoration:none;">${r.no}</a></td>
+      <td>${r.tgl||''}</td>
+      <td>${r.tipeTransaksi||''}</td>
+      <td>${(r.supplier||'').toUpperCase()}</td>
+      <td class="text-right">${facNum2(facGrandTotal(r))}</td>
+      <td><button class="icon-btn edit" data-fac-edit="${idx}" title="Edit">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-fac-del="${idx}" title="Delete">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function facGrandTotal(r){
+  const kurs = Number(r.kursVendor || 1);
+  return (r.items || []).reduce((a, it) => a + Number(it.jumlah || 0), 0) * kurs;
+}
+
+/* =====================================================================
+   FORM (full page)
+===================================================================== */
+function tplFacForm(mode, row){
+  const isAdd = mode === 'add';
+  return `
+    <div class="breadcrumb">Home / Biaya Asset / <b>${isAdd?'Tambah':'Ubah'}</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('plus',15)} Biaya Fixed Asset</h3>
+        <button class="btn-danger" id="btnFacTutorial">${icon('card',14)} Tutorial</button>
+      </div>
+      <div class="card-body">
+        <div class="form-grid-3" style="grid-template-columns:repeat(3,1fr);align-items:end;">
+          <h2 style="font-size:20px;font-weight:700;color:var(--navy);margin:0 0 10px;padding-bottom:10px;border-bottom:1px solid var(--border);">Biaya Fixed Asset</h2>
+          <div class="form-group"></div>
+          <div class="form-group"></div>
+        </div>
+        <div class="form-grid-3" style="grid-template-columns:repeat(3,1fr);">
+          <div class="form-group">
+            <label>Supplier</label>
+            <div class="input-with-btn">
+              <input type="text" id="fFacSupplier" value="${(row.supplier||'').toUpperCase()}" placeholder="Pilih Supplier" readonly>
+              <button type="button" class="icon-btn edit" id="facSupplierSearch" title="Cari Supplier">${icon('search',13)}</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Type Transaksi</label>
+            <select id="fFacTipe">${FAC_TIPE_LIST.map(t=>`<option ${row.tipeTransaksi===t?'selected':''}>${t}</option>`).join('')}</select>
+          </div>
+          <div class="form-group"></div>
+        </div>
+        <div class="form-grid-3" style="grid-template-columns:repeat(5,1fr);">
+          <div class="form-group">
+            <label>Auto Number</label>
+            <select disabled><option>FAC01</option></select>
+          </div>
+          <div class="form-group">
+            <label>No. Transaksi</label>
+            <div class="input-with-btn">
+              <input type="text" id="fFacNo" value="${row.no||''}" readonly>
+              ${isAdd ? `<button type="button" class="icon-btn edit" id="facRefreshNo" title="Generate Ulang Nomor">${icon('refreshCw',13)}</button>` : ''}
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Tgl. Transaksi</label>
+            <div class="input-with-btn">
+              <input type="text" id="fFacTgl" value="${row.tgl||''}">
+              <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',13)}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Syarat Bayar</label>
+            <select id="fFacSyaratBayar">${FAC_SYARAT_BAYAR_LIST.map(sb=>`<option ${row.syaratBayar===sb?'selected':''}>${sb}</option>`).join('')}</select>
+          </div>
+          <div class="form-group">
+            <label>Tgl. Jth. Tmp.</label>
+            <input type="text" id="fFacTglJthTmp" value="${row.tglJthTmp||row.tgl||''}" disabled style="background:#f2f3f6;">
+          </div>
+        </div>
+
+        <div class="inv-tabs">
+          <button type="button" class="inv-tab-btn active" id="facTabDetailBtn">Detail Transaksi</button>
+          <button type="button" class="inv-tab-btn" id="facTabJurnalBtn">Account Journal Details</button>
+        </div>
+
+        <div id="facTabDetailContent">
+          <div class="card-header dark-header" style="border-radius:6px;margin-top:10px;">
+            <h3>${icon('alertTriangle',14)} Fixed Asset Item</h3>
+            <button type="button" class="btn-primary" id="facItemAdd">${icon('plus',13)} Add</button>
+          </div>
+          <div class="table-wrap" style="margin:6px 0 0;">
+            <table class="po-item-table">
+              <thead><tr>
+                <th style="width:190px;">Kode Aset</th>
+                <th style="width:220px;">Nama Aset</th>
+                <th>Keterangan</th>
+                <th style="width:230px;">Jurnal</th>
+                <th class="text-right" style="width:140px;">Jumlah</th>
+                <th style="width:50px;"></th>
+              </tr></thead>
+              <tbody id="facItemsBody">${tplFacItemRows(row.items)}</tbody>
+            </table>
+          </div>
+          <div style="display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:14px;">
+            <span style="font-size:12.5px;font-weight:600;">Total</span>
+            <input type="text" id="fFacTotal" value="${facNum2(facGrandTotal(row))}" disabled style="max-width:260px;text-align:right;font-weight:700;">
+          </div>
+
+          <div class="form-section" style="margin-top:20px;">Currency Supplier</div>
+          <table class="field-table po-rincian-table" style="max-width:620px;">
+            <tr>
+              <td class="flabel">Mata Uang Vendor</td><td><input type="text" id="fFacMataUang" value="${row.mataUangVendor||''}" disabled style="background:#f2f3f6;"></td>
+              <td class="flabel">Kurs Vendor</td><td><input type="number" step="0.01" min="0" id="fFacKurs" value="${row.kursVendor!=null?row.kursVendor:1}" style="text-align:right;"></td>
+            </tr>
+          </table>
+
+          <div class="form-group" style="max-width:640px;margin-top:16px;">
+            <label>Memo</label>
+            <textarea id="fFacMemo" class="po-textarea" rows="3">${row.memo||''}</textarea>
+          </div>
+        </div>
+        <div id="facTabJurnalContent" style="display:none;">${tplFacJurnalContent(row)}</div>
+      </div>
+      <div class="card-footer" style="display:flex;gap:10px;justify-content:flex-end;align-items:center;padding:14px 20px;border-top:1px solid var(--border);">
+        <button type="button" class="btn-primary" id="facSimpan">Simpan</button>
+        <a href="#" id="facBatalkan" class="link-add" style="margin-top:0;">Cancel</a>
+      </div>
+    </div>`;
+}
+
+function tplFacItemRows(items){
+  if(!items || !items.length) return `<tr><td colspan="6" style="color:var(--text-light);">Belum ada Fixed Asset Item — klik "Add".</td></tr>`;
+  return items.map((it,idx)=>`
+    <tr>
+      <td>
+        <div class="input-with-btn">
+          <input type="text" data-fac-item-kode="${idx}" value="${it.kodeAset||''}" readonly style="background:#f2f3f6;">
+          <button type="button" class="icon-btn edit" data-fac-item-pick="${idx}" title="Cari Aset">${icon('search',12)}</button>
+        </div>
+      </td>
+      <td><input type="text" data-fac-item-nama="${idx}" value="${it.namaAset||''}" readonly></td>
+      <td><input type="text" data-fac-item-ket="${idx}" value="${it.keterangan||''}" placeholder="mis. Service besar + ganti oli"></td>
+      <td><select data-fac-item-jurnal="${idx}"><option value=""></option>${DATA.jurnalFixedAsset.map(j=>`<option ${it.jurnal===j.keterangan?'selected':''}>${j.keterangan}</option>`).join('')}</select></td>
+      <td><input type="number" step="0.01" min="0" data-fac-item-jumlah="${idx}" value="${it.jumlah||0}" style="text-align:right;"></td>
+      <td style="text-align:center;"><button type="button" class="icon-btn del" data-fac-item-del="${idx}" title="Hapus Baris">${icon('trash',14)}</button></td>
+    </tr>`).join('');
+}
+
+/* ===== Tab 2 — Account Journal Details ===== */
+function tplFacJurnalContent(row){
+  const totals = facJurnalTotals(row);
+  const selisihColor = Math.abs(totals.selisih) > 0.004 ? 'var(--red)' : 'var(--text)';
+  return `
+    <div style="display:flex;justify-content:center;margin:14px 0;">
+      <button type="button" class="btn-secondary" id="facBuatJurnal">${icon('refreshCw',13)} Buat Jurnal</button>
+    </div>
+    <div class="card-header dark-header" style="border-radius:6px;">
+      <h3>${icon('settings',14)} Account Journal Details</h3>
+      <button type="button" class="btn-primary" id="facJurnalAddRow">${icon('plus',13)} Tambah</button>
+    </div>
+    <div class="table-wrap" style="margin:6px 0 0;">
+      <table class="po-item-table">
+        <thead><tr>
+          <th>Kode Akun</th><th>Nama Akun</th><th>Keterangan</th><th class="text-right">Jumlah Debit</th><th class="text-right">Jumlah Kredit</th><th>Hapus</th>
+        </tr></thead>
+        <tbody id="facJurnalBody">${tplFacJurnalRows(row.jurnalAkun)}</tbody>
+      </table>
+    </div>
+    <div style="max-width:280px;margin:16px 0 0 auto;">
+      <div style="font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:4px;">Jumlah Debit - Kredit</div>
+      <input type="text" id="facJurnalSelisih" value="${facNum2(totals.selisih)}" readonly style="text-align:right;font-weight:700;color:${selisihColor};">
+    </div>`;
+}
+
+function tplFacJurnalRows(list){
+  if(!list || !list.length) return `<tr><td colspan="6" style="color:var(--text-light);">Belum ada rincian jurnal — klik "Buat Jurnal".</td></tr>`;
+  return list.map((entry,idx)=>`
+    <tr>
+      <td style="min-width:110px;">
+        <div class="input-with-btn">
+          <input type="text" data-fac-jurnal-kode="${idx}" value="${entry.kodeAkun||''}" readonly>
+          <button type="button" class="icon-btn edit" data-fac-jurnal-akun-search="${idx}" title="Cari Akun GL">${icon('search',12)}</button>
+        </div>
+      </td>
+      <td style="min-width:180px;"><input type="text" data-fac-jurnal-nama="${idx}" value="${entry.namaAkun||''}" readonly></td>
+      <td style="min-width:160px;"><input type="text" data-fac-jurnal-ket="${idx}" value="${entry.keterangan||''}"></td>
+      <td style="width:150px;"><input type="number" step="0.01" min="0" data-fac-jurnal-debit="${idx}" value="${entry.debit||0}" style="text-align:right;"></td>
+      <td style="width:150px;"><input type="number" step="0.01" min="0" data-fac-jurnal-kredit="${idx}" value="${entry.kredit||0}" style="text-align:right;"></td>
+      <td style="width:50px;"><button type="button" class="icon-btn del" data-fac-jurnal-del="${idx}" title="Hapus Baris">${icon('trash',14)}</button></td>
+    </tr>`).join('');
+}
+
+/* Picker Supplier / Aset / Akun GL — salinan lokal. */
+function tplFacSupplierPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Supplier</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="facSupplierPickerSearch" placeholder="Cari kode / nama supplier..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Supplier</th><th></th></tr></thead>
+            <tbody id="facSupplierPickerBody">${tplFacSupplierPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplFacSupplierPickerRows(list){
+  if(!list.length) return `<tr><td colspan="3" style="color:var(--text-light);">Tidak ada supplier ditemukan</td></tr>`;
+  return list.map(s=>`
+    <tr><td>${s.kode}</td><td>${s.nama}</td><td><button class="btn-pick" data-pick-supplier="${s.kode}">Pilih</button></td></tr>`).join('');
+}
+
+function tplFacAsetPicker(list){
+  return `
+    <div class="modal-box" style="max-width:720px;">
+      <div class="modal-header"><span>Pilih Fixed Asset</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="facAsetPickerSearch" placeholder="Cari kode / nama aset..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:340px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Aset</th><th>Cabang</th><th></th></tr></thead>
+            <tbody id="facAsetPickerBody">${tplFacAsetPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplFacAsetPickerRows(list){
+  if(!list.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada aset ditemukan</td></tr>`;
+  return list.map(a=>`
+    <tr><td>${a.kode}</td><td>${a.nama}</td><td>${a.cabang||''}</td><td><button class="btn-pick" data-pick-aset="${a.kode}">Pilih</button></td></tr>`).join('');
+}
+
+function tplFacAkunPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Akun GL</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="facAkunPickerSearch" placeholder="Cari kode / nama akun..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Akun</th><th>Kat.</th><th></th></tr></thead>
+            <tbody id="facAkunPickerBody">${tplFacAkunPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplFacAkunPickerRows(list){
+  if(!list.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada akun ditemukan</td></tr>`;
+  return list.map(a=>`
+    <tr><td>${a.kode}</td><td>${a.nama}</td><td>${a.kategori}</td><td><button class="btn-pick" data-fac-pick-akun="${a.kode}">Pilih</button></td></tr>`).join('');
+}
+
+function tplFacDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Biaya Fixed Asset</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus transaksi <b>${row.no}</b> — ${(row.supplier||'').toUpperCase()} (${facNum2(facGrandTotal(row))})?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+function tplFacInfoModal(title,text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer"><button class="btn-primary" id="modalOk">Mengerti</button></div>
+    </div>`;
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Biaya Asset / "Biaya Fixed Asset" (Aktiva
+   Tetap > Daftar Transaksi, key page:'biayaAsset'). Dimuat
+   otomatis (lazy-load) oleh core.js — lihat PAGE_MODULES di
+   js/core.js. Markup di file sebelah: biaya-asset.template.js
+   (catatan desain & pemetaan screenshot SDL -> DBM di header).
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Alur inti: pilih Supplier (mengisi Mata Uang Vendor IDR),
+   tambah baris Fixed Asset Item (picker aset, keterangan
+   editable, jurnal dari master Jurnal Aktiva Tetap — entry
+   tipe "Biaya" tersedia, jumlah editable); Total = Σ Jumlah x
+   Kurs Vendor (kurs editable, recalc live). Buat Jurnal:
+   D akun biaya per item (glDebit jurnal item || 5210006) lawan
+   K 2110001 Hutang Usaha (total); Simpan menolak jurnal tak
+   balance (modal info). Chip bulan list fungsional. Nomor
+   GLOBAL "26/FAC-{urut 10 digit}".
+   Data: DATA.biayaFixedAsset (2 sample September 2026). */
+
+var facState = { search:'', sortField:'', sortDir:'asc', bulan:'09' };
+
+function renderBiayaAssetPage(){
+  facState = { search:'', sortField:'', sortDir:'asc', bulan:'09' };
+  renderFacList();
+}
+
+function renderFacList(){
+  content.innerHTML = tplFacListPage(facState.bulan);
+  document.getElementById('btnFacAdd').onclick = () => openFacForm('add', null);
+  document.getElementById('facSearch').oninput = (e) => { facState.search = e.target.value.trim().toLowerCase(); renderFacTable(); };
+  document.getElementById('facFilterBulan').onchange = (e) => { facState.bulan = e.target.value; renderFacTable(); };
+  document.getElementById('facPageSize').onchange = () => renderFacTable();
+  document.querySelectorAll('[data-fac-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.facSort;
+    if(facState.sortField === field){
+      facState.sortDir = facState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      facState.sortField = field;
+      facState.sortDir = 'asc';
+    }
+    renderFacTable();
+  });
+  renderFacTable();
+}
+
+function facFilteredRows(){
+  const q = facState.search;
+  let rows = (DATA.biayaFixedAsset || []).filter(r => {
+    if(facState.bulan && !(r.tgl || '').includes(`/${facState.bulan}/`)) return false;
+    if(!q) return true;
+    return r.no.toLowerCase().includes(q) ||
+      (r.supplier||'').toLowerCase().includes(q) ||
+      (r.tipeTransaksi||'').toLowerCase().includes(q);
+  });
+  const f = facState.sortField;
+  if(f){
+    const dir = facState.sortDir === 'desc' ? -1 : 1;
+    rows.sort((a,b) => {
+      if(f === 'grandTotal') return (facGrandTotal(a) - facGrandTotal(b)) * dir;
+      return String(a[f]||'').localeCompare(String(b[f]||''), 'id') * dir;
+    });
+  }
+  return rows;
+}
+
+function renderFacTable(){
+  const rows = facFilteredRows();
+  const tbody = document.getElementById('facTbody');
+  tbody.innerHTML = tplFacRows(rows);
+  document.getElementById('facTotal').textContent = `Total Record: ${rows.length}`;
+  ['no','tgl','tipeTransaksi','supplier','grandTotal'].forEach(f => {
+    const el = document.getElementById(`facSortIcon_${f}`);
+    if(!el) return;
+    if(facState.sortField === f){
+      el.innerHTML = facState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+  tbody.querySelectorAll('[data-fac-edit]').forEach(b => b.onclick = () => openFacForm('edit', +b.dataset.facEdit));
+  tbody.querySelectorAll('[data-fac-del]').forEach(b => b.onclick = () => openFacDelete(+b.dataset.facDel));
+}
+
+/* Nomor otomatis GLOBAL: 26/FAC-0000000001, 0000000002, ... */
+function facGenerateNo(){
+  const prefix = '26/FAC-';
+  let max = 0;
+  (DATA.biayaFixedAsset || []).forEach(r => {
+    if(r.no && r.no.startsWith(prefix)){
+      const n = parseInt(r.no.slice(prefix.length), 10);
+      if(!isNaN(n) && n > max) max = n;
+    }
+  });
+  return prefix + String(max + 1).padStart(10, '0');
+}
+
+function facRecalcTotal(row){
+  const el = document.getElementById('fFacTotal');
+  if(el) el.value = facNum2(facGrandTotal(row));
+}
+
+function facJurnalTotals(row){
+  let d = 0, k = 0;
+  (row.jurnalAkun || []).forEach(e => { d += Number(e.debit || 0); k += Number(e.kredit || 0); });
+  return { debit: d, kredit: k, selisih: d - k };
+}
+
+/* Jurnal otomatis biaya aktiva tetap. */
+function facBuildJurnal(row){
+  const kurs = Number(row.kursVendor || 1);
+  const list = [];
+  (row.items || []).forEach(it => {
+    const j = DATA.jurnalFixedAsset.find(x => x.keterangan === it.jurnal);
+    const akun = (j && j.glDebit) ? j.glDebit : '5210006';
+    list.push({ kodeAkun: akun, namaAkun: facAkunNama(akun), keterangan: it.keterangan || `${it.kodeAset} ${it.namaAset}`, debit: Number(it.jumlah || 0) * kurs, kredit: 0 });
+  });
+  list.push({ kodeAkun:'2110001', namaAkun: facAkunNama('2110001'), keterangan: `Biaya FA ${row.no} — ${row.supplier||''}`, debit: 0, kredit: facGrandTotal(row) });
+  return list;
+}
+
+/* =====================================================================
+   FORM add / edit
+===================================================================== */
+function openFacForm(mode, idx){
+  const src = idx != null ? DATA.biayaFixedAsset[idx] : null;
+  const row = src ? JSON.parse(JSON.stringify(src)) : {
+    no: facGenerateNo(), tgl: '01/09/2026', tglJthTmp: '01/09/2026',
+    supplier: '', supplierKode: '', syaratBayar: 'CBD.', tipeTransaksi: 'Perbaikan',
+    mataUangVendor: '', kursVendor: 1, memo: '',
+    items: [], jurnalAkun: [],
+  };
+  content.innerHTML = tplFacForm(mode, row);
+
+  const back = () => renderFacList();
+  document.getElementById('facBatalkan').onclick = (e) => { e.preventDefault(); back(); };
+  document.getElementById('btnFacTutorial').onclick = () => openFacInfo('Tutorial', 'Video tutorial Biaya Fixed Asset tersedia di portal MASERP (mockup).');
+
+  const tabD = document.getElementById('facTabDetailBtn');
+  const tabJ = document.getElementById('facTabJurnalBtn');
+  const contD = document.getElementById('facTabDetailContent');
+  const contJ = document.getElementById('facTabJurnalContent');
+  tabD.onclick = () => { tabD.classList.add('active'); tabJ.classList.remove('active'); contD.style.display = ''; contJ.style.display = 'none'; };
+  tabJ.onclick = () => { tabJ.classList.add('active'); tabD.classList.remove('active'); contJ.style.display = ''; contD.style.display = 'none'; };
+
+  wireFacItems(row);
+  wireFacJurnalTab(row);
+
+  const refreshNoBtn = document.getElementById('facRefreshNo');
+  if(refreshNoBtn) refreshNoBtn.onclick = () => { row.no = facGenerateNo(); document.getElementById('fFacNo').value = row.no; };
+
+  document.getElementById('fFacTgl').oninput = (e) => {
+    row.tgl = e.target.value;
+    row.tglJthTmp = e.target.value;
+    document.getElementById('fFacTglJthTmp').value = e.target.value;
+  };
+  document.getElementById('fFacTipe').onchange = (e) => { row.tipeTransaksi = e.target.value; };
+  document.getElementById('fFacSyaratBayar').onchange = (e) => { row.syaratBayar = e.target.value; };
+  document.getElementById('fFacKurs').oninput = (e) => {
+    row.kursVendor = Number(e.target.value) || 0;
+    facRecalcTotal(row);
+  };
+
+  document.getElementById('facSupplierSearch').onclick = () => openFacSupplierPicker((s) => {
+    row.supplier = s.nama;
+    row.supplierKode = s.kode;
+    row.mataUangVendor = s.mataUang || 'IDR';
+    document.getElementById('fFacSupplier').value = s.nama.toUpperCase();
+    document.getElementById('fFacMataUang').value = row.mataUangVendor;
+  });
+
+  document.getElementById('facSimpan').onclick = () => {
+    row.tgl = document.getElementById('fFacTgl').value.trim();
+    row.memo = document.getElementById('fFacMemo').value;
+    row.syaratBayar = document.getElementById('fFacSyaratBayar').value;
+    row.tipeTransaksi = document.getElementById('fFacTipe').value;
+    if(!row.supplier){ openFacInfo('Validasi', 'Supplier wajib dipilih.'); return; }
+    if(!row.tgl){ openFacInfo('Validasi', 'Tgl. Transaksi wajib diisi.'); return; }
+    if(!row.items || !row.items.length){ openFacInfo('Validasi', 'Fixed Asset Item masih kosong — klik "Add".'); return; }
+    if(row.items.some(it => !it.kodeAset)){ openFacInfo('Validasi', 'Ada baris item yang belum dipilih Kode Aset-nya.'); return; }
+    if(row.jurnalAkun && row.jurnalAkun.length){
+      const t = facJurnalTotals(row);
+      if(Math.abs(t.selisih) > 0.004){
+        openFacInfo('Jurnal Tidak Balance', `Total Debit (${facNum2(t.debit)}) tidak sama dengan Total Kredit (${facNum2(t.kredit)}). Selisih: ${facNum2(t.selisih)}.`);
+        return;
+      }
+    }
+    DATA.biayaFixedAsset = DATA.biayaFixedAsset || [];
+    if(mode === 'add') DATA.biayaFixedAsset.unshift(row);
+    else DATA.biayaFixedAsset[idx] = row;
+    back();
+  };
+}
+
+/* ----- Tabel item ----- */
+function wireFacItems(row){
+  document.getElementById('facItemsBody').innerHTML = tplFacItemRows(row.items);
+  const body = document.getElementById('facItemsBody');
+  document.getElementById('facItemAdd').onclick = () => {
+    row.items = row.items || [];
+    row.items.push({ kodeAset:'', namaAset:'', keterangan:'', jurnal:'', jumlah:0 });
+    wireFacItems(row);
+    facRecalcTotal(row);
+  };
+  body.querySelectorAll('[data-fac-item-del]').forEach(b => b.onclick = () => {
+    row.items.splice(+b.dataset.facItemDel, 1);
+    wireFacItems(row);
+    facRecalcTotal(row);
+  });
+  body.querySelectorAll('[data-fac-item-pick]').forEach(b => b.onclick = () => {
+    const i = +b.dataset.facItemPick;
+    openFacAsetPicker((a) => {
+      row.items[i].kodeAset = a.kode;
+      row.items[i].namaAset = a.nama;
+      wireFacItems(row);
+      facRecalcTotal(row);
+    });
+  });
+  body.querySelectorAll('[data-fac-item-ket]').forEach(inp => inp.oninput = () => {
+    row.items[+inp.dataset.facItemKet].keterangan = inp.value;
+  });
+  body.querySelectorAll('[data-fac-item-jurnal]').forEach(sel => sel.onchange = () => {
+    row.items[+sel.dataset.facItemJurnal].jurnal = sel.value;
+  });
+  body.querySelectorAll('[data-fac-item-jumlah]').forEach(inp => inp.oninput = () => {
+    row.items[+inp.dataset.facItemJumlah].jumlah = Number(inp.value) || 0;
+    facRecalcTotal(row);
+  });
+}
+
+/* ----- Tab Account Journal Details ----- */
+function wireFacJurnalTab(row){
+  const cont = document.getElementById('facTabJurnalContent');
+  cont.innerHTML = tplFacJurnalContent(row);
+
+  const rerender = () => wireFacJurnalTab(row);
+  const refreshSelisih = () => {
+    const t = facJurnalTotals(row);
+    const el = document.getElementById('facJurnalSelisih');
+    el.value = facNum2(t.selisih);
+    el.style.color = Math.abs(t.selisih) > 0.004 ? 'var(--red)' : 'var(--text)';
+  };
+
+  document.getElementById('facBuatJurnal').onclick = () => {
+    row.jurnalAkun = facBuildJurnal(row);
+    rerender();
+  };
+  document.getElementById('facJurnalAddRow').onclick = () => {
+    row.jurnalAkun = row.jurnalAkun || [];
+    row.jurnalAkun.push({ kodeAkun:'', namaAkun:'', keterangan:'', debit:0, kredit:0 });
+    rerender();
+  };
+  cont.querySelectorAll('[data-fac-jurnal-del]').forEach(b => b.onclick = () => {
+    row.jurnalAkun.splice(+b.dataset.facJurnalDel, 1);
+    rerender();
+  });
+  cont.querySelectorAll('[data-fac-jurnal-akun-search]').forEach(b => b.onclick = () => {
+    const i = +b.dataset.facJurnalAkunSearch;
+    openFacAkunPicker((akun) => {
+      row.jurnalAkun[i].kodeAkun = akun.kode;
+      row.jurnalAkun[i].namaAkun = akun.nama;
+      cont.querySelector(`[data-fac-jurnal-kode="${i}"]`).value = akun.kode;
+      cont.querySelector(`[data-fac-jurnal-nama="${i}"]`).value = akun.nama;
+    });
+  });
+  cont.querySelectorAll('[data-fac-jurnal-ket]').forEach(inp => inp.oninput = () => {
+    row.jurnalAkun[+inp.dataset.facJurnalKet].keterangan = inp.value;
+  });
+  cont.querySelectorAll('[data-fac-jurnal-debit]').forEach(inp => inp.oninput = () => {
+    row.jurnalAkun[+inp.dataset.facJurnalDebit].debit = Number(inp.value) || 0;
+    refreshSelisih();
+  });
+  cont.querySelectorAll('[data-fac-jurnal-kredit]').forEach(inp => inp.oninput = () => {
+    row.jurnalAkun[+inp.dataset.facJurnalKredit].kredit = Number(inp.value) || 0;
+    refreshSelisih();
+  });
+}
+
+/* =====================================================================
+   Modals
+===================================================================== */
+function facOverlay(html){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  const cancel = document.getElementById('modalCancel');
+  if(cancel) cancel.onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  return overlay;
+}
+
+function openFacDelete(idx){
+  const row = DATA.biayaFixedAsset[idx];
+  facOverlay(tplFacDeleteConfirm(row));
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.biayaFixedAsset.splice(idx, 1);
+    closeModal();
+    renderFacTable();
+  };
+}
+
+function openFacInfo(title, text){
+  facOverlay(tplFacInfoModal(title, text));
+  document.getElementById('modalOk').onclick = closeModal;
+}
+
+function openFacSupplierPicker(onPick){
+  const overlay = facOverlay(tplFacSupplierPicker(DATA.suppliers));
+  const wire = () => overlay.querySelectorAll('[data-pick-supplier]').forEach(b => b.onclick = () => {
+    const s = DATA.suppliers.find(x => x.kode === b.dataset.pickSupplier);
+    if(s) onPick(s);
+    closeModal();
+  });
+  wire();
+  document.getElementById('facSupplierPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.suppliers.filter(s => !q || s.kode.toLowerCase().includes(q) || s.nama.toLowerCase().includes(q));
+    document.getElementById('facSupplierPickerBody').innerHTML = tplFacSupplierPickerRows(list);
+    wire();
+  };
+}
+
+function openFacAsetPicker(onPick){
+  const overlay = facOverlay(tplFacAsetPicker(DATA.aktivaTetap));
+  const wire = () => overlay.querySelectorAll('[data-pick-aset]').forEach(b => b.onclick = () => {
+    const a = DATA.aktivaTetap.find(x => x.kode === b.dataset.pickAset);
+    if(a) onPick(a);
+    closeModal();
+  });
+  wire();
+  document.getElementById('facAsetPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.aktivaTetap.filter(a => !q || a.kode.toLowerCase().includes(q) || a.nama.toLowerCase().includes(q));
+    document.getElementById('facAsetPickerBody').innerHTML = tplFacAsetPickerRows(list);
+    wire();
+  };
+}
+
+function openFacAkunPicker(onPick){
+  const overlay = facOverlay(tplFacAkunPicker(DATA.akunGL));
+  const wire = () => overlay.querySelectorAll('[data-fac-pick-akun]').forEach(b => b.onclick = () => {
+    const akun = DATA.akunGL.find(a => a.kode === b.dataset.facPickAkun);
+    if(akun) onPick(akun);
+    closeModal();
+  });
+  wire();
+  document.getElementById('facAkunPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.akunGL.filter(a => !q || a.kode.includes(q) || a.nama.toLowerCase().includes(q));
+    document.getElementById('facAkunPickerBody').innerHTML = tplFacAkunPickerRows(list);
+    wire();
+  };
+}
+
+</script>
+<script>
+/* =========================================================
    CORE — sidebar, navigasi, dan lazy-loader modul per menu
 
    File ini SENGAJA dibuat kecil dan selalu dimuat di awal
@@ -59401,6 +61179,8 @@ const PAGE_MODULES={
   uangMukaSupplier:{srcs:['js/pages/uang-muka-supplier.template.js','js/pages/uang-muka-supplier.js'], fn:'renderUangMukaSupplierPage'},
   uangMukaCustomer:{srcs:['js/pages/uang-muka-customer.template.js','js/pages/uang-muka-customer.js'], fn:'renderUangMukaCustomerPage'},
   spEcatKhusus:{srcs:['js/pages/sp-ecat-khusus.template.js','js/pages/sp-ecat-khusus.js'], fn:'renderSpEcatKhususPage'},
+  penjualanAktivaTetap:{srcs:['js/pages/penjualan-aktiva-tetap.template.js','js/pages/penjualan-aktiva-tetap.js'], fn:'renderPenjualanAktivaTetapPage'},
+  biayaAsset:{srcs:['js/pages/biaya-asset.template.js','js/pages/biaya-asset.js'], fn:'renderBiayaAssetPage'},
   permintaanPembelian:{srcs:['js/pages/permintaan-pembelian.template.js','js/pages/permintaan-pembelian.js'], fn:'renderPermintaanPembelianPage'},
   tutupPR:{srcs:['js/pages/tutup-pr.template.js','js/pages/tutup-pr.js'], fn:'renderTutupPRPage'},
   returPB:{srcs:['js/pages/retur-penerimaan-barang.template.js','js/pages/retur-penerimaan-barang.js'], fn:'renderReturPBPage'},
