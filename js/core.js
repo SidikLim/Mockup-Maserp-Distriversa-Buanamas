@@ -184,6 +184,7 @@ const PAGE_MODULES={
   hakAksesGroup:{srcs:['js/pages/hak-akses-group.template.js','js/pages/hak-akses-group.js'], fn:'renderHakAksesGroupPage'},
   hakAksesGroupReport:{srcs:['js/pages/hak-akses-group-report.template.js','js/pages/hak-akses-group-report.js'], fn:'renderHakAksesGroupReportPage'},
   budgeting:{srcs:['js/pages/budgeting.template.js','js/pages/budgeting.js'], fn:'renderBudgetingPage'},
+  chartGrafik:{srcs:['js/pages/chart-grafik.template.js','js/pages/chart-grafik.js'], fn:'renderChartGrafikPage'},
   masterRayon:{srcs:['js/pages/master-rayon.template.js','js/pages/master-rayon.js'], fn:'renderMasterRayonPage'},
   masterWilayah:{srcs:['js/pages/master-wilayah.template.js','js/pages/master-wilayah.js'], fn:'renderMasterWilayahPage'},
   groupUser:{srcs:['js/pages/group-user.template.js','js/pages/group-user.js'], fn:'renderGroupUserPage'},

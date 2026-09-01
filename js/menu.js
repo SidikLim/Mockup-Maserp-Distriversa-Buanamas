@@ -204,7 +204,7 @@ const MENU=[
    {label:'Aktiva Tetap', page:'reportAktivaTetap'},
    {label:'Cabang', page:'reportCabang'},
    {label:'Laporan Kustom', page:'placeholder', title:'Laporan Kustom'},
-   {label:'Chart / Grafik', page:'placeholder', title:'Chart / Grafik'},
+   {label:'Chart / Grafik', page:'chartGrafik'},
    {label:'Dashboard', page:'placeholder', title:'Dashboard Laporan'},
  ]},
  {label:'Profil Perusahaan', icon:'folder', children:[
