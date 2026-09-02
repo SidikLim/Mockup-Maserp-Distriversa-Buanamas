@@ -217,6 +217,9 @@ const PAGE_MODULES={
   badanUsaha:{srcs:['js/pages/badan-usaha.template.js','js/pages/badan-usaha.js'], fn:'renderBadanUsahaPage'},
   masterStockOpname:{srcs:['js/pages/master-stock-opname.template.js','js/pages/master-stock-opname.js'], fn:'renderMasterStockOpnamePage'},
   stockOpname:{srcs:['js/pages/stock-opname.template.js','js/pages/stock-opname.js'], fn:'renderStockOpnamePage'},
+  historyCreditLimit:{srcs:['js/pages/history-credit-limit.template.js','js/pages/history-credit-limit.js'], fn:'renderHistoryCreditLimitPage'},
+  rumusKomisiSalesman:{srcs:['js/pages/rumus-komisi-salesman.template.js','js/pages/rumus-komisi-salesman.js'], fn:'renderRumusKomisiSalesmanPage'},
+  alasanRetur:{srcs:['js/pages/alasan-retur.template.js','js/pages/alasan-retur.js'], fn:'renderAlasanReturPage'},
 };
 const loadedModules=new Set();
 

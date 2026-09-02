@@ -874,6 +874,131 @@ const DATA = {
     legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'NPWP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'SKPKP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
     legalitasPemilik:[{syarat:'KTP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Nama Penanggung Jawab', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}]},
   ],
+  /* =========================================================
+     History Credit Limit Customer (Customer & Penjualan >
+     Master & Setting > History Credit Limit, page:
+     'historyCreditLimit') — ditambahkan 2026-09-02. TIDAK ADA
+     screenshot MASERP untuk halaman History-nya sendiri (lihat
+     catatan lengkap di js/pages/history-credit-limit.template.js)
+     — 16 baris di bawah adalah jejak audit (log) perubahan
+     Credit Limit/Dominasi Limit untuk 10 customer DBM yang
+     SUDAH ADA di DATA.customers di atas.
+
+     Baris berstatus "Disetujui" TERAKHIR per customer per jenis
+     limit SENGAJA disamakan persis dengan `limit`/`dominasiLimit`
+     yang sudah ada di DATA.customers (satu sumber kebenaran yang
+     sama, bukan angka independen) — konsisten precedent Master
+     Stock Opname (`sistem` diambil dari DATA.persediaan). 2 baris
+     berstatus "Pending" & 1 baris "Ditolak" sengaja ditambahkan
+     (tidak memengaruhi limit berjalan customer terkait) supaya
+     ketiga status bisa didemokan di halaman History-nya.
+
+     `diajukanOleh`/`disetujuiOleh` diambil dari nama staf yang
+     SUDAH ADA di DATA.users (role FIN untuk pengaju, role MGR
+     untuk penyetuju) — bukan nama fiktif baru. */
+  historyCreditLimit:[
+    {customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', tanggal:'15/03/2026', jenis:'Credit Limit', limitLama:35000000, limitBaru:50000000, diajukanOleh:'Putri Hidayat', disetujuiOleh:'Sigit Susanto', status:'Disetujui', keterangan:'Kenaikan limit rutin tahunan sesuai rata-rata omzet 6 bulan terakhir'},
+    {customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', tanggal:'15/03/2026', jenis:'Dominasi Limit', limitLama:7000000, limitBaru:10000000, diajukanOleh:'Putri Hidayat', disetujuiOleh:'Sigit Susanto', status:'Disetujui', keterangan:'Penyesuaian dominasi limit mengikuti kenaikan Credit Limit pada batch pengajuan yang sama'},
+    {customerKode:'CUST-002', customerNama:'UD Makmur Jaya', tanggal:'22/02/2026', jenis:'Credit Limit', limitLama:25000000, limitBaru:35000000, diajukanOleh:'Yulia Anggraini', disetujuiOleh:'Amalia Rahmawati', status:'Disetujui', keterangan:'Permintaan customer karena peningkatan volume order bulanan'},
+    {customerKode:'CUST-003', customerNama:'CV Berkah Abadi', tanggal:'05/01/2026', jenis:'Credit Limit', limitLama:15000000, limitBaru:20000000, diajukanOleh:'Tono Kusuma', disetujuiOleh:'Gita Puspitasari', status:'Disetujui', keterangan:'Kenaikan limit rutin tahunan sesuai rata-rata omzet 6 bulan terakhir'},
+    {customerKode:'CUST-003', customerNama:'CV Berkah Abadi', tanggal:'28/08/2026', jenis:'Credit Limit', limitLama:20000000, limitBaru:25000000, diajukanOleh:'Tono Kusuma', disetujuiOleh:'', status:'Pending', keterangan:'Menunggu approval Finance Manager'},
+    {customerKode:'CUST-004', customerNama:'Toko Anugrah', tanggal:'18/04/2026', jenis:'Credit Limit', limitLama:10000000, limitBaru:15000000, diajukanOleh:'Andri Kurniawan', disetujuiOleh:'Sari Hidayat', status:'Disetujui', keterangan:'Kenaikan limit rutin tahunan sesuai rata-rata omzet 6 bulan terakhir'},
+    {customerKode:'CUST-005', customerNama:'UD Sinar Harapan', tanggal:'02/02/2026', jenis:'Credit Limit', limitLama:8000000, limitBaru:12000000, diajukanOleh:'Taufik Permana', disetujuiOleh:'Vera Kusuma', status:'Disetujui', keterangan:'Kenaikan limit rutin tahunan sesuai rata-rata omzet 6 bulan terakhir'},
+    {customerKode:'CUST-005', customerNama:'UD Sinar Harapan', tanggal:'10/06/2026', jenis:'Credit Limit', limitLama:12000000, limitBaru:15000000, diajukanOleh:'Hendra Handayani', disetujuiOleh:'Hadi Anggraini', status:'Ditolak', keterangan:'Ditolak karena riwayat keterlambatan pembayaran 2 bulan terakhir'},
+    {customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya', tanggal:'12/03/2026', jenis:'Credit Limit', limitLama:20000000, limitBaru:28000000, diajukanOleh:'Putri Hidayat', disetujuiOleh:'Sigit Susanto', status:'Disetujui', keterangan:'Kenaikan limit mengikuti perluasan jaringan toko'},
+    {customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya', tanggal:'12/03/2026', jenis:'Dominasi Limit', limitLama:4000000, limitBaru:5600000, diajukanOleh:'Putri Hidayat', disetujuiOleh:'Sigit Susanto', status:'Disetujui', keterangan:'Penyesuaian dominasi limit mengikuti kenaikan Credit Limit pada batch pengajuan yang sama'},
+    {customerKode:'CUST-007', customerNama:'CV Maju Terus', tanggal:'25/01/2026', jenis:'Credit Limit', limitLama:6000000, limitBaru:9000000, diajukanOleh:'Yulia Anggraini', disetujuiOleh:'Amalia Rahmawati', status:'Disetujui', keterangan:'Kenaikan limit rutin tahunan sesuai rata-rata omzet 6 bulan terakhir'},
+    {customerKode:'CUST-008', customerNama:'Toko Sejahtera', tanggal:'08/05/2026', jenis:'Credit Limit', limitLama:12500000, limitBaru:17500000, diajukanOleh:'Tono Kusuma', disetujuiOleh:'Gita Puspitasari', status:'Disetujui', keterangan:'Kenaikan limit rutin tahunan sesuai rata-rata omzet 6 bulan terakhir'},
+    {customerKode:'CUST-008', customerNama:'Toko Sejahtera', tanggal:'30/08/2026', jenis:'Credit Limit', limitLama:17500000, limitBaru:22000000, diajukanOleh:'Tono Kusuma', disetujuiOleh:'', status:'Pending', keterangan:'Menunggu approval Finance Manager'},
+    {customerKode:'CUST-009', customerNama:'PT Family Mart Indonesia', tanggal:'20/02/2026', jenis:'Credit Limit', limitLama:75000000, limitBaru:100000000, diajukanOleh:'Andri Kurniawan', disetujuiOleh:'Sari Hidayat', status:'Disetujui', keterangan:'Customer korporat — kenaikan limit sesuai kontrak distribusi nasional'},
+    {customerKode:'CUST-010', customerNama:'Toko Family Mart Sentosa', tanggal:'14/04/2026', jenis:'Credit Limit', limitLama:14000000, limitBaru:20000000, diajukanOleh:'Hendra Handayani', disetujuiOleh:'Hadi Anggraini', status:'Disetujui', keterangan:'Kenaikan limit rutin tahunan sesuai rata-rata omzet 6 bulan terakhir'},
+    {customerKode:'CUST-010', customerNama:'Toko Family Mart Sentosa', tanggal:'14/04/2026', jenis:'Dominasi Limit', limitLama:3000000, limitBaru:4000000, diajukanOleh:'Hendra Handayani', disetujuiOleh:'Hadi Anggraini', status:'Disetujui', keterangan:'Penyesuaian dominasi limit mengikuti kenaikan Credit Limit pada batch pengajuan yang sama'},
+  ],
+  /* =========================================================
+     Rumus Komisi Salesman (Customer & Penjualan > Master &
+     Setting > Rumus Komisi Salesman, page:'rumusKomisiSalesman')
+     — ditambahkan 2026-09-02 sesuai 2 screenshot MASERP yang
+     dikirim user ("Daftar Rencana Komisi Salesman" & form
+     "Komisi Sales", lihat catatan lengkap di
+     js/pages/rumus-komisi-salesman.template.js). Screenshot list
+     aslinya menampilkan "Total Record: 0" (instalasi DBM memang
+     belum diisi) — SENGAJA diisi 3 baris sample di bawah supaya
+     fitur tiering-nya bisa didemokan, bukan direplikasi persis
+     kondisi kosongnya.
+
+     Tiap baris = 1 rumus komisi dengan TEPAT 5 tingkat (tier)
+     berjenjang berdasar rentang omzet (Jumlah Minimum–Maksimum)
+     → persentase komisi. Tingkat 5 dipakai sebagai tingkat
+     "tak terbatas ke atas" (max 999.999.999). Angka % & rentang
+     rupiah murni ilustratif (tidak ada acuan angka nyata dari
+     screenshot, karena tabelnya kosong) — disusun naik bertahap
+     per tingkat supaya masuk akal secara bisnis. */
+  rumusKomisiSalesman:[
+    {kode:'KOM-001', keterangan:'Komisi Reguler Salesman FMCG', tingkat:[
+      {min:0, max:10000000, persen:0.5},
+      {min:10000000, max:25000000, persen:0.75},
+      {min:25000000, max:50000000, persen:1},
+      {min:50000000, max:100000000, persen:1.25},
+      {min:100000000, max:999999999, persen:1.5},
+    ]},
+    {kode:'KOM-002', keterangan:'Komisi Khusus Produk Promo', tingkat:[
+      {min:0, max:5000000, persen:0.25},
+      {min:5000000, max:15000000, persen:0.5},
+      {min:15000000, max:30000000, persen:0.75},
+      {min:30000000, max:60000000, persen:1},
+      {min:60000000, max:999999999, persen:1.25},
+    ]},
+    {kode:'KOM-003', keterangan:'Komisi Corporate Account', tingkat:[
+      {min:0, max:50000000, persen:0.25},
+      {min:50000000, max:100000000, persen:0.4},
+      {min:100000000, max:250000000, persen:0.6},
+      {min:250000000, max:500000000, persen:0.8},
+      {min:500000000, max:999999999, persen:1},
+    ]},
+  ],
+  /* =========================================================
+     Alasan Retur (Customer & Penjualan > Master & Setting >
+     Alasan Retur, page:'alasanRetur') — ditambahkan 2026-09-02
+     sesuai screenshot MASERP "Alasan Retur" yang dikirim user
+     (Total Record: 30). SELURUH 30 baris di bawah DIPERTAHANKAN
+     PERSIS urutan & isi screenshot (kode alasan retur generik
+     proses bisnis distribusi FMCG, bukan data rahasia instalasi
+     lain — precedent sama Report Center/Alasan Belum Tertagih).
+     `tipe` SENGAJA tidak unik per baris (banyak baris berbagi
+     Type yang sama, mis. "Koreksi Faktur" 5 baris) — lihat
+     catatan lengkap di js/pages/alasan-retur.template.js. */
+  alasanRetur:[
+    {tipe:'Ada Order PBF Lain', alasan:'Ada Order PBF Lain'},
+    {tipe:'Bad Debt', alasan:'Outlet Tidak Mampu Bayar'},
+    {tipe:'Barang Rusak Oleh Ekspedisi', alasan:'Barang Rusak Oleh Ekspedisi'},
+    {tipe:'Barang Tidak Terjual di Outlet', alasan:'Barang Tidak Terjual di Outlet'},
+    {tipe:'Ditolak ED Dekat', alasan:'Ditolak ED Dekat'},
+    {tipe:'Double Order dari Outlet', alasan:'Double Order dari Outlet'},
+    {tipe:'Gudang Tidak Kirim Barang', alasan:'Gudang Tidak Kirim Barang'},
+    {tipe:'Kesalahan CS', alasan:'Double Input'},
+    {tipe:'Kesalahan CS', alasan:'Kesalahan CS Salah Item/Qty/Tidak Pilih DPF'},
+    {tipe:'Kesalahan DPF/L', alasan:'Salah Nilai/Amount Diskon/DPL Sudah Tidak Berlaku'},
+    {tipe:'Kesalahan DPF/L', alasan:'Salah Produk'},
+    {tipe:'Kesalahan DPF/L', alasan:'Salah Konversi/QTY'},
+    {tipe:'Kesalahan Inkaso', alasan:'Koreksi Faktur Pindah Bulan'},
+    {tipe:'Kesalahan Inkaso', alasan:'Faktur Pajak Expired (Telat Memberikan Faktur Pajak)'},
+    {tipe:'Kesalahan Team Salesforce', alasan:'Order Untuk PBF Lain'},
+    {tipe:'Kesalahan Team Salesforce', alasan:'Terlambat Memasukkan Tagihan'},
+    {tipe:'Kesalahan Team Salesforce', alasan:'Double Upload Order'},
+    {tipe:'Koreksi Faktur', alasan:'Awal Konfirmasi Bisa Layanan Parsial Ternyata Minta Faktur Dijadikan Satu'},
+    {tipe:'Koreksi Faktur', alasan:'Pecah Faktur'},
+    {tipe:'Koreksi Faktur', alasan:'Faktur Terbit Sebelum Ada SPK Terbit'},
+    {tipe:'Koreksi Faktur', alasan:'Pergantian NPWP'},
+    {tipe:'Koreksi Faktur', alasan:'Perbedaan Harga E-KAT (Besaran Discount)'},
+    {tipe:'Lain-lain', alasan:'(...isi manual...)'},
+    {tipe:'Mendekati ED/ED', alasan:'Retur Mendekati ED/ED'},
+    {tipe:'Mutu Produk', alasan:'Mutu Produk'},
+    {tipe:'Outlet Tidak Merasa Pesan', alasan:'Outlet Tidak Merasa Pesan'},
+    {tipe:'Recall/Penarikan', alasan:'Recall/Penarikan'},
+    {tipe:'Salah SP', alasan:'Outlet Salah Pesan Barang'},
+    {tipe:'Terlambat Pengiriman', alasan:'Terlambat Pengiriman'},
+    {tipe:'Terlambat Pengiriman', alasan:'Pengiriman Atas Order GIT/Pesta'},
+  ],
   supplierGroup:[
     {kode:'VND000', nama:'NONE', diskon1:0, diskon2:0},
     {kode:'VND001', nama:'PRINSIPAL', diskon1:0, diskon2:0},
