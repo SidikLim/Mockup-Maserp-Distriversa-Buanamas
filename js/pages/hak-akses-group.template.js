@@ -30,7 +30,7 @@ const HAG_MODULES = [
   {nama:'SHELL', items:['Login Multi Cabang','Ganti Password','Kunci Layar','Notifikasi']},
   {nama:'DASHBOARD', items:['Dashboard Utama','Dashboard Supplier & Pembelian','Dashboard Customer & Penjualan','Dashboard Persediaan Barang','Dashboard Kas/Bank','Dashboard General Ledger']},
   {nama:'PURCHASING', items:['Purchase Order','Permintaan Pembelian','Terima Barang','Pembelian Melalui BPB','Pembelian Langsung','Pembelian dari PO','Retur Pembelian','Pelunasan Utang','Pengajuan Pembayaran','Uang Muka Supplier']},
-  {nama:'SALES', items:['Sales Quotation','Sales Order','Picking List','Invoice','Retur Penjualan','Uang Muka Customer','Surat Pesanan Ekatalog & Khusus','T3F','Daftar Tagih Piutang','Penerimaan Piutang']},
+  {nama:'SALES', items:['Sales Quotation','Sales Order','Picking List','Surat Jalan','Retur Penjualan','Uang Muka Customer','Surat Pesanan Ekatalog & Khusus','T3F','Daftar Tagih Piutang','Penerimaan Piutang']},
   {nama:'INVENTORY', items:['Persediaan Barang','Stock Request','Transaksi Persediaan','Master Stock Opname','Stock Opname','Reordering Sheet']},
   {nama:'BANK', items:['Master Bank','Transaksi Kas','Jurnal Kas Lain-Lain','Daftar Giro Mundur','Rekonsiliasi']},
   {nama:'MANUFACTURING', items:['Work Order','Bill of Material','Hasil Produksi']},

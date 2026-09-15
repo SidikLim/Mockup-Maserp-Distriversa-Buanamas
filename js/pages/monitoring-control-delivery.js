@@ -94,7 +94,7 @@ function renderMcdTable(){
 function mcdOpenInvoice(idx){
   const row = DATA.invoices[idx];
   if(!row) return;
-  goToPage('invoices', 'Invoice', () => {
+  goToPage('invoices', 'Surat Jalan', () => {
     const invIdx = DATA.invoices.findIndex(x => x.no === row.no);
     // NB: modul Invoice cuma mengenal mode 'add'/'edit' (tidak ada mode
     // 'view' sungguhan — lihat openInvForm() di invoice.js, isAdd =

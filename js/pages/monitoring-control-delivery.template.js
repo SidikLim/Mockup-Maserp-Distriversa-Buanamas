@@ -10,7 +10,13 @@
    murni sejak awal `js/menu.js`) sesuai 5 screenshot MASERP yang
    dikirim user 2026-08-26: list "Monitoring Control Delivery
    List" (toolbar page-size+Global Search+dropdown status "All"+
-   chip periode dekoratif, kolom No Invoice/No Picking List/No.
+   chip periode dekoratif, kolom No Invoice [2026-09-15: kolom ini
+   & seluruh sebutan "Invoice" di modul Invoice sendiri sudah
+   di-rename jadi "Surat Jalan" di UI — lihat catatan lengkap di
+   header invoice.template.js/di atas DATA.invoices, js/data.js;
+   komentar historis di bawah ini SENGAJA dibiarkan menyebut
+   "Invoice" apa adanya karena menjelaskan screenshot ASLI 2026-08-26]/
+   No Picking List/No.
    S.O./Tgl. S.J./Customer/Status/History/Update Status, pager
    windowed, Total Record besar [1218 di instalasi Sidik sendiri]),
    modal "History Monitoring Control Delivery" (tabel Tanggal/
@@ -89,8 +95,8 @@
    ke-clip oleh `.table-wrap{overflow-x:auto}` pada tabel list. */
 
 const MCD_STATUSES = [
-  'Create Invoice',
-  'Print Invoice',
+  'Create Surat Jalan',
+  'Print Surat Jalan',
   'Serah Terima ke Tim Pengantar (G)',
   'Diterima Sales Office (SO)',
   'Serah Terima ke Tim Pengantar (SO)',
@@ -116,7 +122,7 @@ function tplMcdListPage(){
       </div>
       <div class="table-wrap"><table>
         <thead><tr>
-          <th>No Invoice</th>
+          <th>No Surat Jalan</th>
           <th>No Picking List</th>
           <th>No. S.O.</th>
           <th>Tgl. S.J.</th>

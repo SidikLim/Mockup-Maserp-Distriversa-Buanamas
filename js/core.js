@@ -160,6 +160,7 @@ const PAGE_MODULES={
   pickingList:{srcs:['js/pages/picking-list.template.js','js/pages/picking-list.js'], fn:'renderPickingListPage'},
   invoices:{srcs:['js/pages/invoice.template.js','js/pages/invoice.js'], fn:'renderInvoicePage'},
   fakturPenjualanSJ:{srcs:['js/pages/faktur-penjualan-sj.template.js','js/pages/faktur-penjualan-sj.js'], fn:'renderFakturPenjualanSJPage'},
+  penjualanLangsung:{srcs:['js/pages/penjualan-langsung.template.js','js/pages/penjualan-langsung.js'], fn:'renderPenjualanLangsungPage'},
   gudang:{srcs:['js/pages/gudang.template.js','js/pages/gudang.js'], fn:'renderGudangPage'},
   kasBank:{srcs:['js/pages/kas-bank.template.js','js/pages/kas-bank.js'], fn:'renderKasBankPage'},
   masterBank:{srcs:['js/pages/master-bank.template.js','js/pages/master-bank.js'], fn:'renderMasterBankPage'},

@@ -215,8 +215,8 @@ function tplRpjForm(mode, row){
           <div class="form-group">
             <label>No. Faktur Jual</label>
             <div class="input-with-btn">
-              <input type="text" id="fRpjNoFakturJual" value="${row.noFakturJual||''}" placeholder="Pilih Sales Invoice" readonly>
-              ${!isView ? `<button type="button" class="icon-btn edit" id="rpjFakturSearch" title="Cari Sales Invoice">${icon('search',13)}</button>
+              <input type="text" id="fRpjNoFakturJual" value="${row.noFakturJual||''}" placeholder="Pilih Surat Jalan" readonly>
+              ${!isView ? `<button type="button" class="icon-btn edit" id="rpjFakturSearch" title="Cari Surat Jalan">${icon('search',13)}</button>
               <button type="button" class="icon-btn del" id="rpjFakturClear" title="Hapus Faktur Terpilih">${icon('trash',13)}</button>` : ''}
             </div>
           </div>
@@ -351,7 +351,7 @@ function tplRpjBarangTab(row, isView){
       </table>
     </div>
     <a href="#" id="rpjTambahItem" class="link-add" style="${isView?'display:none;':''}">${icon('plus',12)} Tambah Item Baru</a>
-    <div id="rpjItemsEmptyHint" style="font-size:11.5px;color:var(--text-light);margin-top:6px;${(row.items&&row.items.length)?'display:none;':''}">Belum ada barang — pilih No. Faktur Jual (Sales Invoice) terlebih dahulu, barang faktur itu akan tampil di sini untuk diretur.</div>`;
+    <div id="rpjItemsEmptyHint" style="font-size:11.5px;color:var(--text-light);margin-top:6px;${(row.items&&row.items.length)?'display:none;':''}">Belum ada barang — pilih No. Faktur Jual (Surat Jalan) terlebih dahulu, barang faktur itu akan tampil di sini untuk diretur.</div>`;
 }
 
 function tplRpjItemRows(items, isView){
@@ -596,7 +596,7 @@ function tplRpjCetakBapbr(row){
     </div>`;
 }
 
-/* Picker Customer & Sales Invoice & Akun GL — salinan lokal pola
+/* Picker Customer & Surat Jalan & Akun GL — salinan lokal pola
    modul transaksi lain. */
 function tplRpjCustomerPicker(list){
   return `
@@ -624,7 +624,7 @@ function tplRpjCustomerPickerRows(list){
 function tplRpjFakturPicker(list){
   return `
     <div class="modal-box" style="max-width:760px;">
-      <div class="modal-header"><span>Pilih Sales Invoice</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-header"><span>Pilih Surat Jalan</span><span class="close" id="modalClose">&times;</span></div>
       <div class="modal-body">
         <input type="text" id="rpjFakturPickerSearch" placeholder="Cari no. faktur / customer..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
         <div class="table-wrap" style="max-height:340px;overflow:auto;">

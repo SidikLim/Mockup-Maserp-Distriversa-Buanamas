@@ -22,7 +22,7 @@ function tplMainDashboard(){
     <div class="flow-row">
       <div class="flow-step"><div class="flow-box">${icon('file',28)}</div><div class="flow-label">Sales Order</div></div>
       <div class="flow-arrow">&#8594;</div>
-      <div class="flow-step"><div class="flow-box">${icon('truck',28)}</div><div class="flow-label">Invoice</div></div>
+      <div class="flow-step"><div class="flow-box">${icon('truck',28)}</div><div class="flow-label">Surat Jalan</div></div>
       <div class="flow-arrow">&#8594;</div>
       <div class="flow-step"><div class="flow-box">${icon('card',28)}</div><div class="flow-label">Faktur Penjualan</div></div>
       <div class="flow-arrow">&#8594;</div>

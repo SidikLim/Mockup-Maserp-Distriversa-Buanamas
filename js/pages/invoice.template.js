@@ -11,6 +11,28 @@
    logic, modal, & konvensi penamaan konstanta PKL_* ditiru persis
    di sini sebagai INV_*).
 
+   2026-09-15 (lanjutan): SELURUH teks tampilan modul ini (label menu
+   sidebar, breadcrumb, judul list/form, kolom "No Invoice", tombol
+   cetak, modal Hapus/Posting, judul dokumen cetak) di-RENAME dari
+   "Invoice" jadi "Surat Jalan" atas permintaan eksplisit Sidik —
+   nama identifier kode (INV_*, fungsi tplInv.../renderInv..., nama file
+   invoice.template.js/invoice.js, key `page:'invoices'`,
+   `DATA.invoices`, field `row.no`) SENGAJA TIDAK diubah (di luar
+   cakupan permintaan, resiko putus koneksi ke modul lain seperti
+   Monitoring Control Delivery/Faktur Penjualan Via S.J./Retur
+   Penjualan/dashboard yang semuanya membaca `DATA.invoices`).
+   Field "No. SJ"/`row.noSJ` (nomor pengantar TERPISAH dari nomor
+   dokumen utama `row.no` — 1 dokumen modul ini selalu punya persis
+   1 Surat Jalan pengantar sendiri, lihat komentar di atas
+   `invGenerateNumbers()` di invoice.js) SENGAJA JUGA TIDAK diubah, atas
+   keputusan eksplisit user setelah ditawari opsi — lihat komentar
+   di atas `tplInvCetakDropdown()` untuk detail konsekuensinya
+   (dropdown "Pilihan Cetak" jadi punya 2 opsi "Surat Jalan" [dokumen
+   utama] + 1 opsi "Cetak Lampiran Surat Jalan" [row.noSJ terpisah]).
+   Field "No. IVC" (singkatan "Invoice") juga SENGAJA dibiarkan
+   apa adanya untuk hindari duplikat label dengan "No. SJ" di
+   baris sebelahnya — lihat komentar di atas baris itu di tplInvForm().
+
    Sebelumnya page:'invoices' cuma pemetaan generik read-only
    ({title,cols,rows} di objek `pages` dalam renderPage(), js/core.js,
    dengan 10 baris dummy {no,tgl,customer,jumlah,status} tanpa
@@ -71,14 +93,14 @@ function invFindPL(no){ return DATA.pickingList.find(p => p.no === no); }
 
 function tplInvoiceListPage(){
   return `
-    <div class="breadcrumb">Home / <b>Invoice</b></div>
+    <div class="breadcrumb">Home / <b>Surat Jalan</b></div>
     <div class="card">
       <div class="card-header dark-header">
-        <h3>${icon('invoice',15)} Invoices</h3>
+        <h3>${icon('invoice',15)} Daftar Surat Jalan</h3>
         <div class="toolbar-actions">
           <button class="chip-btn" id="btnInvPickingReq" style="background:var(--teal);">Picking Requested</button>
           <button class="chip-btn" id="btnInvTsFilter">${icon('search',12)} TS</button>
-          <select class="chip-btn" id="invStatusFilter"><option>All</option><option>Create Invoice</option><option>Invoice Selesai</option></select>
+          <select class="chip-btn" id="invStatusFilter"><option>All</option><option>Create Surat Jalan</option><option>Surat Jalan Selesai</option></select>
           <select class="chip-btn" id="invPeriodFilter"><option>Agustus 2026</option></select>
           <button class="btn-primary" id="btnInvAdd">${icon('plus',14)} Tambah</button>
         </div>
@@ -89,7 +111,7 @@ function tplInvoiceListPage(){
       </div>
       <div class="table-wrap"><table>
         <thead><tr>
-          <th>No Invoice</th>
+          <th>No Surat Jalan</th>
           <th>No SP</th>
           <th>Customer</th>
           <th>Area</th>
@@ -108,7 +130,7 @@ function tplInvoiceListPage(){
 }
 
 function tplInvRows(rows){
-  if(!rows.length) return `<tr><td colspan="11" style="color:var(--text-light);">Tidak ada data Invoice</td></tr>`;
+  if(!rows.length) return `<tr><td colspan="11" style="color:var(--text-light);">Tidak ada data Surat Jalan</td></tr>`;
   return rows.map((r,i)=>{
     const dis = r.posted ? 'disabled' : '';
     const disStyle = r.posted ? 'opacity:.4;pointer-events:none;' : '';
@@ -144,16 +166,34 @@ function tplInvRows(rows){
    2 contoh cetakan PDF Invoice yang dikirim user (lihat catatan desain
    lengkap di header tplInvPrintDoc() di bawah). "Cetak Surat Jalan"
    TETAP dekoratif (belum ada contoh cetakan Surat Jalan yang dikirim,
-   di luar cakupan permintaan kali ini). */
+   di luar cakupan permintaan kali ini).
+
+   2026-09-15 (lanjutan): seluruh modul ini (menu/breadcrumb/judul/dsb)
+   di-rename dari "Invoice" jadi "Surat Jalan" atas permintaan Sidik
+   (lihat komentar besar di atas DATA.invoices di js/data.js untuk
+   penjelasan lengkap). Field "No. SJ"/`row.noSJ` (nomor pengantar
+   TERPISAH, format 26/SJ/..., beda dari nomor dokumen utama row.no
+   format 26/SI/...) SENGAJA TIDAK diubah — atas keputusan eksplisit
+   user, model datanya ("1 dokumen ini selalu punya persis 1 Surat
+   Jalan pengantar terpisah") tetap dipertahankan apa adanya. Akibatnya
+   di dropdown "Pilihan Cetak" ini SEKARANG ADA 3 opsi yang sama-sama
+   menyebut "Surat Jalan" — 2 opsi PERTAMA (Half/Full Page) mencetak
+   DOKUMEN UTAMA halaman ini sendiri (yang sekarang bernama "Surat
+   Jalan" di seluruh UI), opsi KETIGA tetap mencetak lampiran
+   pengantar terpisah (`row.noSJ`) yang sudah ada sebelumnya — supaya
+   tidak membingungkan 3 opsi mirip dalam 1 dropdown, opsi ketiga ini
+   diberi label lebih spesifik "Cetak Lampiran Surat Jalan" (bukan
+   sekadar "Cetak Surat Jalan" seperti sebelumnya) TANPA mengubah
+   `id="invCetakSJ"`/wiring/data `row.noSJ`-nya sama sekali. */
 function tplInvCetakDropdown(row){
   return `
     <div class="modal-box" style="max-width:340px;">
       <div class="modal-header"><span>Pilihan Cetak</span><span class="close" id="modalClose">&times;</span></div>
       <div class="modal-body">
         <div style="display:flex;flex-direction:column;gap:8px;">
-          <button class="btn-secondary" id="invCetakHalf" style="text-align:left;">${icon('printer',13)} Cetak Invoice - Half Page</button>
-          <button class="btn-secondary" id="invCetakFull" style="text-align:left;">${icon('printer',13)} Cetak Invoice - Full Page</button>
-          <button class="btn-secondary" id="invCetakSJ" style="text-align:left;">${icon('printer',13)} Cetak Surat Jalan</button>
+          <button class="btn-secondary" id="invCetakHalf" style="text-align:left;">${icon('printer',13)} Cetak Surat Jalan - Half Page</button>
+          <button class="btn-secondary" id="invCetakFull" style="text-align:left;">${icon('printer',13)} Cetak Surat Jalan - Full Page</button>
+          <button class="btn-secondary" id="invCetakSJ" style="text-align:left;">${icon('printer',13)} Cetak Lampiran Surat Jalan</button>
         </div>
       </div>
       <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
@@ -325,14 +365,24 @@ function tplInvForm(mode, row){
   const titleAction = isAdd ? 'Tambah' : 'Ubah';
   const headerIcon = isAdd ? 'plus' : 'edit';
   return `
-    <div class="breadcrumb">Home / Invoice / <b>${titleAction}</b></div>
+    <div class="breadcrumb">Home / Surat Jalan / <b>${titleAction}</b></div>
     <div class="card">
       <div class="card-header dark-header">
-        <h3>${icon(headerIcon,15)} ${isAdd?'+ Invoice':'Invoice'}</h3>
+        <h3>${icon(headerIcon,15)} ${isAdd?'+ Surat Jalan':'Surat Jalan'}</h3>
       </div>
       <div class="card-body">
-        <h2 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px;">INVOICE</h2>
+        <h2 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px;">SURAT JALAN</h2>
 
+        <!-- 2026-09-15: label "No. IVC" (No. SP di kolom list) SENGAJA
+             TIDAK diubah walau "IVC" singkatan dari "Invoice" — kalau
+             diganti ke "No. SJ" akan bentrok/duplikat persis dengan
+             label "No. SJ" di baris tepat di bawahnya (field terpisah
+             row.noSJ, lihat komentar besar di atas DATA.invoices di
+             js/data.js & di atas tplInvCetakDropdown()). Baris "No. IVC"
+             ini menampilkan row.no (nomor dokumen utama, format
+             26/SI/...) — konsisten dengan kolom "No Surat Jalan" di
+             list (juga row.no), hanya labelnya di form ini yang belum
+             sempat disamakan, di luar cakupan permintaan rename ini. -->
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
           <table class="field-table">
             <tr>
@@ -519,8 +569,8 @@ function tplInvForm(mode, row){
 function tplInvDeleteConfirm(row){
   return `
     <div class="modal-box">
-      <div class="modal-header"><span>Hapus Invoice</span><span class="close" id="modalClose">&times;</span></div>
-      <div class="modal-body"><p>Yakin ingin menghapus Invoice <b>${row.no}</b>?</p></div>
+      <div class="modal-header"><span>Hapus Surat Jalan</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Surat Jalan <b>${row.no}</b>?</p></div>
       <div class="modal-footer">
         <button class="btn-secondary" id="modalCancel">Batal</button>
         <button class="btn-danger" id="modalDelete">Hapus</button>
@@ -546,8 +596,8 @@ function tplInvInfoModal(title,text){
 function tplInvPostingConfirm(row){
   return `
     <div class="modal-box">
-      <div class="modal-header"><span>Posting Invoice</span><span class="close" id="modalClose">&times;</span></div>
-      <div class="modal-body"><p>Posting Invoice <b>${row.no}</b> ini ke General Ledger? Setelah di-posting, invoice tidak dapat diubah atau dihapus lagi.</p></div>
+      <div class="modal-header"><span>Posting Surat Jalan</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Posting Surat Jalan <b>${row.no}</b> ini ke General Ledger? Setelah di-posting, Surat Jalan tidak dapat diubah atau dihapus lagi.</p></div>
       <div class="modal-footer">
         <button class="btn-secondary" id="modalCancel">Batal</button>
         <button class="btn-primary" id="modalConfirm">Ya, Posting</button>
@@ -823,7 +873,7 @@ function tplInvPrintDoc(row, mode){
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>${isFull ? 'Invoice Full Page' : 'Invoice Half Page'} - ${row.no}</title>
+<title>${isFull ? 'Surat Jalan Full Page' : 'Surat Jalan Half Page'} - ${row.no}</title>
 <style>
   * { box-sizing:border-box; }
   body { font-family:Arial, Helvetica, sans-serif; font-size:${isFull?'11.5px':'10.5px'}; color:#33384a; margin:0; padding:0; background:#e9ebf1; }
@@ -885,7 +935,7 @@ function tplInvPrintDoc(row, mode){
             </div>
           </div>
         </td>
-        <td class="hdr-title-cell">INVOICE</td>
+        <td class="hdr-title-cell">SURAT JALAN</td>
       </tr>
       <tr>
         <td>
@@ -973,7 +1023,7 @@ function tplInvPrintDoc(row, mode){
           <div class="perhatian">
             <b>Perhatian;</b><br>
             1. Barang yang telah diterima dengan baik tidak dapat dikembalikan atau ditukar dengan barang lain.<br>
-            2. Invoice ASLI berlaku sebagai kwitansi<br>
+            2. Surat Jalan ASLI berlaku sebagai kwitansi<br>
             3. Tidak menerima pembayaran tunai<br>
             4. Pembayaran dengan Cheque atau Giro harus ada atas nama ${INV_PRINT_COMPANY.nama} dan dianggap lunas setelah diuangkan
           </div>

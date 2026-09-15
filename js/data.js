@@ -2041,9 +2041,31 @@ const DATA = {
      masing-masing sampai seq 2) — konsisten dengan format nomor
      26/PKL/.../08/... & 26/SO/.../08/... yang sudah ada. 3 baris (index 1,
      4, 7 di bawah -- sumber Picking List yang sudah 'Terkirim') ditandai
-     posted:true/ts:'Invoice Selesai' dari awal supaya perilaku tombol
+     posted:true/ts:'Surat Jalan Selesai' dari awal supaya perilaku tombol
      Ubah/Hapus/Posting yang disabled langsung terlihat tanpa perlu
      mengklik apa pun lebih dulu.
+
+     2026-09-15 (lanjutan): SELURUH teks tampilan modul "Invoice" ini
+     di-rename jadi "Surat Jalan" atas permintaan eksplisit Sidik (lihat
+     catatan lengkap di header invoice.template.js/invoice.js) — key
+     `invoices`/field/fungsi TIDAK berubah nama. Field literal di baris
+     bawah yang IKUT diubah karena benar-benar dirender ke UI: `ts`
+     ('Create Invoice'/'Invoice Selesai' -> 'Create Surat Jalan'/'Surat
+     Jalan Selesai'), `keterangan`, dan `mcdHistory[].status`/`.keterangan`
+     (dipakai Monitoring Control Delivery, lihat js/pages/monitoring-
+     control-delivery.*). SATU kalimat SENGAJA DITULIS ULANG (bukan cuma
+     ganti kata) karena kalau di-substitusi apa adanya jadi kontradiktif:
+     kalimat asli "Invoice dicetak untuk dilampirkan ke Surat Jalan."
+     (Invoice = dokumen utama modul ini, "Surat Jalan" di situ merujuk ke
+     field noSJ yang TERPISAH & SENGAJA TIDAK di-rename — lihat keputusan
+     di header invoice.template.js) — kalau "Invoice" diganti "Surat
+     Jalan" apa adanya jadi "Surat Jalan dicetak untuk dilampirkan ke
+     Surat Jalan." (sirkular/membingungkan, 1 dokumen seolah dilampirkan
+     ke dirinya sendiri). Disederhanakan jadi "Surat Jalan dicetak untuk
+     pengiriman barang." — tetap merepresentasikan event yang sama
+     (dokumen dicetak sebelum barang dikirim), tanpa klaim spesifik
+     soal lampiran ke noSJ yang sudah tidak bisa dinyatakan dengan
+     jelas pasca-rename ini.
 
      2026-08-26 — field BARU `mcdHistory` (array riwayat status
      pengiriman: {tanggal, username, status, keterangan, printBadge?})
@@ -2067,16 +2089,16 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'11/08/2026',
       syaratBayar:'Kredit 30 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
       shipVia:'Driver', noResi:'', driver:'Maulana Sidik - L 8753 GE (CDE)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/TGR/08/00168.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/TGR/08/00168.',
       items:[
         {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', satuan:'Dus', qtyPesan:20, qtyKirim:20, batch:'BT-260701-01', ed:'2027-06-30'},
         {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', satuan:'Karung', qtyPesan:80, qtyKirim:80, batch:'BT-260702-02', ed:'2027-05-15'},
       ],
-      jumlah:1700000, posted:false, ts:'Create Invoice',
+      jumlah:1700000, posted:false, ts:'Create Surat Jalan',
       tglInput:'11/08/2026 10:30', userInput:'sidik', tglEdit:'', userEdit:'',
       mcdHistory:[
-        {tanggal:'11/08/2026 10:30', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/TGR/08/00168.'},
-        {tanggal:'11/08/2026 10:35', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'11/08/2026 10:30', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/TGR/08/00168.'},
+        {tanggal:'11/08/2026 10:35', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.', printBadge:true},
         {tanggal:'11/08/2026 11:15', username:'setia_adg', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Maulana Sidik - L 8753 GE (CDE).'},
         {tanggal:'11/08/2026 15:20', username:'setia_adg', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh Toko Family Mart Jaya.'},
       ]},
@@ -2087,19 +2109,19 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'08/08/2026',
       syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
       shipVia:'Driver', noResi:'', driver:'Bambang Wijaya - B 9012 XYZ (ABC)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00042.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/SBY/08/00042.',
       items:[
         {kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', satuan:'Dus', qtyPesan:30, qtyKirim:30, batch:'BT-260707-07', ed:'2027-07-31'},
         {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', satuan:'Dus', qtyPesan:40, qtyKirim:40, batch:'BT-260708-08', ed:'2027-08-31'},
       ],
-      jumlah:880000, posted:true, ts:'Invoice Selesai', dibayar:0,
+      jumlah:880000, posted:true, ts:'Surat Jalan Selesai', dibayar:0,
       tglInput:'08/08/2026 15:20', userInput:'sidik', tglEdit:'09/08/2026 09:15', userEdit:'sidik',
       mcdHistory:[
-        {tanggal:'08/08/2026 15:20', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SBY/08/00042.'},
-        {tanggal:'08/08/2026 15:25', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'08/08/2026 15:20', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/SBY/08/00042.'},
+        {tanggal:'08/08/2026 15:25', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.', printBadge:true},
         {tanggal:'08/08/2026 16:00', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
         {tanggal:'08/08/2026 19:30', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh UD Makmur Jaya.'},
-        {tanggal:'09/08/2026 09:15', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
+        {tanggal:'09/08/2026 09:15', username:'sidik', status:'Faktur', keterangan:'Surat Jalan sudah diposting (lihat modul Surat Jalan).'},
       ]},
     {no:'26/SI/MDN/08/00001', noSJ:'26/SJ/MDN/08/00001', tglBuat:'06/08/2026 11:00', tgl:'06/08/2026',
       cabang:'Medan', gudang:'(04-GUU) Gudang Utama-MDN', area:'SUMATERA UTARA',
@@ -2108,15 +2130,15 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'06/08/2026',
       syaratBayar:'Kredit 45 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Gatot Subroto No. 21, Medan',
       shipVia:'Ekspedisi', noResi:'JNE-88213345', driver:'',
-      keterangan:'Invoice sesuai Picking List 26/PKL/MDN/08/00015.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/MDN/08/00015.',
       items:[
         {kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', satuan:'Karung', qtyPesan:50, qtyKirim:50, batch:'BT-260704-04', ed:'2027-01-31'},
       ],
-      jumlah:600000, posted:false, ts:'Create Invoice',
+      jumlah:600000, posted:false, ts:'Create Surat Jalan',
       tglInput:'06/08/2026 11:00', userInput:'sidik', tglEdit:'', userEdit:'',
       mcdHistory:[
-        {tanggal:'06/08/2026 11:00', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/MDN/08/00015.'},
-        {tanggal:'06/08/2026 11:10', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.'},
+        {tanggal:'06/08/2026 11:00', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/MDN/08/00015.'},
+        {tanggal:'06/08/2026 11:10', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.'},
         {tanggal:'07/08/2026 08:00', username:'setia_adg', status:'Diterima Sales Office (SO)', keterangan:'Barang tiba di Sales Office cabang tujuan via Ekspedisi JNE (No. Resi JNE-88213345).'},
         {tanggal:'07/08/2026 09:30', username:'setia_adg', status:'Serah Terima ke Tim Pengantar (SO)', keterangan:'Diserahterimakan ke tim pengantar lokal Sales Office untuk diteruskan ke Toko Anugrah.'},
       ]},
@@ -2127,15 +2149,15 @@ const DATA = {
       spAsli:false, skEd:false, cito:false, citoTgl:'07/08/2026',
       syaratBayar:'CBD', layanan:'Reguler', alamatPengiriman:'Jl. Perintis Kemerdekaan No. 5, Makassar',
       shipVia:'Driver', noResi:'', driver:'Hendra Gunawan - D 4521 FE (EFG)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/MKS/08/00009. Qty Kirim memakai fallback Qty Pesan karena Picking List sumbernya masih qtyPicking:0 (lihat catatan di atas array ini).',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/MKS/08/00009. Qty Kirim memakai fallback Qty Pesan karena Picking List sumbernya masih qtyPicking:0 (lihat catatan di atas array ini).',
       items:[
         {kode:'BRG-005', nama:'Mie Instan Indomie Goreng', satuan:'Dus', qtyPesan:100, qtyKirim:100, batch:'', ed:''},
       ],
-      jumlah:250000, posted:false, ts:'Create Invoice',
+      jumlah:250000, posted:false, ts:'Create Surat Jalan',
       tglInput:'07/08/2026 13:15', userInput:'sidik', tglEdit:'', userEdit:'',
       mcdHistory:[
-        {tanggal:'07/08/2026 13:15', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/MKS/08/00009.'},
-        {tanggal:'07/08/2026 13:20', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'07/08/2026 13:15', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/MKS/08/00009.'},
+        {tanggal:'07/08/2026 13:20', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.', printBadge:true},
       ]},
     {no:'26/SI/HO/08/00001', noSJ:'26/SJ/HO/08/00001', tglBuat:'07/08/2026 16:00', tgl:'07/08/2026',
       cabang:'Head Office', gudang:'(00-GUU) Gudang Utama-HO', area:'JABODETABEK BANTEN',
@@ -2144,18 +2166,18 @@ const DATA = {
       spAsli:false, skEd:false, cito:false, citoTgl:'07/08/2026',
       syaratBayar:'Kredit 30 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat',
       shipVia:'Diambil Sendiri', noResi:'', driver:'',
-      keterangan:'Invoice sesuai Picking List 26/PKL/HO/08/00077.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/HO/08/00077.',
       items:[
         {kode:'BRG-006', nama:'Kecap Manis ABC 600ml', satuan:'Dus', qtyPesan:60, qtyKirim:60, batch:'BT-260706-06', ed:'2027-03-31'},
         {kode:'BRG-009', nama:'Kopi Kapal Api 165gr', satuan:'Dus', qtyPesan:20, qtyKirim:20, batch:'BT-260709-09', ed:'2027-09-30'},
       ],
-      jumlah:1120000, posted:true, ts:'Invoice Selesai', dibayar:1120000,
+      jumlah:1120000, posted:true, ts:'Surat Jalan Selesai', dibayar:1120000,
       tglInput:'07/08/2026 16:00', userInput:'sidik', tglEdit:'07/08/2026 17:20', userEdit:'sidik',
       mcdHistory:[
-        {tanggal:'07/08/2026 16:00', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/HO/08/00077.'},
-        {tanggal:'07/08/2026 16:05', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.'},
+        {tanggal:'07/08/2026 16:00', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/HO/08/00077.'},
+        {tanggal:'07/08/2026 16:05', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.'},
         {tanggal:'07/08/2026 16:30', username:'sidik', status:'Diterima Customer', keterangan:'Barang diambil langsung oleh Toko Sumber Rejeki (Diambil Sendiri), tidak melalui tim pengantar.'},
-        {tanggal:'07/08/2026 17:20', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
+        {tanggal:'07/08/2026 17:20', username:'sidik', status:'Faktur', keterangan:'Surat Jalan sudah diposting (lihat modul Surat Jalan).'},
         {tanggal:'08/08/2026 10:00', username:'setia_adg', status:'Sudah Tukar Faktur / Pemberkasan', keterangan:'Faktur asli sudah ditukar & berkas lengkap.'},
       ]},
     {no:'26/SI/SMG/08/00001', noSJ:'26/SJ/SMG/08/00001', tglBuat:'05/08/2026 15:30', tgl:'05/08/2026',
@@ -2165,15 +2187,15 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'05/08/2026',
       syaratBayar:'Kredit 30 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Pandanaran No. 33, Semarang',
       shipVia:'Driver', noResi:'', driver:'Yusuf Setiawan - B 7788 KLM (HIJ)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/SMG/08/00013. Qty Kirim memakai fallback Qty Pesan karena Picking List sumbernya masih qtyPicking:0 (lihat catatan di atas array ini).',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/SMG/08/00013. Qty Kirim memakai fallback Qty Pesan karena Picking List sumbernya masih qtyPicking:0 (lihat catatan di atas array ini).',
       items:[
         {kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', satuan:'Dus', qtyPesan:25, qtyKirim:25, batch:'', ed:''},
       ],
-      jumlah:400000, posted:false, ts:'Create Invoice',
+      jumlah:400000, posted:false, ts:'Create Surat Jalan',
       tglInput:'05/08/2026 15:30', userInput:'sidik', tglEdit:'', userEdit:'',
       mcdHistory:[
-        {tanggal:'05/08/2026 15:30', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SMG/08/00013.'},
-        {tanggal:'05/08/2026 15:35', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.'},
+        {tanggal:'05/08/2026 15:30', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/SMG/08/00013.'},
+        {tanggal:'05/08/2026 15:35', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.'},
         {tanggal:'05/08/2026 16:10', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Yusuf Setiawan - B 7788 KLM (HIJ).'},
         {tanggal:'06/08/2026 09:00', username:'nazwaa_iks', status:'Diterima Sales Office (SO)', keterangan:'Barang direlay lewat Sales Office sebelum diteruskan ke CV Maju Terus.'},
         {tanggal:'06/08/2026 10:15', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (SO)', keterangan:'Diserahterimakan ke tim pengantar Sales Office untuk pengantaran terakhir.'},
@@ -2185,14 +2207,14 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'09/08/2026',
       syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Kertajaya No. 67, Surabaya',
       shipVia:'Dikirim Supplier', noResi:'', driver:'',
-      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00043. Qty Kirim memakai fallback Qty Pesan karena Picking List sumbernya masih qtyPicking:0 (lihat catatan di atas array ini).',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/SBY/08/00043. Qty Kirim memakai fallback Qty Pesan karena Picking List sumbernya masih qtyPicking:0 (lihat catatan di atas array ini).',
       items:[
         {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', satuan:'Dus', qtyPesan:35, qtyKirim:35, batch:'', ed:''},
       ],
-      jumlah:350000, posted:false, ts:'Create Invoice',
+      jumlah:350000, posted:false, ts:'Create Surat Jalan',
       tglInput:'09/08/2026 12:40', userInput:'sidik', tglEdit:'', userEdit:'',
       mcdHistory:[
-        {tanggal:'09/08/2026 12:40', username:'sidik', status:'Create Invoice', keterangan:'Invoice baru dibuat, menunggu proses cetak.'},
+        {tanggal:'09/08/2026 12:40', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan baru dibuat, menunggu proses cetak.'},
       ]},
     {no:'26/SI/HO/08/00002', noSJ:'26/SJ/HO/08/00002', tglBuat:'11/08/2026 14:10', tgl:'11/08/2026',
       cabang:'Head Office', gudang:'(00-GUU) Gudang Utama-HO', area:'JABODETABEK BANTEN',
@@ -2201,18 +2223,18 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'11/08/2026',
       syaratBayar:'Kredit 30 Hari', layanan:'Express', alamatPengiriman:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
       shipVia:'Driver', noResi:'', driver:'Agus Salim - F 3344 AB (KLM)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/HO/08/00078.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/HO/08/00078.',
       items:[
         {kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', satuan:'Dus', qtyPesan:70, qtyKirim:70, batch:'BT-260710-10', ed:'2027-10-31'},
       ],
-      jumlah:350000, posted:true, ts:'Invoice Selesai', dibayar:150000,
+      jumlah:350000, posted:true, ts:'Surat Jalan Selesai', dibayar:150000,
       tglInput:'11/08/2026 14:10', userInput:'sidik', tglEdit:'11/08/2026 16:45', userEdit:'sidik',
       mcdHistory:[
-        {tanggal:'11/08/2026 14:10', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/HO/08/00078.'},
-        {tanggal:'11/08/2026 14:15', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'11/08/2026 14:10', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/HO/08/00078.'},
+        {tanggal:'11/08/2026 14:15', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.', printBadge:true},
         {tanggal:'11/08/2026 14:45', username:'setia_adg', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Agus Salim - F 3344 AB (KLM).'},
-        {tanggal:'11/08/2026 16:30', username:'setia_adg', status:'Diterima Customer', keterangan:'Diterima sebagian oleh Toko Family Mart Jaya (Ditolak Sebagian) — sebagian retur, lihat catatan pembayaran sebagian di Invoice terkait.'},
-        {tanggal:'11/08/2026 17:20', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
+        {tanggal:'11/08/2026 16:30', username:'setia_adg', status:'Diterima Customer', keterangan:'Diterima sebagian oleh Toko Family Mart Jaya (Ditolak Sebagian) — sebagian retur, lihat catatan pembayaran sebagian di Surat Jalan terkait.'},
+        {tanggal:'11/08/2026 17:20', username:'sidik', status:'Faktur', keterangan:'Surat Jalan sudah diposting (lihat modul Surat Jalan).'},
         {tanggal:'12/08/2026 09:40', username:'setia_adg', status:'Sudah Tukar Faktur / Pemberkasan', keterangan:'Faktur asli sudah ditukar & berkas lengkap.'},
       ]},
     /* 2026-08-26 — 2 baris BARU (bukan mengedit 8 baris di atas yang
@@ -2262,17 +2284,17 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'20/08/2026',
       syaratBayar:'Kredit 30 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat',
       shipVia:'Driver', noResi:'', driver:'Maulana Sidik - L 8753 GE (CDE)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/HO/08/00079. Termasuk bonus barang dari Promotion 26/PM-HO/08/00001 (PRO01) — beli Sembako 55 pcs (Tepung 30 + Gula 25, >=50) mendapat bonus Gula Pasir Gulaku 1kg 20% x 55 = 11 pcs gratis.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/HO/08/00079. Termasuk bonus barang dari Promotion 26/PM-HO/08/00001 (PRO01) — beli Sembako 55 pcs (Tepung 30 + Gula 25, >=50) mendapat bonus Gula Pasir Gulaku 1kg 20% x 55 = 11 pcs gratis.',
       items:[
         {kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', satuan:'Karung', qtyPesan:30, qtyKirim:30, batch:'BT-260815-15', ed:'2027-02-28'},
         {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', satuan:'Karung', qtyPesan:25, qtyKirim:25, batch:'BT-260816-16', ed:'2027-06-15'},
         {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', satuan:'Karung', qtyPesan:11, qtyKirim:11, batch:'BT-260816-16', ed:'2027-06-15', bonus:true, bonusKeterangan:'Bonus Promo PRO01 (26/PM-HO/08/00001) — 20% x 55'},
       ],
-      jumlah:735000, posted:false, ts:'Create Invoice',
+      jumlah:735000, posted:false, ts:'Create Surat Jalan',
       tglInput:'20/08/2026 10:00', userInput:'sidik', tglEdit:'', userEdit:'',
       mcdHistory:[
-        {tanggal:'20/08/2026 10:00', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/HO/08/00079.'},
-        {tanggal:'20/08/2026 10:05', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.'},
+        {tanggal:'20/08/2026 10:00', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/HO/08/00079.'},
+        {tanggal:'20/08/2026 10:05', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.'},
         {tanggal:'20/08/2026 10:40', username:'setia_adg', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Maulana Sidik - L 8753 GE (CDE).'},
         {tanggal:'20/08/2026 14:00', username:'setia_adg', status:'Diterima Sales Office (SO)', keterangan:'Barang direlay lewat Sales Office karena Toko Sumber Rejeki pindah titik terima sementara.'},
       ]},
@@ -2283,16 +2305,16 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'21/08/2026',
       syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
       shipVia:'Driver', noResi:'', driver:'Bambang Wijaya - B 9012 XYZ (ABC)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00044. Termasuk bonus barang dari Promotion 26/PM-SBY/08/00001 (PRO02) — beli Minyak Goreng Sunco 2L 120 dus (>=100) mendapat bonus 10% x 120 = 12 dus gratis (SKU sama).',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/SBY/08/00044. Termasuk bonus barang dari Promotion 26/PM-SBY/08/00001 (PRO02) — beli Minyak Goreng Sunco 2L 120 dus (>=100) mendapat bonus 10% x 120 = 12 dus gratis (SKU sama).',
       items:[
         {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', satuan:'Dus', qtyPesan:120, qtyKirim:120, batch:'BT-260817-17', ed:'2027-07-31'},
         {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', satuan:'Dus', qtyPesan:12, qtyKirim:12, batch:'BT-260817-17', ed:'2027-07-31', bonus:true, bonusKeterangan:'Bonus Promo PRO02 (26/PM-SBY/08/00001) — 10% x 120'},
       ],
-      jumlah:3000000, posted:false, ts:'Create Invoice',
+      jumlah:3000000, posted:false, ts:'Create Surat Jalan',
       tglInput:'21/08/2026 09:45', userInput:'sidik', tglEdit:'', userEdit:'',
       mcdHistory:[
-        {tanggal:'21/08/2026 09:45', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SBY/08/00044.'},
-        {tanggal:'21/08/2026 09:50', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'21/08/2026 09:45', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/SBY/08/00044.'},
+        {tanggal:'21/08/2026 09:50', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.', printBadge:true},
         {tanggal:'21/08/2026 10:20', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
         {tanggal:'21/08/2026 13:10', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh UD Makmur Jaya.'},
       ]},
@@ -2319,18 +2341,18 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'22/08/2026',
       syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Basuki Rahmat No. 105, Surabaya',
       shipVia:'Driver', noResi:'', driver:'Bambang Wijaya - B 9012 XYZ (ABC)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00045.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/SBY/08/00045.',
       items:[
         {kode:'BRG-006', nama:'Kecap Manis ABC 600ml', satuan:'Dus', qtyPesan:50, qtyKirim:50, batch:'BT-260818-18', ed:'2027-01-20'},
       ],
-      jumlah:700000, posted:true, ts:'Invoice Selesai', dibayar:0,
+      jumlah:700000, posted:true, ts:'Surat Jalan Selesai', dibayar:0,
       tglInput:'22/08/2026 10:10', userInput:'sidik', tglEdit:'22/08/2026 15:40', userEdit:'sidik',
       mcdHistory:[
-        {tanggal:'22/08/2026 10:10', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SBY/08/00045.'},
-        {tanggal:'22/08/2026 10:15', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'22/08/2026 10:10', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/SBY/08/00045.'},
+        {tanggal:'22/08/2026 10:15', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.', printBadge:true},
         {tanggal:'22/08/2026 11:00', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
         {tanggal:'22/08/2026 14:30', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh Toko Family Mart Sentosa.'},
-        {tanggal:'22/08/2026 15:40', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
+        {tanggal:'22/08/2026 15:40', username:'sidik', status:'Faktur', keterangan:'Surat Jalan sudah diposting (lihat modul Surat Jalan).'},
       ]},
     {no:'26/SI/SBY/08/00005', noSJ:'26/SJ/SBY/08/00005', tglBuat:'24/08/2026 09:05', tgl:'24/08/2026',
       cabang:'Surabaya', gudang:'(01-GUU) Gudang Utama-SBY', area:'JAWA TIMUR',
@@ -2339,18 +2361,18 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'24/08/2026',
       syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Basuki Rahmat No. 105, Surabaya',
       shipVia:'Driver', noResi:'', driver:'Bambang Wijaya - B 9012 XYZ (ABC)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00046.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/SBY/08/00046.',
       items:[
         {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', satuan:'Dus', qtyPesan:54, qtyKirim:54, batch:'BT-260819-19', ed:'2027-09-18'},
       ],
-      jumlah:540000, posted:true, ts:'Invoice Selesai', dibayar:0,
+      jumlah:540000, posted:true, ts:'Surat Jalan Selesai', dibayar:0,
       tglInput:'24/08/2026 09:05', userInput:'sidik', tglEdit:'24/08/2026 13:20', userEdit:'sidik',
       mcdHistory:[
-        {tanggal:'24/08/2026 09:05', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SBY/08/00046.'},
-        {tanggal:'24/08/2026 09:10', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'24/08/2026 09:05', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/SBY/08/00046.'},
+        {tanggal:'24/08/2026 09:10', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.', printBadge:true},
         {tanggal:'24/08/2026 10:00', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
         {tanggal:'24/08/2026 12:45', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh Toko Family Mart Sentosa.'},
-        {tanggal:'24/08/2026 13:20', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
+        {tanggal:'24/08/2026 13:20', username:'sidik', status:'Faktur', keterangan:'Surat Jalan sudah diposting (lihat modul Surat Jalan).'},
       ]},
   ],
   /* Daftar Driver (dipakai field "Driver" di form Invoice, picker
@@ -5188,7 +5210,7 @@ const DATA = {
     'INVENTORY|Persediaan Barang|ADG','INVENTORY|Stock Request|ADG','INVENTORY|Stock Opname|ADG','PURCHASING|Terima Barang|ADG',
     'INVENTORY|Persediaan Barang|ADG-HO','INVENTORY|Stock Opname|ADG-HO',
     'PURCHASING|Purchase Order|PURCH','PURCHASING|Permintaan Pembelian|PURCH','PURCHASING|Terima Barang|PURCH','PURCHASING|Pembelian Melalui BPB|PURCH','PURCHASING|Pembelian dari PO|PURCH',
-    'SALES|Sales Quotation|SALES','SALES|Sales Order|SALES','SALES|Invoice|SALES',
+    'SALES|Sales Quotation|SALES','SALES|Sales Order|SALES','SALES|Surat Jalan|SALES',
     'BANK|Transaksi Kas|KAS','BANK|Jurnal Kas Lain-Lain|KAS','BANK|Master Bank|KAS',
     'SALES|Daftar Tagih Piutang|KOL','SALES|T3F|KOL','SALES|Penerimaan Piutang|KOL',
     'PURCHASING|Pelunasan Utang|FIN','PURCHASING|Pengajuan Pembayaran|FIN','BANK|Daftar Giro Mundur|FIN',
@@ -6318,6 +6340,243 @@ const DATA = {
       ongkosAngkut:0, ppn:38500, jumlahAkhir:388500, sisaJumlah:388500,
       keterangan:'Faktur Penjualan Via S.J. sesuai S.J. 26/SJ/HO/08/00002.', tipeTransaksi:'Penjualan Kredit',
       tglInput:'13/08/2026 10:00', userInput:'sidik', tglEdit:'', userEdit:''},
+  ],
+  /* Penjualan Langsung — menu Customer & Penjualan > Daftar Transaksi >
+     Penjualan Langsung (page:'penjualanLangsung', lihat js/pages/
+     penjualan-langsung.*). SEBELUMNYA placeholder murni
+     `{label:'Penjualan Langsung', page:'placeholder'}` di js/menu.js.
+     Dibangun 2026-09-15 sesuai 2 screenshot MASERP yang dikirim user:
+     "+ Penjualan Langsung" (form Tambah) & "Daftar Penjualan Langsung"
+     (list, 5 baris, semua Customer sama, semua "Penjualan Kredit").
+
+     KONSEP: kebalikan/mirror-sisi-Penjualan dari Pembelian Langsung
+     (js/pages/pembelian-langsung.*) — dokumen BERDIRI SENDIRI, TIDAK
+     di-chain dari Sales Order/Picking List/Invoice manapun (beda dari
+     Faktur Penjualan Via S.J. di atas yang WAJIB chain dari 1 baris
+     DATA.invoices). Faktur & Surat Jalan dibuat LANGSUNG dalam 1
+     dokumen ini sendiri (field "Surat Jalan" di form = otomatis SAMA
+     dengan "No. Faktur", lihat pjlOnNoFakturChange() di penjualan-
+     langsung.js). Cocok dipakai untuk transaksi non-fisik seperti
+     klaim discount distributor, penyesuaian, dll — makanya SEMUA 5
+     baris contoh di bawah ini bertema "Klaim Discount Distributor",
+     bukan penjualan barang fisik biasa (yang jalurnya normal lewat
+     Sales Order → Picking List → Invoice → Faktur Penjualan Via S.J.).
+
+     SUBSTITUSI DATA vs screenshot asli (mengikuti preseden yang SUDAH
+     didokumentasikan 4x di file ini — cari komentar "SATORIA ANEKA
+     INDUSTRI" di atas dekat Stock Request/Purchase Order/Pelunasan
+     Utang/Cabang — screenshot MASERP tsb berasal dari demo perusahaan
+     farmasi LAIN, bukan data DBM, WAJIB diganti):
+       - Customer "SATORIA ANEKA INDUSTRI" / alamat "SATORIA TOWER
+         LANTAI 27-28" → DIGANTI TOTAL jadi CUST-002 "UD Makmur Jaya"
+         (Surabaya, alamat asli "Jl. Raya Darmo No. 45, Surabaya") —
+         dipilih krn cocok secara geografis dgn konteks S.Office
+         SIDOARJO/Area AREAOFFICE di screenshot (Surabaya-Sidoarjo
+         satu wilayah Jawa Timur). Baris merah kredit info di screenshot
+         ("Batas Kredit 1.000.000,00; Piutang 6.358.770.506,13; Sisa
+         Kredit -6.357.770.506,13; Kode Lama Customer SAI.0001;") ADALAH
+         angka fiktif ekstrem demo — DIGANTI pakai data asli customer
+         CUST-002 (limit 35.000.000, piutang 9.120.000, noRef
+         'SBY.0001') sehingga Sisa Kredit = 25.880.000 (POSITIF, tidak
+         over-limit) — mengikuti aturan "customer.piutang/limit TIDAK
+         BOLEH diubah sembarangan" (preseden modul Sales Order); baris
+         kredit-info di UI tetap dibuat AKAN merah otomatis kalau
+         Sisa Kredit < 0 (lihat pjlCreditInfoHTML() di .js), hanya saja
+         dgn data customer asli saat ini tidak pernah terpicu merah.
+       - Item "BB-00035 Klaim Discount Distributor-SIDOARJO" TIDAK
+         ditambahkan ke DATA.items master (yg isinya 220 barang fisik
+         BRG-xxx) — disimpan sbg baris bebas (freeform kode/nama,
+         persis pola Nama Barang yang editable di item row Pembelian
+         Langsung/Faktur Penjualan Via S.J.), krn ini representasi
+         klaim finansial, bukan produk fisik yg perlu ada di katalog.
+       - Principal (picker baru, interaktif, sumber DATA.suppliers —
+         beda dari field Principal READONLY di Invoice/Retur Penjualan
+         yg di-chain dari dokumen atasnya) memakai supplier 5016 "PT
+         Wilmar Nabati Indonesia" utk baris 1 (konsisten dgn kode
+         principal yg sama dipakai di DATA.promotion).
+       - Gudang "(NON-00) Non Stock Head Office" (kode custom di
+         screenshot asli) → DISEDERHANAKAN pakai pola yg SUDAH established
+         di Pembelian Langsung: "Non Stock {Cabang}" (bukan bikin skema
+         kode baru "(NON-00)" yg tidak dipakai modul manapun lain).
+       - Salesman "OFFICE" DIPERTAHANKAN apa adanya (bukan nama salesman
+         customer) krn transaksi jenis Klaim Discount ini office-
+         initiated, bukan hasil kunjungan sales lapangan — ditambahkan
+         sbg 1 entry khusus di PJL_SALESMAN_LIST (js/pages/penjualan-
+         langsung.template.js) di samping nama-nama salesman asli.
+       - "Special Disc" (per-baris item & Global) TIDAK ada modul master
+         apapun di seluruh codebase (sudah dicek, nihil) → dibuat sbg
+         picker DEKORATIF dari daftar dummy tetap (PJL_SPECIAL_DISC_LIST),
+         sama seperti pola SO_SP_DUMMY_LIST/SO_DSC_DUMMY_LIST di Sales
+         Order — tidak mempengaruhi kalkulasi apapun.
+       - Checkbox Pph/Ppn per baris item TERSIMPAN sbg flag
+         (item.pphChecked/item.ppnChecked) tapi TIDAK dikonsumsi oleh
+         kalkulasi total — persis pola item.pph di Purchase Order
+         (purchase-order.js baris ~240) & item.ppnChecked di Faktur
+         Penjualan Via S.J. (keduanya juga sekadar flag informasional).
+       - Tombol toolbar "Refresh DPL" & "Auto Fill Quantity SI" dibuat
+         DEKORATIF (buka modal info "akan tersedia pada versi lengkap")
+         — krn dokumen ini BERDIRI SENDIRI (tidak ada Sales Order/DPL
+         asal utk di-refresh/di-auto-fill qty-nya), persis pola tombol
+         "Refresh DPL" dekoratif yg SUDAH ada di sales-quotation.js
+         (beda dgn "Auto Fill Quantity Picking" di picking-list.js yg
+         FUNGSIONAL krn di sana memang ada qtyOrder sumber dari S.O.).
+       - "Multi Batch Number" pakai ulang PERSIS pola modal single-text-
+         input tplPlBatchModal Pembelian Langsung (1 string per item,
+         BUKAN array multi-batch sungguhan — sama2 didokumentasikan
+         sbg mockup di kedua tempat).
+       - Kolom "PPh Dipotong" pakai daftar lokal PJL_PPH_LIST format
+         sama dgn FKT_PPH_LIST/PL_PPH_LIST yg sudah ada ('PPH 23 (2)'
+         bukan 'PPH 23' polos spt di screenshot — konsisten dgn 2 modul
+         lain, bukan salah ketik).
+       - Total (DPP/PPN 11%/PPh 2%/Jumlah Akhir) baris 1 di bawah ini
+         SENGAJA TIDAK dibulatkan (Math.round) spt fktRecalcTotals —
+         angka di screenshot asli (939.310.169,41 / 94.792.769,39 /
+         -17.235.048,98) TERBUKTI hasil perkalian desimal PERSIS tanpa
+         pembulatan (861.752.449 × 11% = 94.792.769,39 pas), jadi
+         pjlRecalcTotals() di penjualan-langsung.js SENGAJA tidak
+         memakai Math.round spt fktRecalcTotals, beda dari Fkt/PO/PL.
+       - 4 baris lain (00002–00005) disederhanakan (tipePpn 'Tidak ada
+         PPN', 1 item, tanpa Pph) — HANYA baris 1 (00001) yg mereplikasi
+         detail lengkap sesuai screenshot form "+ Penjualan Langsung";
+         baris 2-5 murni utk mengisi screenshot "Daftar Penjualan
+         Langsung" (5 baris, Jumlah Akhir 6.433.392,55 / 487.200.856,67
+         / 223.195.807,64 / 36.567.265,50) dgn angka PERSIS sama. */
+  penjualanLangsung:[
+    {no:'26/DSI/HO/07/00001', scannerType:'Barcode', cabang:'Head Office', proyek:'',
+      salesOffice:'SF01', salesOfficeNama:'SIDOARJO', area:'AREAOFFICE', areaNama:'AREAOFFICE',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya',
+      orderPenggantiRetur:false, tipeLayanan:'Reguler',
+      principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia',
+      tglFaktur:'16/07/2026', tglJatuhTempo:'14/09/2026', syaratBayar:'Kredit 60 Hari',
+      gudang:'Non Stock Head Office', salesman:'OFFICE',
+      jurnal:'JURNAL PENJUALAN KREDIT (IDR)', poCustomer:'', tglBatasRetur:'',
+      driver:'', kernet:'', pickUpType:'',
+      alamatPengirimanTipe:'Alamat Customer', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
+      specialDiscGlobal:'-Special Disc-',
+      items:[
+        {kode:'BB-00035', nama:'Klaim Discount Distributor-SIDOARJO', pphChecked:true, ppnChecked:true,
+          specialDisc:'PricingByDate', batch:'0', qty:1, um:'UNIT', hna:0, hna1:861752449, hna1Inklusif:false,
+          discPrincipal:0, discDistributor:0, totalDisc:0, discBarang:0, jumlah:861752449},
+      ],
+      tipePpn:'PPN Eksklusif(+11%)', mataUangPajak:'Rupiah (IDR)', kursPajak:1,
+      tglFakturPajak:'16/07/2026', kodePajak:'04 - DPP Nilai Lain', noFakturPajak:'04002600282639302',
+      diskon1:0, diskon1Unit:'%', diskon2:0, diskon2Unit:'%', kurs:1,
+      diskon1Amount:0, diskon2Amount:0, dpp:861752449, pajak11:'PPN11', ppn:94792769.39,
+      uangMukaTipe:'Tertua', sisaUangMuka:0, uangMukaPakai:0,
+      pphKode:'PPH 23 (2)', pphPersen:2, pphAmount:17235048.98,
+      ongkosAngkut:0, jumlahAkhir:939310169.41, sisaJumlah:939310169.41,
+      suratJalan:'26/DSI/HO/07/00001',
+      keterangan:'Klaim Discount Cab Sidoarjo Bulan Juni 2026 Sesuai Surat UD Makmur Jaya Tgl 16/07/2026',
+      tipeTransaksi:'Penjualan Kredit', pembayaran:0,
+      tglInput:'16/07/2026 09:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/DSI/HO/07/00002', scannerType:'Barcode', cabang:'Head Office', proyek:'',
+      salesOffice:'SF01', salesOfficeNama:'SIDOARJO', area:'AREAOFFICE', areaNama:'AREAOFFICE',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya',
+      orderPenggantiRetur:false, tipeLayanan:'Reguler',
+      principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia',
+      tglFaktur:'16/07/2026', tglJatuhTempo:'14/09/2026', syaratBayar:'Kredit 60 Hari',
+      gudang:'Non Stock Head Office', salesman:'OFFICE',
+      jurnal:'JURNAL PENJUALAN KREDIT (IDR)', poCustomer:'', tglBatasRetur:'',
+      driver:'', kernet:'', pickUpType:'',
+      alamatPengirimanTipe:'Alamat Customer', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
+      specialDiscGlobal:'-Special Disc-',
+      items:[
+        {kode:'BB-00035', nama:'Klaim Discount Distributor-SIDOARJO', pphChecked:false, ppnChecked:false,
+          specialDisc:'-Special Disc-', batch:'0', qty:1, um:'UNIT', hna:0, hna1:6433392.55, hna1Inklusif:false,
+          discPrincipal:0, discDistributor:0, totalDisc:0, discBarang:0, jumlah:6433392.55},
+      ],
+      tipePpn:'Tidak ada PPN', mataUangPajak:'Rupiah (IDR)', kursPajak:1,
+      tglFakturPajak:'16/07/2026', kodePajak:'04 - DPP Nilai Lain', noFakturPajak:'',
+      diskon1:0, diskon1Unit:'%', diskon2:0, diskon2Unit:'%', kurs:1,
+      diskon1Amount:0, diskon2Amount:0, dpp:6433392.55, pajak11:'', ppn:0,
+      uangMukaTipe:'Tertua', sisaUangMuka:0, uangMukaPakai:0,
+      pphKode:'', pphPersen:0, pphAmount:0,
+      ongkosAngkut:0, jumlahAkhir:6433392.55, sisaJumlah:6433392.55,
+      suratJalan:'26/DSI/HO/07/00002',
+      keterangan:'Klaim Discount Cab Sidoarjo Bulan Mei 2026 Sesuai Surat UD Makmur Jaya Tgl 16/07/2026',
+      tipeTransaksi:'Penjualan Kredit', pembayaran:0,
+      tglInput:'16/07/2026 09:05', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/DSI/HO/07/00003', scannerType:'Barcode', cabang:'Head Office', proyek:'',
+      salesOffice:'SF01', salesOfficeNama:'SIDOARJO', area:'AREAOFFICE', areaNama:'AREAOFFICE',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya',
+      orderPenggantiRetur:false, tipeLayanan:'Reguler',
+      principalKode:'5017', principalNama:'PT Sinar Meadow',
+      tglFaktur:'16/07/2026', tglJatuhTempo:'14/09/2026', syaratBayar:'Kredit 60 Hari',
+      gudang:'Non Stock Head Office', salesman:'OFFICE',
+      jurnal:'JURNAL PENJUALAN KREDIT (IDR)', poCustomer:'', tglBatasRetur:'',
+      driver:'', kernet:'', pickUpType:'',
+      alamatPengirimanTipe:'Alamat Customer', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
+      specialDiscGlobal:'-Special Disc-',
+      items:[
+        {kode:'BB-00035', nama:'Klaim Discount Distributor-SIDOARJO', pphChecked:false, ppnChecked:false,
+          specialDisc:'-Special Disc-', batch:'0', qty:1, um:'UNIT', hna:0, hna1:487200856.67, hna1Inklusif:false,
+          discPrincipal:0, discDistributor:0, totalDisc:0, discBarang:0, jumlah:487200856.67},
+      ],
+      tipePpn:'Tidak ada PPN', mataUangPajak:'Rupiah (IDR)', kursPajak:1,
+      tglFakturPajak:'16/07/2026', kodePajak:'04 - DPP Nilai Lain', noFakturPajak:'',
+      diskon1:0, diskon1Unit:'%', diskon2:0, diskon2Unit:'%', kurs:1,
+      diskon1Amount:0, diskon2Amount:0, dpp:487200856.67, pajak11:'', ppn:0,
+      uangMukaTipe:'Tertua', sisaUangMuka:0, uangMukaPakai:0,
+      pphKode:'', pphPersen:0, pphAmount:0,
+      ongkosAngkut:0, jumlahAkhir:487200856.67, sisaJumlah:487200856.67,
+      suratJalan:'26/DSI/HO/07/00003',
+      keterangan:'Klaim Discount Cab Sidoarjo Bulan April 2026 Sesuai Surat UD Makmur Jaya Tgl 16/07/2026',
+      tipeTransaksi:'Penjualan Kredit', pembayaran:0,
+      tglInput:'16/07/2026 09:10', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/DSI/HO/07/00004', scannerType:'Barcode', cabang:'Head Office', proyek:'',
+      salesOffice:'SF01', salesOfficeNama:'SIDOARJO', area:'AREAOFFICE', areaNama:'AREAOFFICE',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya',
+      orderPenggantiRetur:false, tipeLayanan:'Reguler',
+      principalKode:'5019', principalNama:'PT Mayora Distribusi',
+      tglFaktur:'16/07/2026', tglJatuhTempo:'14/09/2026', syaratBayar:'Kredit 60 Hari',
+      gudang:'Non Stock Head Office', salesman:'OFFICE',
+      jurnal:'JURNAL PENJUALAN KREDIT (IDR)', poCustomer:'', tglBatasRetur:'',
+      driver:'', kernet:'', pickUpType:'',
+      alamatPengirimanTipe:'Alamat Customer', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
+      specialDiscGlobal:'-Special Disc-',
+      items:[
+        {kode:'BB-00035', nama:'Klaim Discount Distributor-SIDOARJO', pphChecked:false, ppnChecked:false,
+          specialDisc:'-Special Disc-', batch:'0', qty:1, um:'UNIT', hna:0, hna1:223195807.64, hna1Inklusif:false,
+          discPrincipal:0, discDistributor:0, totalDisc:0, discBarang:0, jumlah:223195807.64},
+      ],
+      tipePpn:'Tidak ada PPN', mataUangPajak:'Rupiah (IDR)', kursPajak:1,
+      tglFakturPajak:'16/07/2026', kodePajak:'04 - DPP Nilai Lain', noFakturPajak:'',
+      diskon1:0, diskon1Unit:'%', diskon2:0, diskon2Unit:'%', kurs:1,
+      diskon1Amount:0, diskon2Amount:0, dpp:223195807.64, pajak11:'', ppn:0,
+      uangMukaTipe:'Tertua', sisaUangMuka:0, uangMukaPakai:0,
+      pphKode:'', pphPersen:0, pphAmount:0,
+      ongkosAngkut:0, jumlahAkhir:223195807.64, sisaJumlah:223195807.64,
+      suratJalan:'26/DSI/HO/07/00004',
+      keterangan:'Klaim Discount Cab Sidoarjo Bulan Maret 2026 Sesuai Surat UD Makmur Jaya Tgl 16/07/2026',
+      tipeTransaksi:'Penjualan Kredit', pembayaran:0,
+      tglInput:'16/07/2026 09:15', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/DSI/HO/07/00005', scannerType:'Barcode', cabang:'Head Office', proyek:'',
+      salesOffice:'SF01', salesOfficeNama:'SIDOARJO', area:'AREAOFFICE', areaNama:'AREAOFFICE',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya',
+      orderPenggantiRetur:false, tipeLayanan:'Reguler',
+      principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara',
+      tglFaktur:'16/07/2026', tglJatuhTempo:'14/09/2026', syaratBayar:'Kredit 60 Hari',
+      gudang:'Non Stock Head Office', salesman:'OFFICE',
+      jurnal:'JURNAL PENJUALAN KREDIT (IDR)', poCustomer:'', tglBatasRetur:'',
+      driver:'', kernet:'', pickUpType:'',
+      alamatPengirimanTipe:'Alamat Customer', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
+      specialDiscGlobal:'-Special Disc-',
+      items:[
+        {kode:'BB-00035', nama:'Klaim Discount Distributor-SIDOARJO', pphChecked:false, ppnChecked:false,
+          specialDisc:'-Special Disc-', batch:'0', qty:1, um:'UNIT', hna:0, hna1:36567265.50, hna1Inklusif:false,
+          discPrincipal:0, discDistributor:0, totalDisc:0, discBarang:0, jumlah:36567265.50},
+      ],
+      tipePpn:'Tidak ada PPN', mataUangPajak:'Rupiah (IDR)', kursPajak:1,
+      tglFakturPajak:'16/07/2026', kodePajak:'04 - DPP Nilai Lain', noFakturPajak:'',
+      diskon1:0, diskon1Unit:'%', diskon2:0, diskon2Unit:'%', kurs:1,
+      diskon1Amount:0, diskon2Amount:0, dpp:36567265.50, pajak11:'', ppn:0,
+      uangMukaTipe:'Tertua', sisaUangMuka:0, uangMukaPakai:0,
+      pphKode:'', pphPersen:0, pphAmount:0,
+      ongkosAngkut:0, jumlahAkhir:36567265.50, sisaJumlah:36567265.50,
+      suratJalan:'26/DSI/HO/07/00005',
+      keterangan:'Klaim Discount Cab Sidoarjo Bulan Februari 2026 Sesuai Surat UD Makmur Jaya Tgl 16/07/2026',
+      tipeTransaksi:'Penjualan Kredit', pembayaran:0,
+      tglInput:'16/07/2026 09:20', userInput:'sidik', tglEdit:'', userEdit:''},
   ],
   /* Sales Quotation — menu Customer & Penjualan > Daftar Transaksi >
      Sales Quotation (lihat js/pages/sales-quotation.*). Tahap PALING

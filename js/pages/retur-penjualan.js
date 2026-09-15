@@ -144,7 +144,7 @@ function rpjBuildJurnal(row){
   row.jurnalAkun = rows;
 }
 
-/* Mengisi form + item dari 1 Sales Invoice terpilih (DATA.invoices) —
+/* Mengisi form + item dari 1 Surat Jalan terpilih (DATA.invoices) —
    harga jual dari master DATA.items (invoice mockup tidak menyimpan
    harga per item), batch dari item invoice. */
 function rpjApplyFaktur(row, inv){
@@ -251,7 +251,7 @@ function refreshRpjJurnalSelisih(row){
 function wireRpjItemEvents(row){
   (row.items||[]).forEach((it, idx) => {
     const info = document.querySelector(`[data-rpj-item-info="${idx}"]`);
-    if(info) info.onclick = () => openRpjInfo('Barang Yang Diretur', `Barang mengikuti isi Sales Invoice <b>${row.noFakturJual||'-'}</b> — Kode/Nama/U/M terkunci; yang bisa diubah: Qty, Disc. Principal, dan Disc. Distributor.`);
+    if(info) info.onclick = () => openRpjInfo('Barang Yang Diretur', `Barang mengikuti isi Surat Jalan <b>${row.noFakturJual||'-'}</b> — Kode/Nama/U/M terkunci; yang bisa diubah: Qty, Disc. Principal, dan Disc. Distributor.`);
     const hinfo = document.querySelector(`[data-rpj-harga-info="${idx}"]`);
     if(hinfo) hinfo.onclick = () => openRpjInfo('Harga Jual', 'Harga Jual mengikuti harga master barang / DPL yang berlaku. Pencarian price list akan tersedia di sini.');
     const binfo = document.querySelector(`[data-rpj-batch-info="${idx}"]`);
@@ -286,7 +286,7 @@ function wireRpjItemEvents(row){
 function wireRpjJurnalEvents(row, isView){
   const btnBuat = document.getElementById('rpjBuatJurnal');
   if(btnBuat) btnBuat.onclick = () => {
-    if(!row.items.length){ openRpjInfo('Validasi', 'Pilih Sales Invoice dan pastikan ada barang yang diretur terlebih dahulu.'); return; }
+    if(!row.items.length){ openRpjInfo('Validasi', 'Pilih Surat Jalan dan pastikan ada barang yang diretur terlebih dahulu.'); return; }
     rpjBuildJurnal(row);
     refreshRpjJurnalContent(row, isView);
   };
@@ -380,7 +380,7 @@ function wireRpjForm(mode, idx, row){
 
   document.getElementById('rpjTambahItem').onclick = (e) => {
     e.preventDefault();
-    openRpjInfo('Tambah Item Baru', 'Barang yang diretur mengikuti isi Sales Invoice yang dipilih — menambah barang di luar faktur itu tidak diizinkan di mockup ini. Pilih faktur lain kalau barangnya beda dokumen.');
+    openRpjInfo('Tambah Item Baru', 'Barang yang diretur mengikuti isi Surat Jalan yang dipilih — menambah barang di luar faktur itu tidak diizinkan di mockup ini. Pilih faktur lain kalau barangnya beda dokumen.');
   };
   document.getElementById('rpjPajakInfo').onclick = () => openRpjInfo('Kode Pajak', `Kode pajak mengikuti mode PPN di panel "Informasi PPN" (saat ini: ${row.pajak11 || 'tidak ada'}).`);
 
@@ -404,7 +404,7 @@ function wireRpjForm(mode, idx, row){
 function rpjSave(row, withPrint){
   if(!row.customer){ openRpjInfo('Validasi', 'Customer wajib dipilih.'); return; }
   const adaQty = row.items.some(it => (+it.qty||0) > 0);
-  if(!adaQty){ openRpjInfo('Validasi', 'Isi minimal 1 barang yang diretur (pilih Sales Invoice terlebih dahulu).'); return; }
+  if(!adaQty){ openRpjInfo('Validasi', 'Isi minimal 1 barang yang diretur (pilih Surat Jalan terlebih dahulu).'); return; }
   rpjRecalcTotals(row);
   if(!row.jurnalAkun.length){
     rpjBuildJurnal(row);

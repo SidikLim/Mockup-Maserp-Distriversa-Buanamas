@@ -511,7 +511,7 @@ function tplFktInvoicePicker(list, title){
       <div class="modal-body">
         <div class="table-wrap" style="max-height:340px;overflow:auto;"><table>
           <thead><tr><th>No. S.O.</th><th>No. S.J.</th><th>Customer</th><th>Cabang</th><th></th></tr></thead>
-          <tbody>${list.length ? list.map(inv=>`<tr><td>${inv.noSO||''}</td><td>${inv.noSJ||''}</td><td>${inv.customerNama||''}</td><td>${inv.cabang||''}</td><td><button class="btn-pick" data-pick-inv="${inv.no}">Pilih</button></td></tr>`).join('') : `<tr><td colspan="5" style="color:var(--text-light);">Tidak ada Invoice</td></tr>`}</tbody>
+          <tbody>${list.length ? list.map(inv=>`<tr><td>${inv.noSO||''}</td><td>${inv.noSJ||''}</td><td>${inv.customerNama||''}</td><td>${inv.cabang||''}</td><td><button class="btn-pick" data-pick-inv="${inv.no}">Pilih</button></td></tr>`).join('') : `<tr><td colspan="5" style="color:var(--text-light);">Tidak ada Surat Jalan</td></tr>`}</tbody>
         </table></div>
       </div>
       <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>

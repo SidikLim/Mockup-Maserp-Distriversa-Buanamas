@@ -2639,9 +2639,31 @@ const DATA = {
      masing-masing sampai seq 2) — konsisten dengan format nomor
      26/PKL/.../08/... & 26/SO/.../08/... yang sudah ada. 3 baris (index 1,
      4, 7 di bawah -- sumber Picking List yang sudah 'Terkirim') ditandai
-     posted:true/ts:'Invoice Selesai' dari awal supaya perilaku tombol
+     posted:true/ts:'Surat Jalan Selesai' dari awal supaya perilaku tombol
      Ubah/Hapus/Posting yang disabled langsung terlihat tanpa perlu
      mengklik apa pun lebih dulu.
+
+     2026-09-15 (lanjutan): SELURUH teks tampilan modul "Invoice" ini
+     di-rename jadi "Surat Jalan" atas permintaan eksplisit Sidik (lihat
+     catatan lengkap di header invoice.template.js/invoice.js) — key
+     `invoices`/field/fungsi TIDAK berubah nama. Field literal di baris
+     bawah yang IKUT diubah karena benar-benar dirender ke UI: `ts`
+     ('Create Invoice'/'Invoice Selesai' -> 'Create Surat Jalan'/'Surat
+     Jalan Selesai'), `keterangan`, dan `mcdHistory[].status`/`.keterangan`
+     (dipakai Monitoring Control Delivery, lihat js/pages/monitoring-
+     control-delivery.*). SATU kalimat SENGAJA DITULIS ULANG (bukan cuma
+     ganti kata) karena kalau di-substitusi apa adanya jadi kontradiktif:
+     kalimat asli "Invoice dicetak untuk dilampirkan ke Surat Jalan."
+     (Invoice = dokumen utama modul ini, "Surat Jalan" di situ merujuk ke
+     field noSJ yang TERPISAH & SENGAJA TIDAK di-rename — lihat keputusan
+     di header invoice.template.js) — kalau "Invoice" diganti "Surat
+     Jalan" apa adanya jadi "Surat Jalan dicetak untuk dilampirkan ke
+     Surat Jalan." (sirkular/membingungkan, 1 dokumen seolah dilampirkan
+     ke dirinya sendiri). Disederhanakan jadi "Surat Jalan dicetak untuk
+     pengiriman barang." — tetap merepresentasikan event yang sama
+     (dokumen dicetak sebelum barang dikirim), tanpa klaim spesifik
+     soal lampiran ke noSJ yang sudah tidak bisa dinyatakan dengan
+     jelas pasca-rename ini.
 
      2026-08-26 — field BARU `mcdHistory` (array riwayat status
      pengiriman: {tanggal, username, status, keterangan, printBadge?})
@@ -2665,16 +2687,16 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'11/08/2026',
       syaratBayar:'Kredit 30 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
       shipVia:'Driver', noResi:'', driver:'Maulana Sidik - L 8753 GE (CDE)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/TGR/08/00168.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/TGR/08/00168.',
       items:[
         {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', satuan:'Dus', qtyPesan:20, qtyKirim:20, batch:'BT-260701-01', ed:'2027-06-30'},
         {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', satuan:'Karung', qtyPesan:80, qtyKirim:80, batch:'BT-260702-02', ed:'2027-05-15'},
       ],
-      jumlah:1700000, posted:false, ts:'Create Invoice',
+      jumlah:1700000, posted:false, ts:'Create Surat Jalan',
       tglInput:'11/08/2026 10:30', userInput:'sidik', tglEdit:'', userEdit:'',
       mcdHistory:[
-        {tanggal:'11/08/2026 10:30', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/TGR/08/00168.'},
-        {tanggal:'11/08/2026 10:35', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'11/08/2026 10:30', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/TGR/08/00168.'},
+        {tanggal:'11/08/2026 10:35', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.', printBadge:true},
         {tanggal:'11/08/2026 11:15', username:'setia_adg', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Maulana Sidik - L 8753 GE (CDE).'},
         {tanggal:'11/08/2026 15:20', username:'setia_adg', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh Toko Family Mart Jaya.'},
       ]},
@@ -2685,19 +2707,19 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'08/08/2026',
       syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
       shipVia:'Driver', noResi:'', driver:'Bambang Wijaya - B 9012 XYZ (ABC)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00042.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/SBY/08/00042.',
       items:[
         {kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', satuan:'Dus', qtyPesan:30, qtyKirim:30, batch:'BT-260707-07', ed:'2027-07-31'},
         {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', satuan:'Dus', qtyPesan:40, qtyKirim:40, batch:'BT-260708-08', ed:'2027-08-31'},
       ],
-      jumlah:880000, posted:true, ts:'Invoice Selesai', dibayar:0,
+      jumlah:880000, posted:true, ts:'Surat Jalan Selesai', dibayar:0,
       tglInput:'08/08/2026 15:20', userInput:'sidik', tglEdit:'09/08/2026 09:15', userEdit:'sidik',
       mcdHistory:[
-        {tanggal:'08/08/2026 15:20', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SBY/08/00042.'},
-        {tanggal:'08/08/2026 15:25', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'08/08/2026 15:20', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/SBY/08/00042.'},
+        {tanggal:'08/08/2026 15:25', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.', printBadge:true},
         {tanggal:'08/08/2026 16:00', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
         {tanggal:'08/08/2026 19:30', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh UD Makmur Jaya.'},
-        {tanggal:'09/08/2026 09:15', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
+        {tanggal:'09/08/2026 09:15', username:'sidik', status:'Faktur', keterangan:'Surat Jalan sudah diposting (lihat modul Surat Jalan).'},
       ]},
     {no:'26/SI/MDN/08/00001', noSJ:'26/SJ/MDN/08/00001', tglBuat:'06/08/2026 11:00', tgl:'06/08/2026',
       cabang:'Medan', gudang:'(04-GUU) Gudang Utama-MDN', area:'SUMATERA UTARA',
@@ -2706,15 +2728,15 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'06/08/2026',
       syaratBayar:'Kredit 45 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Gatot Subroto No. 21, Medan',
       shipVia:'Ekspedisi', noResi:'JNE-88213345', driver:'',
-      keterangan:'Invoice sesuai Picking List 26/PKL/MDN/08/00015.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/MDN/08/00015.',
       items:[
         {kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', satuan:'Karung', qtyPesan:50, qtyKirim:50, batch:'BT-260704-04', ed:'2027-01-31'},
       ],
-      jumlah:600000, posted:false, ts:'Create Invoice',
+      jumlah:600000, posted:false, ts:'Create Surat Jalan',
       tglInput:'06/08/2026 11:00', userInput:'sidik', tglEdit:'', userEdit:'',
       mcdHistory:[
-        {tanggal:'06/08/2026 11:00', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/MDN/08/00015.'},
-        {tanggal:'06/08/2026 11:10', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.'},
+        {tanggal:'06/08/2026 11:00', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/MDN/08/00015.'},
+        {tanggal:'06/08/2026 11:10', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.'},
         {tanggal:'07/08/2026 08:00', username:'setia_adg', status:'Diterima Sales Office (SO)', keterangan:'Barang tiba di Sales Office cabang tujuan via Ekspedisi JNE (No. Resi JNE-88213345).'},
         {tanggal:'07/08/2026 09:30', username:'setia_adg', status:'Serah Terima ke Tim Pengantar (SO)', keterangan:'Diserahterimakan ke tim pengantar lokal Sales Office untuk diteruskan ke Toko Anugrah.'},
       ]},
@@ -2725,15 +2747,15 @@ const DATA = {
       spAsli:false, skEd:false, cito:false, citoTgl:'07/08/2026',
       syaratBayar:'CBD', layanan:'Reguler', alamatPengiriman:'Jl. Perintis Kemerdekaan No. 5, Makassar',
       shipVia:'Driver', noResi:'', driver:'Hendra Gunawan - D 4521 FE (EFG)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/MKS/08/00009. Qty Kirim memakai fallback Qty Pesan karena Picking List sumbernya masih qtyPicking:0 (lihat catatan di atas array ini).',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/MKS/08/00009. Qty Kirim memakai fallback Qty Pesan karena Picking List sumbernya masih qtyPicking:0 (lihat catatan di atas array ini).',
       items:[
         {kode:'BRG-005', nama:'Mie Instan Indomie Goreng', satuan:'Dus', qtyPesan:100, qtyKirim:100, batch:'', ed:''},
       ],
-      jumlah:250000, posted:false, ts:'Create Invoice',
+      jumlah:250000, posted:false, ts:'Create Surat Jalan',
       tglInput:'07/08/2026 13:15', userInput:'sidik', tglEdit:'', userEdit:'',
       mcdHistory:[
-        {tanggal:'07/08/2026 13:15', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/MKS/08/00009.'},
-        {tanggal:'07/08/2026 13:20', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'07/08/2026 13:15', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/MKS/08/00009.'},
+        {tanggal:'07/08/2026 13:20', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.', printBadge:true},
       ]},
     {no:'26/SI/HO/08/00001', noSJ:'26/SJ/HO/08/00001', tglBuat:'07/08/2026 16:00', tgl:'07/08/2026',
       cabang:'Head Office', gudang:'(00-GUU) Gudang Utama-HO', area:'JABODETABEK BANTEN',
@@ -2742,18 +2764,18 @@ const DATA = {
       spAsli:false, skEd:false, cito:false, citoTgl:'07/08/2026',
       syaratBayar:'Kredit 30 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat',
       shipVia:'Diambil Sendiri', noResi:'', driver:'',
-      keterangan:'Invoice sesuai Picking List 26/PKL/HO/08/00077.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/HO/08/00077.',
       items:[
         {kode:'BRG-006', nama:'Kecap Manis ABC 600ml', satuan:'Dus', qtyPesan:60, qtyKirim:60, batch:'BT-260706-06', ed:'2027-03-31'},
         {kode:'BRG-009', nama:'Kopi Kapal Api 165gr', satuan:'Dus', qtyPesan:20, qtyKirim:20, batch:'BT-260709-09', ed:'2027-09-30'},
       ],
-      jumlah:1120000, posted:true, ts:'Invoice Selesai', dibayar:1120000,
+      jumlah:1120000, posted:true, ts:'Surat Jalan Selesai', dibayar:1120000,
       tglInput:'07/08/2026 16:00', userInput:'sidik', tglEdit:'07/08/2026 17:20', userEdit:'sidik',
       mcdHistory:[
-        {tanggal:'07/08/2026 16:00', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/HO/08/00077.'},
-        {tanggal:'07/08/2026 16:05', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.'},
+        {tanggal:'07/08/2026 16:00', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/HO/08/00077.'},
+        {tanggal:'07/08/2026 16:05', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.'},
         {tanggal:'07/08/2026 16:30', username:'sidik', status:'Diterima Customer', keterangan:'Barang diambil langsung oleh Toko Sumber Rejeki (Diambil Sendiri), tidak melalui tim pengantar.'},
-        {tanggal:'07/08/2026 17:20', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
+        {tanggal:'07/08/2026 17:20', username:'sidik', status:'Faktur', keterangan:'Surat Jalan sudah diposting (lihat modul Surat Jalan).'},
         {tanggal:'08/08/2026 10:00', username:'setia_adg', status:'Sudah Tukar Faktur / Pemberkasan', keterangan:'Faktur asli sudah ditukar & berkas lengkap.'},
       ]},
     {no:'26/SI/SMG/08/00001', noSJ:'26/SJ/SMG/08/00001', tglBuat:'05/08/2026 15:30', tgl:'05/08/2026',
@@ -2763,15 +2785,15 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'05/08/2026',
       syaratBayar:'Kredit 30 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Pandanaran No. 33, Semarang',
       shipVia:'Driver', noResi:'', driver:'Yusuf Setiawan - B 7788 KLM (HIJ)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/SMG/08/00013. Qty Kirim memakai fallback Qty Pesan karena Picking List sumbernya masih qtyPicking:0 (lihat catatan di atas array ini).',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/SMG/08/00013. Qty Kirim memakai fallback Qty Pesan karena Picking List sumbernya masih qtyPicking:0 (lihat catatan di atas array ini).',
       items:[
         {kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', satuan:'Dus', qtyPesan:25, qtyKirim:25, batch:'', ed:''},
       ],
-      jumlah:400000, posted:false, ts:'Create Invoice',
+      jumlah:400000, posted:false, ts:'Create Surat Jalan',
       tglInput:'05/08/2026 15:30', userInput:'sidik', tglEdit:'', userEdit:'',
       mcdHistory:[
-        {tanggal:'05/08/2026 15:30', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SMG/08/00013.'},
-        {tanggal:'05/08/2026 15:35', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.'},
+        {tanggal:'05/08/2026 15:30', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/SMG/08/00013.'},
+        {tanggal:'05/08/2026 15:35', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.'},
         {tanggal:'05/08/2026 16:10', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Yusuf Setiawan - B 7788 KLM (HIJ).'},
         {tanggal:'06/08/2026 09:00', username:'nazwaa_iks', status:'Diterima Sales Office (SO)', keterangan:'Barang direlay lewat Sales Office sebelum diteruskan ke CV Maju Terus.'},
         {tanggal:'06/08/2026 10:15', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (SO)', keterangan:'Diserahterimakan ke tim pengantar Sales Office untuk pengantaran terakhir.'},
@@ -2783,14 +2805,14 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'09/08/2026',
       syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Kertajaya No. 67, Surabaya',
       shipVia:'Dikirim Supplier', noResi:'', driver:'',
-      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00043. Qty Kirim memakai fallback Qty Pesan karena Picking List sumbernya masih qtyPicking:0 (lihat catatan di atas array ini).',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/SBY/08/00043. Qty Kirim memakai fallback Qty Pesan karena Picking List sumbernya masih qtyPicking:0 (lihat catatan di atas array ini).',
       items:[
         {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', satuan:'Dus', qtyPesan:35, qtyKirim:35, batch:'', ed:''},
       ],
-      jumlah:350000, posted:false, ts:'Create Invoice',
+      jumlah:350000, posted:false, ts:'Create Surat Jalan',
       tglInput:'09/08/2026 12:40', userInput:'sidik', tglEdit:'', userEdit:'',
       mcdHistory:[
-        {tanggal:'09/08/2026 12:40', username:'sidik', status:'Create Invoice', keterangan:'Invoice baru dibuat, menunggu proses cetak.'},
+        {tanggal:'09/08/2026 12:40', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan baru dibuat, menunggu proses cetak.'},
       ]},
     {no:'26/SI/HO/08/00002', noSJ:'26/SJ/HO/08/00002', tglBuat:'11/08/2026 14:10', tgl:'11/08/2026',
       cabang:'Head Office', gudang:'(00-GUU) Gudang Utama-HO', area:'JABODETABEK BANTEN',
@@ -2799,18 +2821,18 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'11/08/2026',
       syaratBayar:'Kredit 30 Hari', layanan:'Express', alamatPengiriman:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
       shipVia:'Driver', noResi:'', driver:'Agus Salim - F 3344 AB (KLM)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/HO/08/00078.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/HO/08/00078.',
       items:[
         {kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', satuan:'Dus', qtyPesan:70, qtyKirim:70, batch:'BT-260710-10', ed:'2027-10-31'},
       ],
-      jumlah:350000, posted:true, ts:'Invoice Selesai', dibayar:150000,
+      jumlah:350000, posted:true, ts:'Surat Jalan Selesai', dibayar:150000,
       tglInput:'11/08/2026 14:10', userInput:'sidik', tglEdit:'11/08/2026 16:45', userEdit:'sidik',
       mcdHistory:[
-        {tanggal:'11/08/2026 14:10', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/HO/08/00078.'},
-        {tanggal:'11/08/2026 14:15', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'11/08/2026 14:10', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/HO/08/00078.'},
+        {tanggal:'11/08/2026 14:15', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.', printBadge:true},
         {tanggal:'11/08/2026 14:45', username:'setia_adg', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Agus Salim - F 3344 AB (KLM).'},
-        {tanggal:'11/08/2026 16:30', username:'setia_adg', status:'Diterima Customer', keterangan:'Diterima sebagian oleh Toko Family Mart Jaya (Ditolak Sebagian) — sebagian retur, lihat catatan pembayaran sebagian di Invoice terkait.'},
-        {tanggal:'11/08/2026 17:20', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
+        {tanggal:'11/08/2026 16:30', username:'setia_adg', status:'Diterima Customer', keterangan:'Diterima sebagian oleh Toko Family Mart Jaya (Ditolak Sebagian) — sebagian retur, lihat catatan pembayaran sebagian di Surat Jalan terkait.'},
+        {tanggal:'11/08/2026 17:20', username:'sidik', status:'Faktur', keterangan:'Surat Jalan sudah diposting (lihat modul Surat Jalan).'},
         {tanggal:'12/08/2026 09:40', username:'setia_adg', status:'Sudah Tukar Faktur / Pemberkasan', keterangan:'Faktur asli sudah ditukar & berkas lengkap.'},
       ]},
     /* 2026-08-26 — 2 baris BARU (bukan mengedit 8 baris di atas yang
@@ -2860,17 +2882,17 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'20/08/2026',
       syaratBayar:'Kredit 30 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat',
       shipVia:'Driver', noResi:'', driver:'Maulana Sidik - L 8753 GE (CDE)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/HO/08/00079. Termasuk bonus barang dari Promotion 26/PM-HO/08/00001 (PRO01) — beli Sembako 55 pcs (Tepung 30 + Gula 25, >=50) mendapat bonus Gula Pasir Gulaku 1kg 20% x 55 = 11 pcs gratis.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/HO/08/00079. Termasuk bonus barang dari Promotion 26/PM-HO/08/00001 (PRO01) — beli Sembako 55 pcs (Tepung 30 + Gula 25, >=50) mendapat bonus Gula Pasir Gulaku 1kg 20% x 55 = 11 pcs gratis.',
       items:[
         {kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', satuan:'Karung', qtyPesan:30, qtyKirim:30, batch:'BT-260815-15', ed:'2027-02-28'},
         {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', satuan:'Karung', qtyPesan:25, qtyKirim:25, batch:'BT-260816-16', ed:'2027-06-15'},
         {kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', satuan:'Karung', qtyPesan:11, qtyKirim:11, batch:'BT-260816-16', ed:'2027-06-15', bonus:true, bonusKeterangan:'Bonus Promo PRO01 (26/PM-HO/08/00001) — 20% x 55'},
       ],
-      jumlah:735000, posted:false, ts:'Create Invoice',
+      jumlah:735000, posted:false, ts:'Create Surat Jalan',
       tglInput:'20/08/2026 10:00', userInput:'sidik', tglEdit:'', userEdit:'',
       mcdHistory:[
-        {tanggal:'20/08/2026 10:00', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/HO/08/00079.'},
-        {tanggal:'20/08/2026 10:05', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.'},
+        {tanggal:'20/08/2026 10:00', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/HO/08/00079.'},
+        {tanggal:'20/08/2026 10:05', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.'},
         {tanggal:'20/08/2026 10:40', username:'setia_adg', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Maulana Sidik - L 8753 GE (CDE).'},
         {tanggal:'20/08/2026 14:00', username:'setia_adg', status:'Diterima Sales Office (SO)', keterangan:'Barang direlay lewat Sales Office karena Toko Sumber Rejeki pindah titik terima sementara.'},
       ]},
@@ -2881,16 +2903,16 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'21/08/2026',
       syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
       shipVia:'Driver', noResi:'', driver:'Bambang Wijaya - B 9012 XYZ (ABC)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00044. Termasuk bonus barang dari Promotion 26/PM-SBY/08/00001 (PRO02) — beli Minyak Goreng Sunco 2L 120 dus (>=100) mendapat bonus 10% x 120 = 12 dus gratis (SKU sama).',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/SBY/08/00044. Termasuk bonus barang dari Promotion 26/PM-SBY/08/00001 (PRO02) — beli Minyak Goreng Sunco 2L 120 dus (>=100) mendapat bonus 10% x 120 = 12 dus gratis (SKU sama).',
       items:[
         {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', satuan:'Dus', qtyPesan:120, qtyKirim:120, batch:'BT-260817-17', ed:'2027-07-31'},
         {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', satuan:'Dus', qtyPesan:12, qtyKirim:12, batch:'BT-260817-17', ed:'2027-07-31', bonus:true, bonusKeterangan:'Bonus Promo PRO02 (26/PM-SBY/08/00001) — 10% x 120'},
       ],
-      jumlah:3000000, posted:false, ts:'Create Invoice',
+      jumlah:3000000, posted:false, ts:'Create Surat Jalan',
       tglInput:'21/08/2026 09:45', userInput:'sidik', tglEdit:'', userEdit:'',
       mcdHistory:[
-        {tanggal:'21/08/2026 09:45', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SBY/08/00044.'},
-        {tanggal:'21/08/2026 09:50', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'21/08/2026 09:45', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/SBY/08/00044.'},
+        {tanggal:'21/08/2026 09:50', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.', printBadge:true},
         {tanggal:'21/08/2026 10:20', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
         {tanggal:'21/08/2026 13:10', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh UD Makmur Jaya.'},
       ]},
@@ -2917,18 +2939,18 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'22/08/2026',
       syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Basuki Rahmat No. 105, Surabaya',
       shipVia:'Driver', noResi:'', driver:'Bambang Wijaya - B 9012 XYZ (ABC)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00045.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/SBY/08/00045.',
       items:[
         {kode:'BRG-006', nama:'Kecap Manis ABC 600ml', satuan:'Dus', qtyPesan:50, qtyKirim:50, batch:'BT-260818-18', ed:'2027-01-20'},
       ],
-      jumlah:700000, posted:true, ts:'Invoice Selesai', dibayar:0,
+      jumlah:700000, posted:true, ts:'Surat Jalan Selesai', dibayar:0,
       tglInput:'22/08/2026 10:10', userInput:'sidik', tglEdit:'22/08/2026 15:40', userEdit:'sidik',
       mcdHistory:[
-        {tanggal:'22/08/2026 10:10', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SBY/08/00045.'},
-        {tanggal:'22/08/2026 10:15', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'22/08/2026 10:10', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/SBY/08/00045.'},
+        {tanggal:'22/08/2026 10:15', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.', printBadge:true},
         {tanggal:'22/08/2026 11:00', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
         {tanggal:'22/08/2026 14:30', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh Toko Family Mart Sentosa.'},
-        {tanggal:'22/08/2026 15:40', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
+        {tanggal:'22/08/2026 15:40', username:'sidik', status:'Faktur', keterangan:'Surat Jalan sudah diposting (lihat modul Surat Jalan).'},
       ]},
     {no:'26/SI/SBY/08/00005', noSJ:'26/SJ/SBY/08/00005', tglBuat:'24/08/2026 09:05', tgl:'24/08/2026',
       cabang:'Surabaya', gudang:'(01-GUU) Gudang Utama-SBY', area:'JAWA TIMUR',
@@ -2937,18 +2959,18 @@ const DATA = {
       spAsli:true, skEd:false, cito:false, citoTgl:'24/08/2026',
       syaratBayar:'Kredit 14 Hari', layanan:'Reguler', alamatPengiriman:'Jl. Basuki Rahmat No. 105, Surabaya',
       shipVia:'Driver', noResi:'', driver:'Bambang Wijaya - B 9012 XYZ (ABC)',
-      keterangan:'Invoice sesuai Picking List 26/PKL/SBY/08/00046.',
+      keterangan:'Surat Jalan sesuai Picking List 26/PKL/SBY/08/00046.',
       items:[
         {kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', satuan:'Dus', qtyPesan:54, qtyKirim:54, batch:'BT-260819-19', ed:'2027-09-18'},
       ],
-      jumlah:540000, posted:true, ts:'Invoice Selesai', dibayar:0,
+      jumlah:540000, posted:true, ts:'Surat Jalan Selesai', dibayar:0,
       tglInput:'24/08/2026 09:05', userInput:'sidik', tglEdit:'24/08/2026 13:20', userEdit:'sidik',
       mcdHistory:[
-        {tanggal:'24/08/2026 09:05', username:'sidik', status:'Create Invoice', keterangan:'Invoice dibuat dari Picking List 26/PKL/SBY/08/00046.'},
-        {tanggal:'24/08/2026 09:10', username:'sidik', status:'Print Invoice', keterangan:'Invoice dicetak untuk dilampirkan ke Surat Jalan.', printBadge:true},
+        {tanggal:'24/08/2026 09:05', username:'sidik', status:'Create Surat Jalan', keterangan:'Surat Jalan dibuat dari Picking List 26/PKL/SBY/08/00046.'},
+        {tanggal:'24/08/2026 09:10', username:'sidik', status:'Print Surat Jalan', keterangan:'Surat Jalan dicetak untuk pengiriman barang.', printBadge:true},
         {tanggal:'24/08/2026 10:00', username:'nazwaa_iks', status:'Serah Terima ke Tim Pengantar (G)', keterangan:'Diserahterimakan ke Driver Bambang Wijaya - B 9012 XYZ (ABC).'},
         {tanggal:'24/08/2026 12:45', username:'nazwaa_iks', status:'Diterima Customer', keterangan:'Barang diterima lengkap oleh Toko Family Mart Sentosa.'},
-        {tanggal:'24/08/2026 13:20', username:'sidik', status:'Faktur', keterangan:'Invoice sudah diposting (lihat modul Invoice).'},
+        {tanggal:'24/08/2026 13:20', username:'sidik', status:'Faktur', keterangan:'Surat Jalan sudah diposting (lihat modul Surat Jalan).'},
       ]},
   ],
   /* Daftar Driver (dipakai field "Driver" di form Invoice, picker
@@ -5786,7 +5808,7 @@ const DATA = {
     'INVENTORY|Persediaan Barang|ADG','INVENTORY|Stock Request|ADG','INVENTORY|Stock Opname|ADG','PURCHASING|Terima Barang|ADG',
     'INVENTORY|Persediaan Barang|ADG-HO','INVENTORY|Stock Opname|ADG-HO',
     'PURCHASING|Purchase Order|PURCH','PURCHASING|Permintaan Pembelian|PURCH','PURCHASING|Terima Barang|PURCH','PURCHASING|Pembelian Melalui BPB|PURCH','PURCHASING|Pembelian dari PO|PURCH',
-    'SALES|Sales Quotation|SALES','SALES|Sales Order|SALES','SALES|Invoice|SALES',
+    'SALES|Sales Quotation|SALES','SALES|Sales Order|SALES','SALES|Surat Jalan|SALES',
     'BANK|Transaksi Kas|KAS','BANK|Jurnal Kas Lain-Lain|KAS','BANK|Master Bank|KAS',
     'SALES|Daftar Tagih Piutang|KOL','SALES|T3F|KOL','SALES|Penerimaan Piutang|KOL',
     'PURCHASING|Pelunasan Utang|FIN','PURCHASING|Pengajuan Pembayaran|FIN','BANK|Daftar Giro Mundur|FIN',
@@ -6917,6 +6939,243 @@ const DATA = {
       keterangan:'Faktur Penjualan Via S.J. sesuai S.J. 26/SJ/HO/08/00002.', tipeTransaksi:'Penjualan Kredit',
       tglInput:'13/08/2026 10:00', userInput:'sidik', tglEdit:'', userEdit:''},
   ],
+  /* Penjualan Langsung — menu Customer & Penjualan > Daftar Transaksi >
+     Penjualan Langsung (page:'penjualanLangsung', lihat js/pages/
+     penjualan-langsung.*). SEBELUMNYA placeholder murni
+     `{label:'Penjualan Langsung', page:'placeholder'}` di js/menu.js.
+     Dibangun 2026-09-15 sesuai 2 screenshot MASERP yang dikirim user:
+     "+ Penjualan Langsung" (form Tambah) & "Daftar Penjualan Langsung"
+     (list, 5 baris, semua Customer sama, semua "Penjualan Kredit").
+
+     KONSEP: kebalikan/mirror-sisi-Penjualan dari Pembelian Langsung
+     (js/pages/pembelian-langsung.*) — dokumen BERDIRI SENDIRI, TIDAK
+     di-chain dari Sales Order/Picking List/Invoice manapun (beda dari
+     Faktur Penjualan Via S.J. di atas yang WAJIB chain dari 1 baris
+     DATA.invoices). Faktur & Surat Jalan dibuat LANGSUNG dalam 1
+     dokumen ini sendiri (field "Surat Jalan" di form = otomatis SAMA
+     dengan "No. Faktur", lihat pjlOnNoFakturChange() di penjualan-
+     langsung.js). Cocok dipakai untuk transaksi non-fisik seperti
+     klaim discount distributor, penyesuaian, dll — makanya SEMUA 5
+     baris contoh di bawah ini bertema "Klaim Discount Distributor",
+     bukan penjualan barang fisik biasa (yang jalurnya normal lewat
+     Sales Order → Picking List → Invoice → Faktur Penjualan Via S.J.).
+
+     SUBSTITUSI DATA vs screenshot asli (mengikuti preseden yang SUDAH
+     didokumentasikan 4x di file ini — cari komentar "SATORIA ANEKA
+     INDUSTRI" di atas dekat Stock Request/Purchase Order/Pelunasan
+     Utang/Cabang — screenshot MASERP tsb berasal dari demo perusahaan
+     farmasi LAIN, bukan data DBM, WAJIB diganti):
+       - Customer "SATORIA ANEKA INDUSTRI" / alamat "SATORIA TOWER
+         LANTAI 27-28" → DIGANTI TOTAL jadi CUST-002 "UD Makmur Jaya"
+         (Surabaya, alamat asli "Jl. Raya Darmo No. 45, Surabaya") —
+         dipilih krn cocok secara geografis dgn konteks S.Office
+         SIDOARJO/Area AREAOFFICE di screenshot (Surabaya-Sidoarjo
+         satu wilayah Jawa Timur). Baris merah kredit info di screenshot
+         ("Batas Kredit 1.000.000,00; Piutang 6.358.770.506,13; Sisa
+         Kredit -6.357.770.506,13; Kode Lama Customer SAI.0001;") ADALAH
+         angka fiktif ekstrem demo — DIGANTI pakai data asli customer
+         CUST-002 (limit 35.000.000, piutang 9.120.000, noRef
+         'SBY.0001') sehingga Sisa Kredit = 25.880.000 (POSITIF, tidak
+         over-limit) — mengikuti aturan "customer.piutang/limit TIDAK
+         BOLEH diubah sembarangan" (preseden modul Sales Order); baris
+         kredit-info di UI tetap dibuat AKAN merah otomatis kalau
+         Sisa Kredit < 0 (lihat pjlCreditInfoHTML() di .js), hanya saja
+         dgn data customer asli saat ini tidak pernah terpicu merah.
+       - Item "BB-00035 Klaim Discount Distributor-SIDOARJO" TIDAK
+         ditambahkan ke DATA.items master (yg isinya 220 barang fisik
+         BRG-xxx) — disimpan sbg baris bebas (freeform kode/nama,
+         persis pola Nama Barang yang editable di item row Pembelian
+         Langsung/Faktur Penjualan Via S.J.), krn ini representasi
+         klaim finansial, bukan produk fisik yg perlu ada di katalog.
+       - Principal (picker baru, interaktif, sumber DATA.suppliers —
+         beda dari field Principal READONLY di Invoice/Retur Penjualan
+         yg di-chain dari dokumen atasnya) memakai supplier 5016 "PT
+         Wilmar Nabati Indonesia" utk baris 1 (konsisten dgn kode
+         principal yg sama dipakai di DATA.promotion).
+       - Gudang "(NON-00) Non Stock Head Office" (kode custom di
+         screenshot asli) → DISEDERHANAKAN pakai pola yg SUDAH established
+         di Pembelian Langsung: "Non Stock {Cabang}" (bukan bikin skema
+         kode baru "(NON-00)" yg tidak dipakai modul manapun lain).
+       - Salesman "OFFICE" DIPERTAHANKAN apa adanya (bukan nama salesman
+         customer) krn transaksi jenis Klaim Discount ini office-
+         initiated, bukan hasil kunjungan sales lapangan — ditambahkan
+         sbg 1 entry khusus di PJL_SALESMAN_LIST (js/pages/penjualan-
+         langsung.template.js) di samping nama-nama salesman asli.
+       - "Special Disc" (per-baris item & Global) TIDAK ada modul master
+         apapun di seluruh codebase (sudah dicek, nihil) → dibuat sbg
+         picker DEKORATIF dari daftar dummy tetap (PJL_SPECIAL_DISC_LIST),
+         sama seperti pola SO_SP_DUMMY_LIST/SO_DSC_DUMMY_LIST di Sales
+         Order — tidak mempengaruhi kalkulasi apapun.
+       - Checkbox Pph/Ppn per baris item TERSIMPAN sbg flag
+         (item.pphChecked/item.ppnChecked) tapi TIDAK dikonsumsi oleh
+         kalkulasi total — persis pola item.pph di Purchase Order
+         (purchase-order.js baris ~240) & item.ppnChecked di Faktur
+         Penjualan Via S.J. (keduanya juga sekadar flag informasional).
+       - Tombol toolbar "Refresh DPL" & "Auto Fill Quantity SI" dibuat
+         DEKORATIF (buka modal info "akan tersedia pada versi lengkap")
+         — krn dokumen ini BERDIRI SENDIRI (tidak ada Sales Order/DPL
+         asal utk di-refresh/di-auto-fill qty-nya), persis pola tombol
+         "Refresh DPL" dekoratif yg SUDAH ada di sales-quotation.js
+         (beda dgn "Auto Fill Quantity Picking" di picking-list.js yg
+         FUNGSIONAL krn di sana memang ada qtyOrder sumber dari S.O.).
+       - "Multi Batch Number" pakai ulang PERSIS pola modal single-text-
+         input tplPlBatchModal Pembelian Langsung (1 string per item,
+         BUKAN array multi-batch sungguhan — sama2 didokumentasikan
+         sbg mockup di kedua tempat).
+       - Kolom "PPh Dipotong" pakai daftar lokal PJL_PPH_LIST format
+         sama dgn FKT_PPH_LIST/PL_PPH_LIST yg sudah ada ('PPH 23 (2)'
+         bukan 'PPH 23' polos spt di screenshot — konsisten dgn 2 modul
+         lain, bukan salah ketik).
+       - Total (DPP/PPN 11%/PPh 2%/Jumlah Akhir) baris 1 di bawah ini
+         SENGAJA TIDAK dibulatkan (Math.round) spt fktRecalcTotals —
+         angka di screenshot asli (939.310.169,41 / 94.792.769,39 /
+         -17.235.048,98) TERBUKTI hasil perkalian desimal PERSIS tanpa
+         pembulatan (861.752.449 × 11% = 94.792.769,39 pas), jadi
+         pjlRecalcTotals() di penjualan-langsung.js SENGAJA tidak
+         memakai Math.round spt fktRecalcTotals, beda dari Fkt/PO/PL.
+       - 4 baris lain (00002–00005) disederhanakan (tipePpn 'Tidak ada
+         PPN', 1 item, tanpa Pph) — HANYA baris 1 (00001) yg mereplikasi
+         detail lengkap sesuai screenshot form "+ Penjualan Langsung";
+         baris 2-5 murni utk mengisi screenshot "Daftar Penjualan
+         Langsung" (5 baris, Jumlah Akhir 6.433.392,55 / 487.200.856,67
+         / 223.195.807,64 / 36.567.265,50) dgn angka PERSIS sama. */
+  penjualanLangsung:[
+    {no:'26/DSI/HO/07/00001', scannerType:'Barcode', cabang:'Head Office', proyek:'',
+      salesOffice:'SF01', salesOfficeNama:'SIDOARJO', area:'AREAOFFICE', areaNama:'AREAOFFICE',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya',
+      orderPenggantiRetur:false, tipeLayanan:'Reguler',
+      principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia',
+      tglFaktur:'16/07/2026', tglJatuhTempo:'14/09/2026', syaratBayar:'Kredit 60 Hari',
+      gudang:'Non Stock Head Office', salesman:'OFFICE',
+      jurnal:'JURNAL PENJUALAN KREDIT (IDR)', poCustomer:'', tglBatasRetur:'',
+      driver:'', kernet:'', pickUpType:'',
+      alamatPengirimanTipe:'Alamat Customer', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
+      specialDiscGlobal:'-Special Disc-',
+      items:[
+        {kode:'BB-00035', nama:'Klaim Discount Distributor-SIDOARJO', pphChecked:true, ppnChecked:true,
+          specialDisc:'PricingByDate', batch:'0', qty:1, um:'UNIT', hna:0, hna1:861752449, hna1Inklusif:false,
+          discPrincipal:0, discDistributor:0, totalDisc:0, discBarang:0, jumlah:861752449},
+      ],
+      tipePpn:'PPN Eksklusif(+11%)', mataUangPajak:'Rupiah (IDR)', kursPajak:1,
+      tglFakturPajak:'16/07/2026', kodePajak:'04 - DPP Nilai Lain', noFakturPajak:'04002600282639302',
+      diskon1:0, diskon1Unit:'%', diskon2:0, diskon2Unit:'%', kurs:1,
+      diskon1Amount:0, diskon2Amount:0, dpp:861752449, pajak11:'PPN11', ppn:94792769.39,
+      uangMukaTipe:'Tertua', sisaUangMuka:0, uangMukaPakai:0,
+      pphKode:'PPH 23 (2)', pphPersen:2, pphAmount:17235048.98,
+      ongkosAngkut:0, jumlahAkhir:939310169.41, sisaJumlah:939310169.41,
+      suratJalan:'26/DSI/HO/07/00001',
+      keterangan:'Klaim Discount Cab Sidoarjo Bulan Juni 2026 Sesuai Surat UD Makmur Jaya Tgl 16/07/2026',
+      tipeTransaksi:'Penjualan Kredit', pembayaran:0,
+      tglInput:'16/07/2026 09:00', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/DSI/HO/07/00002', scannerType:'Barcode', cabang:'Head Office', proyek:'',
+      salesOffice:'SF01', salesOfficeNama:'SIDOARJO', area:'AREAOFFICE', areaNama:'AREAOFFICE',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya',
+      orderPenggantiRetur:false, tipeLayanan:'Reguler',
+      principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia',
+      tglFaktur:'16/07/2026', tglJatuhTempo:'14/09/2026', syaratBayar:'Kredit 60 Hari',
+      gudang:'Non Stock Head Office', salesman:'OFFICE',
+      jurnal:'JURNAL PENJUALAN KREDIT (IDR)', poCustomer:'', tglBatasRetur:'',
+      driver:'', kernet:'', pickUpType:'',
+      alamatPengirimanTipe:'Alamat Customer', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
+      specialDiscGlobal:'-Special Disc-',
+      items:[
+        {kode:'BB-00035', nama:'Klaim Discount Distributor-SIDOARJO', pphChecked:false, ppnChecked:false,
+          specialDisc:'-Special Disc-', batch:'0', qty:1, um:'UNIT', hna:0, hna1:6433392.55, hna1Inklusif:false,
+          discPrincipal:0, discDistributor:0, totalDisc:0, discBarang:0, jumlah:6433392.55},
+      ],
+      tipePpn:'Tidak ada PPN', mataUangPajak:'Rupiah (IDR)', kursPajak:1,
+      tglFakturPajak:'16/07/2026', kodePajak:'04 - DPP Nilai Lain', noFakturPajak:'',
+      diskon1:0, diskon1Unit:'%', diskon2:0, diskon2Unit:'%', kurs:1,
+      diskon1Amount:0, diskon2Amount:0, dpp:6433392.55, pajak11:'', ppn:0,
+      uangMukaTipe:'Tertua', sisaUangMuka:0, uangMukaPakai:0,
+      pphKode:'', pphPersen:0, pphAmount:0,
+      ongkosAngkut:0, jumlahAkhir:6433392.55, sisaJumlah:6433392.55,
+      suratJalan:'26/DSI/HO/07/00002',
+      keterangan:'Klaim Discount Cab Sidoarjo Bulan Mei 2026 Sesuai Surat UD Makmur Jaya Tgl 16/07/2026',
+      tipeTransaksi:'Penjualan Kredit', pembayaran:0,
+      tglInput:'16/07/2026 09:05', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/DSI/HO/07/00003', scannerType:'Barcode', cabang:'Head Office', proyek:'',
+      salesOffice:'SF01', salesOfficeNama:'SIDOARJO', area:'AREAOFFICE', areaNama:'AREAOFFICE',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya',
+      orderPenggantiRetur:false, tipeLayanan:'Reguler',
+      principalKode:'5017', principalNama:'PT Sinar Meadow',
+      tglFaktur:'16/07/2026', tglJatuhTempo:'14/09/2026', syaratBayar:'Kredit 60 Hari',
+      gudang:'Non Stock Head Office', salesman:'OFFICE',
+      jurnal:'JURNAL PENJUALAN KREDIT (IDR)', poCustomer:'', tglBatasRetur:'',
+      driver:'', kernet:'', pickUpType:'',
+      alamatPengirimanTipe:'Alamat Customer', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
+      specialDiscGlobal:'-Special Disc-',
+      items:[
+        {kode:'BB-00035', nama:'Klaim Discount Distributor-SIDOARJO', pphChecked:false, ppnChecked:false,
+          specialDisc:'-Special Disc-', batch:'0', qty:1, um:'UNIT', hna:0, hna1:487200856.67, hna1Inklusif:false,
+          discPrincipal:0, discDistributor:0, totalDisc:0, discBarang:0, jumlah:487200856.67},
+      ],
+      tipePpn:'Tidak ada PPN', mataUangPajak:'Rupiah (IDR)', kursPajak:1,
+      tglFakturPajak:'16/07/2026', kodePajak:'04 - DPP Nilai Lain', noFakturPajak:'',
+      diskon1:0, diskon1Unit:'%', diskon2:0, diskon2Unit:'%', kurs:1,
+      diskon1Amount:0, diskon2Amount:0, dpp:487200856.67, pajak11:'', ppn:0,
+      uangMukaTipe:'Tertua', sisaUangMuka:0, uangMukaPakai:0,
+      pphKode:'', pphPersen:0, pphAmount:0,
+      ongkosAngkut:0, jumlahAkhir:487200856.67, sisaJumlah:487200856.67,
+      suratJalan:'26/DSI/HO/07/00003',
+      keterangan:'Klaim Discount Cab Sidoarjo Bulan April 2026 Sesuai Surat UD Makmur Jaya Tgl 16/07/2026',
+      tipeTransaksi:'Penjualan Kredit', pembayaran:0,
+      tglInput:'16/07/2026 09:10', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/DSI/HO/07/00004', scannerType:'Barcode', cabang:'Head Office', proyek:'',
+      salesOffice:'SF01', salesOfficeNama:'SIDOARJO', area:'AREAOFFICE', areaNama:'AREAOFFICE',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya',
+      orderPenggantiRetur:false, tipeLayanan:'Reguler',
+      principalKode:'5019', principalNama:'PT Mayora Distribusi',
+      tglFaktur:'16/07/2026', tglJatuhTempo:'14/09/2026', syaratBayar:'Kredit 60 Hari',
+      gudang:'Non Stock Head Office', salesman:'OFFICE',
+      jurnal:'JURNAL PENJUALAN KREDIT (IDR)', poCustomer:'', tglBatasRetur:'',
+      driver:'', kernet:'', pickUpType:'',
+      alamatPengirimanTipe:'Alamat Customer', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
+      specialDiscGlobal:'-Special Disc-',
+      items:[
+        {kode:'BB-00035', nama:'Klaim Discount Distributor-SIDOARJO', pphChecked:false, ppnChecked:false,
+          specialDisc:'-Special Disc-', batch:'0', qty:1, um:'UNIT', hna:0, hna1:223195807.64, hna1Inklusif:false,
+          discPrincipal:0, discDistributor:0, totalDisc:0, discBarang:0, jumlah:223195807.64},
+      ],
+      tipePpn:'Tidak ada PPN', mataUangPajak:'Rupiah (IDR)', kursPajak:1,
+      tglFakturPajak:'16/07/2026', kodePajak:'04 - DPP Nilai Lain', noFakturPajak:'',
+      diskon1:0, diskon1Unit:'%', diskon2:0, diskon2Unit:'%', kurs:1,
+      diskon1Amount:0, diskon2Amount:0, dpp:223195807.64, pajak11:'', ppn:0,
+      uangMukaTipe:'Tertua', sisaUangMuka:0, uangMukaPakai:0,
+      pphKode:'', pphPersen:0, pphAmount:0,
+      ongkosAngkut:0, jumlahAkhir:223195807.64, sisaJumlah:223195807.64,
+      suratJalan:'26/DSI/HO/07/00004',
+      keterangan:'Klaim Discount Cab Sidoarjo Bulan Maret 2026 Sesuai Surat UD Makmur Jaya Tgl 16/07/2026',
+      tipeTransaksi:'Penjualan Kredit', pembayaran:0,
+      tglInput:'16/07/2026 09:15', userInput:'sidik', tglEdit:'', userEdit:''},
+    {no:'26/DSI/HO/07/00005', scannerType:'Barcode', cabang:'Head Office', proyek:'',
+      salesOffice:'SF01', salesOfficeNama:'SIDOARJO', area:'AREAOFFICE', areaNama:'AREAOFFICE',
+      customerKode:'CUST-002', customerNama:'UD Makmur Jaya',
+      orderPenggantiRetur:false, tipeLayanan:'Reguler',
+      principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara',
+      tglFaktur:'16/07/2026', tglJatuhTempo:'14/09/2026', syaratBayar:'Kredit 60 Hari',
+      gudang:'Non Stock Head Office', salesman:'OFFICE',
+      jurnal:'JURNAL PENJUALAN KREDIT (IDR)', poCustomer:'', tglBatasRetur:'',
+      driver:'', kernet:'', pickUpType:'',
+      alamatPengirimanTipe:'Alamat Customer', alamatPengiriman:'Jl. Raya Darmo No. 45, Surabaya',
+      specialDiscGlobal:'-Special Disc-',
+      items:[
+        {kode:'BB-00035', nama:'Klaim Discount Distributor-SIDOARJO', pphChecked:false, ppnChecked:false,
+          specialDisc:'-Special Disc-', batch:'0', qty:1, um:'UNIT', hna:0, hna1:36567265.50, hna1Inklusif:false,
+          discPrincipal:0, discDistributor:0, totalDisc:0, discBarang:0, jumlah:36567265.50},
+      ],
+      tipePpn:'Tidak ada PPN', mataUangPajak:'Rupiah (IDR)', kursPajak:1,
+      tglFakturPajak:'16/07/2026', kodePajak:'04 - DPP Nilai Lain', noFakturPajak:'',
+      diskon1:0, diskon1Unit:'%', diskon2:0, diskon2Unit:'%', kurs:1,
+      diskon1Amount:0, diskon2Amount:0, dpp:36567265.50, pajak11:'', ppn:0,
+      uangMukaTipe:'Tertua', sisaUangMuka:0, uangMukaPakai:0,
+      pphKode:'', pphPersen:0, pphAmount:0,
+      ongkosAngkut:0, jumlahAkhir:36567265.50, sisaJumlah:36567265.50,
+      suratJalan:'26/DSI/HO/07/00005',
+      keterangan:'Klaim Discount Cab Sidoarjo Bulan Februari 2026 Sesuai Surat UD Makmur Jaya Tgl 16/07/2026',
+      tipeTransaksi:'Penjualan Kredit', pembayaran:0,
+      tglInput:'16/07/2026 09:20', userInput:'sidik', tglEdit:'', userEdit:''},
+  ],
   /* Sales Quotation — menu Customer & Penjualan > Daftar Transaksi >
      Sales Quotation (lihat js/pages/sales-quotation.*). Tahap PALING
      AWAL dari rantai transaksi Customer & Penjualan (Sales Quotation →
@@ -8026,12 +8285,12 @@ const MENU=[
    {label:'Tutup Sales Quotation', page:'tutupSalesQuotation'},
    {label:'Sales Order', page:'salesOrders'},
    {label:'Picking List', page:'pickingList'},
-   {label:'Invoice', page:'invoices'},
+   {label:'Surat Jalan', page:'invoices'},
    {label:'Packing', page:'packing'},
    {label:'Monitoring Control Delivery', page:'monitoringControlDelivery'},
    {label:'Retur Surat Jalan', page:'returSuratJalan'},
    {label:'Penjualan Via S.J.', page:'fakturPenjualanSJ'},
-   {label:'Penjualan Langsung', page:'placeholder', title:'Penjualan Langsung'},
+   {label:'Penjualan Langsung', page:'penjualanLangsung'},
    {label:'Penerimaan Piutang', page:'penerimaanPiutang'},
    {label:'Retur Penjualan', page:'returPenjualan'},
    {label:'Document Status Retur Penjualan', page:'placeholder', title:'Document Status Retur Penjualan'},
@@ -11379,7 +11638,7 @@ function tplMainDashboard(){
     <div class="flow-row">
       <div class="flow-step"><div class="flow-box">${icon('file',28)}</div><div class="flow-label">Sales Order</div></div>
       <div class="flow-arrow">&#8594;</div>
-      <div class="flow-step"><div class="flow-box">${icon('truck',28)}</div><div class="flow-label">Invoice</div></div>
+      <div class="flow-step"><div class="flow-box">${icon('truck',28)}</div><div class="flow-label">Surat Jalan</div></div>
       <div class="flow-arrow">&#8594;</div>
       <div class="flow-step"><div class="flow-box">${icon('card',28)}</div><div class="flow-label">Faktur Penjualan</div></div>
       <div class="flow-arrow">&#8594;</div>
@@ -11414,7 +11673,7 @@ function tplSalesDashboard(){
           <div class="flow-arrow">&#8594;</div>
           <div class="flow-step" data-nav="pickingList" data-title="Picking List"><div class="flow-box quick">${icon('clipboard',28)}</div><div class="flow-label">Picking List</div></div>
           <div class="flow-arrow">&#8594;</div>
-          <div class="flow-step" data-nav="invoices" data-title="Invoice"><div class="flow-box quick">${icon('truck',28)}</div><div class="flow-label">Invoice</div></div>
+          <div class="flow-step" data-nav="invoices" data-title="Surat Jalan"><div class="flow-box quick">${icon('truck',28)}</div><div class="flow-label">Surat Jalan</div></div>
           <div class="flow-arrow">&#8594;</div>
           <div class="flow-step" data-nav="packing" data-title="Packing"><div class="flow-box quick">${icon('box',28)}</div><div class="flow-label">Packing</div></div>
           <div class="flow-arrow">&#8594;</div>
@@ -12913,7 +13172,7 @@ function tplFktInvoicePicker(list, title){
       <div class="modal-body">
         <div class="table-wrap" style="max-height:340px;overflow:auto;"><table>
           <thead><tr><th>No. S.O.</th><th>No. S.J.</th><th>Customer</th><th>Cabang</th><th></th></tr></thead>
-          <tbody>${list.length ? list.map(inv=>`<tr><td>${inv.noSO||''}</td><td>${inv.noSJ||''}</td><td>${inv.customerNama||''}</td><td>${inv.cabang||''}</td><td><button class="btn-pick" data-pick-inv="${inv.no}">Pilih</button></td></tr>`).join('') : `<tr><td colspan="5" style="color:var(--text-light);">Tidak ada Invoice</td></tr>`}</tbody>
+          <tbody>${list.length ? list.map(inv=>`<tr><td>${inv.noSO||''}</td><td>${inv.noSJ||''}</td><td>${inv.customerNama||''}</td><td>${inv.cabang||''}</td><td><button class="btn-pick" data-pick-inv="${inv.no}">Pilih</button></td></tr>`).join('') : `<tr><td colspan="5" style="color:var(--text-light);">Tidak ada Surat Jalan</td></tr>`}</tbody>
         </table></div>
       </div>
       <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
@@ -14380,7 +14639,7 @@ const HAG_MODULES = [
   {nama:'SHELL', items:['Login Multi Cabang','Ganti Password','Kunci Layar','Notifikasi']},
   {nama:'DASHBOARD', items:['Dashboard Utama','Dashboard Supplier & Pembelian','Dashboard Customer & Penjualan','Dashboard Persediaan Barang','Dashboard Kas/Bank','Dashboard General Ledger']},
   {nama:'PURCHASING', items:['Purchase Order','Permintaan Pembelian','Terima Barang','Pembelian Melalui BPB','Pembelian Langsung','Pembelian dari PO','Retur Pembelian','Pelunasan Utang','Pengajuan Pembayaran','Uang Muka Supplier']},
-  {nama:'SALES', items:['Sales Quotation','Sales Order','Picking List','Invoice','Retur Penjualan','Uang Muka Customer','Surat Pesanan Ekatalog & Khusus','T3F','Daftar Tagih Piutang','Penerimaan Piutang']},
+  {nama:'SALES', items:['Sales Quotation','Sales Order','Picking List','Surat Jalan','Retur Penjualan','Uang Muka Customer','Surat Pesanan Ekatalog & Khusus','T3F','Daftar Tagih Piutang','Penerimaan Piutang']},
   {nama:'INVENTORY', items:['Persediaan Barang','Stock Request','Transaksi Persediaan','Master Stock Opname','Stock Opname','Reordering Sheet']},
   {nama:'BANK', items:['Master Bank','Transaksi Kas','Jurnal Kas Lain-Lain','Daftar Giro Mundur','Rekonsiliasi']},
   {nama:'MANUFACTURING', items:['Work Order','Bill of Material','Hasil Produksi']},
@@ -14993,6 +15252,28 @@ function tplHclDetailModal(row){
    logic, modal, & konvensi penamaan konstanta PKL_* ditiru persis
    di sini sebagai INV_*).
 
+   2026-09-15 (lanjutan): SELURUH teks tampilan modul ini (label menu
+   sidebar, breadcrumb, judul list/form, kolom "No Invoice", tombol
+   cetak, modal Hapus/Posting, judul dokumen cetak) di-RENAME dari
+   "Invoice" jadi "Surat Jalan" atas permintaan eksplisit Sidik —
+   nama identifier kode (INV_*, fungsi tplInv.../renderInv..., nama file
+   invoice.template.js/invoice.js, key `page:'invoices'`,
+   `DATA.invoices`, field `row.no`) SENGAJA TIDAK diubah (di luar
+   cakupan permintaan, resiko putus koneksi ke modul lain seperti
+   Monitoring Control Delivery/Faktur Penjualan Via S.J./Retur
+   Penjualan/dashboard yang semuanya membaca `DATA.invoices`).
+   Field "No. SJ"/`row.noSJ` (nomor pengantar TERPISAH dari nomor
+   dokumen utama `row.no` — 1 dokumen modul ini selalu punya persis
+   1 Surat Jalan pengantar sendiri, lihat komentar di atas
+   `invGenerateNumbers()` di invoice.js) SENGAJA JUGA TIDAK diubah, atas
+   keputusan eksplisit user setelah ditawari opsi — lihat komentar
+   di atas `tplInvCetakDropdown()` untuk detail konsekuensinya
+   (dropdown "Pilihan Cetak" jadi punya 2 opsi "Surat Jalan" [dokumen
+   utama] + 1 opsi "Cetak Lampiran Surat Jalan" [row.noSJ terpisah]).
+   Field "No. IVC" (singkatan "Invoice") juga SENGAJA dibiarkan
+   apa adanya untuk hindari duplikat label dengan "No. SJ" di
+   baris sebelahnya — lihat komentar di atas baris itu di tplInvForm().
+
    Sebelumnya page:'invoices' cuma pemetaan generik read-only
    ({title,cols,rows} di objek `pages` dalam renderPage(), js/core.js,
    dengan 10 baris dummy {no,tgl,customer,jumlah,status} tanpa
@@ -15053,14 +15334,14 @@ function invFindPL(no){ return DATA.pickingList.find(p => p.no === no); }
 
 function tplInvoiceListPage(){
   return `
-    <div class="breadcrumb">Home / <b>Invoice</b></div>
+    <div class="breadcrumb">Home / <b>Surat Jalan</b></div>
     <div class="card">
       <div class="card-header dark-header">
-        <h3>${icon('invoice',15)} Invoices</h3>
+        <h3>${icon('invoice',15)} Daftar Surat Jalan</h3>
         <div class="toolbar-actions">
           <button class="chip-btn" id="btnInvPickingReq" style="background:var(--teal);">Picking Requested</button>
           <button class="chip-btn" id="btnInvTsFilter">${icon('search',12)} TS</button>
-          <select class="chip-btn" id="invStatusFilter"><option>All</option><option>Create Invoice</option><option>Invoice Selesai</option></select>
+          <select class="chip-btn" id="invStatusFilter"><option>All</option><option>Create Surat Jalan</option><option>Surat Jalan Selesai</option></select>
           <select class="chip-btn" id="invPeriodFilter"><option>Agustus 2026</option></select>
           <button class="btn-primary" id="btnInvAdd">${icon('plus',14)} Tambah</button>
         </div>
@@ -15071,7 +15352,7 @@ function tplInvoiceListPage(){
       </div>
       <div class="table-wrap"><table>
         <thead><tr>
-          <th>No Invoice</th>
+          <th>No Surat Jalan</th>
           <th>No SP</th>
           <th>Customer</th>
           <th>Area</th>
@@ -15090,7 +15371,7 @@ function tplInvoiceListPage(){
 }
 
 function tplInvRows(rows){
-  if(!rows.length) return `<tr><td colspan="11" style="color:var(--text-light);">Tidak ada data Invoice</td></tr>`;
+  if(!rows.length) return `<tr><td colspan="11" style="color:var(--text-light);">Tidak ada data Surat Jalan</td></tr>`;
   return rows.map((r,i)=>{
     const dis = r.posted ? 'disabled' : '';
     const disStyle = r.posted ? 'opacity:.4;pointer-events:none;' : '';
@@ -15126,16 +15407,34 @@ function tplInvRows(rows){
    2 contoh cetakan PDF Invoice yang dikirim user (lihat catatan desain
    lengkap di header tplInvPrintDoc() di bawah). "Cetak Surat Jalan"
    TETAP dekoratif (belum ada contoh cetakan Surat Jalan yang dikirim,
-   di luar cakupan permintaan kali ini). */
+   di luar cakupan permintaan kali ini).
+
+   2026-09-15 (lanjutan): seluruh modul ini (menu/breadcrumb/judul/dsb)
+   di-rename dari "Invoice" jadi "Surat Jalan" atas permintaan Sidik
+   (lihat komentar besar di atas DATA.invoices di js/data.js untuk
+   penjelasan lengkap). Field "No. SJ"/`row.noSJ` (nomor pengantar
+   TERPISAH, format 26/SJ/..., beda dari nomor dokumen utama row.no
+   format 26/SI/...) SENGAJA TIDAK diubah — atas keputusan eksplisit
+   user, model datanya ("1 dokumen ini selalu punya persis 1 Surat
+   Jalan pengantar terpisah") tetap dipertahankan apa adanya. Akibatnya
+   di dropdown "Pilihan Cetak" ini SEKARANG ADA 3 opsi yang sama-sama
+   menyebut "Surat Jalan" — 2 opsi PERTAMA (Half/Full Page) mencetak
+   DOKUMEN UTAMA halaman ini sendiri (yang sekarang bernama "Surat
+   Jalan" di seluruh UI), opsi KETIGA tetap mencetak lampiran
+   pengantar terpisah (`row.noSJ`) yang sudah ada sebelumnya — supaya
+   tidak membingungkan 3 opsi mirip dalam 1 dropdown, opsi ketiga ini
+   diberi label lebih spesifik "Cetak Lampiran Surat Jalan" (bukan
+   sekadar "Cetak Surat Jalan" seperti sebelumnya) TANPA mengubah
+   `id="invCetakSJ"`/wiring/data `row.noSJ`-nya sama sekali. */
 function tplInvCetakDropdown(row){
   return `
     <div class="modal-box" style="max-width:340px;">
       <div class="modal-header"><span>Pilihan Cetak</span><span class="close" id="modalClose">&times;</span></div>
       <div class="modal-body">
         <div style="display:flex;flex-direction:column;gap:8px;">
-          <button class="btn-secondary" id="invCetakHalf" style="text-align:left;">${icon('printer',13)} Cetak Invoice - Half Page</button>
-          <button class="btn-secondary" id="invCetakFull" style="text-align:left;">${icon('printer',13)} Cetak Invoice - Full Page</button>
-          <button class="btn-secondary" id="invCetakSJ" style="text-align:left;">${icon('printer',13)} Cetak Surat Jalan</button>
+          <button class="btn-secondary" id="invCetakHalf" style="text-align:left;">${icon('printer',13)} Cetak Surat Jalan - Half Page</button>
+          <button class="btn-secondary" id="invCetakFull" style="text-align:left;">${icon('printer',13)} Cetak Surat Jalan - Full Page</button>
+          <button class="btn-secondary" id="invCetakSJ" style="text-align:left;">${icon('printer',13)} Cetak Lampiran Surat Jalan</button>
         </div>
       </div>
       <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
@@ -15307,14 +15606,24 @@ function tplInvForm(mode, row){
   const titleAction = isAdd ? 'Tambah' : 'Ubah';
   const headerIcon = isAdd ? 'plus' : 'edit';
   return `
-    <div class="breadcrumb">Home / Invoice / <b>${titleAction}</b></div>
+    <div class="breadcrumb">Home / Surat Jalan / <b>${titleAction}</b></div>
     <div class="card">
       <div class="card-header dark-header">
-        <h3>${icon(headerIcon,15)} ${isAdd?'+ Invoice':'Invoice'}</h3>
+        <h3>${icon(headerIcon,15)} ${isAdd?'+ Surat Jalan':'Surat Jalan'}</h3>
       </div>
       <div class="card-body">
-        <h2 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px;">INVOICE</h2>
+        <h2 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px;">SURAT JALAN</h2>
 
+        <!-- 2026-09-15: label "No. IVC" (No. SP di kolom list) SENGAJA
+             TIDAK diubah walau "IVC" singkatan dari "Invoice" — kalau
+             diganti ke "No. SJ" akan bentrok/duplikat persis dengan
+             label "No. SJ" di baris tepat di bawahnya (field terpisah
+             row.noSJ, lihat komentar besar di atas DATA.invoices di
+             js/data.js & di atas tplInvCetakDropdown()). Baris "No. IVC"
+             ini menampilkan row.no (nomor dokumen utama, format
+             26/SI/...) — konsisten dengan kolom "No Surat Jalan" di
+             list (juga row.no), hanya labelnya di form ini yang belum
+             sempat disamakan, di luar cakupan permintaan rename ini. -->
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
           <table class="field-table">
             <tr>
@@ -15501,8 +15810,8 @@ function tplInvForm(mode, row){
 function tplInvDeleteConfirm(row){
   return `
     <div class="modal-box">
-      <div class="modal-header"><span>Hapus Invoice</span><span class="close" id="modalClose">&times;</span></div>
-      <div class="modal-body"><p>Yakin ingin menghapus Invoice <b>${row.no}</b>?</p></div>
+      <div class="modal-header"><span>Hapus Surat Jalan</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Surat Jalan <b>${row.no}</b>?</p></div>
       <div class="modal-footer">
         <button class="btn-secondary" id="modalCancel">Batal</button>
         <button class="btn-danger" id="modalDelete">Hapus</button>
@@ -15528,8 +15837,8 @@ function tplInvInfoModal(title,text){
 function tplInvPostingConfirm(row){
   return `
     <div class="modal-box">
-      <div class="modal-header"><span>Posting Invoice</span><span class="close" id="modalClose">&times;</span></div>
-      <div class="modal-body"><p>Posting Invoice <b>${row.no}</b> ini ke General Ledger? Setelah di-posting, invoice tidak dapat diubah atau dihapus lagi.</p></div>
+      <div class="modal-header"><span>Posting Surat Jalan</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Posting Surat Jalan <b>${row.no}</b> ini ke General Ledger? Setelah di-posting, Surat Jalan tidak dapat diubah atau dihapus lagi.</p></div>
       <div class="modal-footer">
         <button class="btn-secondary" id="modalCancel">Batal</button>
         <button class="btn-primary" id="modalConfirm">Ya, Posting</button>
@@ -15805,7 +16114,7 @@ function tplInvPrintDoc(row, mode){
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>${isFull ? 'Invoice Full Page' : 'Invoice Half Page'} - ${row.no}</title>
+<title>${isFull ? 'Surat Jalan Full Page' : 'Surat Jalan Half Page'} - ${row.no}</title>
 <style>
   * { box-sizing:border-box; }
   body { font-family:Arial, Helvetica, sans-serif; font-size:${isFull?'11.5px':'10.5px'}; color:#33384a; margin:0; padding:0; background:#e9ebf1; }
@@ -15867,7 +16176,7 @@ function tplInvPrintDoc(row, mode){
             </div>
           </div>
         </td>
-        <td class="hdr-title-cell">INVOICE</td>
+        <td class="hdr-title-cell">SURAT JALAN</td>
       </tr>
       <tr>
         <td>
@@ -15955,7 +16264,7 @@ function tplInvPrintDoc(row, mode){
           <div class="perhatian">
             <b>Perhatian;</b><br>
             1. Barang yang telah diterima dengan baik tidak dapat dikembalikan atau ditukar dengan barang lain.<br>
-            2. Invoice ASLI berlaku sebagai kwitansi<br>
+            2. Surat Jalan ASLI berlaku sebagai kwitansi<br>
             3. Tidak menerima pembayaran tunai<br>
             4. Pembayaran dengan Cheque atau Giro harus ada atas nama ${INV_PRINT_COMPANY.nama} dan dianggap lunas setelah diuangkan
           </div>
@@ -20297,7 +20606,13 @@ function tplWlDeleteConfirm(row){
    murni sejak awal `js/menu.js`) sesuai 5 screenshot MASERP yang
    dikirim user 2026-08-26: list "Monitoring Control Delivery
    List" (toolbar page-size+Global Search+dropdown status "All"+
-   chip periode dekoratif, kolom No Invoice/No Picking List/No.
+   chip periode dekoratif, kolom No Invoice [2026-09-15: kolom ini
+   & seluruh sebutan "Invoice" di modul Invoice sendiri sudah
+   di-rename jadi "Surat Jalan" di UI — lihat catatan lengkap di
+   header invoice.template.js/di atas DATA.invoices, js/data.js;
+   komentar historis di bawah ini SENGAJA dibiarkan menyebut
+   "Invoice" apa adanya karena menjelaskan screenshot ASLI 2026-08-26]/
+   No Picking List/No.
    S.O./Tgl. S.J./Customer/Status/History/Update Status, pager
    windowed, Total Record besar [1218 di instalasi Sidik sendiri]),
    modal "History Monitoring Control Delivery" (tabel Tanggal/
@@ -20376,8 +20691,8 @@ function tplWlDeleteConfirm(row){
    ke-clip oleh `.table-wrap{overflow-x:auto}` pada tabel list. */
 
 const MCD_STATUSES = [
-  'Create Invoice',
-  'Print Invoice',
+  'Create Surat Jalan',
+  'Print Surat Jalan',
   'Serah Terima ke Tim Pengantar (G)',
   'Diterima Sales Office (SO)',
   'Serah Terima ke Tim Pengantar (SO)',
@@ -20403,7 +20718,7 @@ function tplMcdListPage(){
       </div>
       <div class="table-wrap"><table>
         <thead><tr>
-          <th>No Invoice</th>
+          <th>No Surat Jalan</th>
           <th>No Picking List</th>
           <th>No. S.O.</th>
           <th>Tgl. S.J.</th>
@@ -25510,6 +25825,735 @@ function tplFasDeleteConfirm(row){
 }
 
 function tplFasInfoModal(title,text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer"><button class="btn-primary" id="modalOk">Mengerti</button></div>
+    </div>`;
+}
+
+/* =========================================================
+   TEMPLATE (HTML saja) — Penjualan Langsung (Customer & Penjualan >
+   Daftar Transaksi > Penjualan Langsung, page:'penjualanLangsung' —
+   SEBELUMNYA placeholder murni `{label:'Penjualan Langsung',
+   page:'placeholder'}` di js/menu.js). Semua fungsi di file ini
+   HANYA menyusun & mengembalikan markup HTML (string), TIDAK ada
+   logic/DOM-binding/data mutation — logic-nya ada di file sebelah:
+   penjualan-langsung.js. Data: DATA.penjualanLangsung (lihat komentar
+   desain lengkap + semua keputusan substitusi data di atas array
+   tsb, js/data.js).
+
+   KONSEP MODUL — mirror-sisi-Penjualan dari Pembelian Langsung
+   (js/pages/pembelian-langsung.*, dibaca ulang & dipakai sbg acuan
+   struktur langsung): dokumen BERDIRI SENDIRI, tidak di-chain dari
+   Sales Order/Picking List/Invoice manapun — Faktur & Surat Jalan
+   dibuat LANGSUNG dalam 1 dokumen ini (field "Surat Jalan" otomatis
+   ikut nilai "No. Faktur" saat No. Faktur di-generate ulang, lihat
+   pjlOnRefreshNo() di .js).
+
+   Sesuai 2 screenshot MASERP yang dikirim user (2026-09-15):
+   1) "+ Penjualan Langsung" (form Tambah): baris Scanner Type /
+      Cabang / Proyek; Customer (picker) + baris info kredit merah/
+      abu-abu (Batas Kredit / Piutang / Sisa Kredit / Kode Lama
+      Customer — lihat pjlCreditInfoHTML()); checkbox "Order
+      Pengganti Retur Administasi"; Tipe Layanan + Principal
+      (picker, sumber DATA.suppliers); S.Office | Area; No. Faktur
+      (+refresh) / Tgl. Faktur / Tgl. Jth. Tempo / Syarat Bayar;
+      Gudang / Salesman (picker) / Jurnal; P.O. Customer / Tanggal
+      batas Retur / Driver (picker) / Kernet (picker) / Pick Up
+      Type; Alamat Pengiriman. Tab "Rincian Transaksi"/"Rincian
+      Jurnal Akun" + toolbar (kolom/Refresh DPL/Auto Fill Quantity
+      SI — SEMUA DEKORATIF, lihat catatan di DATA.penjualanLangsung);
+      Special Disc Global; tabel item (Pph/Ppn checkbox — flag
+      dekoratif, Kode/Nama Barang bebas, Special Disc picker
+      dekoratif, Multi Batch Number, Qty/U.M/HNA/HNA1+Inklusif,
+      Disc Principal/Distributor/Total/Disc Barang1/Jumlah);
+      Informasi PPN (4 radio + subfields Mata Uang/Kurs Pajak/
+      Tgl. Faktur Pajak/Kode Pajak/No Faktur Pajak); panel Rincian
+      Transaksi (Mata Uang/Kurs/Diskon1&2/DPP); Uang Muka; Pajak
+      11% + Pph Dipotong (picker+hapus) + Ongkos Angkut + Jumlah +
+      Sisa Jumlah; Surat Jalan; Keterangan. Footer: Perbaharui
+      Kurs/Cetak/Simpan/Batalkan + Duplikat (header) + Tutorial
+      (header, merah).
+   2) "Daftar Penjualan Langsung": chip periode (default Juli 2026,
+      FUNGSIONAL sama pola PL_BULAN_LIST) + Tambah; kolom No.
+      Transaksi (link->Lihat)/Tgl. Faktur/Customer/Tipe Transaksi/
+      Jumlah Akhir/P.O. Customer + aksi Attach/Kwitansi/Cetak/Ubah/
+      Hapus. Attach & Kwitansi DEKORATIF (modal info, pola sama
+      persis "Upload File" dekoratif di sales-quotation.js) — Cetak
+      FUNGSIONAL (preview kop DBM, pola tplPlPrintModal). Hapus
+      nonaktif bila Pembayaran > 0 (persis pola Pembelian Langsung). */
+
+const PJL_CABANG_LIST = ['Head Office','Surabaya','Bandung','Medan','Makassar','Semarang','Tangerang','Sidoarjo'];
+const PJL_CABANG_CODE = {'Head Office':'HO','Surabaya':'SBY','Bandung':'BDG','Medan':'MDN','Makassar':'MKS','Semarang':'SMG','Tangerang':'TGR','Sidoarjo':'SDA'};
+const PJL_SYARAT_BAYAR_LIST = ['CBD','Kredit 14 Hari','Kredit 30 Hari','Kredit 45 Hari','Kredit 60 Hari'];
+const PJL_SATUAN_LIST = ['UNIT','Pcs','Dus','Karung','Box','Pack'];
+const PJL_PPH_LIST = [
+  {kode:'PPH 22 (0.3)', persen:0.3},
+  {kode:'PPH 23 (2)', persen:2},
+  {kode:'PPH 4(2) (2.5)', persen:2.5},
+];
+const PJL_PPN_LIST = ['Tidak ada PPN','PPN Tidak Dipungut Pajak','PPN Inklusif','PPN Eksklusif(+11%)'];
+const PJL_SALESMAN_LIST = ['OFFICE','Andi Wijaya','Budi Santoso','Dedi Kurniawan','Eka Putri','Fajar Nugroho','M. Reza Wijaya'];
+const PJL_SCANNER_LIST = ['Barcode','QR Code'];
+/* "Special Disc" (Global & per-baris item) — TIDAK ada modul master
+   apapun di codebase (sudah dicek nihil), picker DEKORATIF dari
+   daftar dummy tetap, pola sama seperti SO_SP_DUMMY_LIST/
+   SO_DSC_DUMMY_LIST di Sales Order — tidak mempengaruhi kalkulasi. */
+const PJL_SPECIAL_DISC_LIST = ['-Special Disc-','PricingByDate','PricingByVolume','PricingByCustomerGroup'];
+const PJL_UANG_MUKA_LIST = ['Tertua','Pilih uang muka'];
+const PJL_BULAN_LIST = [
+  {label:'Agustus 2026', mm:'08', yy:'2026'},
+  {label:'Juli 2026', mm:'07', yy:'2026'},
+  {label:'Semua Periode', mm:'', yy:''},
+];
+
+function pjlNum2(n){ return Number(n||0).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function pjlTipeTransaksi(row){ return (row.syaratBayar||'').indexOf('Kredit') === 0 ? 'Penjualan Kredit' : 'Penjualan Tunai'; }
+function pjlCustomer(kode){ return DATA.customers.find(c => c.kode === kode); }
+function pjlSupplier(kode){ return DATA.suppliers.find(s => s.kode === kode); }
+
+/* Baris info kredit customer (Batas Kredit/Piutang/Sisa Kredit/Kode
+   Lama Customer) — komponen BARU (tidak ada preseden identik di
+   modul lain, lihat catatan di DATA.penjualanLangsung), merah hanya
+   kalau Sisa Kredit < 0 (over-limit), selain itu abu-abu netral. */
+function pjlCreditInfoHTML(customerKode){
+  const c = pjlCustomer(customerKode);
+  if(!c) return '';
+  const sisaKredit = Number(c.limit||0) - Number(c.piutang||0);
+  const color = sisaKredit < 0 ? 'var(--red)' : 'var(--text-light)';
+  return `<div style="font-size:11.5px;color:${color};margin:4px 0 10px;">
+    Batas Kredit ${pjlNum2(c.limit)}; Piutang ${pjlNum2(c.piutang)}; Sisa Kredit ${pjlNum2(sisaKredit)}; Kode Lama Customer ${c.noRef||'-'};
+  </div>`;
+}
+
+function pjlSalesOfficeOptions(selected){
+  return DATA.salesOffice.map(s=>`<option value="${s.kode}" ${selected===s.kode?'selected':''}>${s.nama}</option>`).join('');
+}
+function pjlAreaOptions(salesOfficeKode, selected){
+  const opts = DATA.area.filter(a => a.salesOffice === salesOfficeKode);
+  if(!opts.length) return `<option value="">-</option>`;
+  return opts.map(a=>`<option value="${a.kode}" ${selected===a.kode?'selected':''}>${a.nama}</option>`).join('');
+}
+function pjlGudangOptions(cabang, selected){
+  const opts = ['Non Stock ' + cabang].concat(DATA.gudang.filter(g=>g.cabang===cabang).map(g=>g.nama));
+  if(selected && !opts.includes(selected)) opts.unshift(selected);
+  return opts.map(o=>`<option ${o===selected?'selected':''}>${o}</option>`).join('');
+}
+
+/* =====================================================================
+   LIST PAGE — "Daftar Penjualan Langsung"
+===================================================================== */
+function tplPenjualanLangsungListPage(bulan){
+  return `
+    <div class="breadcrumb">Home / Customer &amp; Penjualan / <b>Penjualan Langsung</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('list',15)} Daftar Penjualan Langsung</h3>
+        <div class="toolbar-actions">
+          <select class="chip-btn" id="pjlFilterBulan">${PJL_BULAN_LIST.map(b=>`<option value="${b.mm}|${b.yy}" ${bulan===b.mm+'|'+b.yy?'selected':''}>${b.label}</option>`).join('')}</select>
+          <button class="btn-primary" id="btnPjlAdd">${icon('plus',14)} Tambah</button>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <select id="pjlPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="pjlSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th style="width:150px;">No. Transaksi<span class="th-sort">&#8597;</span></th>
+          <th style="width:100px;">Tgl. Faktur<span class="th-sort">&#8597;</span></th>
+          <th>Customer<span class="th-sort">&#8597;</span></th>
+          <th style="width:140px;">Tipe Transaksi<span class="th-sort">&#8597;</span></th>
+          <th class="text-right" style="width:150px;">Jumlah Akhir<span class="th-sort">&#8597;</span></th>
+          <th style="width:130px;">P.O. Customer<span class="th-sort">&#8597;</span></th>
+          <th style="width:56px;">Attach</th>
+          <th style="width:56px;">Kwitansi</th>
+          <th style="width:56px;">Cetak</th>
+          <th style="width:56px;">Ubah</th>
+          <th style="width:56px;">Hapus</th>
+        </tr></thead>
+        <tbody id="pjlTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager"><button>First</button><button>Previous</button><button class="active">1</button><button>Next</button><button>Last</button></div><div id="pjlTotal"></div></div>
+    </div>`;
+}
+
+function tplPjlRows(rows){
+  if(!rows.length) return `<tr><td colspan="11" style="color:var(--text-light);padding:14px;">Tidak ada Penjualan Langsung pada periode / pencarian ini.</td></tr>`;
+  return rows.map((r,i)=>{
+    const lunas = Number(r.pembayaran||0) > 0;
+    return `
+    <tr>
+      <td><button class="link-pick" data-view-link="${i}">${r.no}</button></td>
+      <td>${r.tglFaktur||''}</td>
+      <td>${(r.customerNama||'').toUpperCase()}<br><span style="font-size:11px;color:var(--text-light);">${r.alamatPengiriman||''}</span></td>
+      <td>${pjlTipeTransaksi(r)}</td>
+      <td class="text-right">${pjlNum2(r.jumlahAkhir)}</td>
+      <td>${r.poCustomer||''}</td>
+      <td><button class="icon-btn print" data-pjl-attach="${i}" title="Attach">${icon('file',14)}</button></td>
+      <td><button class="icon-btn print" data-pjl-kwitansi="${i}" title="Kwitansi">${icon('cash',14)}</button></td>
+      <td><button class="icon-btn edit" data-pjl-cetak="${i}" title="Cetak">${icon('printer',14)}</button></td>
+      <td><button class="icon-btn edit" data-pjl-edit="${i}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-pjl-del="${i}" title="${lunas?'Tidak bisa dihapus — sudah ada pembayaran':'Hapus'}" ${lunas?'disabled style="opacity:.45;cursor:not-allowed;"':''}>${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* =====================================================================
+   FORM (full page) — "+ Penjualan Langsung"
+===================================================================== */
+function tplPjlForm(mode, row){
+  const isAdd = mode === 'add';
+  const isView = mode === 'view';
+  const dis = isView ? 'disabled' : '';
+  return `
+    <div class="breadcrumb">Home / Penjualan Langsung / <b>${isAdd ? 'Tambah' : (isView ? 'Lihat' : 'Ubah')}</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('plus',15)} Penjualan Langsung</h3>
+        <div class="toolbar-actions">
+          ${!isView ? `<button class="btn-teal" id="btnPjlDuplikat" type="button">Duplikat</button>` : ''}
+          <button class="btn-danger" id="btnPjlTutorial">${icon('card',14)} Tutorial</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="form-grid-3" style="grid-template-columns:1fr 1fr 1fr;">
+          <div class="form-group">
+            <label>Scanner Type</label>
+            <select id="fPjlScanner" ${dis}>${PJL_SCANNER_LIST.map(s=>`<option ${row.scannerType===s?'selected':''}>${s}</option>`).join('')}</select>
+          </div>
+          <div class="form-group">
+            <label>Cabang</label>
+            <select id="fPjlCabang" ${(!isAdd)?'disabled':dis}>${PJL_CABANG_LIST.map(c=>`<option ${row.cabang===c?'selected':''}>${c}</option>`).join('')}</select>
+          </div>
+          <div class="form-group">
+            <label>Proyek</label>
+            <input type="text" id="fPjlProyek" value="${row.proyek||''}" ${dis}>
+          </div>
+        </div>
+
+        <div class="form-grid-3" style="grid-template-columns:1fr;">
+          <div class="form-group">
+            <label>Customer</label>
+            <div class="input-with-btn">
+              <input type="text" id="fPjlCustomer" value="${(row.customerNama||'').toUpperCase()}" placeholder="Pilih Customer" readonly>
+              ${!isView ? `<button type="button" class="icon-btn edit" id="pjlCustomerSearch" title="Cari Customer">${icon('search',13)}</button>` : ''}
+            </div>
+            <div id="pjlCreditInfo">${pjlCreditInfoHTML(row.customerKode)}</div>
+          </div>
+        </div>
+
+        <label style="display:flex;align-items:center;gap:8px;font-size:12.8px;margin:0 0 14px;">
+          <input type="checkbox" id="fPjlOrderPengganti" ${row.orderPenggantiRetur?'checked':''} ${dis} style="width:auto;"> Order Pengganti Retur Administasi
+        </label>
+
+        <div class="form-grid-3" style="grid-template-columns:1fr 1fr;">
+          <div class="form-group">
+            <label>Tipe Layanan</label>
+            <select id="fPjlTipeLayanan" ${dis}><option value="">Pilih</option>${DATA.layananList.map(l=>`<option ${row.tipeLayanan===l?'selected':''}>${l}</option>`).join('')}</select>
+          </div>
+          <div class="form-group">
+            <label>Principal</label>
+            <div class="input-with-btn">
+              <input type="text" id="fPjlPrincipal" value="${(row.principalNama||'').toUpperCase()}" placeholder="Pilih Principal" readonly>
+              ${!isView ? `<button type="button" class="icon-btn edit" id="pjlPrincipalSearch" title="Cari Principal">${icon('search',13)}</button>` : ''}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid-3" style="grid-template-columns:1fr 1fr;">
+          <div class="form-group">
+            <label>S.Office</label>
+            <select id="fPjlSalesOffice" ${dis}>${pjlSalesOfficeOptions(row.salesOffice)}</select>
+          </div>
+          <div class="form-group">
+            <label>Area</label>
+            <select id="fPjlArea" ${dis}>${pjlAreaOptions(row.salesOffice, row.area)}</select>
+          </div>
+        </div>
+
+        <div class="form-grid-3" style="grid-template-columns:1.2fr 1fr 1fr 1fr;">
+          <div class="form-group">
+            <label>No. Faktur</label>
+            <div class="input-with-btn">
+              <input type="text" id="fPjlNo" value="${row.no||''}" readonly>
+              ${isAdd ? `<button type="button" class="icon-btn edit" id="pjlRefreshNo" title="Generate Ulang Nomor">${icon('refreshCw',13)}</button>` : ''}
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Tgl. Faktur</label>
+            <div class="input-with-btn">
+              <input type="text" id="fPjlTglFaktur" value="${row.tglFaktur||''}" ${dis}>
+              <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',13)}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Tgl. Jth. Tempo</label>
+            <div class="input-with-btn">
+              <input type="text" id="fPjlTglJthTempo" value="${row.tglJatuhTempo||''}" ${dis}>
+              <span class="icon-btn edit" style="pointer-events:none;">${icon('calendar',13)}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Syarat Bayar</label>
+            <select id="fPjlSyaratBayar" ${dis}>${PJL_SYARAT_BAYAR_LIST.map(s=>`<option ${row.syaratBayar===s?'selected':''}>${s}</option>`).join('')}</select>
+          </div>
+        </div>
+
+        <div class="form-grid-3" style="grid-template-columns:1fr 1fr 1fr;">
+          <div class="form-group">
+            <label>Gudang</label>
+            <select id="fPjlGudang" ${dis}>${pjlGudangOptions(row.cabang||'Head Office', row.gudang)}</select>
+          </div>
+          <div class="form-group">
+            <label>Salesman</label>
+            <select id="fPjlSalesman" ${dis}>${PJL_SALESMAN_LIST.map(s=>`<option ${row.salesman===s?'selected':''}>${s}</option>`).join('')}</select>
+          </div>
+          <div class="form-group">
+            <label>Jurnal</label>
+            <select id="fPjlJurnal" ${dis}><option value=""></option>${DATA.jurnalPenjualan.map(j=>`<option ${row.jurnal===j.nama?'selected':''}>${j.nama}</option>`).join('')}</select>
+          </div>
+        </div>
+
+        <div class="form-grid-3" style="grid-template-columns:1fr 1fr 1fr 1fr 1fr;">
+          <div class="form-group">
+            <label>P.O. Customer</label>
+            <input type="text" id="fPjlPoCustomer" value="${row.poCustomer||''}" ${dis}>
+          </div>
+          <div class="form-group">
+            <label>Tanggal batas Retur</label>
+            <input type="text" id="fPjlTglBatasRetur" value="${row.tglBatasRetur||''}" ${dis}>
+          </div>
+          <div class="form-group">
+            <label>Driver</label>
+            <select id="fPjlDriver" ${dis}><option value=""></option>${DATA.driverList.map(d=>`<option ${row.driver===d?'selected':''}>${d}</option>`).join('')}</select>
+          </div>
+          <div class="form-group">
+            <label>Kernet</label>
+            <select id="fPjlKernet" ${dis}><option value=""></option>${DATA.kernetList.map(k=>`<option ${row.kernet===k?'selected':''}>${k}</option>`).join('')}</select>
+          </div>
+          <div class="form-group">
+            <label>Pick Up Type</label>
+            <input type="text" id="fPjlPickUpType" value="${row.pickUpType||''}" ${dis}>
+          </div>
+        </div>
+
+        <div class="form-grid-3" style="grid-template-columns:220px 1fr;">
+          <div class="form-group">
+            <label>Alamat Pengiriman</label>
+            <select id="fPjlAlamatTipe" ${dis}><option ${row.alamatPengirimanTipe==='Alamat Customer'?'selected':''}>Alamat Customer</option><option ${row.alamatPengirimanTipe==='Alamat Lain'?'selected':''}>Alamat Lain</option></select>
+          </div>
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <textarea id="fPjlAlamat" class="po-textarea" rows="3" ${dis}>${row.alamatPengiriman||''}</textarea>
+          </div>
+        </div>
+
+        <div class="inv-tabs">
+          <button type="button" class="inv-tab-btn active" id="pjlTabRincianBtn">Rincian Transaksi</button>
+          <button type="button" class="inv-tab-btn" id="pjlTabJurnalBtn">Rincian Jurnal Akun</button>
+        </div>
+
+        <div id="pjlTabRincianContent">${tplPjlRincianTab(row, isView)}</div>
+        <div id="pjlTabJurnalContent" style="display:none;">${tplPjlJurnalContent(row, isView)}</div>
+
+        ${tplPjlBottomPanel(row, isView)}
+      </div>
+      <div class="card-footer" style="display:flex;gap:10px;justify-content:flex-end;align-items:center;padding:14px 20px;border-top:1px solid var(--border);">
+        ${!isView ? `
+          <button type="button" class="btn-teal" id="pjlPerbaharuiKurs">Perbaharui Kurs</button>
+          <button type="button" class="btn-teal" id="pjlCetak">${icon('printer',13)} Cetak</button>
+          <button type="button" class="btn-primary" id="pjlSimpan">Simpan</button>` : ''}
+        <a href="#" id="pjlBatalkan" class="link-add" style="margin-top:0;">${isView?'Tutup':'Batalkan'}</a>
+      </div>
+    </div>`;
+}
+
+/* ===== Tab 1 — Rincian Transaksi (toolbar + tabel item, scroll horizontal) ===== */
+function tplPjlRincianTab(row, isView){
+  return `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0 6px;flex-wrap:wrap;gap:10px;">
+      <div class="form-group" style="max-width:260px;margin:0;">
+        <label>Special Disc Global</label>
+        <select id="fPjlSpecialDiscGlobal" ${isView?'disabled':''}>${PJL_SPECIAL_DISC_LIST.map(s=>`<option ${row.specialDiscGlobal===s?'selected':''}>${s}</option>`).join('')}</select>
+      </div>
+      ${!isView ? `
+      <div style="display:flex;gap:8px;">
+        <button type="button" class="icon-btn edit" id="pjlColumnsBtn" title="Pilih Kolom">${icon('settings',14)}</button>
+        <button type="button" class="btn-secondary" id="pjlRefreshDpl">${icon('search',13)} Refresh DPL</button>
+        <button type="button" class="btn-secondary" id="pjlAutoFillQty">Auto Fill Quantity SI</button>
+      </div>` : ''}
+    </div>
+    <div class="table-wrap" style="margin:10px 0 0;overflow-x:auto;">
+      <table class="po-item-table" style="min-width:1560px;">
+        <thead><tr>
+          <th style="width:40px;">No.</th>
+          <th style="width:44px;">Pph</th>
+          <th style="width:44px;">Ppn</th>
+          <th style="width:120px;">Kode Barang</th>
+          <th style="min-width:200px;">Nama Barang</th>
+          <th style="width:140px;">Special Disc</th>
+          <th style="width:90px;">Multi Batch Number</th>
+          <th class="text-right" style="width:70px;">Qty</th>
+          <th style="width:80px;">U/M</th>
+          <th class="text-right" style="width:110px;">HNA</th>
+          <th class="text-right" style="width:130px;">HNA1</th>
+          <th class="text-right" style="width:90px;">Disc Principal(%)</th>
+          <th class="text-right" style="width:100px;">Disc Distributor(%)</th>
+          <th class="text-right" style="width:90px;">Total Disc(%)</th>
+          <th class="text-right" style="width:110px;">Disc/Barang1</th>
+          <th class="text-right" style="width:140px;">Jumlah</th>
+          <th style="width:56px;">Hapus</th>
+        </tr></thead>
+        <tbody id="pjlItemsBody">${tplPjlItemRows(row.items, isView)}</tbody>
+      </table>
+    </div>
+    ${!isView ? `<a href="#" class="link-add" id="pjlAddItem">${icon('plus',13)}Tambah Item Baru</a>` : ''}`;
+}
+
+function tplPjlItemRows(items, isView){
+  if(!items || !items.length) return `<tr><td colspan="17" style="color:var(--text-light);">Belum ada rincian — klik "+Tambah Item Baru".</td></tr>`;
+  return items.map((it,idx)=>`
+    <tr>
+      <td style="text-align:center;">${idx+1}</td>
+      <td style="text-align:center;"><input type="checkbox" data-pjl-pph="${idx}" ${it.pphChecked?'checked':''} ${isView?'disabled':''}></td>
+      <td style="text-align:center;"><input type="checkbox" data-pjl-ppn="${idx}" ${it.ppnChecked?'checked':''} ${isView?'disabled':''}></td>
+      <td>
+        <div class="input-with-btn">
+          <input type="text" data-pjl-kode="${idx}" value="${it.kode||''}" ${isView?'disabled':''}>
+        </div>
+      </td>
+      <td><textarea data-pjl-nama="${idx}" class="po-textarea" rows="2" ${isView?'disabled':''}>${it.nama||''}</textarea></td>
+      <td><select data-pjl-specialdisc="${idx}" ${isView?'disabled':''}>${PJL_SPECIAL_DISC_LIST.map(s=>`<option ${it.specialDisc===s?'selected':''}>${s}</option>`).join('')}</select></td>
+      <td style="text-align:center;">${!isView ? `<button type="button" class="btn-primary" data-pjl-batch="${idx}" style="padding:4px 10px;font-size:12px;" title="Multi Batch Number">+</button>` : `<span style="font-size:11.5px;">${it.batch||'-'}</span>`}</td>
+      <td><input type="number" min="0" data-pjl-qty="${idx}" value="${it.qty!=null?it.qty:1}" ${isView?'disabled':''} style="text-align:right;"></td>
+      <td><select data-pjl-um="${idx}" ${isView?'disabled':''}>${PJL_SATUAN_LIST.map(u=>`<option ${it.um===u?'selected':''}>${u}</option>`).join('')}</select></td>
+      <td><input type="number" min="0" data-pjl-hna="${idx}" value="${it.hna||0}" ${isView?'disabled':''} style="text-align:right;"></td>
+      <td>
+        <input type="number" min="0" data-pjl-hna1="${idx}" value="${it.hna1||0}" ${isView?'disabled':''} style="text-align:right;">
+        <label style="display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--text-light);white-space:nowrap;"><input type="checkbox" data-pjl-hna1inklusif="${idx}" ${it.hna1Inklusif?'checked':''} ${isView?'disabled':''} style="width:auto;"> Inklusif</label>
+      </td>
+      <td><input type="number" min="0" data-pjl-discprincipal="${idx}" value="${it.discPrincipal||0}" ${isView?'disabled':''} style="text-align:right;"></td>
+      <td><input type="number" min="0" data-pjl-discdistributor="${idx}" value="${it.discDistributor||0}" ${isView?'disabled':''} style="text-align:right;"></td>
+      <td><input type="text" data-pjl-totaldisc="${idx}" value="${it.totalDisc||0}" readonly style="text-align:right;"></td>
+      <td><input type="text" data-pjl-discbarang="${idx}" value="${pjlNum2(it.discBarang||0)}" readonly style="text-align:right;"></td>
+      <td><input type="text" data-pjl-jumlah="${idx}" value="${pjlNum2(it.jumlah||0)}" readonly style="text-align:right;"></td>
+      <td style="text-align:center;">${!isView ? `<button type="button" class="icon-btn del" data-pjl-item-del="${idx}" title="Hapus Baris">${icon('trash',14)}</button>` : ''}</td>
+    </tr>`).join('');
+}
+
+/* ===== Tab 2 — Rincian Jurnal Akun (Otomatis / Manual) — pola sama
+   persis Pembelian Langsung, akun GL sisi Penjualan (Piutang/PPN
+   Keluaran/dsb dari DATA.jurnalPenjualan). ===== */
+function tplPjlJurnalContent(row, isView){
+  const totals = pjlJurnalTotals(row);
+  const selisihColor = Math.abs(totals.selisih) > 0.004 ? 'var(--red)' : 'var(--text)';
+  const manual = row.jurnalMode === 'manual';
+  return `
+    ${!isView ? `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0;flex-wrap:wrap;gap:10px;">
+      <div class="radio-inline" style="display:flex;gap:18px;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12.8px;"><input type="radio" name="pjlJurnalMode" value="otomatis" ${!manual?'checked':''} style="width:auto;"> Jurnal Otomatis</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12.8px;"><input type="radio" name="pjlJurnalMode" value="manual" ${manual?'checked':''} style="width:auto;"> Jurnal Manual</label>
+      </div>
+      <button type="button" class="btn-secondary" id="pjlBuatJurnal">${icon('refreshCw',13)} Buat Jurnal</button>
+    </div>` : '<div style="margin-top:14px;"></div>'}
+    <div class="card-header dark-header" style="border-radius:6px;">
+      <h3>${icon('settings',14)} Rincian Jurnal Akun</h3>
+      ${(!isView && manual) ? `<button type="button" class="btn-primary" id="pjlJurnalAddRow">${icon('plus',13)} Tambah</button>` : ''}
+    </div>
+    <div class="table-wrap" style="margin:6px 0 0;">
+      <table class="po-item-table">
+        <thead><tr>
+          <th>Kode Akun</th><th>Nama Akun</th><th>Keterangan</th><th class="text-right">Jumlah Debit</th><th class="text-right">Jumlah Kredit</th><th>Hapus</th>
+        </tr></thead>
+        <tbody id="pjlJurnalBody">${tplPjlJurnalRows(row.jurnalAkun, isView || !manual)}</tbody>
+      </table>
+    </div>
+    <div style="max-width:280px;margin:16px 0 0 auto;">
+      <div style="font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:4px;">Jumlah Debit - Kredit</div>
+      <input type="text" id="pjlJurnalSelisih" value="${pjlNum2(totals.selisih)}" readonly style="text-align:right;font-weight:700;color:${selisihColor};">
+    </div>`;
+}
+
+function tplPjlJurnalRows(list, readonly){
+  if(!list || !list.length) return `<tr><td colspan="6" style="color:var(--text-light);">Belum ada rincian jurnal — klik "Buat Jurnal".</td></tr>`;
+  return list.map((entry,idx)=>{
+    if(readonly){
+      return `
+      <tr>
+        <td style="min-width:110px;"><input type="text" value="${entry.kodeAkun||''}" readonly></td>
+        <td style="min-width:180px;"><input type="text" value="${entry.namaAkun||''}" readonly></td>
+        <td style="min-width:160px;"><input type="text" value="${entry.keterangan||''}" readonly></td>
+        <td style="width:150px;"><input type="text" value="${pjlNum2(entry.debit||0)}" readonly style="text-align:right;"></td>
+        <td style="width:150px;"><input type="text" value="${pjlNum2(entry.kredit||0)}" readonly style="text-align:right;"></td>
+        <td style="width:50px;"></td>
+      </tr>`;
+    }
+    return `
+    <tr data-pjl-jurnal-row="${idx}">
+      <td style="min-width:110px;">
+        <div class="input-with-btn">
+          <input type="text" data-pjl-jurnal-kode="${idx}" value="${entry.kodeAkun||''}" readonly>
+          <button type="button" class="icon-btn edit" data-pjl-jurnal-akun-search="${idx}" title="Cari Akun GL">${icon('search',12)}</button>
+        </div>
+      </td>
+      <td style="min-width:180px;"><input type="text" data-pjl-jurnal-nama="${idx}" value="${entry.namaAkun||''}" readonly></td>
+      <td style="min-width:160px;"><input type="text" data-pjl-jurnal-ket="${idx}" value="${entry.keterangan||''}"></td>
+      <td style="width:150px;"><input type="number" step="0.01" min="0" data-pjl-jurnal-debit="${idx}" value="${entry.debit||0}" style="text-align:right;"></td>
+      <td style="width:150px;"><input type="number" step="0.01" min="0" data-pjl-jurnal-kredit="${idx}" value="${entry.kredit||0}" style="text-align:right;"></td>
+      <td style="width:50px;"><button type="button" class="icon-btn del" data-pjl-jurnal-del="${idx}" title="Hapus Baris">${icon('trash',14)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ===== Panel bawah — Informasi PPN + Rincian Transaksi + Uang Muka
+   + Pajak/Pph/Ongkos/Jumlah + Surat Jalan + Keterangan ===== */
+function tplPjlBottomPanel(row, isView){
+  const dis = isView ? 'disabled' : '';
+  const showSub = (row.tipePpn === 'PPN Inklusif' || row.tipePpn === 'PPN Eksklusif(+11%)');
+  return `
+    <div class="form-grid" style="margin-top:26px;">
+      <div>
+        <div class="form-section">Informasi PPN</div>
+        <div class="radio-group">
+          ${PJL_PPN_LIST.map(p=>`<label><input type="radio" name="pjlPpnMode" value="${p}" ${row.tipePpn===p?'checked':''} ${dis}> ${p}</label>`).join('')}
+        </div>
+        <div id="pjlPpnSubfields" style="margin-top:14px;${showSub?'':'display:none;'}">
+          <table class="field-table po-rincian-table">
+            <tr><td class="flabel">Mata Uang</td><td><input type="text" id="fPjlMataUangPajak" value="${row.mataUangPajak||'Rupiah (IDR)'}" disabled></td></tr>
+            <tr><td class="flabel">Kurs Pajak</td><td><input type="text" id="fPjlKursPajak" value="${pjlNum2(row.kursPajak||1)}" ${dis} style="text-align:right;"></td></tr>
+            <tr><td class="flabel">Tgl. Faktur Pajak</td><td><input type="text" id="fPjlTglFakturPajak" value="${row.tglFakturPajak||''}" ${dis}></td></tr>
+            <tr><td class="flabel">Kode Pajak</td><td><select id="fPjlKodePajak" ${dis}>${DATA.kodePajakList.map(k=>`<option ${row.kodePajak===k?'selected':''}>${k}</option>`).join('')}</select></td></tr>
+            <tr><td class="flabel">No Faktur Pajak</td><td><input type="text" id="fPjlNoFakturPajak" value="${row.noFakturPajak||''}" ${dis}></td></tr>
+          </table>
+        </div>
+        <div class="form-group" style="margin-top:18px;max-width:420px;">
+          <label>Keterangan</label>
+          <textarea id="fPjlKeterangan" class="po-textarea" rows="3" ${dis}>${row.keterangan||''}</textarea>
+        </div>
+      </div>
+      <div>
+        <div class="form-section">Rincian Transaksi</div>
+        <table class="field-table po-rincian-table">
+          <tr><td class="flabel">Mata Uang</td><td><input type="text" value="IDR" disabled></td><td class="flabel">Kurs</td><td><input type="text" value="${pjlNum2(row.kurs||1)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">Diskon 1</td><td><input type="number" min="0" max="100" id="fPjlDiskon1" value="${row.diskon1||0}" ${dis} style="text-align:right;"> %</td><td></td><td><input type="text" id="fPjlDiskon1Amount" value="${pjlNum2(row.diskon1Amount||0)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">Diskon 2</td><td><input type="number" min="0" max="100" id="fPjlDiskon2" value="${row.diskon2||0}" ${dis} style="text-align:right;"> %</td><td></td><td><input type="text" id="fPjlDiskon2Amount" value="${pjlNum2(row.diskon2Amount||0)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">DPP</td><td colspan="3"><input type="text" id="fPjlDpp" value="${pjlNum2(row.dpp||0)}" disabled style="text-align:right;"></td></tr>
+        </table>
+
+        <div class="form-section" style="margin-top:18px;">Uang Muka</div>
+        <table class="field-table po-rincian-table">
+          <tr><td class="flabel">Tipe Uang Muka</td><td colspan="3">
+            <div style="display:flex;gap:18px;">
+              ${PJL_UANG_MUKA_LIST.map(u=>`<label style="display:flex;align-items:center;gap:6px;font-size:12.5px;"><input type="radio" name="pjlUmTipe" value="${u}" ${row.uangMukaTipe===u?'checked':''} ${dis} style="width:auto;"> ${u}</label>`).join('')}
+            </div>
+          </td></tr>
+          <tr><td class="flabel">Sisa U.Muka</td><td><input type="text" id="fPjlSisaUm" value="${pjlNum2(row.sisaUangMuka||0)}" disabled style="text-align:right;"></td><td class="flabel">Pakai:</td><td><input type="number" min="0" id="fPjlUmPakai" value="${row.uangMukaPakai||0}" ${dis} style="text-align:right;"></td></tr>
+        </table>
+
+        <table class="field-table po-rincian-table" style="margin-top:14px;">
+          <tr><td class="flabel">Pajak <span id="pjlPajakPersenLabel">${showSub?'11':'0'}</span> %</td><td>
+              <div class="input-with-btn">
+                <input type="text" id="fPjlPajakKode" value="${row.pajak11||''}" placeholder="Pilih Ppn" readonly>
+                ${!isView ? `<button type="button" class="icon-btn edit" id="pjlPajakInfo" title="Pilih PPN">${icon('search',13)}</button>` : ''}
+              </div>
+            </td><td></td><td><input type="text" id="fPjlPpnAmount" value="${pjlNum2(row.ppn||0)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">Pph Dipoton</td><td>
+              <div class="input-with-btn">
+                <input type="text" id="fPjlPphKode" value="${row.pphKode||''}" placeholder="Tidak ada" readonly>
+                ${!isView ? `<button type="button" class="icon-btn edit" id="pjlPphSearch" title="Cari PPh">${icon('search',13)}</button>
+                <button type="button" class="icon-btn del" id="pjlPphClear" title="Hapus PPh">${icon('trash',13)}</button>` : ''}
+              </div>
+            </td><td style="font-size:11.5px;color:var(--text-light);white-space:nowrap;"><span id="pjlPphPersenLabel">${row.pphKode ? row.pphPersen : 0}</span> %</td><td><input type="text" id="fPjlPphAmount" value="${pjlNum2(row.pphAmount||0)}" disabled style="text-align:right;"></td></tr>
+          <tr><td class="flabel">Ongkos Angkut</td><td colspan="3"><input type="number" min="0" id="fPjlOngkosAngkut" value="${row.ongkosAngkut||0}" ${dis} style="text-align:right;"></td></tr>
+          <tr><td class="flabel">Jumlah</td><td colspan="3"><input type="text" id="fPjlJumlah" value="${pjlNum2(row.jumlahAkhir||0)}" disabled style="text-align:right;font-weight:700;"></td></tr>
+          <tr><td class="flabel">Sisa Jumlah</td><td colspan="3"><input type="text" id="fPjlSisaJumlah" value="${pjlNum2(row.sisaJumlah||0)}" disabled style="text-align:right;font-weight:700;"></td></tr>
+        </table>
+
+        <div class="form-group" style="margin-top:18px;">
+          <label>Surat Jalan</label>
+          <input type="text" id="fPjlSuratJalan" value="${row.suratJalan||''}" disabled>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* Cetakan/preview Faktur Penjualan Langsung — kop DBM (pola sama
+   persis tplPlPrintModal Pembelian Langsung, sisi Penjualan). */
+function tplPjlPrintModal(row){
+  const ho = DATA.cabangMaster[0] || {};
+  const td = 'padding:4px 6px;font-size:11.5px;';
+  const itemRows = (row.items||[]).map((it,i)=>`
+    <tr>
+      <td style="${td}text-align:center;">${i+1}</td>
+      <td style="${td}">${it.kode||'-'}</td>
+      <td style="${td}white-space:pre-line;">${it.nama||''}</td>
+      <td style="${td}text-align:right;">${Number(it.qty||0).toLocaleString('id-ID')}</td>
+      <td style="${td}text-align:center;">${it.um||''}</td>
+      <td style="${td}text-align:right;">${pjlNum2(it.hna1)}</td>
+      <td style="${td}text-align:right;">${pjlNum2(it.discBarang)}</td>
+      <td style="${td}text-align:right;">${pjlNum2(it.jumlah)}</td>
+    </tr>`).join('');
+  return `
+    <div class="modal-box" style="max-width:920px;width:96vw;">
+      <div class="modal-header"><span>${icon('printer',15)} Cetak Penjualan Langsung — ${row.no}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body" style="max-height:72vh;overflow:auto;">
+        <div style="background:#fff;border:1px solid var(--border);padding:22px 26px;font-family:Arial,Helvetica,sans-serif;color:#111;">
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:64px;height:64px;border-radius:10px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;">DBM</div>
+            <div>
+              <div style="font-weight:800;font-size:14px;">${(ho.namaPerusahaan||'PT Distriversa Buanamas').toUpperCase()}</div>
+              <div style="font-size:11.5px;">${ho.alamat||''}, ${ho.kota||''} — Tlp: ${ho.telepon||''}</div>
+            </div>
+          </div>
+          <div style="text-align:center;font-weight:800;font-size:15px;margin:12px 0;text-decoration:underline;">FAKTUR PENJUALAN LANGSUNG</div>
+          <table style="border:none;font-size:11.5px;"><tbody>
+            <tr><td style="${td}">No. Faktur</td><td style="${td}">: ${row.no}</td><td style="${td}padding-left:40px;">Customer</td><td style="${td}">: ${(row.customerNama||'').toUpperCase()}</td></tr>
+            <tr><td style="${td}">Tgl. Faktur</td><td style="${td}">: ${row.tglFaktur||''}</td><td style="${td}padding-left:40px;">Surat Jalan</td><td style="${td}">: ${row.suratJalan||'-'}</td></tr>
+            <tr><td style="${td}">Syarat Bayar</td><td style="${td}">: ${row.syaratBayar||''} (${pjlTipeTransaksi(row)})</td><td style="${td}padding-left:40px;">Tgl. Jth. Tempo</td><td style="${td}">: ${row.tglJatuhTempo||''}</td></tr>
+            <tr><td style="${td}">Keterangan</td><td style="${td}" colspan="3">: ${row.keterangan||''}</td></tr>
+          </tbody></table>
+          <table style="width:100%;border-collapse:collapse;margin-top:10px;">
+            <thead><tr style="border-top:2px solid #111;border-bottom:2px solid #111;">
+              <th style="${td}width:34px;">No.</th><th style="${td}text-align:left;">Kode</th><th style="${td}text-align:left;">Nama Barang</th><th style="${td}text-align:right;">Qty</th><th style="${td}">U/M</th><th style="${td}text-align:right;">HNA1</th><th style="${td}text-align:right;">Disc</th><th style="${td}text-align:right;">Jumlah</th>
+            </tr></thead>
+            <tbody>${itemRows}</tbody>
+          </table>
+          <div style="border-top:2px solid #111;"></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+            <table style="border:none;min-width:300px;font-size:11.5px;"><tbody>
+              <tr><td style="${td}">DPP :</td><td style="${td}text-align:right;">${pjlNum2(row.dpp)}</td></tr>
+              <tr><td style="${td}">PPN :</td><td style="${td}text-align:right;">${pjlNum2(row.ppn)}</td></tr>
+              ${row.pphAmount ? `<tr><td style="${td}">PPh Dipotong :</td><td style="${td}text-align:right;">(${pjlNum2(row.pphAmount)})</td></tr>` : ''}
+              ${row.ongkosAngkut ? `<tr><td style="${td}">Ongkos Angkut :</td><td style="${td}text-align:right;">${pjlNum2(row.ongkosAngkut)}</td></tr>` : ''}
+              <tr style="border-top:2px solid #111;"><td style="${td}font-weight:800;">Jumlah :</td><td style="${td}text-align:right;font-weight:800;">${pjlNum2(row.jumlahAkhir)}</td></tr>
+              ${Number(row.uangMukaPakai||0) ? `<tr><td style="${td}">Uang Muka Dipakai :</td><td style="${td}text-align:right;">(${pjlNum2(row.uangMukaPakai)})</td></tr>` : ''}
+              <tr><td style="${td}">Sisa Jumlah :</td><td style="${td}text-align:right;">${pjlNum2(row.sisaJumlah)}</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+/* Pickers & modal kecil. */
+function tplPjlCustomerPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Customer</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="pjlCustomerPickerSearch" placeholder="Cari kode / nama customer..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Customer</th><th>Kota</th><th></th></tr></thead>
+            <tbody id="pjlCustomerPickerBody">${tplPjlCustomerPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+function tplPjlCustomerPickerRows(list){
+  if(!list.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada customer ditemukan</td></tr>`;
+  return list.map(c=>`
+    <tr><td>${c.kode}</td><td>${c.nama}</td><td>${c.kota||''}</td><td><button class="btn-pick" data-pjl-pick-customer="${c.kode}">Pilih</button></td></tr>`).join('');
+}
+
+function tplPjlPrincipalPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Principal</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="pjlPrincipalPickerSearch" placeholder="Cari kode / nama principal..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Principal</th><th></th></tr></thead>
+            <tbody id="pjlPrincipalPickerBody">${tplPjlPrincipalPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+function tplPjlPrincipalPickerRows(list){
+  if(!list.length) return `<tr><td colspan="3" style="color:var(--text-light);">Tidak ada principal ditemukan</td></tr>`;
+  return list.map(s=>`
+    <tr><td>${s.kode}</td><td>${s.nama}</td><td><button class="btn-pick" data-pjl-pick-principal="${s.kode}">Pilih</button></td></tr>`).join('');
+}
+
+function tplPjlPphPicker(list){
+  return `
+    <div class="modal-box" style="max-width:400px;">
+      <div class="modal-header"><span>Pilih PPh</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="table-wrap"><table>
+          <thead><tr><th>Kode PPh</th><th>Persen</th><th></th></tr></thead>
+          <tbody>${list.map(p=>`<tr><td>${p.kode}</td><td>${p.persen}%</td><td><button class="btn-pick" data-pjl-pick-pph="${p.kode}" data-pjl-pick-persen="${p.persen}">Pilih</button></td></tr>`).join('')}</tbody>
+        </table></div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplPjlAkunPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Akun GL</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="pjlAkunPickerSearch" placeholder="Cari kode / nama akun..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama Akun</th><th>Kat.</th><th></th></tr></thead>
+            <tbody id="pjlAkunPickerBody">${tplPjlAkunPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+function tplPjlAkunPickerRows(list){
+  if(!list.length) return `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada akun ditemukan</td></tr>`;
+  return list.map(a=>`
+    <tr><td>${a.kode}</td><td>${a.nama}</td><td>${a.kategori}</td><td><button class="btn-pick" data-pjl-pick-akun="${a.kode}">Pilih</button></td></tr>`).join('');
+}
+
+/* Modal input Multi Batch Number per baris barang — pola sama persis
+   tplPlBatchModal Pembelian Langsung (1 string per item, mockup). */
+function tplPjlBatchModal(item){
+  return `
+    <div class="modal-box" style="max-width:420px;">
+      <div class="modal-header"><span>Multi Batch Number — ${item.kode||item.nama||''}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Batch Number</label>
+          <input type="text" id="fPjlBatchInput" value="${item.batch||''}" placeholder="contoh: MB-2607-001">
+        </div>
+        <div style="font-size:11.5px;color:var(--text-light);margin-top:6px;">Mockup — pada aplikasi asli bisa lebih dari satu batch per baris.</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-primary" id="pjlBatchOk">Simpan</button>
+      </div>
+    </div>`;
+}
+
+function tplPjlDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Penjualan Langsung</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Faktur <b>${row.no}</b> — ${(row.customerNama||'').toUpperCase()} (${pjlNum2(row.jumlahAkhir)})?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+function tplPjlInfoModal(title,text){
   return `
     <div class="modal-box">
       <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
@@ -30654,8 +31698,8 @@ function tplRpjForm(mode, row){
           <div class="form-group">
             <label>No. Faktur Jual</label>
             <div class="input-with-btn">
-              <input type="text" id="fRpjNoFakturJual" value="${row.noFakturJual||''}" placeholder="Pilih Sales Invoice" readonly>
-              ${!isView ? `<button type="button" class="icon-btn edit" id="rpjFakturSearch" title="Cari Sales Invoice">${icon('search',13)}</button>
+              <input type="text" id="fRpjNoFakturJual" value="${row.noFakturJual||''}" placeholder="Pilih Surat Jalan" readonly>
+              ${!isView ? `<button type="button" class="icon-btn edit" id="rpjFakturSearch" title="Cari Surat Jalan">${icon('search',13)}</button>
               <button type="button" class="icon-btn del" id="rpjFakturClear" title="Hapus Faktur Terpilih">${icon('trash',13)}</button>` : ''}
             </div>
           </div>
@@ -30790,7 +31834,7 @@ function tplRpjBarangTab(row, isView){
       </table>
     </div>
     <a href="#" id="rpjTambahItem" class="link-add" style="${isView?'display:none;':''}">${icon('plus',12)} Tambah Item Baru</a>
-    <div id="rpjItemsEmptyHint" style="font-size:11.5px;color:var(--text-light);margin-top:6px;${(row.items&&row.items.length)?'display:none;':''}">Belum ada barang — pilih No. Faktur Jual (Sales Invoice) terlebih dahulu, barang faktur itu akan tampil di sini untuk diretur.</div>`;
+    <div id="rpjItemsEmptyHint" style="font-size:11.5px;color:var(--text-light);margin-top:6px;${(row.items&&row.items.length)?'display:none;':''}">Belum ada barang — pilih No. Faktur Jual (Surat Jalan) terlebih dahulu, barang faktur itu akan tampil di sini untuk diretur.</div>`;
 }
 
 function tplRpjItemRows(items, isView){
@@ -31035,7 +32079,7 @@ function tplRpjCetakBapbr(row){
     </div>`;
 }
 
-/* Picker Customer & Sales Invoice & Akun GL — salinan lokal pola
+/* Picker Customer & Surat Jalan & Akun GL — salinan lokal pola
    modul transaksi lain. */
 function tplRpjCustomerPicker(list){
   return `
@@ -31063,7 +32107,7 @@ function tplRpjCustomerPickerRows(list){
 function tplRpjFakturPicker(list){
   return `
     <div class="modal-box" style="max-width:760px;">
-      <div class="modal-header"><span>Pilih Sales Invoice</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-header"><span>Pilih Surat Jalan</span><span class="close" id="modalClose">&times;</span></div>
       <div class="modal-body">
         <input type="text" id="rpjFakturPickerSearch" placeholder="Cari no. faktur / customer..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
         <div class="table-wrap" style="max-height:340px;overflow:auto;">
@@ -45165,6 +46209,13 @@ function openHclDetail(idx){
    lihat tplInvRows() & class .icon-btn.disabled/gaya inline di
    css/style.css) — beda mendasar dari toggle Checked/Terkirim yang
    memang dirancang bisa bolak-balik.
+
+   2026-09-15 (lanjutan): seluruh teks tampilan modul ini di-rename
+   dari "Invoice" jadi "Surat Jalan" (label ts:'Create Surat Jalan'/
+   'Surat Jalan Selesai', teks modal info, dst.) — lihat catatan
+   lengkap di header invoice.template.js & di atas DATA.invoices
+   (js/data.js). Nama fungsi/variabel di file ini (invGenerateNumbers,
+   INV_*, dst.) TIDAK diubah.
 ========================================================= */
 
 function renderInvoicePage(){
@@ -45174,10 +46225,10 @@ function renderInvoicePage(){
 function renderInvList(){
   content.innerHTML = tplInvoiceListPage();
   document.getElementById('btnInvAdd').onclick = () => openInvForm('add');
-  document.getElementById('btnInvPickingReq').onclick = () => openInvInfo('Picking Requested', 'Filter khusus Invoice yang menunggu proses Picking Request. Filter ini dekoratif pada mockup ini, akan tersedia pada versi lengkap.');
-  document.getElementById('btnInvTsFilter').onclick = () => openInvInfo('Filter TS', 'Pencarian/filter berdasarkan Tahap Status (TS) Invoice. Filter ini dekoratif pada mockup ini, akan tersedia pada versi lengkap.');
-  document.getElementById('invStatusFilter').onchange = () => openInvInfo('Filter Status', 'Menampilkan semua status Invoice. Filter per status akan tersedia pada versi lengkap.');
-  document.getElementById('invPeriodFilter').onchange = () => openInvInfo('Filter Periode', 'Menampilkan Invoice untuk periode Agustus 2026. Pemilihan periode lain akan tersedia pada versi lengkap.');
+  document.getElementById('btnInvPickingReq').onclick = () => openInvInfo('Picking Requested', 'Filter khusus Surat Jalan yang menunggu proses Picking Request. Filter ini dekoratif pada mockup ini, akan tersedia pada versi lengkap.');
+  document.getElementById('btnInvTsFilter').onclick = () => openInvInfo('Filter TS', 'Pencarian/filter berdasarkan Tahap Status (TS) Surat Jalan. Filter ini dekoratif pada mockup ini, akan tersedia pada versi lengkap.');
+  document.getElementById('invStatusFilter').onchange = () => openInvInfo('Filter Status', 'Menampilkan semua status Surat Jalan. Filter per status akan tersedia pada versi lengkap.');
+  document.getElementById('invPeriodFilter').onchange = () => openInvInfo('Filter Periode', 'Menampilkan Surat Jalan untuk periode Agustus 2026. Pemilihan periode lain akan tersedia pada versi lengkap.');
   renderInvTable();
 }
 
@@ -45310,7 +46361,7 @@ function invBuildEmptyRow(){
     spAsli:false, skEd:false, cito:false, citoTgl:'11/08/2026',
     syaratBayar: INV_SYARAT_BAYAR_LIST[0], layanan: DATA.layananList[0],
     alamatPengiriman:'', shipVia: INV_SHIP_VIA_LIST[0], noResi:'', driver:'',
-    keterangan:'', items:[], jumlah:0, posted:false, ts:'Create Invoice',
+    keterangan:'', items:[], jumlah:0, posted:false, ts:'Create Surat Jalan',
     /* Diskon Global 1 & 2 — fitur baru 2026-08-28 (lihat invRecalcJumlah). */
     subtotalBarang:0, diskonGlobal1:0, diskonGlobal1Unit:'%', diskonGlobal1Amount:0,
     diskonGlobal2:0, diskonGlobal2Unit:'%', diskonGlobal2Amount:0,
@@ -45767,7 +46818,7 @@ function openInvPrintWindow(idx, mode, liveRow){
   const row = liveRow || persisted;
   const w = window.open('', '_blank');
   if(!w){
-    openInvInfo('Cetak Invoice', 'Pop-up diblokir browser. Izinkan pop-up untuk halaman ini agar bisa membuka preview cetak Invoice.');
+    openInvInfo('Cetak Surat Jalan', 'Pop-up diblokir browser. Izinkan pop-up untuk halaman ini agar bisa membuka preview cetak Surat Jalan.');
     return;
   }
   w.document.open();
@@ -45794,7 +46845,7 @@ function openInvDeleteConfirm(idx){
 
 /* Posting — TRANSISI SATU ARAH, lihat catatan lengkap di header file
    ini & tplInvPostingConfirm(). Begitu dikonfirmasi, row.posted=true &
-   row.ts berubah 'Create Invoice' -> 'Invoice Selesai', lalu tabel
+   row.ts berubah 'Create Surat Jalan' -> 'Surat Jalan Selesai', lalu tabel
    di-render ulang supaya tombol Ubah/Hapus/Posting baris itu langsung
    tampil disabled (lihat tplInvRows()). */
 function openInvPostingConfirm(idx){
@@ -45809,7 +46860,7 @@ function openInvPostingConfirm(idx){
   overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
   document.getElementById('modalConfirm').onclick = () => {
     row.posted = true;
-    row.ts = 'Invoice Selesai';
+    row.ts = 'Surat Jalan Selesai';
     row.tglEdit = new Date().toLocaleDateString('id-ID') + ' ' + new Date().toTimeString().slice(0,5);
     row.userEdit = 'sidik';
     closeModal();
@@ -49327,7 +50378,7 @@ function renderMcdTable(){
 function mcdOpenInvoice(idx){
   const row = DATA.invoices[idx];
   if(!row) return;
-  goToPage('invoices', 'Invoice', () => {
+  goToPage('invoices', 'Surat Jalan', () => {
     const invIdx = DATA.invoices.findIndex(x => x.no === row.no);
     // NB: modul Invoice cuma mengenal mode 'add'/'edit' (tidak ada mode
     // 'view' sungguhan — lihat openInvForm() di invoice.js, isAdd =
@@ -53834,6 +54885,618 @@ function openFasAkunPicker(onPick){
     const q = e.target.value.trim().toLowerCase();
     const list = DATA.akunGL.filter(a => !q || a.kode.includes(q) || a.nama.toLowerCase().includes(q));
     document.getElementById('fasAkunPickerBody').innerHTML = tplFasAkunPickerRows(list);
+    wire();
+  };
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Penjualan Langsung (Customer & Penjualan >
+   Daftar Transaksi). Dimuat otomatis (lazy-load) oleh core.js saat
+   menu ini pertama kali diklik — lihat PAGE_MODULES di js/core.js.
+   Markup HTML-nya ada di file sebelah: penjualan-langsung.template.js
+   (catatan desain lengkap + semua keputusan substitusi data ada di
+   headernya & di atas DATA.penjualanLangsung, js/data.js). NB:
+   closeModal() dipakai bersama (core.js).
+
+   Alur inti (mirror-sisi-Penjualan dari pembelian-langsung.js):
+   - Dokumen BERDIRI SENDIRI (tidak di-chain dari S.O./Picking
+     List/Invoice) — Faktur & Surat Jalan dibuat langsung 1 dokumen
+     (Surat Jalan otomatis ikut No. Faktur, lihat pjlOnRefreshNo()).
+   - Aritmetika per baris ITEM (persis fktRecalcItem, HNA1 sbg basis
+     — checkbox "Inklusif" murni flag tampilan, TIDAK mengubah
+     hitungan, lihat catatan di template): Total Disc% = Disc
+     Principal% + Disc Distributor%; Disc/Barang1 = HNA1 x
+     TotalDisc%; Jumlah = (HNA1 - Disc/Barang1) x Qty.
+   - Total dokumen (persis fktRecalcTotals TAPI SENGAJA TANPA
+     Math.round — lihat catatan presisi desimal di atas
+     DATA.penjualanLangsung): subtotal -> Diskon1%/Diskon2%
+     berjenjang -> DPP -> PPN 11% (hanya jika Eksklusif; Inklusif
+     cuma set kode pajak, tanpa nominal PPN tambahan, sama seperti
+     Faktur Penjualan Via S.J.) -> dikurangi PPh Dipotong -> +
+     Ongkos Angkut = Jumlah (Akhir); Sisa Jumlah = Jumlah - Uang
+     Muka Dipakai - Pembayaran.
+   - Sisa U.Muka otomatis dari total Uang Muka Customer
+     (DATA.uangMukaCustomer) milik customer terpilih; "Pakai"
+     divalidasi <= sisa (pola sama plSisaUangMuka Pembelian
+     Langsung, sisi Customer).
+   - Jurnal Otomatis (radio): Buat Jurnal -> D Piutang Usaha (net
+     stlh PPh) + D PPh Dibayar Dimuka (bila ada) lawan K Penjualan
+     Barang Dagang (4110001) + K PPN Keluaran (bila ada) — SENGAJA
+     TIDAK melibatkan Uang Muka Dipakai (persis simplifikasi yg
+     sama di plBuildJurnal Pembelian Langsung, yg jg tidak
+     melibatkan Uang Muka Supplier di jurnal otomatisnya). Jurnal
+     Manual: baris editable + Tambah; Simpan menolak jurnal tidak
+     balance.
+   - Tipe Transaksi list = "Penjualan Kredit"/"Penjualan Tunai" dari
+     Syarat Bayar; Hapus di list NONAKTIF bila Pembayaran > 0.
+   - Cetak -> preview faktur kop DBM; Perbaharui Kurs -> modal info
+     (mockup); Refresh DPL & Auto Fill Quantity SI -> modal info
+     (DEKORATIF, dokumen berdiri sendiri tanpa DPL/S.O. sumber —
+     lihat catatan di template); Attach & Kwitansi (kolom list) ->
+     modal info (DEKORATIF, pola sama "Upload File" dekoratif di
+     sales-quotation.js); tombol + Multi Batch -> modal input batch;
+     Duplikat (header form) -> menggandakan dokumen jadi draft baru
+     ("add" dgn No. Faktur baru, dari mode manapun). Data:
+     DATA.penjualanLangsung. */
+
+var pjlState = { bulan:'07|2026', search:'' };
+
+function renderPenjualanLangsungPage(){
+  pjlState = { bulan:'07|2026', search:'' };
+  renderPjlList();
+}
+
+function renderPjlList(){
+  content.innerHTML = tplPenjualanLangsungListPage(pjlState.bulan);
+  document.getElementById('btnPjlAdd').onclick = () => openPjlForm('add', null);
+  document.getElementById('pjlFilterBulan').onchange = (e) => { pjlState.bulan = e.target.value; renderPjlTable(); };
+  document.getElementById('pjlSearch').oninput = (e) => { pjlState.search = e.target.value; renderPjlTable(); };
+  renderPjlTable();
+}
+
+function pjlFilteredRows(){
+  const q = pjlState.search.trim().toLowerCase();
+  const parts = pjlState.bulan.split('|');
+  const mm = parts[0], yy = parts[1];
+  return (DATA.penjualanLangsung || []).filter(r => {
+    if(mm && !(r.tglFaktur||'').includes('/' + mm + '/' + yy)) return false;
+    if(q && !(
+      r.no.toLowerCase().includes(q) ||
+      (r.customerNama||'').toLowerCase().includes(q) ||
+      pjlTipeTransaksi(r).toLowerCase().includes(q) ||
+      (r.poCustomer||'').toLowerCase().includes(q) ||
+      (r.keterangan||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+}
+
+function renderPjlTable(){
+  const rows = pjlFilteredRows();
+  const tbody = document.getElementById('pjlTbody');
+  tbody.innerHTML = tplPjlRows(rows);
+  document.getElementById('pjlTotal').textContent = `Total Record: ${rows.length}`;
+  const idxOf = (r) => DATA.penjualanLangsung.indexOf(r);
+  tbody.querySelectorAll('[data-view-link]').forEach(b => b.onclick = () => openPjlForm('view', idxOf(rows[+b.dataset.viewLink])));
+  tbody.querySelectorAll('[data-pjl-edit]').forEach(b => b.onclick = () => openPjlForm('edit', idxOf(rows[+b.dataset.pjlEdit])));
+  tbody.querySelectorAll('[data-pjl-del]').forEach(b => {
+    if(b.disabled) return;
+    b.onclick = () => openPjlDelete(idxOf(rows[+b.dataset.pjlDel]));
+  });
+  tbody.querySelectorAll('[data-pjl-attach]').forEach(b => b.onclick = () => openPjlInfo('Attach', 'Fitur upload lampiran file Penjualan Langsung akan tersedia di sini pada versi lengkap.'));
+  tbody.querySelectorAll('[data-pjl-kwitansi]').forEach(b => b.onclick = () => openPjlInfo('Kwitansi', 'Cetak Kwitansi terpisah dari dokumen ini akan tersedia pada versi lengkap.'));
+  tbody.querySelectorAll('[data-pjl-cetak]').forEach(b => b.onclick = () => openPjlPrint(DATA.penjualanLangsung[idxOf(rows[+b.dataset.pjlCetak])]));
+}
+
+/* Nomor otomatis per cabang: 26/DSI/{kode}/07/{urut}. */
+function pjlGenerateNo(cabang){
+  const kode = PJL_CABANG_CODE[cabang] || 'HO';
+  const prefix = `26/DSI/${kode}/07/`;
+  let max = 0;
+  (DATA.penjualanLangsung || []).forEach(r => {
+    if(r.no && r.no.startsWith(prefix)){
+      const n = parseInt(r.no.slice(prefix.length), 10);
+      if(!isNaN(n) && n > max) max = n;
+    }
+  });
+  return prefix + String(max + 1).padStart(5, '0');
+}
+
+function pjlAkunNama(kode){ const a = DATA.akunGL.find(x => x.kode === kode); return a ? a.nama : ''; }
+
+/* Sisa uang muka customer terpilih (total Uang Muka Customer). */
+function pjlSisaUangMuka(customerNama){
+  if(!customerNama) return 0;
+  return (DATA.uangMukaCustomer || [])
+    .filter(u => (u.customer||'').toLowerCase() === customerNama.toLowerCase())
+    .reduce((a,u) => a + Number(u.jumlahTotal||0), 0);
+}
+
+function pjlJurnalTotals(row){
+  let d = 0, k = 0;
+  (row.jurnalAkun || []).forEach(e => { d += Number(e.debit || 0); k += Number(e.kredit || 0); });
+  return { debit: d, kredit: k, selisih: d - k };
+}
+
+/* ===== Aritmetika (SENGAJA TANPA Math.round — lihat catatan
+   presisi desimal di atas DATA.penjualanLangsung). ===== */
+function pjlRecalcItem(it){
+  it.totalDisc = Number(it.discPrincipal||0) + Number(it.discDistributor||0);
+  it.discBarang = Number(it.hna1||0) * it.totalDisc / 100;
+  it.jumlah = (Number(it.hna1||0) - it.discBarang) * Number(it.qty||0);
+}
+
+function pjlRecalc(row){
+  (row.items || []).forEach(pjlRecalcItem);
+  const subtotal = (row.items || []).reduce((a,it) => a + Number(it.jumlah||0), 0);
+  const d1 = Number(row.diskon1||0);
+  row.diskon1Amount = subtotal * d1 / 100;
+  const sisaSetelahD1 = subtotal - row.diskon1Amount;
+  const d2 = Number(row.diskon2||0);
+  row.diskon2Amount = sisaSetelahD1 * d2 / 100;
+  row.dpp = sisaSetelahD1 - row.diskon2Amount;
+  row.pajak11 = (row.tipePpn === 'PPN Inklusif' || row.tipePpn === 'PPN Eksklusif(+11%)') ? 'PPN11' : '';
+  row.ppn = (row.tipePpn === 'PPN Eksklusif(+11%)') ? (row.dpp * 0.11) : 0;
+  row.pphAmount = row.pphKode ? (row.dpp * Number(row.pphPersen||0) / 100) : 0;
+  row.jumlahAkhir = row.dpp + row.ppn - row.pphAmount + Number(row.ongkosAngkut||0);
+  row.sisaUangMuka = pjlSisaUangMuka(row.customerNama);
+  if(Number(row.uangMukaPakai||0) > row.sisaUangMuka) row.uangMukaPakai = row.sisaUangMuka;
+  row.sisaJumlah = row.jumlahAkhir - Number(row.uangMukaPakai||0) - Number(row.pembayaran||0);
+
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.value = v; };
+  set('fPjlDiskon1Amount', pjlNum2(row.diskon1Amount));
+  set('fPjlDiskon2Amount', pjlNum2(row.diskon2Amount));
+  set('fPjlDpp', pjlNum2(row.dpp));
+  set('fPjlPajakKode', row.pajak11);
+  set('fPjlPpnAmount', pjlNum2(row.ppn));
+  set('fPjlPphAmount', pjlNum2(row.pphAmount));
+  set('fPjlSisaUm', pjlNum2(row.sisaUangMuka));
+  set('fPjlJumlah', pjlNum2(row.jumlahAkhir));
+  set('fPjlSisaJumlah', pjlNum2(row.sisaJumlah));
+  const lbl = document.getElementById('pjlPajakPersenLabel');
+  if(lbl) lbl.textContent = (row.tipePpn==='PPN Inklusif'||row.tipePpn==='PPN Eksklusif(+11%)') ? '11' : '0';
+  const plbl = document.getElementById('pjlPphPersenLabel');
+  if(plbl) plbl.textContent = row.pphKode ? row.pphPersen : 0;
+  const subEl = document.getElementById('pjlPpnSubfields');
+  if(subEl) subEl.style.display = (row.tipePpn === 'PPN Inklusif' || row.tipePpn === 'PPN Eksklusif(+11%)') ? '' : 'none';
+  // Refresh kolom hitung baris barang tanpa render ulang (fokus aman)
+  (row.items || []).forEach((it, idx) => {
+    const g = (sel) => document.querySelector(`[data-pjl-${sel}="${idx}"]`);
+    const t = g('totaldisc'); if(t) t.value = it.totalDisc;
+    const dsc = g('discbarang'); if(dsc) dsc.value = pjlNum2(it.discBarang);
+    const j = g('jumlah'); if(j) j.value = pjlNum2(it.jumlah);
+  });
+}
+
+/* Jurnal otomatis — lihat catatan skema di header file ini. */
+function pjlBuildJurnal(row){
+  const ket = row.keterangan || row.no;
+  const j = (DATA.jurnalPenjualan && DATA.jurnalPenjualan[0]) || {};
+  const akunPiutang = j.akunPiutang || '1120001';
+  const akunPPN = j.akunPPN || '2120002';
+  const akunPphAsset = j.akunARSSPPPH || '1120004';
+  const akunPenjualan = '4110001';
+  const list = [
+    { kodeAkun: akunPiutang, namaAkun: pjlAkunNama(akunPiutang), keterangan: ket, debit: row.dpp + row.ppn - row.pphAmount + Number(row.ongkosAngkut||0), kredit: 0 },
+  ];
+  if(row.pphAmount > 0.004){
+    list.push({ kodeAkun: akunPphAsset, namaAkun: pjlAkunNama(akunPphAsset), keterangan: `PPh dipotong ${row.pphKode}`, debit: row.pphAmount, kredit: 0 });
+  }
+  list.push({ kodeAkun: akunPenjualan, namaAkun: pjlAkunNama(akunPenjualan), keterangan: ket, debit: 0, kredit: row.dpp + Number(row.ongkosAngkut||0) });
+  if(row.ppn > 0.004){
+    list.push({ kodeAkun: akunPPN, namaAkun: pjlAkunNama(akunPPN), keterangan: ket, debit: 0, kredit: row.ppn });
+  }
+  return list;
+}
+
+/* =====================================================================
+   FORM add / edit / view
+===================================================================== */
+function pjlEmptyRow(){
+  return {
+    no: pjlGenerateNo('Head Office'), scannerType:'Barcode', cabang:'Head Office', proyek:'',
+    salesOffice: (DATA.salesOffice[0]||{}).kode || '', area:'',
+    customerKode:'', customerNama:'', orderPenggantiRetur:false, tipeLayanan:'',
+    principalKode:'', principalNama:'',
+    tglFaktur:'31/07/2026', tglJatuhTempo:'28/09/2026', syaratBayar:'Kredit 60 Hari',
+    gudang:'Non Stock Head Office', salesman:'OFFICE', jurnal:'JURNAL PENJUALAN KREDIT (IDR)',
+    poCustomer:'', tglBatasRetur:'', driver:'', kernet:'', pickUpType:'',
+    alamatPengirimanTipe:'Alamat Customer', alamatPengiriman:'',
+    specialDiscGlobal:'-Special Disc-',
+    items: [{ kode:'', nama:'', pphChecked:false, ppnChecked:false, specialDisc:'-Special Disc-', batch:'0', qty:1, um:'UNIT', hna:0, hna1:0, hna1Inklusif:false, discPrincipal:0, discDistributor:0, totalDisc:0, discBarang:0, jumlah:0 }],
+    tipePpn:'Tidak ada PPN', mataUangPajak:'Rupiah (IDR)', kursPajak:1,
+    tglFakturPajak:'31/07/2026', kodePajak: DATA.kodePajakList[1] || '', noFakturPajak:'',
+    diskon1:0, diskon1Amount:0, diskon2:0, diskon2Amount:0, kurs:1,
+    dpp:0, pajak11:'', ppn:0, uangMukaTipe:'Tertua', sisaUangMuka:0, uangMukaPakai:0,
+    pphKode:'', pphPersen:0, pphAmount:0, ongkosAngkut:0, jumlahAkhir:0, sisaJumlah:0,
+    suratJalan:'', keterangan:'', tipeTransaksi:'Penjualan Kredit', pembayaran:0,
+    jurnalMode:'otomatis', jurnalAkun:[], userInput:'sidik',
+  };
+}
+
+function openPjlForm(mode, idx, presetRow){
+  const src = idx != null ? DATA.penjualanLangsung[idx] : null;
+  const row = presetRow || (src ? JSON.parse(JSON.stringify(src)) : pjlEmptyRow());
+  const isView = mode === 'view';
+  content.innerHTML = tplPjlForm(mode, row);
+
+  const back = () => renderPjlList();
+  document.getElementById('pjlBatalkan').onclick = (e) => { e.preventDefault(); back(); };
+  document.getElementById('btnPjlTutorial').onclick = () => openPjlInfo('Tutorial', 'Video tutorial Penjualan Langsung tersedia di portal MASERP (mockup).');
+  const dupBtn = document.getElementById('btnPjlDuplikat');
+  if(dupBtn) dupBtn.onclick = () => {
+    const dup = JSON.parse(JSON.stringify(row));
+    dup.no = pjlGenerateNo(dup.cabang || 'Head Office');
+    dup.suratJalan = dup.no;
+    dup.pembayaran = 0;
+    openPjlForm('add', null, dup);
+  };
+
+  // Tabs
+  const tabR = document.getElementById('pjlTabRincianBtn');
+  const tabJ = document.getElementById('pjlTabJurnalBtn');
+  const contR = document.getElementById('pjlTabRincianContent');
+  const contJ = document.getElementById('pjlTabJurnalContent');
+  tabR.onclick = () => { tabR.classList.add('active'); tabJ.classList.remove('active'); contR.style.display = ''; contJ.style.display = 'none'; };
+  tabJ.onclick = () => { tabJ.classList.add('active'); tabR.classList.remove('active'); contJ.style.display = ''; contR.style.display = 'none'; };
+
+  wirePjlItems(row, isView);
+  wirePjlJurnalTab(row, isView);
+  wirePjlBottomPanel(row, isView);
+  if(isView) return;
+
+  const refreshNoBtn = document.getElementById('pjlRefreshNo');
+  if(refreshNoBtn) refreshNoBtn.onclick = () => {
+    row.no = pjlGenerateNo(row.cabang);
+    row.suratJalan = row.no;
+    document.getElementById('fPjlNo').value = row.no;
+    document.getElementById('fPjlSuratJalan').value = row.suratJalan;
+  };
+
+  document.getElementById('fPjlScanner').onchange = (e) => { row.scannerType = e.target.value; };
+  document.getElementById('fPjlCabang').onchange = (e) => {
+    row.cabang = e.target.value;
+    row.gudang = 'Non Stock ' + row.cabang;
+    document.getElementById('fPjlGudang').innerHTML = pjlGudangOptions(row.cabang, row.gudang);
+    if(mode === 'add'){
+      row.no = pjlGenerateNo(row.cabang);
+      row.suratJalan = row.no;
+      document.getElementById('fPjlNo').value = row.no;
+      document.getElementById('fPjlSuratJalan').value = row.suratJalan;
+    }
+  };
+  document.getElementById('fPjlProyek').oninput = (e) => { row.proyek = e.target.value; };
+
+  document.getElementById('pjlCustomerSearch').onclick = () => openPjlCustomerPicker((c) => {
+    row.customerKode = c.kode;
+    row.customerNama = c.nama;
+    document.getElementById('fPjlCustomer').value = c.nama.toUpperCase();
+    document.getElementById('pjlCreditInfo').innerHTML = pjlCreditInfoHTML(c.kode);
+    if(row.alamatPengirimanTipe !== 'Alamat Lain'){
+      row.alamatPengiriman = c.alamat || '';
+      document.getElementById('fPjlAlamat').value = row.alamatPengiriman;
+    }
+    pjlRecalc(row); // refresh Sisa U.Muka customer tsb
+  });
+
+  document.getElementById('fPjlOrderPengganti').onchange = (e) => { row.orderPenggantiRetur = e.target.checked; };
+  document.getElementById('fPjlTipeLayanan').onchange = (e) => { row.tipeLayanan = e.target.value; };
+
+  document.getElementById('pjlPrincipalSearch').onclick = () => openPjlPrincipalPicker((s) => {
+    row.principalKode = s.kode;
+    row.principalNama = s.nama;
+    document.getElementById('fPjlPrincipal').value = s.nama.toUpperCase();
+  });
+
+  document.getElementById('fPjlSalesOffice').onchange = (e) => {
+    row.salesOffice = e.target.value;
+    row.area = '';
+    document.getElementById('fPjlArea').innerHTML = pjlAreaOptions(row.salesOffice, '');
+  };
+  document.getElementById('fPjlArea').onchange = (e) => { row.area = e.target.value; };
+
+  document.getElementById('fPjlTglFaktur').oninput = (e) => { row.tglFaktur = e.target.value.trim(); };
+  document.getElementById('fPjlTglJthTempo').oninput = (e) => { row.tglJatuhTempo = e.target.value.trim(); };
+  document.getElementById('fPjlSyaratBayar').onchange = (e) => { row.syaratBayar = e.target.value; };
+  document.getElementById('fPjlGudang').onchange = (e) => { row.gudang = e.target.value; };
+  document.getElementById('fPjlSalesman').onchange = (e) => { row.salesman = e.target.value; };
+  document.getElementById('fPjlJurnal').onchange = (e) => { row.jurnal = e.target.value; };
+  document.getElementById('fPjlPoCustomer').oninput = (e) => { row.poCustomer = e.target.value; };
+  document.getElementById('fPjlTglBatasRetur').oninput = (e) => { row.tglBatasRetur = e.target.value; };
+  document.getElementById('fPjlDriver').onchange = (e) => { row.driver = e.target.value; };
+  document.getElementById('fPjlKernet').onchange = (e) => { row.kernet = e.target.value; };
+  document.getElementById('fPjlPickUpType').oninput = (e) => { row.pickUpType = e.target.value; };
+  document.getElementById('fPjlAlamatTipe').onchange = (e) => {
+    row.alamatPengirimanTipe = e.target.value;
+    if(e.target.value === 'Alamat Customer'){
+      const c = pjlCustomer(row.customerKode);
+      row.alamatPengiriman = c ? (c.alamat||'') : '';
+      document.getElementById('fPjlAlamat').value = row.alamatPengiriman;
+    }
+  };
+  document.getElementById('fPjlAlamat').oninput = (e) => { row.alamatPengiriman = e.target.value; };
+
+  document.getElementById('fPjlSpecialDiscGlobal').onchange = (e) => { row.specialDiscGlobal = e.target.value; };
+  document.getElementById('pjlColumnsBtn').onclick = () => openPjlInfo('Pilih Kolom', 'Pengaturan kolom tabel Rincian Transaksi yang ditampilkan/disembunyikan akan tersedia pada versi lengkap.');
+  document.getElementById('pjlRefreshDpl').onclick = () => openPjlInfo('Refresh DPL', 'Menyinkronkan ulang Daftar Price List (HNA/HNA1 terbaru) dari master barang akan tersedia pada versi lengkap.');
+  document.getElementById('pjlAutoFillQty').onclick = () => openPjlInfo('Auto Fill Quantity SI', 'Dokumen Penjualan Langsung berdiri sendiri (tanpa Sales Order/DPL asal) sehingga tidak ada sumber Qty untuk diisi otomatis pada mockup ini.');
+
+  document.getElementById('pjlAddItem').onclick = (e) => {
+    e.preventDefault();
+    pjlReadItems(row);
+    row.items.push({ kode:'', nama:'', pphChecked:false, ppnChecked:false, specialDisc:'-Special Disc-', batch:'0', qty:1, um:'UNIT', hna:0, hna1:0, hna1Inklusif:false, discPrincipal:0, discDistributor:0, totalDisc:0, discBarang:0, jumlah:0 });
+    wirePjlItems(row, isView);
+    pjlRecalc(row);
+  };
+
+  document.getElementById('pjlPerbaharuiKurs').onclick = () => openPjlInfo('Perbaharui Kurs', 'Kurs IDR = 1,00 (mata uang lokal, tidak perlu diperbaharui).');
+  document.getElementById('pjlCetak').onclick = () => { pjlReadForm(row); pjlRecalc(row); openPjlPrint(row); };
+  document.getElementById('pjlSimpan').onclick = () => { if(pjlSave(mode, idx, row)) back(); };
+}
+
+/* Baca nilai baris barang dari DOM ke state. */
+function pjlReadItems(row){
+  row.items.forEach((it, idx) => {
+    const g = (sel) => document.querySelector(`[data-pjl-${sel}="${idx}"]`);
+    const kode = g('kode'); if(kode) it.kode = kode.value;
+    const nama = g('nama'); if(nama) it.nama = nama.value;
+    const specialDisc = g('specialdisc'); if(specialDisc) it.specialDisc = specialDisc.value;
+    const qty = g('qty'); if(qty) it.qty = Number(qty.value) || 0;
+    const um = g('um'); if(um) it.um = um.value;
+    const hna = g('hna'); if(hna) it.hna = Number(hna.value) || 0;
+    const hna1 = g('hna1'); if(hna1) it.hna1 = Number(hna1.value) || 0;
+    const hna1Inklusif = g('hna1inklusif'); if(hna1Inklusif) it.hna1Inklusif = hna1Inklusif.checked;
+    const dp = g('discprincipal'); if(dp) it.discPrincipal = Number(dp.value) || 0;
+    const dd = g('discdistributor'); if(dd) it.discDistributor = Number(dd.value) || 0;
+  });
+}
+
+function wirePjlItems(row, isView){
+  document.getElementById('pjlItemsBody').innerHTML = tplPjlItemRows(row.items, isView);
+  if(isView) return;
+  const onEdit = () => { pjlReadItems(row); pjlRecalc(row); };
+  ['qty','hna','hna1','discprincipal','discdistributor'].forEach(sel => {
+    document.querySelectorAll(`[data-pjl-${sel}]`).forEach(inp => inp.oninput = onEdit);
+  });
+  document.querySelectorAll('[data-pjl-hna1inklusif]').forEach(cb => cb.onchange = onEdit);
+  document.querySelectorAll('[data-pjl-kode]').forEach(inp => inp.oninput = () => { row.items[+inp.dataset.pjlKode].kode = inp.value; });
+  document.querySelectorAll('[data-pjl-nama]').forEach(inp => inp.oninput = () => { row.items[+inp.dataset.pjlNama].nama = inp.value; });
+  document.querySelectorAll('[data-pjl-um]').forEach(sel => sel.onchange = () => { row.items[+sel.dataset.pjlUm].um = sel.value; });
+  document.querySelectorAll('[data-pjl-specialdisc]').forEach(sel => sel.onchange = () => { row.items[+sel.dataset.pjlSpecialdisc].specialDisc = sel.value; });
+  document.querySelectorAll('[data-pjl-pph]').forEach(cb => cb.onchange = () => { row.items[+cb.dataset.pjlPph].pphChecked = cb.checked; });
+  document.querySelectorAll('[data-pjl-ppn]').forEach(cb => cb.onchange = () => { row.items[+cb.dataset.pjlPpn].ppnChecked = cb.checked; });
+  document.querySelectorAll('[data-pjl-item-del]').forEach(b => b.onclick = () => {
+    pjlReadItems(row);
+    row.items.splice(+b.dataset.pjlItemDel, 1);
+    wirePjlItems(row, isView);
+    pjlRecalc(row);
+  });
+  document.querySelectorAll('[data-pjl-batch]').forEach(b => b.onclick = () => {
+    const i = +b.dataset.pjlBatch;
+    pjlReadItems(row);
+    openPjlBatch(row.items[i]);
+  });
+}
+
+/* ----- Panel bawah: PPN, diskon, uang muka, pph, ongkos ----- */
+function wirePjlBottomPanel(row, isView){
+  if(isView) return;
+  document.querySelectorAll('input[name="pjlPpnMode"]').forEach(r => r.onchange = () => { row.tipePpn = r.value; pjlRecalc(row); });
+  document.querySelectorAll('input[name="pjlUmTipe"]').forEach(r => r.onchange = () => { row.uangMukaTipe = r.value; });
+  document.getElementById('fPjlKursPajak').oninput = (e) => { row.kursPajak = Number(e.target.value) || 1; };
+  document.getElementById('fPjlTglFakturPajak').oninput = (e) => { row.tglFakturPajak = e.target.value; };
+  document.getElementById('fPjlKodePajak').onchange = (e) => { row.kodePajak = e.target.value; };
+  document.getElementById('fPjlNoFakturPajak').oninput = (e) => { row.noFakturPajak = e.target.value; };
+  document.getElementById('fPjlKeterangan').oninput = (e) => { row.keterangan = e.target.value; };
+  document.getElementById('fPjlDiskon1').oninput = (e) => { row.diskon1 = Number(e.target.value) || 0; pjlRecalc(row); };
+  document.getElementById('fPjlDiskon2').oninput = (e) => { row.diskon2 = Number(e.target.value) || 0; pjlRecalc(row); };
+  document.getElementById('fPjlUmPakai').oninput = (e) => {
+    let v = Number(e.target.value) || 0;
+    const sisa = pjlSisaUangMuka(row.customerNama);
+    if(v > sisa){ v = sisa; e.target.value = v; }
+    row.uangMukaPakai = v;
+    pjlRecalc(row);
+  };
+  document.getElementById('fPjlOngkosAngkut').oninput = (e) => { row.ongkosAngkut = Number(e.target.value) || 0; pjlRecalc(row); };
+  document.getElementById('pjlPajakInfo').onclick = () => openPjlInfo('Kode Pajak', 'Kode pajak PPN11 (11%) dipakai otomatis saat mode PPN Inklusif / Eksklusif dipilih di Informasi PPN.');
+  document.getElementById('pjlPphSearch').onclick = () => openPjlPphPicker((p) => {
+    row.pphKode = p.kode; row.pphPersen = p.persen;
+    document.getElementById('fPjlPphKode').value = p.kode;
+    pjlRecalc(row);
+  });
+  document.getElementById('pjlPphClear').onclick = () => {
+    row.pphKode = ''; row.pphPersen = 0;
+    document.getElementById('fPjlPphKode').value = '';
+    pjlRecalc(row);
+  };
+}
+
+/* ----- Tab Rincian Jurnal Akun ----- */
+function wirePjlJurnalTab(row, isView){
+  const cont = document.getElementById('pjlTabJurnalContent');
+  cont.innerHTML = tplPjlJurnalContent(row, isView);
+  if(isView) return;
+
+  const rerender = () => wirePjlJurnalTab(row, isView);
+  const refreshSelisih = () => {
+    const t = pjlJurnalTotals(row);
+    const el = document.getElementById('pjlJurnalSelisih');
+    el.value = pjlNum2(t.selisih);
+    el.style.color = Math.abs(t.selisih) > 0.004 ? 'var(--red)' : 'var(--text)';
+  };
+
+  cont.querySelectorAll('input[name="pjlJurnalMode"]').forEach(r => r.onchange = () => {
+    row.jurnalMode = r.value;
+    rerender();
+  });
+  document.getElementById('pjlBuatJurnal').onclick = () => {
+    pjlReadItems(row);
+    pjlRecalc(row);
+    if(row.dpp <= 0){ openPjlInfo('Buat Jurnal', 'Isi rincian transaksi terlebih dahulu di tab Rincian Transaksi.'); return; }
+    row.jurnalAkun = pjlBuildJurnal(row);
+    rerender();
+  };
+  const addBtn = document.getElementById('pjlJurnalAddRow');
+  if(addBtn) addBtn.onclick = () => {
+    row.jurnalAkun = row.jurnalAkun || [];
+    row.jurnalAkun.push({ kodeAkun:'', namaAkun:'', keterangan:'', debit:0, kredit:0 });
+    rerender();
+  };
+  cont.querySelectorAll('[data-pjl-jurnal-del]').forEach(b => b.onclick = () => {
+    row.jurnalAkun.splice(+b.dataset.pjlJurnalDel, 1);
+    rerender();
+  });
+  cont.querySelectorAll('[data-pjl-jurnal-akun-search]').forEach(b => b.onclick = () => {
+    const i = +b.dataset.pjlJurnalAkunSearch;
+    openPjlAkunPicker((akun) => {
+      row.jurnalAkun[i].kodeAkun = akun.kode;
+      row.jurnalAkun[i].namaAkun = akun.nama;
+      cont.querySelector(`[data-pjl-jurnal-kode="${i}"]`).value = akun.kode;
+      cont.querySelector(`[data-pjl-jurnal-nama="${i}"]`).value = akun.nama;
+    });
+  });
+  cont.querySelectorAll('[data-pjl-jurnal-ket]').forEach(inp => inp.oninput = () => {
+    row.jurnalAkun[+inp.dataset.pjlJurnalKet].keterangan = inp.value;
+  });
+  cont.querySelectorAll('[data-pjl-jurnal-debit]').forEach(inp => inp.oninput = () => {
+    row.jurnalAkun[+inp.dataset.pjlJurnalDebit].debit = Number(inp.value) || 0;
+    refreshSelisih();
+  });
+  cont.querySelectorAll('[data-pjl-jurnal-kredit]').forEach(inp => inp.oninput = () => {
+    row.jurnalAkun[+inp.dataset.pjlJurnalKredit].kredit = Number(inp.value) || 0;
+    refreshSelisih();
+  });
+}
+
+/* Baca field form header/bawah ke state. */
+function pjlReadForm(row){
+  row.tglFaktur = document.getElementById('fPjlTglFaktur').value.trim();
+  row.tglJatuhTempo = document.getElementById('fPjlTglJthTempo').value.trim();
+  row.syaratBayar = document.getElementById('fPjlSyaratBayar').value;
+  row.gudang = document.getElementById('fPjlGudang').value;
+  row.jurnal = document.getElementById('fPjlJurnal').value;
+  row.alamatPengiriman = document.getElementById('fPjlAlamat').value;
+  row.keterangan = document.getElementById('fPjlKeterangan').value;
+  row.poCustomer = document.getElementById('fPjlPoCustomer').value.trim();
+  pjlReadItems(row);
+  row.items = row.items.filter(it => (it.nama||'').trim() || (it.kode||'').trim());
+}
+
+/* ----- Simpan + validasi ----- */
+function pjlSave(mode, idx, row){
+  pjlReadForm(row);
+  pjlRecalc(row);
+
+  if(!row.customerKode){ openPjlInfo('Validasi', 'Customer wajib dipilih.'); return false; }
+  if(!row.tglFaktur){ openPjlInfo('Validasi', 'Tgl. Faktur wajib diisi.'); return false; }
+  if(!row.items.length){ openPjlInfo('Validasi', 'Rincian transaksi minimal 1 barang / jasa.'); return false; }
+  if(row.jurnalAkun && row.jurnalAkun.length){
+    const t = pjlJurnalTotals(row);
+    if(Math.abs(t.selisih) > 0.004){
+      openPjlInfo('Jurnal Tidak Balance', `Total Debit (${pjlNum2(t.debit)}) tidak sama dengan Total Kredit (${pjlNum2(t.kredit)}). Selisih: ${pjlNum2(t.selisih)}.`);
+      return false;
+    }
+  }
+
+  row.tipeTransaksi = pjlTipeTransaksi(row);
+  DATA.penjualanLangsung = DATA.penjualanLangsung || [];
+  if(mode === 'add') DATA.penjualanLangsung.unshift(row);
+  else DATA.penjualanLangsung[idx] = row;
+  return true;
+}
+
+/* =====================================================================
+   Modals
+===================================================================== */
+function pjlOverlay(html){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  const cancel = document.getElementById('modalCancel');
+  if(cancel) cancel.onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  return overlay;
+}
+
+function openPjlPrint(row){ pjlOverlay(tplPjlPrintModal(row)); }
+
+function openPjlBatch(item){
+  pjlOverlay(tplPjlBatchModal(item));
+  document.getElementById('pjlBatchOk').onclick = () => {
+    item.batch = document.getElementById('fPjlBatchInput').value.trim();
+    closeModal();
+  };
+}
+
+function openPjlDelete(idx){
+  const row = DATA.penjualanLangsung[idx];
+  pjlOverlay(tplPjlDeleteConfirm(row));
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.penjualanLangsung.splice(idx, 1);
+    closeModal();
+    renderPjlTable();
+  };
+}
+
+function openPjlInfo(title, text){
+  pjlOverlay(tplPjlInfoModal(title, text));
+  document.getElementById('modalOk').onclick = closeModal;
+}
+
+function openPjlCustomerPicker(onPick){
+  const overlay = pjlOverlay(tplPjlCustomerPicker(DATA.customers));
+  const wire = () => overlay.querySelectorAll('[data-pjl-pick-customer]').forEach(b => b.onclick = () => {
+    const cust = DATA.customers.find(x => x.kode === b.dataset.pjlPickCustomer);
+    closeModal();
+    if(cust) onPick(cust);
+  });
+  wire();
+  document.getElementById('pjlCustomerPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.customers.filter(c => !q || c.kode.toLowerCase().includes(q) || c.nama.toLowerCase().includes(q));
+    document.getElementById('pjlCustomerPickerBody').innerHTML = tplPjlCustomerPickerRows(list);
+    wire();
+  };
+}
+
+function openPjlPrincipalPicker(onPick){
+  const overlay = pjlOverlay(tplPjlPrincipalPicker(DATA.suppliers));
+  const wire = () => overlay.querySelectorAll('[data-pjl-pick-principal]').forEach(b => b.onclick = () => {
+    const s = pjlSupplier(b.dataset.pjlPickPrincipal);
+    closeModal();
+    if(s) onPick(s);
+  });
+  wire();
+  document.getElementById('pjlPrincipalPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.suppliers.filter(s => !q || s.kode.toLowerCase().includes(q) || s.nama.toLowerCase().includes(q));
+    document.getElementById('pjlPrincipalPickerBody').innerHTML = tplPjlPrincipalPickerRows(list);
+    wire();
+  };
+}
+
+function openPjlPphPicker(onPick){
+  const overlay = pjlOverlay(tplPjlPphPicker(PJL_PPH_LIST));
+  overlay.querySelectorAll('[data-pjl-pick-pph]').forEach(b => b.onclick = () => {
+    closeModal();
+    onPick({ kode: b.dataset.pjlPickPph, persen: Number(b.dataset.pjlPickPersen) });
+  });
+}
+
+function openPjlAkunPicker(onPick){
+  const overlay = pjlOverlay(tplPjlAkunPicker(DATA.akunGL));
+  const wire = () => overlay.querySelectorAll('[data-pjl-pick-akun]').forEach(b => b.onclick = () => {
+    const akun = DATA.akunGL.find(a => a.kode === b.dataset.pjlPickAkun);
+    closeModal();
+    if(akun) onPick(akun);
+  });
+  wire();
+  document.getElementById('pjlAkunPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const list = DATA.akunGL.filter(a => !q || a.kode.includes(q) || a.nama.toLowerCase().includes(q));
+    document.getElementById('pjlAkunPickerBody').innerHTML = tplPjlAkunPickerRows(list);
     wire();
   };
 }
@@ -59001,7 +60664,7 @@ function rpjBuildJurnal(row){
   row.jurnalAkun = rows;
 }
 
-/* Mengisi form + item dari 1 Sales Invoice terpilih (DATA.invoices) —
+/* Mengisi form + item dari 1 Surat Jalan terpilih (DATA.invoices) —
    harga jual dari master DATA.items (invoice mockup tidak menyimpan
    harga per item), batch dari item invoice. */
 function rpjApplyFaktur(row, inv){
@@ -59108,7 +60771,7 @@ function refreshRpjJurnalSelisih(row){
 function wireRpjItemEvents(row){
   (row.items||[]).forEach((it, idx) => {
     const info = document.querySelector(`[data-rpj-item-info="${idx}"]`);
-    if(info) info.onclick = () => openRpjInfo('Barang Yang Diretur', `Barang mengikuti isi Sales Invoice <b>${row.noFakturJual||'-'}</b> — Kode/Nama/U/M terkunci; yang bisa diubah: Qty, Disc. Principal, dan Disc. Distributor.`);
+    if(info) info.onclick = () => openRpjInfo('Barang Yang Diretur', `Barang mengikuti isi Surat Jalan <b>${row.noFakturJual||'-'}</b> — Kode/Nama/U/M terkunci; yang bisa diubah: Qty, Disc. Principal, dan Disc. Distributor.`);
     const hinfo = document.querySelector(`[data-rpj-harga-info="${idx}"]`);
     if(hinfo) hinfo.onclick = () => openRpjInfo('Harga Jual', 'Harga Jual mengikuti harga master barang / DPL yang berlaku. Pencarian price list akan tersedia di sini.');
     const binfo = document.querySelector(`[data-rpj-batch-info="${idx}"]`);
@@ -59143,7 +60806,7 @@ function wireRpjItemEvents(row){
 function wireRpjJurnalEvents(row, isView){
   const btnBuat = document.getElementById('rpjBuatJurnal');
   if(btnBuat) btnBuat.onclick = () => {
-    if(!row.items.length){ openRpjInfo('Validasi', 'Pilih Sales Invoice dan pastikan ada barang yang diretur terlebih dahulu.'); return; }
+    if(!row.items.length){ openRpjInfo('Validasi', 'Pilih Surat Jalan dan pastikan ada barang yang diretur terlebih dahulu.'); return; }
     rpjBuildJurnal(row);
     refreshRpjJurnalContent(row, isView);
   };
@@ -59237,7 +60900,7 @@ function wireRpjForm(mode, idx, row){
 
   document.getElementById('rpjTambahItem').onclick = (e) => {
     e.preventDefault();
-    openRpjInfo('Tambah Item Baru', 'Barang yang diretur mengikuti isi Sales Invoice yang dipilih — menambah barang di luar faktur itu tidak diizinkan di mockup ini. Pilih faktur lain kalau barangnya beda dokumen.');
+    openRpjInfo('Tambah Item Baru', 'Barang yang diretur mengikuti isi Surat Jalan yang dipilih — menambah barang di luar faktur itu tidak diizinkan di mockup ini. Pilih faktur lain kalau barangnya beda dokumen.');
   };
   document.getElementById('rpjPajakInfo').onclick = () => openRpjInfo('Kode Pajak', `Kode pajak mengikuti mode PPN di panel "Informasi PPN" (saat ini: ${row.pajak11 || 'tidak ada'}).`);
 
@@ -59261,7 +60924,7 @@ function wireRpjForm(mode, idx, row){
 function rpjSave(row, withPrint){
   if(!row.customer){ openRpjInfo('Validasi', 'Customer wajib dipilih.'); return; }
   const adaQty = row.items.some(it => (+it.qty||0) > 0);
-  if(!adaQty){ openRpjInfo('Validasi', 'Isi minimal 1 barang yang diretur (pilih Sales Invoice terlebih dahulu).'); return; }
+  if(!adaQty){ openRpjInfo('Validasi', 'Isi minimal 1 barang yang diretur (pilih Surat Jalan terlebih dahulu).'); return; }
   rpjRecalcTotals(row);
   if(!row.jurnalAkun.length){
     rpjBuildJurnal(row);
@@ -66316,6 +67979,7 @@ const PAGE_MODULES={
   pickingList:{srcs:['js/pages/picking-list.template.js','js/pages/picking-list.js'], fn:'renderPickingListPage'},
   invoices:{srcs:['js/pages/invoice.template.js','js/pages/invoice.js'], fn:'renderInvoicePage'},
   fakturPenjualanSJ:{srcs:['js/pages/faktur-penjualan-sj.template.js','js/pages/faktur-penjualan-sj.js'], fn:'renderFakturPenjualanSJPage'},
+  penjualanLangsung:{srcs:['js/pages/penjualan-langsung.template.js','js/pages/penjualan-langsung.js'], fn:'renderPenjualanLangsungPage'},
   gudang:{srcs:['js/pages/gudang.template.js','js/pages/gudang.js'], fn:'renderGudangPage'},
   kasBank:{srcs:['js/pages/kas-bank.template.js','js/pages/kas-bank.js'], fn:'renderKasBankPage'},
   masterBank:{srcs:['js/pages/master-bank.template.js','js/pages/master-bank.js'], fn:'renderMasterBankPage'},

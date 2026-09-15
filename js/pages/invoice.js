@@ -33,6 +33,13 @@
    lihat tplInvRows() & class .icon-btn.disabled/gaya inline di
    css/style.css) — beda mendasar dari toggle Checked/Terkirim yang
    memang dirancang bisa bolak-balik.
+
+   2026-09-15 (lanjutan): seluruh teks tampilan modul ini di-rename
+   dari "Invoice" jadi "Surat Jalan" (label ts:'Create Surat Jalan'/
+   'Surat Jalan Selesai', teks modal info, dst.) — lihat catatan
+   lengkap di header invoice.template.js & di atas DATA.invoices
+   (js/data.js). Nama fungsi/variabel di file ini (invGenerateNumbers,
+   INV_*, dst.) TIDAK diubah.
 ========================================================= */
 
 function renderInvoicePage(){
@@ -42,10 +49,10 @@ function renderInvoicePage(){
 function renderInvList(){
   content.innerHTML = tplInvoiceListPage();
   document.getElementById('btnInvAdd').onclick = () => openInvForm('add');
-  document.getElementById('btnInvPickingReq').onclick = () => openInvInfo('Picking Requested', 'Filter khusus Invoice yang menunggu proses Picking Request. Filter ini dekoratif pada mockup ini, akan tersedia pada versi lengkap.');
-  document.getElementById('btnInvTsFilter').onclick = () => openInvInfo('Filter TS', 'Pencarian/filter berdasarkan Tahap Status (TS) Invoice. Filter ini dekoratif pada mockup ini, akan tersedia pada versi lengkap.');
-  document.getElementById('invStatusFilter').onchange = () => openInvInfo('Filter Status', 'Menampilkan semua status Invoice. Filter per status akan tersedia pada versi lengkap.');
-  document.getElementById('invPeriodFilter').onchange = () => openInvInfo('Filter Periode', 'Menampilkan Invoice untuk periode Agustus 2026. Pemilihan periode lain akan tersedia pada versi lengkap.');
+  document.getElementById('btnInvPickingReq').onclick = () => openInvInfo('Picking Requested', 'Filter khusus Surat Jalan yang menunggu proses Picking Request. Filter ini dekoratif pada mockup ini, akan tersedia pada versi lengkap.');
+  document.getElementById('btnInvTsFilter').onclick = () => openInvInfo('Filter TS', 'Pencarian/filter berdasarkan Tahap Status (TS) Surat Jalan. Filter ini dekoratif pada mockup ini, akan tersedia pada versi lengkap.');
+  document.getElementById('invStatusFilter').onchange = () => openInvInfo('Filter Status', 'Menampilkan semua status Surat Jalan. Filter per status akan tersedia pada versi lengkap.');
+  document.getElementById('invPeriodFilter').onchange = () => openInvInfo('Filter Periode', 'Menampilkan Surat Jalan untuk periode Agustus 2026. Pemilihan periode lain akan tersedia pada versi lengkap.');
   renderInvTable();
 }
 
@@ -178,7 +185,7 @@ function invBuildEmptyRow(){
     spAsli:false, skEd:false, cito:false, citoTgl:'11/08/2026',
     syaratBayar: INV_SYARAT_BAYAR_LIST[0], layanan: DATA.layananList[0],
     alamatPengiriman:'', shipVia: INV_SHIP_VIA_LIST[0], noResi:'', driver:'',
-    keterangan:'', items:[], jumlah:0, posted:false, ts:'Create Invoice',
+    keterangan:'', items:[], jumlah:0, posted:false, ts:'Create Surat Jalan',
     /* Diskon Global 1 & 2 — fitur baru 2026-08-28 (lihat invRecalcJumlah). */
     subtotalBarang:0, diskonGlobal1:0, diskonGlobal1Unit:'%', diskonGlobal1Amount:0,
     diskonGlobal2:0, diskonGlobal2Unit:'%', diskonGlobal2Amount:0,
@@ -635,7 +642,7 @@ function openInvPrintWindow(idx, mode, liveRow){
   const row = liveRow || persisted;
   const w = window.open('', '_blank');
   if(!w){
-    openInvInfo('Cetak Invoice', 'Pop-up diblokir browser. Izinkan pop-up untuk halaman ini agar bisa membuka preview cetak Invoice.');
+    openInvInfo('Cetak Surat Jalan', 'Pop-up diblokir browser. Izinkan pop-up untuk halaman ini agar bisa membuka preview cetak Surat Jalan.');
     return;
   }
   w.document.open();
@@ -662,7 +669,7 @@ function openInvDeleteConfirm(idx){
 
 /* Posting — TRANSISI SATU ARAH, lihat catatan lengkap di header file
    ini & tplInvPostingConfirm(). Begitu dikonfirmasi, row.posted=true &
-   row.ts berubah 'Create Invoice' -> 'Invoice Selesai', lalu tabel
+   row.ts berubah 'Create Surat Jalan' -> 'Surat Jalan Selesai', lalu tabel
    di-render ulang supaya tombol Ubah/Hapus/Posting baris itu langsung
    tampil disabled (lihat tplInvRows()). */
 function openInvPostingConfirm(idx){
@@ -677,7 +684,7 @@ function openInvPostingConfirm(idx){
   overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
   document.getElementById('modalConfirm').onclick = () => {
     row.posted = true;
-    row.ts = 'Invoice Selesai';
+    row.ts = 'Surat Jalan Selesai';
     row.tglEdit = new Date().toLocaleDateString('id-ID') + ' ' + new Date().toTimeString().slice(0,5);
     row.userEdit = 'sidik';
     closeModal();

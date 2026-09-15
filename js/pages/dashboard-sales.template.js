@@ -24,7 +24,7 @@ function tplSalesDashboard(){
           <div class="flow-arrow">&#8594;</div>
           <div class="flow-step" data-nav="pickingList" data-title="Picking List"><div class="flow-box quick">${icon('clipboard',28)}</div><div class="flow-label">Picking List</div></div>
           <div class="flow-arrow">&#8594;</div>
-          <div class="flow-step" data-nav="invoices" data-title="Invoice"><div class="flow-box quick">${icon('truck',28)}</div><div class="flow-label">Invoice</div></div>
+          <div class="flow-step" data-nav="invoices" data-title="Surat Jalan"><div class="flow-box quick">${icon('truck',28)}</div><div class="flow-label">Surat Jalan</div></div>
           <div class="flow-arrow">&#8594;</div>
           <div class="flow-step" data-nav="packing" data-title="Packing"><div class="flow-box quick">${icon('box',28)}</div><div class="flow-label">Packing</div></div>
           <div class="flow-arrow">&#8594;</div>
