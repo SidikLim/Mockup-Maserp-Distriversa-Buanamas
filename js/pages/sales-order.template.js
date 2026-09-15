@@ -206,13 +206,6 @@ function tplSoForm(mode, row){
 
         <div class="po-grid-3">
           <div class="form-group">
-            <label>Principal</label>
-            <div class="input-with-btn">
-              <input type="text" id="fSoPrincipal" value="${row.principalNama||''}" placeholder="Pilih Supplier" readonly>
-              ${!isView ? `<button type="button" class="icon-btn edit" id="soPrincipalSearch" title="Cari Principal">${icon('search',13)}</button>` : ''}
-            </div>
-          </div>
-          <div class="form-group">
             <label>No. SO</label>
             <div class="input-with-btn">
               <input type="text" id="fSoNo" value="${row.no||''}" placeholder="Otomatis" readonly>
@@ -230,6 +223,14 @@ function tplSoForm(mode, row){
               ${DATA.syaratBayarList.map(sb=>`<option ${row.syaratBayar===sb?'selected':''}>${sb}</option>`).join('')}
             </select>
           </div>
+          <!-- Field "Principal" (picker Supplier tunggal di header SO) DIHAPUS
+               2026-09-14 atas permintaan Sidik: 1 No. SO/No. Bukti bisa berisi
+               barang dari beberapa Principal sekaligus, jadi tidak tepat kalau
+               Principal cuma bisa dipilih satu di level header. Slot ke-3
+               po-grid-3 ini sengaja dibiarkan kosong (form-group kosong, pola
+               sama seperti filler di purchase-order.template.js) daripada
+               merestrukturisasi baris ini jadi 2 kolom. -->
+          <div class="form-group"></div>
         </div>
 
         <div class="po-grid-3">
@@ -268,14 +269,29 @@ function tplSoForm(mode, row){
           <div class="upload-box">Belum ada file diunggah.</div>
         </div>
 
-        <div class="po-grid-3">
+        <!-- Piutang dipecah jadi 2 kolom (Sudah Jatuh Tempo / Belum Jatuh
+             Tempo) 2026-09-14 karena 1 nomor CL bisa punya campuran faktur
+             lewat tempo & belum — grid dilebarkan jadi 4 kolom (override
+             grid-template-columns, pola sama seperti form-grid-3 di
+             tagihan-piutang.template.js) supaya tidak perlu form-group
+             kosong. row.piutangJatuhTempo & row.piutangBelumJatuhTempo
+             DIHITUNG dari row.piutang (bukan field statis baru di
+             data.js), persis pola yang sudah dipakai modul Sales
+             Quotation (row.jatuhTempo/belumJatuhTempo) — lihat
+             soRecalcCustomerFinance() di sales-order.js. row.piutang
+             sendiri tetap ada apa adanya, dipakai utk Sisa CL. -->
+        <div class="po-grid-3" style="grid-template-columns:repeat(4,1fr);">
           <div class="form-group">
             <label>CL (Credit Limit)</label>
             <input type="text" id="fSoCl" value="${num(row.cl||0)}" disabled>
           </div>
           <div class="form-group">
-            <label>Piutang</label>
-            <input type="text" id="fSoPiutang" value="${num(row.piutang||0)}" disabled>
+            <label>Piutang Sudah Jatuh Tempo</label>
+            <input type="text" id="fSoPiutangJatuhTempo" value="${num(row.piutangJatuhTempo||0)}" disabled>
+          </div>
+          <div class="form-group">
+            <label>Piutang Belum Jatuh Tempo</label>
+            <input type="text" id="fSoPiutangBelumJatuhTempo" value="${num(row.piutangBelumJatuhTempo||0)}" disabled>
           </div>
           <div class="form-group">
             <label>Sisa CL</label>
@@ -428,19 +444,8 @@ function tplSoCustomerPicker(list){
     </div>`;
 }
 
-function tplSoPrincipalPicker(list){
-  return `
-    <div class="modal-box" style="max-width:560px;">
-      <div class="modal-header"><span>Pilih Principal</span><span class="close" id="modalClose">&times;</span></div>
-      <div class="modal-body">
-        <div class="table-wrap" style="max-height:340px;overflow:auto;"><table>
-          <thead><tr><th>Kode</th><th>Nama Principal</th><th></th></tr></thead>
-          <tbody>${list.map(s=>`<tr><td>${s.kode}</td><td>${s.nama}</td><td><button class="btn-pick" data-pick-principal="${s.kode}">Pilih</button></td></tr>`).join('')}</tbody>
-        </table></div>
-      </div>
-      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
-    </div>`;
-}
+/* tplSoPrincipalPicker() DIHAPUS 2026-09-14 bersamaan dengan field Principal
+   di header form SO — lihat catatan di po-grid-3 field Principal di atas. */
 
 /* Picker dekoratif utk No. SQ/No. SP/No. DSC — 1 template dipakai
    bersama untuk ketiganya (beda judul & field target saja), karena

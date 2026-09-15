@@ -188,7 +188,7 @@ const MENU=[
    {label:'Hak Akses Group', page:'hakAksesGroup'},
    {label:'Hak Akses Group Report', page:'hakAksesGroupReport'},
    {label:'Activity Log', page:'placeholder', title:'Activity Log'},
-   {label:'Hak Approval', page:'placeholder', title:'Hak Approval'},
+   {label:'Hak Approval', page:'hakApproval'},
    {label:'User Aktif', page:'placeholder', title:'User Aktif'},
    {label:'Error Logs', page:'placeholder', title:'Error Logs'},
  ]},

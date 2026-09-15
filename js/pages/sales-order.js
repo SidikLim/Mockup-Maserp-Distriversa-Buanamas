@@ -17,7 +17,13 @@
    TIDAK menyentuh DOM, function *DOM terpisah meng-update tampilan).
    Field CL/Piutang/Sisa CL juga reaktif: langsung terisi ulang begitu
    Customer diganti (lihat soRecalcCustomerFinance/
-   soRefreshCustomerFinanceDOM & wiring di openSoCustomerPicker).
+   soRefreshCustomerFinanceDOM & wiring di openSoCustomerPicker). Kolom
+   Piutang dipecah jadi "Sudah Jatuh Tempo" + "Belum Jatuh Tempo"
+   (2026-09-14) — DIHITUNG dari row.piutang (rasio 70:30 belum:sudah
+   jatuh tempo, BUKAN field statis baru di data.js), persis pola yang
+   sudah dipakai modul Sales Quotation (row.jatuhTempo/belumJatuhTempo
+   di sales-quotation.js). row.piutang sendiri TETAP dipakai apa adanya
+   utk Sisa CL, tidak dihapus/diubah.
 ========================================================= */
 
 function renderSalesOrderPage(){
@@ -179,16 +185,27 @@ function soRefreshDiskonGlobalDOM(row){
 
 /* CL/Piutang/Sisa CL — dihitung ulang begitu Customer diganti (bukan
    nunggu tombol Simpan), mengikuti pola split "kalkulasi murni vs
-   update DOM" yang sama seperti item barang & total dokumen. */
+   update DOM" yang sama seperti item barang & total dokumen.
+   row.piutang tetap total piutang (dipakai apa adanya utk Sisa CL —
+   TIDAK diubah/dihapus, field ini dipakai modul lain, lihat catatan
+   di data.js). Kolom Piutang dipecah 2 (2026-09-14): piutangJatuhTempo
+   & piutangBelumJatuhTempo DIHITUNG dari row.piutang (rasio 70:30
+   belum:sudah jatuh tempo) — BUKAN field statis baru di data.js,
+   sengaja disamakan persis dengan pola yang sudah ada di modul Sales
+   Quotation (lihat row.jatuhTempo/row.belumJatuhTempo di
+   sales-quotation.js) supaya kedua modul konsisten satu sumber data. */
 function soRecalcCustomerFinance(row, customer){
   row.cl = customer ? (+customer.limit || 0) : 0;
   row.piutang = customer ? (+customer.piutang || 0) : 0;
+  row.piutangBelumJatuhTempo = Math.round(row.piutang * 0.7);
+  row.piutangJatuhTempo = row.piutang - row.piutangBelumJatuhTempo;
   row.sisaCl = row.cl - row.piutang;
 }
 
 function soRefreshCustomerFinanceDOM(row){
   document.getElementById('fSoCl').value = num(row.cl);
-  document.getElementById('fSoPiutang').value = num(row.piutang);
+  document.getElementById('fSoPiutangJatuhTempo').value = num(row.piutangJatuhTempo);
+  document.getElementById('fSoPiutangBelumJatuhTempo').value = num(row.piutangBelumJatuhTempo);
   document.getElementById('fSoSisaCl').value = num(row.sisaCl);
 }
 
@@ -198,8 +215,8 @@ function openSoForm(mode, idx){
     row = {
       no: null, noSP:'', noSQ:'', noDSC:'', customer:'', wilayah:'', ts:'Baru', statusApproval:'Pending',
       sOffice: DATA.outletList[0], area: DATA.wilayah[0], layanan: DATA.layananList[0], orderVia: DATA.orderViaList[0],
-      alamat:'', rayon: DATA.rayonList[0], principalKode:'', principalNama:'',
-      cito:false, spAsli:false, skEd:false, cl:0, piutang:0, sisaCl:0,
+      alamat:'', rayon: DATA.rayonList[0],
+      cito:false, spAsli:false, skEd:false, cl:0, piutang:0, piutangJatuhTempo:0, piutangBelumJatuhTempo:0, sisaCl:0,
       konsinyasi:false, keterangan:'', isGuarantee:false, pecahFaktur:false, ukuranBasis:'KG',
       /* syaratBayar + diskonGlobal* — fitur baru 2026-08-28 (lihat
          soRecalcTotals/soApplyPromoSyaratBayar di atas). */
@@ -236,7 +253,6 @@ function openSoForm(mode, idx){
   }
 
   document.getElementById('soCustomerSearch').onclick = () => openSoCustomerPicker(row);
-  document.getElementById('soPrincipalSearch').onclick = () => openSoPrincipalPicker(row);
 
   /* ===== Syarat Bayar + Diskon Global 1 & 2 (fitur baru 2026-08-28) =====
      Semua reaktif: ganti Syarat Bayar -> cek promo Diskon Syarat Bayar
@@ -430,23 +446,8 @@ function openSoCustomerPicker(row){
   });
 }
 
-function openSoPrincipalPicker(row){
-  closeModal();
-  const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
-  overlay.innerHTML = tplSoPrincipalPicker(DATA.suppliers);
-  document.body.appendChild(overlay);
-  document.getElementById('modalClose').onclick = closeModal;
-  document.getElementById('modalCancel').onclick = closeModal;
-  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
-  overlay.querySelectorAll('[data-pick-principal]').forEach(btn => btn.onclick = () => {
-    const s = DATA.suppliers.find(x => x.kode === btn.dataset.pickPrincipal);
-    row.principalKode = s.kode;
-    row.principalNama = s.nama;
-    document.getElementById('fSoPrincipal').value = s.nama;
-    closeModal();
-  });
-}
+/* openSoPrincipalPicker() DIHAPUS 2026-09-14 bersamaan dengan field Principal
+   di header form SO — lihat catatan di sales-order.template.js. */
 
 /* Picker dekoratif bersama untuk No. SQ/No. SP/No. DSC — lihat komentar
    tplSoDecorativePicker() di sales-order.template.js. `datasetKey`

@@ -710,7 +710,17 @@ const DATA = {
      {syarat,keterangan,tglExpired,tglProses,uploaded}). Kode Customer
      format "C000001" pada screenshot HANYA dipakai untuk auto-generate
      customer BARU lewat mockup ini (lihat cstNextKode() di
-     master-customer.js), tidak dipaksakan ke 8 baris existing di bawah. */
+     master-customer.js), tidak dipaksakan ke 8 baris existing di bawah.
+
+     NB LAGI (2026-09-14, modul Sales Order — js/pages/sales-order.*):
+     field `piutang` di atas TETAP TIDAK DIUBAH (lihat NB sebelumnya),
+     TIDAK ADA field baru ditambahkan di sini. Form SO memecah kolom
+     "Piutang" jadi "Sudah Jatuh Tempo"/"Belum Jatuh Tempo" dengan
+     meng-KALKULASI dari `piutang` yang sudah ada (rasio 70:30 belum:sudah
+     jatuh tempo) — persis pola yang sudah dipakai modul Sales Quotation
+     sejak sebelumnya (lihat row.jatuhTempo/row.belumJatuhTempo di
+     sales-quotation.js), BUKAN field statis baru di sini, supaya kedua
+     modul konsisten & tidak ada 2 sumber data utk hal yang sama. */
   customers:[
     {kode:'CUST-001', nama:'Toko Sumber Rejeki', kota:'Jakarta', salesman:'Budi Santoso', limit:50000000, status:'Aktif', alamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat', piutang:18250000,
     noRef:'HO.0001', tglRegistrasi:'12/01/2020', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
@@ -1876,7 +1886,7 @@ const DATA = {
      Order (lihat js/pages/sales-order.*). Setiap baris berisi seluruh
      field yang dipakai list ("No. SO"/"No. SP"/Customer/Wilayah/TS/Status
      Approval") MAUPUN form Tambah/Ubah/Lihat (header S.Office/Area/
-     Layanan/Order Via, picker Customer/Principal/No.SQ/No.SP/No.DSC,
+     Layanan/Order Via, picker Customer/No.SQ/No.SP/No.DSC,
      3 checkbox CITO/SP Asli/SK ED, field CL/Piutang/Sisa CL, Konsinyasi/
      Keterangan/Is Guarantee/Pecah Faktur/toggle KG-Dimensi, dan tabel
      item 2-tingkat: baris ringkasan {kode,nama,um,qty,hna1,hnaXqty,
@@ -1885,84 +1895,94 @@ const DATA = {
      utk penjelasan pilihan field detail & simplifikasi PPN). `ts` (Tahap
      Status alur kerja: Baru/Diproses/Dikirim/Selesai) SENGAJA dipisah
      dari `statusApproval` (Pending/Approved/Rejected) — 2 konsep berbeda
-     sesuai instruksi. Customer/wilayah/principal semua memakai master
-     DBM sendiri (DATA.customers/DATA.suppliers), TIDAK ada nama customer
-     bertema farmasi. 14 baris disebar supaya representatif menguji
-     kombinasi TS x Status Approval x flag-flag lain. */
+     sesuai instruksi. Customer/wilayah semua memakai master DBM sendiri
+     (DATA.customers/DATA.suppliers), TIDAK ada nama customer bertema
+     farmasi. 14 baris disebar supaya representatif menguji kombinasi
+     TS x Status Approval x flag-flag lain.
+     2026-09-14: field header `principalKode`/`principalNama` (picker
+     "Principal" tunggal) DIHAPUS dari sini & dari form SO atas permintaan
+     Sidik — 1 No. SO/No. Bukti bisa berisi barang dari beberapa Principal
+     sekaligus, jadi Principal tunggal di level header tidak akurat. Field
+     ini TETAP ADA di modul lain yang punya konsep Principal-nya sendiri
+     (mis. DATA.invoices/DATA.pickingList/Discount Program) — TIDAK ikut
+     dihapus di sana karena di luar cakupan permintaan ini; picker "No SO"
+     di modul-modul itu (mis. openInvSoPicker() di invoice.js) yang
+     sebelumnya menyalin principalKode/principalNama dari sini kini hanya
+     dapat string kosong (fallback `|| ''` yang sudah ada), bukan error. */
   salesOrders:[
     {no:'26/SO/HO/08/00013', noSP:'SP/HO/08/00013', noSQ:'SQ/HO/08/00013', noDSC:'', customer:'Toko Sumber Rejeki', wilayah:'Jakarta', ts:'Baru', statusApproval:'Pending',
       sOffice:'Head Office', area:'Jakarta', layanan:'Reguler', orderVia:'Sales Rep', alamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat', rayon:'Rayon Jakarta Pusat',
-      principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara', cito:false, spAsli:true, skEd:false, cl:50000000, piutang:18250000, sisaCl:31750000,
+      cito:false, spAsli:true, skEd:false, cl:50000000, piutang:18250000, sisaCl:31750000,
       konsinyasi:false, keterangan:'Order rutin bulanan Sembako', isGuarantee:false, pecahFaktur:false, ukuranBasis:'KG',
       items:[{kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', um:'Dus', qty:50, hna1:25000, hnaXqty:1250000, potongan:25000, dpp:1225000, typePpn:'PPN 11%', ppn:134750, biayaKirim:50000, noBatch:'BT-260701-01', tglKadaluarsa:'2027-06-30'}],
       totalDpp:1225000, totalPpn:134750, totalBiayaKirim:50000, jumlahAkhir:1409750,
       tglSO:'08/08/2026', tglInput:'08/08/2026 09:10:12', userInput:'sidik', tglEdit:'', userEdit:''},
     {no:'26/SO/SBY/08/00007', noSP:'SP/SBY/08/00007', noSQ:'SQ/SBY/08/00007', noDSC:'DSC/SBY/08/00001', customer:'UD Makmur Jaya', wilayah:'Surabaya', ts:'Diproses', statusApproval:'Approved',
       sOffice:'Surabaya', area:'Surabaya', layanan:'Reguler', orderVia:'WhatsApp', alamat:'Jl. Raya Darmo No. 45, Surabaya', rayon:'Rayon Surabaya Kota',
-      principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia', cito:false, spAsli:true, skEd:false, cl:35000000, piutang:9120000, sisaCl:25880000,
+      cito:false, spAsli:true, skEd:false, cl:35000000, piutang:9120000, sisaCl:25880000,
       konsinyasi:false, keterangan:'Restock Sembako gudang Surabaya', isGuarantee:false, pecahFaktur:false, ukuranBasis:'KG',
       items:[{kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg', um:'Karung', qty:100, hna1:15000, hnaXqty:1500000, potongan:0, dpp:1500000, typePpn:'PPN 11%', ppn:165000, biayaKirim:30000, noBatch:'BT-260702-02', tglKadaluarsa:'2027-05-15'}],
       totalDpp:1500000, totalPpn:165000, totalBiayaKirim:30000, jumlahAkhir:1695000,
       tglSO:'08/08/2026', tglInput:'08/08/2026 10:22:40', userInput:'sidik', tglEdit:'09/08/2026 08:05:11', userEdit:'sidik'},
     {no:'26/SO/BDG/08/00005', tutupSo:true, noSP:'SP/BDG/08/00005', noSQ:'', noDSC:'', customer:'CV Berkah Abadi', wilayah:'Bandung', ts:'Dikirim', statusApproval:'Approved',
       sOffice:'Bandung', area:'Bandung', layanan:'Ekspedisi Pihak Ketiga', orderVia:'Telepon', alamat:'Jl. Soekarno Hatta No. 88, Bandung', rayon:'Rayon Bandung Kota',
-      principalKode:'', principalNama:'', cito:false, spAsli:false, skEd:true, cl:20000000, piutang:4300000, sisaCl:15700000,
+      cito:false, spAsli:false, skEd:true, cl:20000000, piutang:4300000, sisaCl:15700000,
       konsinyasi:false, keterangan:'Order beras premium', isGuarantee:false, pecahFaktur:false, ukuranBasis:'Dimensi',
       items:[{kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', um:'Karung', qty:20, hna1:60000, hnaXqty:1200000, potongan:20000, dpp:1180000, typePpn:'Non PKP', ppn:0, biayaKirim:20000, noBatch:'BT-260703-03', tglKadaluarsa:'2027-02-28'}],
       totalDpp:1180000, totalPpn:0, totalBiayaKirim:20000, jumlahAkhir:1200000,
       tglSO:'09/08/2026', tglInput:'09/08/2026 09:00:00', userInput:'sidik', tglEdit:'', userEdit:''},
     {no:'26/SO/MDN/08/00003', noSP:'SP/MDN/08/00003', noSQ:'SQ/MDN/08/00003', noDSC:'', customer:'Toko Anugrah', wilayah:'Medan', ts:'Selesai', statusApproval:'Approved',
       sOffice:'Medan', area:'Medan', layanan:'Reguler', orderVia:'Sales Rep', alamat:'Jl. Gatot Subroto No. 21, Medan', rayon:'Rayon Medan Kota',
-      principalKode:'5020', principalNama:'PT Indofood Distribusi', cito:false, spAsli:true, skEd:false, cl:15000000, piutang:6600000, sisaCl:8400000,
+      cito:false, spAsli:true, skEd:false, cl:15000000, piutang:6600000, sisaCl:8400000,
       konsinyasi:false, keterangan:'Order Tepung Terigu bulanan', isGuarantee:false, pecahFaktur:true, ukuranBasis:'KG',
       items:[{kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', um:'Karung', qty:200, hna1:12000, hnaXqty:2400000, potongan:0, dpp:2400000, typePpn:'PPN 11%', ppn:264000, biayaKirim:40000, noBatch:'BT-260704-04', tglKadaluarsa:'2027-01-31'}],
       totalDpp:2400000, totalPpn:264000, totalBiayaKirim:40000, jumlahAkhir:2704000,
       tglSO:'06/08/2026', tglInput:'06/08/2026 08:40:20', userInput:'sidik', tglEdit:'10/08/2026 14:12:00', userEdit:'sidik'},
     {no:'26/SO/MKS/08/00002', noSP:'', noSQ:'', noDSC:'', customer:'UD Sinar Harapan', wilayah:'Makassar', ts:'Baru', statusApproval:'Rejected',
       sOffice:'Makassar', area:'Makassar', layanan:'Reguler', orderVia:'Email', alamat:'Jl. Perintis Kemerdekaan No. 5, Makassar', rayon:'Rayon Makassar Kota',
-      principalKode:'', principalNama:'', cito:false, spAsli:false, skEd:false, cl:12000000, piutang:2150000, sisaCl:9850000,
+      cito:false, spAsli:false, skEd:false, cl:12000000, piutang:2150000, sisaCl:9850000,
       konsinyasi:false, keterangan:'Ditolak - customer status Non Aktif, cek ulang legalitas', isGuarantee:false, pecahFaktur:false, ukuranBasis:'KG',
       items:[{kode:'BRG-005', nama:'Mie Instan Indomie Goreng', um:'Dus', qty:500, hna1:2500, hnaXqty:1250000, potongan:0, dpp:1250000, typePpn:'PPN 11%', ppn:137500, biayaKirim:15000, noBatch:'BT-260705-05', tglKadaluarsa:'2027-04-30'}],
       totalDpp:1250000, totalPpn:137500, totalBiayaKirim:15000, jumlahAkhir:1402500,
       tglSO:'07/08/2026', tglInput:'07/08/2026 11:15:30', userInput:'sidik', tglEdit:'', userEdit:''},
     {no:'26/SO/HO/08/00012', noSP:'SP/HO/08/00012', noSQ:'SQ/HO/08/00012', noDSC:'', customer:'Toko Family Mart Jaya', wilayah:'Jakarta', ts:'Diproses', statusApproval:'Pending',
       sOffice:'Head Office', area:'Jakarta', layanan:'Express', orderVia:'Online', alamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara', rayon:'Rayon Jakarta Utara',
-      principalKode:'5023', principalNama:'PT Sasa Inti', cito:true, spAsli:true, skEd:false, cl:28000000, piutang:9870000, sisaCl:18130000,
+      cito:true, spAsli:true, skEd:false, cl:28000000, piutang:9870000, sisaCl:18130000,
       konsinyasi:false, keterangan:'CITO - kebutuhan stock display minggu ini', isGuarantee:true, pecahFaktur:false, ukuranBasis:'KG',
       items:[{kode:'BRG-006', nama:'Kecap Manis ABC 600ml', um:'Dus', qty:300, hna1:14000, hnaXqty:4200000, potongan:50000, dpp:4150000, typePpn:'PPN 11%', ppn:456500, biayaKirim:60000, noBatch:'BT-260706-06', tglKadaluarsa:'2027-03-31'}],
       totalDpp:4150000, totalPpn:456500, totalBiayaKirim:60000, jumlahAkhir:4666500,
       tglSO:'10/08/2026', tglInput:'10/08/2026 08:05:00', userInput:'sidik', tglEdit:'', userEdit:''},
     {no:'26/SO/SMG/08/00004', noSP:'SP/SMG/08/00004', noSQ:'', noDSC:'', customer:'CV Maju Terus', wilayah:'Semarang', ts:'Selesai', statusApproval:'Approved',
       sOffice:'Semarang', area:'Semarang', layanan:'Reguler', orderVia:'Telepon', alamat:'Jl. Pandanaran No. 33, Semarang', rayon:'Rayon Semarang Kota',
-      principalKode:'', principalNama:'', cito:false, spAsli:true, skEd:false, cl:9000000, piutang:1200000, sisaCl:7800000,
+      cito:false, spAsli:true, skEd:false, cl:9000000, piutang:1200000, sisaCl:7800000,
       konsinyasi:false, keterangan:'Order Susu Kental Manis', isGuarantee:false, pecahFaktur:false, ukuranBasis:'KG',
       items:[{kode:'BRG-007', nama:'Susu Kental Manis Indomilk 380gr', um:'Dus', qty:150, hna1:16000, hnaXqty:2400000, potongan:0, dpp:2400000, typePpn:'Non PKP', ppn:0, biayaKirim:25000, noBatch:'BT-260707-07', tglKadaluarsa:'2027-07-31'}],
       totalDpp:2400000, totalPpn:0, totalBiayaKirim:25000, jumlahAkhir:2425000,
       tglSO:'05/08/2026', tglInput:'05/08/2026 13:30:00', userInput:'sidik', tglEdit:'11/08/2026 09:00:00', userEdit:'sidik'},
     {no:'26/SO/SBY/08/00006', noSP:'SP/SBY/08/00006', noSQ:'SQ/SBY/08/00006', noDSC:'', customer:'Toko Sejahtera', wilayah:'Surabaya', ts:'Dikirim', statusApproval:'Approved',
       sOffice:'Surabaya', area:'Surabaya', layanan:'Reguler', orderVia:'Sales Rep', alamat:'Jl. Kertajaya No. 67, Surabaya', rayon:'Rayon Surabaya Kota',
-      principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia', cito:false, spAsli:true, skEd:false, cl:17500000, piutang:3120000, sisaCl:14380000,
+      cito:false, spAsli:true, skEd:false, cl:17500000, piutang:3120000, sisaCl:14380000,
       konsinyasi:false, keterangan:'Order Teh Celup mingguan', isGuarantee:false, pecahFaktur:false, ukuranBasis:'KG',
       items:[{kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', um:'Dus', qty:200, hna1:10000, hnaXqty:2000000, potongan:0, dpp:2000000, typePpn:'PPN 11%', ppn:220000, biayaKirim:20000, noBatch:'BT-260708-08', tglKadaluarsa:'2027-08-31'}],
       totalDpp:2000000, totalPpn:220000, totalBiayaKirim:20000, jumlahAkhir:2240000,
       tglSO:'09/08/2026', tglInput:'09/08/2026 10:00:00', userInput:'sidik', tglEdit:'', userEdit:''},
     {no:'26/SO/HO/08/00011', noSP:'', noSQ:'', noDSC:'', customer:'Toko Sumber Rejeki', wilayah:'Jakarta', ts:'Baru', statusApproval:'Pending',
       sOffice:'Head Office', area:'Jakarta', layanan:'Reguler', orderVia:'WhatsApp', alamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat', rayon:'Rayon Jakarta Pusat',
-      principalKode:'', principalNama:'', cito:false, spAsli:false, skEd:false, cl:50000000, piutang:18250000, sisaCl:31750000,
+      cito:false, spAsli:false, skEd:false, cl:50000000, piutang:18250000, sisaCl:31750000,
       konsinyasi:true, keterangan:'Order tambahan Kopi Kapal Api', isGuarantee:false, pecahFaktur:false, ukuranBasis:'KG',
       items:[{kode:'BRG-009', nama:'Kopi Kapal Api 165gr', um:'Dus', qty:80, hna1:14000, hnaXqty:1120000, potongan:0, dpp:1120000, typePpn:'PPN 11%', ppn:123200, biayaKirim:10000, noBatch:'BT-260709-09', tglKadaluarsa:'2027-09-30'}],
       totalDpp:1120000, totalPpn:123200, totalBiayaKirim:10000, jumlahAkhir:1253200,
       tglSO:'07/08/2026', tglInput:'07/08/2026 09:45:00', userInput:'sidik', tglEdit:'', userEdit:''},
     {no:'26/SO/BDG/08/00004', tutupSo:true, noSP:'SP/BDG/08/00004', noSQ:'', noDSC:'DSC/BDG/08/00001', customer:'CV Berkah Abadi', wilayah:'Bandung', ts:'Diproses', statusApproval:'Rejected',
       sOffice:'Bandung', area:'Bandung', layanan:'Reguler', orderVia:'Telepon', alamat:'Jl. Soekarno Hatta No. 88, Bandung', rayon:'Rayon Bandung Kota',
-      principalKode:'5018', principalNama:'CV Distribusi Sentosa', cito:false, spAsli:true, skEd:true, cl:20000000, piutang:4300000, sisaCl:15700000,
+      cito:false, spAsli:true, skEd:true, cl:20000000, piutang:4300000, sisaCl:15700000,
       konsinyasi:false, keterangan:'Ditolak - melebihi Sisa CL setelah PPN', isGuarantee:false, pecahFaktur:false, ukuranBasis:'Dimensi',
       items:[{kode:'BRG-010', nama:'Sabun Mandi Lifebuoy 90gr', um:'Dus', qty:1000, hna1:5000, hnaXqty:5000000, potongan:100000, dpp:4900000, typePpn:'PPN 11%', ppn:539000, biayaKirim:30000, noBatch:'BT-260710-10', tglKadaluarsa:'2027-10-31'}],
       totalDpp:4900000, totalPpn:539000, totalBiayaKirim:30000, jumlahAkhir:5469000,
       tglSO:'10/08/2026', tglInput:'10/08/2026 11:20:00', userInput:'sidik', tglEdit:'', userEdit:''},
     {no:'26/SO/MDN/08/00002', noSP:'SP/MDN/08/00002', noSQ:'SQ/MDN/08/00002', noDSC:'', customer:'Toko Anugrah', wilayah:'Medan', ts:'Selesai', statusApproval:'Approved',
       sOffice:'Medan', area:'Medan', layanan:'Reguler', orderVia:'Sales Rep', alamat:'Jl. Gatot Subroto No. 21, Medan', rayon:'Rayon Medan Kota',
-      principalKode:'5020', principalNama:'PT Indofood Distribusi', cito:false, spAsli:true, skEd:false, cl:15000000, piutang:6600000, sisaCl:8400000,
+      cito:false, spAsli:true, skEd:false, cl:15000000, piutang:6600000, sisaCl:8400000,
       konsinyasi:false, keterangan:'Order kombinasi Sembako', isGuarantee:false, pecahFaktur:false, ukuranBasis:'KG',
       items:[
         {kode:'BRG-001', nama:'Minyak Goreng Sunco 2L', um:'Dus', qty:40, hna1:25000, hnaXqty:1000000, potongan:0, dpp:1000000, typePpn:'PPN 11%', ppn:110000, biayaKirim:0, noBatch:'BT-260711-11', tglKadaluarsa:'2027-06-30'},
@@ -1972,21 +1992,21 @@ const DATA = {
       tglSO:'04/08/2026', tglInput:'04/08/2026 08:00:00', userInput:'sidik', tglEdit:'06/08/2026 15:40:00', userEdit:'sidik'},
     {no:'26/SO/MKS/08/00001', noSP:'', noSQ:'', noDSC:'', customer:'UD Sinar Harapan', wilayah:'Makassar', ts:'Baru', statusApproval:'Pending',
       sOffice:'Makassar', area:'Makassar', layanan:'Reguler', orderVia:'Online', alamat:'Jl. Perintis Kemerdekaan No. 5, Makassar', rayon:'Rayon Makassar Kota',
-      principalKode:'', principalNama:'', cito:false, spAsli:false, skEd:false, cl:12000000, piutang:2150000, sisaCl:9850000,
+      cito:false, spAsli:false, skEd:false, cl:12000000, piutang:2150000, sisaCl:9850000,
       konsinyasi:false, keterangan:'Order Beras Premium', isGuarantee:false, pecahFaktur:false, ukuranBasis:'KG',
       items:[{kode:'BRG-003', nama:'Beras Premium Rojolele 5kg', um:'Karung', qty:10, hna1:60000, hnaXqty:600000, potongan:0, dpp:600000, typePpn:'Non PKP', ppn:0, biayaKirim:15000, noBatch:'BT-260713-13', tglKadaluarsa:'2027-02-28'}],
       totalDpp:600000, totalPpn:0, totalBiayaKirim:15000, jumlahAkhir:615000,
       tglSO:'02/08/2026', tglInput:'02/08/2026 09:30:00', userInput:'sidik', tglEdit:'', userEdit:''},
     {no:'26/SO/HO/08/00010', noSP:'SP/HO/08/00010', noSQ:'SQ/HO/08/00010', noDSC:'', customer:'Toko Family Mart Jaya', wilayah:'Jakarta', ts:'Dikirim', statusApproval:'Approved',
       sOffice:'Head Office', area:'Jakarta', layanan:'Express', orderVia:'WhatsApp', alamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara', rayon:'Rayon Jakarta Utara',
-      principalKode:'5019', principalNama:'PT Mayora Distribusi', cito:false, spAsli:true, skEd:false, cl:28000000, piutang:9870000, sisaCl:18130000,
+      cito:false, spAsli:true, skEd:false, cl:28000000, piutang:9870000, sisaCl:18130000,
       konsinyasi:false, keterangan:'Order Tepung Terigu tambahan', isGuarantee:false, pecahFaktur:false, ukuranBasis:'KG',
       items:[{kode:'BRG-004', nama:'Tepung Terigu Segitiga Biru 1kg', um:'Karung', qty:150, hna1:12000, hnaXqty:1800000, potongan:0, dpp:1800000, typePpn:'PPN 11%', ppn:198000, biayaKirim:25000, noBatch:'BT-260714-14', tglKadaluarsa:'2027-01-31'}],
       totalDpp:1800000, totalPpn:198000, totalBiayaKirim:25000, jumlahAkhir:2023000,
       tglSO:'11/08/2026', tglInput:'11/08/2026 08:15:00', userInput:'sidik', tglEdit:'', userEdit:''},
     {no:'26/SO/SMG/08/00003', noSP:'SP/SMG/08/00003', noSQ:'', noDSC:'', customer:'CV Maju Terus', wilayah:'Semarang', ts:'Selesai', statusApproval:'Rejected',
       sOffice:'Semarang', area:'Semarang', layanan:'Reguler', orderVia:'Email', alamat:'Jl. Pandanaran No. 33, Semarang', rayon:'Rayon Semarang Kota',
-      principalKode:'', principalNama:'', cito:false, spAsli:false, skEd:false, cl:9000000, piutang:1200000, sisaCl:7800000,
+      cito:false, spAsli:false, skEd:false, cl:9000000, piutang:1200000, sisaCl:7800000,
       konsinyasi:false, keterangan:'Ditolak - dokumen SP belum lengkap', isGuarantee:false, pecahFaktur:false, ukuranBasis:'KG',
       items:[{kode:'BRG-005', nama:'Mie Instan Indomie Goreng', um:'Dus', qty:300, hna1:2500, hnaXqty:750000, potongan:0, dpp:750000, typePpn:'PPN 11%', ppn:82500, biayaKirim:10000, noBatch:'BT-260715-15', tglKadaluarsa:'2027-04-30'}],
       totalDpp:750000, totalPpn:82500, totalBiayaKirim:10000, jumlahAkhir:842500,
@@ -3498,6 +3518,18 @@ const DATA = {
     {username:'bagus_sls', nama:'Bagus Kusuma', email:'', role:'SLS', cabangKode:'06', salesman:'Andi Wijaya', rayonKode:'SOLO', areaKode:'JATIM001', salesOffice:'SEMARANG', perusahaanBank:[]},
     {username:'andri_csh', nama:'Andri Santoso', email:'', role:'CSH', cabangKode:'03', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
     {username:'eka_gdg', nama:'Eka Nugroho', email:'', role:'GDG', cabangKode:'00', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    // 2 baris di bawah DITAMBAHKAN 2026-09-15 sebagai bagian dari modul Hak
+    // Approval (lihat DATA.hakApproval) — username 'usman_fas'/'rezha_fas'
+    // persis nilai di screenshot MASERP "Hak Approval" (Tipe Dokumen "Sales
+    // Refund", tag User Names). Role 'FIN' dipakai (kode terdekat yang sudah
+    // ada di USR_ROLE_LIST untuk konteks Finance Accounting), cabang HO
+    // ('00') karena approver di screenshot itu berkonteks "SPV HO". Tanpa
+    // 2 baris ini, picker "User Names" di form Hak Approval tetap bisa
+    // menampilkan nilai ini (disimpan apa adanya di DATA.hakApproval), tapi
+    // TIDAK akan muncul sebagai opsi yang bisa dipilih ulang dari Master
+    // User — ditambahkan supaya referential integrity tetap terjaga.
+    {username:'usman_fas', nama:'Usman Faisal', email:'', role:'FIN', cabangKode:'00', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
+    {username:'rezha_fas', nama:'Rezha Ramadhan', email:'', role:'FIN', cabangKode:'00', salesman:'', rayonKode:'', areaKode:'', salesOffice:'', perusahaanBank:[]},
   ],
   reportCenters: REPORT_CENTERS_DATA,
   glKategori:[
@@ -7233,5 +7265,104 @@ const DATA = {
       ],
       izinCabang:{noNib:'0123456789019', tglNib:'09/11/2018', noSiup:'503/SIUP-B/11/2018', tglSiup:'09/11/2018', noTdg:'27/TDG/11/2018', tglTdg:'14/11/2018', berlakuSampai:'09/11/2038', statusPerizinan:'Aktif'},
       jurnalRK:{akunPiutangRK:'1120002', akunHutangRK:'2110003'}},
+  ],
+
+  /* =========================================================
+     Hak Approval (User Security > Hak Approval, page:'hakApproval') —
+     dibangun 2026-09-15 sesuai 4 screenshot MASERP yang dikirim user: 3
+     screenshot form "Hak Approval" — Tipe Dokumen "Sales Refund" (checkbox
+     With Invoice/Without Invoice + Aktifkan Approval, tabel Level cuma
+     kolom Approver, 1 baris Level 1 dengan User Names usman_fas/rezha_fas);
+     Tipe Dokumen "Delivery Order Refund" (cuma checkbox Aktifkan Approval,
+     4 baris level: Level 1 User Roles "Finance Accounting SPV HO"+"...SPV
+     Cabang Semarang", Level 2 "Kepala Cabang HO"+"...Semarang"+"...
+     Tangerang", Level 3 "Finance Accounting Supervisor", Level 4 kosong);
+     Tipe Dokumen "Sales Order" (4 checkbox kondisi: Grand Total/Over Credit
+     Limit/Invoice Over Due/Price Under Cost of Goods Sold + Aktifkan
+     Approval, tabel level dengan 3 kolom numerik tambahan Batas Over
+     Kredit(%)/Upto Batas Over Kredit (Nominal)/Batas Hari Over Due, nilai
+     persis 10/5jt/3 hari, 25/50jt/7 hari, 50/250jt/30 hari, 9.999/999,999
+     miliar/9.999 hari) — dan 1 screenshot list "Daftar Hak Approval"
+     (kolom Tipe Dokumen/Document Type Options/Aktif?/Edit/Delete, 3 baris:
+     Sales Order [OverCreditLimit;InvoiceOverDue], Purchase Request
+     [kosong], Sales Refund [WithInvoice;WithoutInvoice], semua Aktif=Ya).
+
+     Field yang tampil BEDA-BEDA tergantung Tipe Dokumen yang dipilih
+     (checkbox kondisi tambahan & kolom numerik level approval) — hal ini
+     dimodelkan lewat konfigurasi TETAP `HAP_DOC_TYPES` (didefinisikan di
+     js/pages/hak-approval.template.js, pola sama seperti USR_ROLE_LIST di
+     master-user.template.js / HAG_MODULES di hak-akses-group.template.js:
+     daftar referensi TETAP milik aplikasi, BUKAN data yang di-CRUD user,
+     jadi sengaja TIDAK ditaruh di sini). Array `hakApproval` di bawah ini
+     adalah DATA TERSIMPAN SUNGGUHAN (baris yang muncul di list "Daftar Hak
+     Approval" & bisa di-Tambah/Ubah/Hapus) — 1 baris per Tipe Dokumen yang
+     sudah dikonfigurasi. `options` = flag checkbox kondisi tambahan (key
+     sesuai HAP_DOC_TYPES[].extraOptions[].key, cuma dipakai kalau Tipe
+     Dokumen itu punya extraOptions). `levels` = array approval level;
+     `userRoles`/`userNames` = tag multi-value (chip, lihat tag-box/
+     tag-chip di css/style.css — komponen yang sama dipakai field "Picker"
+     di Picking List); kolom numerik tambahan per level (batasOverKreditPct/
+     batasOverKreditNominal/batasHariOverDue) HANYA ada untuk Tipe Dokumen
+     yang levelCols-nya tidak kosong (saat ini cuma Sales Order).
+
+     "Delivery Order Refund" SENGAJA DIIKUTSERTAKAN sebagai baris ke-4 di
+     sini (persis isi lengkap screenshot form-nya, termasuk 3 level yang
+     sudah terisi) walau screenshot LIST "Daftar Hak Approval" cuma
+     menunjukkan 3 baris (Sales Order/Purchase Request/Sales Refund) —
+     screenshot list itu kemungkinan diambil SEBELUM Delivery Order Refund
+     ini disimpan. Supaya seluruh nilai yang tertangkap di screenshot tetap
+     terdemokan penuh di mockup ini (bukan cuma jadi 1 opsi dropdown yang
+     kosong tak berguna), baris ke-4 ini disertakan sebagai data tersimpan
+     — konsekuensinya list "Daftar Hak Approval" di mockup ini menampilkan
+     4 baris, bukan 3 seperti screenshot, penyesuaian kecil yang sengaja
+     dipilih demi kelengkapan demo CRUD, bukan kesalahan salin data.
+     "Purchase Request" sengaja `levels:[]` (kosong) karena TIDAK ADA
+     screenshot form untuk tipe ini — yang diketahui dari screenshot list
+     hanya Aktif=true & Document Type Options kosong (tipe ini memang tidak
+     didefinisikan punya extraOptions di HAP_DOC_TYPES).
+
+     User Names 'usman_fas'/'rezha_fas' dari screenshot Sales Refund
+     DITAMBAHKAN sebagai 2 baris baru ke DATA.users (role FIN, cabang HO) —
+     lihat komentar tambahan tepat di atas penutup array `users` — supaya
+     picker "User Names" di form Hak Approval ini tetap konsisten dengan
+     Master User (referential integrity), bukan nama yang cuma "nyantol"
+     di 1 tempat saja. */
+  hakApproval:[
+    {
+      tipeDokumen:'salesOrder', aktif:true,
+      options:{grandTotal:false, overCreditLimit:true, invoiceOverDue:true, priceUnderCost:false},
+      useUserRequestApprover:false,
+      levels:[
+        {level:1, batasOverKreditPct:10, batasOverKreditNominal:5000000, batasHariOverDue:3, userRoles:['Finance Accounting SPV HO','Finance Accounting SPV Cabang Semarang'], userNames:[]},
+        {level:2, batasOverKreditPct:25, batasOverKreditNominal:50000000, batasHariOverDue:7, userRoles:['Kepala Cabang HO','Kepala Cabang Semarang','Kepala Cabang Tangerang'], userNames:[]},
+        {level:3, batasOverKreditPct:50, batasOverKreditNominal:250000000, batasHariOverDue:30, userRoles:['Finance Accounting Supervisor'], userNames:[]},
+        {level:4, batasOverKreditPct:9999, batasOverKreditNominal:999999999999, batasHariOverDue:9999, userRoles:[], userNames:[]},
+      ],
+    },
+    {
+      tipeDokumen:'purchaseRequest', aktif:true,
+      options:{},
+      useUserRequestApprover:false,
+      levels:[],
+    },
+    {
+      tipeDokumen:'salesRefund', aktif:true,
+      options:{withInvoice:true, withoutInvoice:true},
+      useUserRequestApprover:false,
+      levels:[
+        {level:1, userRoles:[], userNames:['usman_fas','rezha_fas']},
+      ],
+    },
+    {
+      tipeDokumen:'deliveryOrderRefund', aktif:true,
+      options:{},
+      useUserRequestApprover:false,
+      levels:[
+        {level:1, userRoles:['Finance Accounting SPV HO','Finance Accounting SPV Cabang Semarang'], userNames:[]},
+        {level:2, userRoles:['Kepala Cabang HO','Kepala Cabang Semarang','Kepala Cabang Tangerang'], userNames:[]},
+        {level:3, userRoles:['Finance Accounting Supervisor'], userNames:[]},
+        {level:4, userRoles:[], userNames:[]},
+      ],
+    },
   ],
 };

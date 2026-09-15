@@ -220,6 +220,7 @@ const PAGE_MODULES={
   historyCreditLimit:{srcs:['js/pages/history-credit-limit.template.js','js/pages/history-credit-limit.js'], fn:'renderHistoryCreditLimitPage'},
   rumusKomisiSalesman:{srcs:['js/pages/rumus-komisi-salesman.template.js','js/pages/rumus-komisi-salesman.js'], fn:'renderRumusKomisiSalesmanPage'},
   alasanRetur:{srcs:['js/pages/alasan-retur.template.js','js/pages/alasan-retur.js'], fn:'renderAlasanReturPage'},
+  hakApproval:{srcs:['js/pages/hak-approval.template.js','js/pages/hak-approval.js'], fn:'renderHakApprovalPage'},
 };
 const loadedModules=new Set();
 
