@@ -120,7 +120,7 @@ const MENU=[
    {label:'Cabang', page:'cabang'},
    {label:'Cost Center', page:'costCenter'},
    {label:'Budgeting', page:'budgeting'},
-   {label:'Budgeting Cc.', page:'placeholder', title:'Budgeting Cc.'},
+   {label:'Budgeting Cc.', page:'budgetingCc'},
    {label:'Rumus Rasio Keuangan', page:'placeholder', title:'Rumus Rasio Keuangan'},
    {label:'G.L. Template', page:'placeholder', title:'G.L. Template'},
    {header:'Daftar Transaksi'},

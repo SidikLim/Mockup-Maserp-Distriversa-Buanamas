@@ -5243,6 +5243,43 @@ const DATA = {
     '5210002':{po:true, bulan:[65000000,65000000,65000000,68000000,68000000,68000000,70000000,70000000,70000000,70000000,70000000,75000000]},
   },
 
+  /* Budgeting Cost Center (General Ledger > Master & Setting >
+     Budgeting Cc., page:'budgetingCc'), sesuai screenshot MASERP
+     "Daftar Budgeting Cost Center" yang dikirim user 2026-09-17.
+     BEDA dari Budgeting biasa di atas (yang langsung me-list SEMUA
+     akun GL company-wide): modul ini di-scope per KOMBINASI Cabang +
+     Cost Center (2 field picker di atas tabel, Cost Center di-scope
+     oleh Cabang lewat DATA.cabangMaster[].costCenterKode — pola
+     cascading sama seperti Filter Gudang-by-Cabang di Master Stock
+     Opname) dan baris akunnya ditambahkan MANUAL satu per satu lewat
+     tombol "+Tambah Akun Baru" + picker "Pilih Akun" (bukan auto-list
+     seluruh Chart of Account seperti Budgeting biasa) — karena budget
+     per Cost Center biasanya cuma menyasar segelintir akun biaya yang
+     relevan utk cost center itu, bukan seluruh akun.
+
+     Object key `"kodeCabang|kodeCostCenter"` -> array baris
+     {kode (akun GL), keterangan (teks bebas per baris), bulan:[12
+     nominal JANUARI-DESEMBER]}. Nama GL TIDAK disimpan (computed live
+     dari DATA.akunGL by kode saat render, konsisten aturan proyek:
+     nilai turunan tidak disimpan sebagai field statis).
+
+     SENGAJA TIDAK disinkronkan otomatis ke/dari DATA.budgeting
+     (company-wide) — 2 dokumen ini independen, persis precedent
+     Master Stock Opname vs Stock Opname yang saling merujuk tapi
+     tidak saling memutasi data satu sama lain.
+
+     Sample: Head Office (kode cabang '00') + CC001 Direksi & Corporate
+     Office — 2 akun biaya (Gaji & Tunjangan 5210001, Listrik & Air
+     5210004) dengan porsi budget khusus Cost Center ini (figure
+     independen, sengaja dibuat lebih kecil dari DATA.budgeting
+     company-wide — BUKAN pecahan/derivasi otomatis dari angka itu). */
+  budgetingCc:{
+    '00|CC001':[
+      {kode:'5210001', keterangan:'Budget Gaji & Tunjangan - Direksi dan Corporate Office', bulan:[45000000,45000000,45000000,45000000,47500000,47500000,47500000,47500000,47500000,47500000,47500000,55000000]},
+      {kode:'5210004', keterangan:'Budget Listrik & Air - Kantor Direksi HO', bulan:[8500000,8500000,8500000,8500000,8500000,9000000,9000000,9000000,9000000,9000000,9000000,9500000]},
+    ],
+  },
+
   /* Tagihan Piutang / Daftar Tagih Piutang (Customer & Penjualan >
      Daftar Transaksi, page:'tagihanPiutang'), sesuai 3 screenshot
      MASERP SDL + 2 PDF cetakan (DAFTAR TAGIH full page + Kwitansi/
