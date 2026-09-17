@@ -5280,6 +5280,57 @@ const DATA = {
     ],
   },
 
+  /* Rumus Rasio Keuangan (General Ledger > Master & Setting >
+     Rumus Rasio Keuangan, page:'rumusRasioKeuangan'), sesuai 2
+     screenshot MASERP "Daftar Rasio" + "+ Ratio" yang dikirim user
+     2026-09-17. Array FLAT (bukan object per-kombinasi seperti
+     Budgeting Cc di atas) karena rasio keuangan bukan data yang
+     di-scope per Cabang/Cost Center — 1 baris = 1 definisi rasio
+     company-wide. `namaRatio` dipakai sebagai kunci unik tampilan
+     (screenshot form tidak punya field "Kode Ratio" terpisah).
+
+     Screenshot list "Daftar Rasio" aslinya kosong (0 baris/"Tidak
+     Ada Data"/"Total Record: 0") karena instalasi asli memang belum
+     diisi, TAPI mockup ini SENGAJA diisi 3 baris sample di bawah
+     supaya fiturnya bisa didemokan — persis precedent Rumus Komisi
+     Salesman (lihat header rumus-komisi-salesman.template.js).
+
+     `items[].akunKode` menaut ke akun HEADER (bukan Detail) di
+     DATA.akunGL karena tiap variabel rumus di sini mewakili 1
+     kategori/rollup neraca-laba-rugi utuh (Total Aktiva Lancar,
+     Total Hutang Lancar, dst) — lihat catatan keputusan desain di
+     header rumus-rasio-keuangan.template.js untuk penjelasan
+     lengkap kenapa picker Akun di modul ini beda dari Budgeting Cc.
+     `items[].nama` adalah label bebas (computed dari nama akun saat
+     dipilih pertama kali, tapi disimpan sebagai teks — field ini
+     memang bisa diubah manual lepas dari nama akun aslinya, sesuai
+     tata letak screenshot yang menaruh Nama sebagai kolom terpisah
+     dari Akun). `rumus` HANYA teks bebas, tidak dihitung/diparsing
+     oleh mockup ini (modul ini MASTER/setup, bukan laporan). */
+  rumusRasioKeuangan:[
+    {
+      namaRatio:'Current Ratio', tipeRatio:'Current Ratio', rumus:'ca; /; cl;', target:150,
+      items:[
+        {kode:'ca', nama:'Total Aktiva Lancar', akunKode:'1100000'},
+        {kode:'cl', nama:'Total Hutang Lancar', akunKode:'2100000'},
+      ],
+    },
+    {
+      namaRatio:'Debt to Equity Ratio', tipeRatio:'Debt to Equity Ratio', rumus:'td; /; te;', target:80,
+      items:[
+        {kode:'td', nama:'Total Hutang Lancar', akunKode:'2100000'},
+        {kode:'te', nama:'Total Modal', akunKode:'3100000'},
+      ],
+    },
+    {
+      namaRatio:'Gross Profit Margin', tipeRatio:'Gross Profit Margin', rumus:'pj; -; hpp; /; pj;', target:30,
+      items:[
+        {kode:'pj', nama:'Penjualan', akunKode:'4100000'},
+        {kode:'hpp', nama:'Harga Pokok Penjualan', akunKode:'5100000'},
+      ],
+    },
+  ],
+
   /* Tagihan Piutang / Daftar Tagih Piutang (Customer & Penjualan >
      Daftar Transaksi, page:'tagihanPiutang'), sesuai 3 screenshot
      MASERP SDL + 2 PDF cetakan (DAFTAR TAGIH full page + Kwitansi/

@@ -5878,6 +5878,57 @@ const DATA = {
     ],
   },
 
+  /* Rumus Rasio Keuangan (General Ledger > Master & Setting >
+     Rumus Rasio Keuangan, page:'rumusRasioKeuangan'), sesuai 2
+     screenshot MASERP "Daftar Rasio" + "+ Ratio" yang dikirim user
+     2026-09-17. Array FLAT (bukan object per-kombinasi seperti
+     Budgeting Cc di atas) karena rasio keuangan bukan data yang
+     di-scope per Cabang/Cost Center — 1 baris = 1 definisi rasio
+     company-wide. `namaRatio` dipakai sebagai kunci unik tampilan
+     (screenshot form tidak punya field "Kode Ratio" terpisah).
+
+     Screenshot list "Daftar Rasio" aslinya kosong (0 baris/"Tidak
+     Ada Data"/"Total Record: 0") karena instalasi asli memang belum
+     diisi, TAPI mockup ini SENGAJA diisi 3 baris sample di bawah
+     supaya fiturnya bisa didemokan — persis precedent Rumus Komisi
+     Salesman (lihat header rumus-komisi-salesman.template.js).
+
+     `items[].akunKode` menaut ke akun HEADER (bukan Detail) di
+     DATA.akunGL karena tiap variabel rumus di sini mewakili 1
+     kategori/rollup neraca-laba-rugi utuh (Total Aktiva Lancar,
+     Total Hutang Lancar, dst) — lihat catatan keputusan desain di
+     header rumus-rasio-keuangan.template.js untuk penjelasan
+     lengkap kenapa picker Akun di modul ini beda dari Budgeting Cc.
+     `items[].nama` adalah label bebas (computed dari nama akun saat
+     dipilih pertama kali, tapi disimpan sebagai teks — field ini
+     memang bisa diubah manual lepas dari nama akun aslinya, sesuai
+     tata letak screenshot yang menaruh Nama sebagai kolom terpisah
+     dari Akun). `rumus` HANYA teks bebas, tidak dihitung/diparsing
+     oleh mockup ini (modul ini MASTER/setup, bukan laporan). */
+  rumusRasioKeuangan:[
+    {
+      namaRatio:'Current Ratio', tipeRatio:'Current Ratio', rumus:'ca; /; cl;', target:150,
+      items:[
+        {kode:'ca', nama:'Total Aktiva Lancar', akunKode:'1100000'},
+        {kode:'cl', nama:'Total Hutang Lancar', akunKode:'2100000'},
+      ],
+    },
+    {
+      namaRatio:'Debt to Equity Ratio', tipeRatio:'Debt to Equity Ratio', rumus:'td; /; te;', target:80,
+      items:[
+        {kode:'td', nama:'Total Hutang Lancar', akunKode:'2100000'},
+        {kode:'te', nama:'Total Modal', akunKode:'3100000'},
+      ],
+    },
+    {
+      namaRatio:'Gross Profit Margin', tipeRatio:'Gross Profit Margin', rumus:'pj; -; hpp; /; pj;', target:30,
+      items:[
+        {kode:'pj', nama:'Penjualan', akunKode:'4100000'},
+        {kode:'hpp', nama:'Harga Pokok Penjualan', akunKode:'5100000'},
+      ],
+    },
+  ],
+
   /* Tagihan Piutang / Daftar Tagih Piutang (Customer & Penjualan >
      Daftar Transaksi, page:'tagihanPiutang'), sesuai 3 screenshot
      MASERP SDL + 2 PDF cetakan (DAFTAR TAGIH full page + Kwitansi/
@@ -8386,7 +8437,7 @@ const MENU=[
    {label:'Cost Center', page:'costCenter'},
    {label:'Budgeting', page:'budgeting'},
    {label:'Budgeting Cc.', page:'budgetingCc'},
-   {label:'Rumus Rasio Keuangan', page:'placeholder', title:'Rumus Rasio Keuangan'},
+   {label:'Rumus Rasio Keuangan', page:'rumusRasioKeuangan'},
    {label:'G.L. Template', page:'placeholder', title:'G.L. Template'},
    {header:'Daftar Transaksi'},
    {label:'Transaksi G.L.', page:'jurnalUmum'},
@@ -33325,6 +33376,299 @@ function tplRksDeleteConfirm(row){
 }
 
 function tplRksInfoModal(title, text){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>${text}</p></div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="modalOk">Mengerti</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
+   TEMPLATE (HTML saja) — Rumus Rasio Keuangan (General Ledger >
+   Master & Setting > Rumus Rasio Keuangan, page:
+   'rumusRasioKeuangan'). Semua fungsi di file ini HANYA menyusun
+   & mengembalikan markup HTML (string), TIDAK ada logic/DOM-
+   binding di sini. Logic-nya ada di file sebelah:
+   rumus-rasio-keuangan.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Dibangun 2026-09-17 sesuai 2 screenshot MASERP yang dikirim
+   user: list "Daftar Rasio" (header gelap, tombol "+Add",
+   dropdown page-size default 10, kotak cari placeholder "Global
+   Search", kolom "No." / "Nama Ratio" (sort) / "Type Ratio"
+   (sort) / "Edit" / "Delete", pager First/Previous/Next/Last —
+   SEMUA label ini SENGAJA disalin persis dalam bahasa Inggris
+   dari screenshot walau sebagian besar modul lain di mockup ini
+   pakai label Indonesia; screenshot menampilkan 0 baris/"Tidak
+   Ada Data"/"Total Record: 0" karena instalasi asli memang belum
+   diisi, TAPI mockup ini SENGAJA diisi 3 baris sample (Current
+   Ratio, Debt to Equity Ratio, Gross Profit Margin — lihat
+   DATA.rumusRasioKeuangan di js/data.js) supaya fiturnya bisa
+   didemokan, bukan direplikasi persis kondisi kosongnya — pola
+   yang sama persis seperti precedent Rumus Komisi Salesman) dan
+   form "+ Ratio" (header gelap TANPA tombol tambahan lain — beda
+   dari Rumus Komisi Salesman yang punya tombol Tutorial merah;
+   field Nama Ratio, Tipe Ratio (dropdown), Rumus Ratio (dengan 2
+   teks bantuan persis dari screenshot), Target Ratio (%), lalu
+   tabel dinamis Kode/Nama/Akun/Hapus yang bisa ditambah/dikurangi
+   bebas lewat "+Tambah Item Baru", footer Simpan (biru) + Cancel
+   (link, bahasa Inggris persis screenshot)).
+
+   CATATAN KEPUTUSAN DESAIN (tidak semuanya tampak eksplisit di
+   screenshot, didokumentasikan supaya jelas ini pilihan sadar):
+
+   1) RRK_TIPE_LIST (opsi dropdown Tipe Ratio) — screenshot HANYA
+      menunjukkan nilai default terpilih "Current Ratio", tidak
+      pernah membuka dropdown-nya. Daftar 11 nama rasio keuangan
+      standar di bawah adalah ASUMSI supaya dropdown-nya tidak
+      kosong/hanya 1 opsi.
+
+   2) Field "Rumus Ratio" HANYA disimpan sebagai teks bebas
+      (string, format bebas asal pakai titik koma sesuai 2 teks
+      bantuan di screenshot) — mockup ini TIDAK mem-parsing atau
+      menghitung nilai rasio sungguhan dari rumus ini terhadap
+      saldo GL asli (modul ini adalah MASTER/setup, bukan modul
+      laporan) — pola yang sama seperti Rumus Komisi Salesman yang
+      juga cuma menyimpan rate/rumus, tidak menghitung terhadap
+      transaksi sungguhan.
+
+   3) Kode di tabel item (variabel formula, mis. "ca"/"cl")
+      divalidasi LANGSUNG saat mengetik — karakter selain huruf
+      dibuang otomatis (lihat rrkSanitizeKode() di file .js) —
+      sesuai teks bantuan screenshot "Wajib menggunakan huruf!
+      Tidak boleh angka dan tanda baca." Huruf TIDAK dipaksa
+      kapital (beda dari Kode Satuan di modul Satuan).
+
+   4) Akun picker (kolom "Akun" di tabel item) SENGAJA menampilkan
+      akun 'Header' MAUPUN 'Detail' dari DATA.akunGL — beda dari
+      picker Akun GL di Budgeting Cc yang HANYA menampilkan
+      'Detail' (karena budget dialokasikan ke akun transaksi).
+      Variabel rumus rasio (mis. "Total Aktiva Lancar") jauh lebih
+      alami dipetakan ke akun Header/rollup kategori (mis.
+      1100000 AKTIVA LANCAR) daripada ke 1 baris Detail sembarang
+      — jadi kedua jenis akun sengaja ditampilkan di picker ini.
+
+   5) Field "Nama" di tabel item TETAP kolom teks bebas terpisah
+      (BUKAN computed/readonly dari Akun yang dipilih) — persis
+      tata letak screenshot yang menaruh Nama sebagai input polos
+      di kolom sendiri, terpisah dari picker Akun. Untuk kenyamanan,
+      begitu Akun dipilih & field Nama masih kosong, Nama akan
+      diisi otomatis dari nama akun terpilih (TAPI tetap bisa
+      diubah bebas sesudahnya, tidak pernah ditimpa paksa).
+========================================================= */
+
+const RRK_TIPE_LIST = [
+  'Current Ratio',
+  'Quick Ratio (Acid Test Ratio)',
+  'Cash Ratio',
+  'Debt to Asset Ratio',
+  'Debt to Equity Ratio',
+  'Gross Profit Margin',
+  'Net Profit Margin',
+  'Return on Assets (ROA)',
+  'Return on Equity (ROE)',
+  'Inventory Turnover Ratio',
+  'Receivable Turnover Ratio',
+];
+
+function tplRrkListPage(){
+  return `
+    <div class="breadcrumb">Home / <b>Rumus Rasio Keuangan</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('percent',15)} Daftar Rasio</h3>
+        <button class="btn-primary" id="btnRrkAdd">${icon('plus',14)} Add</button>
+      </div>
+      <div class="table-toolbar">
+        <select id="rrkPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="rrkSearch" placeholder="Global Search">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th style="width:60px;">No.</th>
+          <th>${tplRrkSortHeader('Nama Ratio','namaRatio')}</th>
+          <th>${tplRrkSortHeader('Type Ratio','tipeRatio')}</th>
+          <th style="width:70px;">Edit</th>
+          <th style="width:70px;">Delete</th>
+        </tr></thead>
+        <tbody id="rrkTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="rrkPager"></div><div id="rrkTotal"></div></div>
+    </div>`;
+}
+
+function tplRrkSortHeader(label, field){
+  return `<span class="rrk-sort-header" data-rrk-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="rrkSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplRrkRows(rows, page, pageSize){
+  if(!rows.length) return `<tr><td colspan="5" style="color:var(--text-light);">Tidak Ada Data</td></tr>`;
+  const start = (page-1)*pageSize;
+  return rows.slice(start, start+pageSize).map((r, i) => {
+    const idx = DATA.rumusRasioKeuangan.indexOf(r);
+    return `
+    <tr>
+      <td>${start+i+1}</td>
+      <td><a href="#" class="row-link" data-edit="${idx}" style="color:var(--blue);font-weight:600;">${r.namaRatio}</a></td>
+      <td>${r.tipeRatio || ''}</td>
+      <td><button class="icon-btn edit" data-edit="${idx}" title="Edit">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del="${idx}" title="Delete">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function tplRrkPager(page, totalPages){
+  if(totalPages <= 1) return '';
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+  let nums = '';
+  for(let p = start; p <= end; p++){
+    nums += `<button class="${p===page?'active':''}" data-rrkpage="${p}">${p}</button>`;
+  }
+  return `
+    <button data-rrkpage="1" ${page<=1?'disabled':''}>First</button>
+    <button data-rrkpage="${Math.max(1,page-1)}" ${page<=1?'disabled':''}>Previous</button>
+    ${nums}
+    <button data-rrkpage="${Math.min(totalPages,page+1)}" ${page>=totalPages?'disabled':''}>Next</button>
+    <button data-rrkpage="${totalPages}" ${page>=totalPages?'disabled':''}>Last</button>`;
+}
+
+function tplRrkTipeOptions(selected){
+  return RRK_TIPE_LIST.map(t=>`<option value="${t}" ${t===selected?'selected':''}>${t}</option>`).join('');
+}
+
+function rrkAkunLabel(kode){
+  if(!kode) return '';
+  const a = (DATA.akunGL||[]).find(x=>x.kode===kode);
+  return a ? `${a.kode} - ${a.nama}` : kode;
+}
+
+function tplRrkForm(mode, draft){
+  const isEdit = mode === 'edit';
+  return `
+    <div class="breadcrumb">Home / Rumus Rasio Keuangan / <b>${isEdit ? 'Ubah' : 'Tambah'}</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('percent',15)} + Ratio</h3>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label>Nama Ratio</label>
+          <input type="text" id="fRrkNamaRatio" value="${draft.namaRatio||''}" placeholder="Nama Ratio">
+          <div class="form-error" id="fRrkNamaRatioErr">Nama Ratio wajib diisi</div>
+        </div>
+        <div class="form-group">
+          <label>Tipe Ratio</label>
+          <select id="fRrkTipeRatio">${tplRrkTipeOptions(draft.tipeRatio)}</select>
+        </div>
+        <div class="form-group">
+          <label>Rumus Ratio</label>
+          <input type="text" id="fRrkRumus" value="${draft.rumus||''}" placeholder="ca; /; cl;">
+          <div class="form-error" id="fRrkRumusErr">Rumus Ratio wajib diisi</div>
+          <div style="font-size:11.5px;color:var(--text-light);margin-top:4px;">Contoh Rumus : ca; /; cl;</div>
+          <div style="font-size:11.5px;color:var(--red);margin-top:2px;">Wajib menggunakan titik koma (;) setelah menginput kode atau operator rumus !</div>
+        </div>
+        <div class="form-group" style="max-width:220px;">
+          <label>Target Ratio (%)</label>
+          <div style="position:relative;">
+            <input type="text" id="fRrkTarget" value="${draft.target||0}" style="width:100%;text-align:right;padding-right:26px;border:1px solid var(--border);border-radius:6px;">
+            <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text-light);font-size:11px;">%</span>
+          </div>
+        </div>
+        <table class="field-table" style="width:100%;border-collapse:collapse;margin:16px 0 6px;border:1px solid var(--border);">
+          <tbody>
+            <tr>
+              <td class="flabel" style="width:50px;">No</td>
+              <td class="flabel">Kode</td>
+              <td class="flabel">Nama</td>
+              <td class="flabel">Akun</td>
+              <td class="flabel" style="width:70px;">Hapus</td>
+            </tr>
+          </tbody>
+          <tbody id="rrkItemsBody"></tbody>
+        </table>
+        <a href="#" id="rrkAddItem" class="link-add">${icon('plus',13)} Tambah Item Baru</a>
+        <div class="form-page-actions" style="margin-top:18px;">
+          <button class="btn-primary" id="rrkSimpan">Simpan</button>
+          <a href="#" id="rrkCancel" class="link-add" style="margin-top:0;">Cancel</a>
+        </div>
+      </div>
+    </div>`;
+}
+
+function tplRrkItemRows(items){
+  if(!items.length) return `<tr><td colspan="5" style="color:var(--text-light);padding:10px 14px;">Belum ada item.</td></tr>`;
+  return items.map((it, i) => `
+    <tr>
+      <td style="padding:8px 14px;border-bottom:1px solid var(--border);">${i+1}</td>
+      <td style="padding:8px 14px;border-bottom:1px solid var(--border);">
+        <input type="text" data-rrk-kode="${i}" value="${it.kode||''}" placeholder="Kode" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;font-family:inherit;">
+        <div style="font-size:10.5px;color:var(--text-light);margin-top:3px;">Wajib menggunakan huruf! Tidak boleh angka dan tanda baca.</div>
+      </td>
+      <td style="padding:8px 14px;border-bottom:1px solid var(--border);">
+        <input type="text" data-rrk-nama="${i}" value="${it.nama||''}" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;font-family:inherit;">
+      </td>
+      <td style="padding:8px 14px;border-bottom:1px solid var(--border);">
+        <div class="input-with-btn">
+          <input type="text" readonly value="${rrkAkunLabel(it.akunKode)}" placeholder="Pilih Account">
+          <button type="button" class="icon-btn edit" data-rrk-pick="${i}" title="Pilih Account">${icon('search',13)}</button>
+        </div>
+      </td>
+      <td style="padding:8px 14px;border-bottom:1px solid var(--border);">
+        <button class="icon-btn del" data-rrk-delitem="${i}" title="Hapus">${icon('trash',15)}</button>
+      </td>
+    </tr>`).join('');
+}
+
+function tplRrkAkunPicker(list){
+  return `
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header"><span>Pilih Account</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="table-toolbar">
+          <input type="text" id="rrkAkunPickerSearch" placeholder="Cari Kode / Nama Akun">
+        </div>
+        <div class="table-wrap" style="max-height:360px;overflow:auto;">
+          <table>
+            <thead><tr><th>Kode</th><th>Nama</th><th>Jenis</th></tr></thead>
+            <tbody id="rrkAkunPickerBody">${tplRrkAkunPickerRows(list)}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+      </div>
+    </div>`;
+}
+
+function tplRrkAkunPickerRows(list){
+  if(!list.length) return `<tr><td colspan="3" style="color:var(--text-light);">Akun tidak ditemukan</td></tr>`;
+  return list.map(a => `
+    <tr class="${a.jenis==='Header' ? 'gl-account-header' : ''}">
+      <td><button class="link-pick" data-pick-akun="${a.kode}">${a.kode}</button></td>
+      <td><button class="link-pick" data-pick-akun="${a.kode}">${a.nama}</button></td>
+      <td>${a.jenis}</td>
+    </tr>`).join('');
+}
+
+function tplRrkDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Rasio</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus rasio <b>${row.namaRatio}</b> — ${row.tipeRatio||''}?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+function tplRrkInfoModal(title, text){
   return `
     <div class="modal-box">
       <div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
@@ -62487,6 +62831,231 @@ function openRksInfo(title, text){
 }
 
 /* =========================================================
+   LOGIC (JS saja) — Rumus Rasio Keuangan (General Ledger > Master &
+   Setting > Rumus Rasio Keuangan, page:'rumusRasioKeuangan'). Dimuat
+   otomatis (lazy-load) oleh core.js — lihat PAGE_MODULES di
+   js/core.js. Markup di file sebelah: rumus-rasio-keuangan.template.js
+   (catatan desain lengkap ada di headernya — termasuk keputusan
+   Akun picker yang menampilkan akun Header MAUPUN Detail, beda dari
+   Budgeting Cc.).
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Alur inti:
+   - List "Daftar Rasio" (DATA.rumusRasioKeuangan, array flat — bukan
+     object per-kombinasi seperti Budgeting Cc, karena rasio bukan
+     data yang di-scope per Cabang/Cost Center) dengan sort (klik
+     header Nama Ratio/Type Ratio), search, page-size, pager — pola
+     sama seperti Rumus Komisi Salesman.
+   - "+ Ratio" (Tambah) / Ubah membuka form dengan draft lokal
+     (rrkDraft) hasil copy dari baris DATA (atau baris kosong baru).
+     Tabel item (Kode/Nama/Akun) diedit bebas di draft ini — baris
+     bisa ditambah ("+Tambah Item Baru") atau dihapus kapan saja,
+     TIDAK ditulis ke DATA sampai tombol Simpan ditekan (pola draft
+     sama seperti Budgeting Cc, tapi di sini draft-nya 1 objek Ratio
+     utuh, bukan array baris budget per Cabang+CC).
+   - Kode item disaring HANYA huruf saat mengetik (rrkSanitizeKode) —
+     sesuai teks bantuan di screenshot form.
+   - Akun dipilih lewat modal picker (openRrkAkunPicker) yang
+     menampilkan akun Header & Detail dari DATA.akunGL, dengan
+     pencarian & guard anti-duplikat (1 akun tidak boleh dipakai di
+     2 baris item pada draft yang sama). Begitu akun dipilih, field
+     Nama item ikut diisi otomatis dari nama akun HANYA jika field
+     Nama itu masih kosong (tidak pernah menimpa nama yang sudah
+     diketik user sendiri).
+   - Simpan memvalidasi Nama Ratio & Rumus Ratio wajib diisi, lalu
+     menulis draft (item yang kode-nya kosong dibuang, sama seperti
+     bccSimpan()) ke DATA.rumusRasioKeuangan[idx] (Ubah) atau push
+     baris baru (Tambah).
+   Data: DATA.rumusRasioKeuangan (array {namaRatio, tipeRatio, rumus,
+   target, items:[{kode,nama,akunKode}]}) — lihat js/data.js. */
+
+let rrkState = { page:1, pageSize:10, search:'', sortField:'namaRatio', sortDir:'asc' };
+let rrkDraft = null;
+let rrkEditIndex = -1;
+
+function renderRumusRasioKeuanganPage(){
+  rrkState = { page:1, pageSize:10, search:'', sortField:'namaRatio', sortDir:'asc' };
+  content.innerHTML = tplRrkListPage();
+
+  document.getElementById('btnRrkAdd').onclick = () => openRrkForm('add', -1);
+  document.getElementById('rrkPageSize').onchange = (e) => { rrkState.pageSize = +e.target.value; rrkState.page = 1; renderRrkTable(); };
+  document.getElementById('rrkSearch').oninput = (e) => { rrkState.search = e.target.value.trim().toLowerCase(); rrkState.page = 1; renderRrkTable(); };
+
+  document.querySelectorAll('.rrk-sort-header').forEach(el => el.onclick = () => {
+    const field = el.dataset.rrkSort;
+    if(rrkState.sortField === field){ rrkState.sortDir = rrkState.sortDir === 'asc' ? 'desc' : 'asc'; }
+    else { rrkState.sortField = field; rrkState.sortDir = 'asc'; }
+    renderRrkTable();
+  });
+
+  renderRrkTable();
+}
+
+function rrkFilteredSorted(){
+  const q = rrkState.search;
+  let rows = DATA.rumusRasioKeuangan.slice();
+  if(q){
+    rows = rows.filter(r => `${r.namaRatio||''} ${r.tipeRatio||''}`.toLowerCase().includes(q));
+  }
+  const field = rrkState.sortField, dir = rrkState.sortDir === 'asc' ? 1 : -1;
+  rows.sort((a,b) => String(a[field]||'').localeCompare(String(b[field]||'')) * dir);
+  return rows;
+}
+
+function renderRrkTable(){
+  const rows = rrkFilteredSorted();
+  const totalPages = Math.max(1, Math.ceil(rows.length / rrkState.pageSize));
+  if(rrkState.page > totalPages) rrkState.page = totalPages;
+
+  document.getElementById('rrkTbody').innerHTML = tplRrkRows(rows, rrkState.page, rrkState.pageSize);
+  document.getElementById('rrkTotal').textContent = `Total Record: ${rows.length}`;
+  document.getElementById('rrkPager').innerHTML = tplRrkPager(rrkState.page, totalPages);
+
+  ['namaRatio','tipeRatio'].forEach(f => {
+    const icon = document.getElementById(`rrkSortIcon_${f}`);
+    if(icon) icon.innerHTML = (rrkState.sortField === f) ? (rrkState.sortDir === 'asc' ? '&#8593;' : '&#8595;') : '&#8693;';
+  });
+
+  document.querySelectorAll('#rrkTbody [data-edit]').forEach(el => el.onclick = (e) => { e.preventDefault(); openRrkForm('edit', +el.dataset.edit); });
+  document.querySelectorAll('#rrkTbody [data-del]').forEach(btn => btn.onclick = () => openRrkDeleteConfirm(+btn.dataset.del));
+  const pager = document.getElementById('rrkPager');
+  pager.querySelectorAll('[data-rrkpage]').forEach(b => b.onclick = () => { rrkState.page = +b.dataset.rrkpage; renderRrkTable(); });
+}
+
+function openRrkForm(mode, idx){
+  rrkEditIndex = idx;
+  rrkDraft = mode === 'edit'
+    ? JSON.parse(JSON.stringify(DATA.rumusRasioKeuangan[idx]))
+    : { namaRatio:'', tipeRatio:RRK_TIPE_LIST[0], rumus:'', target:0, items:[] };
+  if(!rrkDraft.items) rrkDraft.items = [];
+
+  content.innerHTML = tplRrkForm(mode, rrkDraft);
+
+  document.getElementById('fRrkNamaRatio').oninput = (e) => { rrkDraft.namaRatio = e.target.value; };
+  document.getElementById('fRrkTipeRatio').onchange = (e) => { rrkDraft.tipeRatio = e.target.value; };
+  document.getElementById('fRrkRumus').oninput = (e) => { rrkDraft.rumus = e.target.value; };
+  document.getElementById('fRrkTarget').oninput = (e) => { rrkDraft.target = e.target.value === '' ? 0 : Number(e.target.value.replace(/[^0-9.\-]/g,'')) || 0; };
+
+  document.getElementById('rrkAddItem').onclick = (e) => {
+    e.preventDefault();
+    rrkDraft.items.push({ kode:'', nama:'', akunKode:'' });
+    renderRrkItemsTable();
+  };
+  document.getElementById('rrkSimpan').onclick = rrkSimpan;
+  document.getElementById('rrkCancel').onclick = (e) => { e.preventDefault(); renderRumusRasioKeuanganPage(); };
+
+  renderRrkItemsTable();
+}
+
+function rrkSanitizeKode(str){
+  return String(str||'').replace(/[^A-Za-z]/g,'');
+}
+
+function renderRrkItemsTable(){
+  document.getElementById('rrkItemsBody').innerHTML = tplRrkItemRows(rrkDraft.items);
+
+  document.querySelectorAll('[data-rrk-kode]').forEach(inp => inp.oninput = (e) => {
+    const i = +e.target.dataset.rrkKode;
+    const clean = rrkSanitizeKode(e.target.value);
+    rrkDraft.items[i].kode = clean;
+    if(e.target.value !== clean) e.target.value = clean;
+  });
+  document.querySelectorAll('[data-rrk-nama]').forEach(inp => inp.oninput = (e) => {
+    rrkDraft.items[+e.target.dataset.rrkNama].nama = e.target.value;
+  });
+  document.querySelectorAll('[data-rrk-pick]').forEach(btn => btn.onclick = () => openRrkAkunPicker(+btn.dataset.rrkPick));
+  document.querySelectorAll('[data-rrk-delitem]').forEach(btn => btn.onclick = () => {
+    rrkDraft.items.splice(+btn.dataset.rrkDelitem, 1);
+    renderRrkItemsTable();
+  });
+}
+
+function rrkOverlay(html){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  const cancel = document.getElementById('modalCancel');
+  if(cancel) cancel.onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  return overlay;
+}
+
+function openRrkAkunPicker(itemIdx){
+  const usedKodes = rrkDraft.items.filter((it,i) => i !== itemIdx && it.akunKode).map(it => it.akunKode);
+  const master = (DATA.akunGL||[]).slice();
+  const overlay = rrkOverlay(tplRrkAkunPicker(master));
+
+  const wireRows = () => {
+    overlay.querySelectorAll('[data-pick-akun]').forEach(btn => btn.onclick = () => {
+      const kode = btn.dataset.pickAkun;
+      if(usedKodes.includes(kode)){
+        openRrkInfo('Pilih Account', 'Akun ini sudah dipakai di baris item lain pada rasio yang sama.');
+        return;
+      }
+      const akun = master.find(a => a.kode === kode);
+      rrkDraft.items[itemIdx].akunKode = kode;
+      if(akun && !rrkDraft.items[itemIdx].nama) rrkDraft.items[itemIdx].nama = akun.nama;
+      closeModal();
+      renderRrkItemsTable();
+    });
+  };
+  wireRows();
+
+  document.getElementById('rrkAkunPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const filtered = master.filter(a => a.kode.toLowerCase().includes(q) || a.nama.toLowerCase().includes(q));
+    document.getElementById('rrkAkunPickerBody').innerHTML = tplRrkAkunPickerRows(filtered);
+    wireRows();
+  };
+}
+
+function rrkSimpan(){
+  if(!rrkDraft.namaRatio || !rrkDraft.namaRatio.trim()){
+    document.getElementById('fRrkNamaRatioErr').style.display = 'block';
+    return;
+  }
+  document.getElementById('fRrkNamaRatioErr').style.display = 'none';
+  if(!rrkDraft.rumus || !rrkDraft.rumus.trim()){
+    document.getElementById('fRrkRumusErr').style.display = 'block';
+    return;
+  }
+  document.getElementById('fRrkRumusErr').style.display = 'none';
+
+  const bersih = {
+    namaRatio: rrkDraft.namaRatio.trim(),
+    tipeRatio: rrkDraft.tipeRatio,
+    rumus: rrkDraft.rumus.trim(),
+    target: rrkDraft.target || 0,
+    items: rrkDraft.items.filter(it => !!it.kode),
+  };
+
+  if(rrkEditIndex >= 0){
+    DATA.rumusRasioKeuangan[rrkEditIndex] = bersih;
+  }else{
+    DATA.rumusRasioKeuangan.push(bersih);
+  }
+  renderRumusRasioKeuanganPage();
+}
+
+function openRrkDeleteConfirm(idx){
+  const row = DATA.rumusRasioKeuangan[idx];
+  rrkOverlay(tplRrkDeleteConfirm(row));
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.rumusRasioKeuangan.splice(idx, 1);
+    closeModal();
+    renderRrkTable();
+  };
+}
+
+function openRrkInfo(title, text){
+  rrkOverlay(tplRrkInfoModal(title, text));
+  document.getElementById('modalOk').onclick = closeModal;
+}
+
+/* =========================================================
    LOGIC (JS saja) — Master Sales Office (menu Customer & Penjualan >
    Master & Setting > Sales Office, page 'salesOffice'). Dimuat otomatis
    (lazy-load) oleh core.js saat menu ini pertama kali diklik — lihat
@@ -68480,6 +69049,7 @@ const PAGE_MODULES={
   hakAksesGroupReport:{srcs:['js/pages/hak-akses-group-report.template.js','js/pages/hak-akses-group-report.js'], fn:'renderHakAksesGroupReportPage'},
   budgeting:{srcs:['js/pages/budgeting.template.js','js/pages/budgeting.js'], fn:'renderBudgetingPage'},
   budgetingCc:{srcs:['js/pages/budgeting-cc.template.js','js/pages/budgeting-cc.js'], fn:'renderBudgetingCcPage'},
+  rumusRasioKeuangan:{srcs:['js/pages/rumus-rasio-keuangan.template.js','js/pages/rumus-rasio-keuangan.js'], fn:'renderRumusRasioKeuanganPage'},
   chartGrafik:{srcs:['js/pages/chart-grafik.template.js','js/pages/chart-grafik.js'], fn:'renderChartGrafikPage'},
   masterRayon:{srcs:['js/pages/master-rayon.template.js','js/pages/master-rayon.js'], fn:'renderMasterRayonPage'},
   masterWilayah:{srcs:['js/pages/master-wilayah.template.js','js/pages/master-wilayah.js'], fn:'renderMasterWilayahPage'},

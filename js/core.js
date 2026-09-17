@@ -186,6 +186,7 @@ const PAGE_MODULES={
   hakAksesGroupReport:{srcs:['js/pages/hak-akses-group-report.template.js','js/pages/hak-akses-group-report.js'], fn:'renderHakAksesGroupReportPage'},
   budgeting:{srcs:['js/pages/budgeting.template.js','js/pages/budgeting.js'], fn:'renderBudgetingPage'},
   budgetingCc:{srcs:['js/pages/budgeting-cc.template.js','js/pages/budgeting-cc.js'], fn:'renderBudgetingCcPage'},
+  rumusRasioKeuangan:{srcs:['js/pages/rumus-rasio-keuangan.template.js','js/pages/rumus-rasio-keuangan.js'], fn:'renderRumusRasioKeuanganPage'},
   chartGrafik:{srcs:['js/pages/chart-grafik.template.js','js/pages/chart-grafik.js'], fn:'renderChartGrafikPage'},
   masterRayon:{srcs:['js/pages/master-rayon.template.js','js/pages/master-rayon.js'], fn:'renderMasterRayonPage'},
   masterWilayah:{srcs:['js/pages/master-wilayah.template.js','js/pages/master-wilayah.js'], fn:'renderMasterWilayahPage'},

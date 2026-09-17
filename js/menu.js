@@ -121,7 +121,7 @@ const MENU=[
    {label:'Cost Center', page:'costCenter'},
    {label:'Budgeting', page:'budgeting'},
    {label:'Budgeting Cc.', page:'budgetingCc'},
-   {label:'Rumus Rasio Keuangan', page:'placeholder', title:'Rumus Rasio Keuangan'},
+   {label:'Rumus Rasio Keuangan', page:'rumusRasioKeuangan'},
    {label:'G.L. Template', page:'placeholder', title:'G.L. Template'},
    {header:'Daftar Transaksi'},
    {label:'Transaksi G.L.', page:'jurnalUmum'},
