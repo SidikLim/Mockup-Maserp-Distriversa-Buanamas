@@ -224,6 +224,8 @@ const PAGE_MODULES={
   rumusKomisiSalesman:{srcs:['js/pages/rumus-komisi-salesman.template.js','js/pages/rumus-komisi-salesman.js'], fn:'renderRumusKomisiSalesmanPage'},
   alasanRetur:{srcs:['js/pages/alasan-retur.template.js','js/pages/alasan-retur.js'], fn:'renderAlasanReturPage'},
   hakApproval:{srcs:['js/pages/hak-approval.template.js','js/pages/hak-approval.js'], fn:'renderHakApprovalPage'},
+  masterCollector:{srcs:['js/pages/master-collector.template.js','js/pages/master-collector.js'], fn:'renderMasterCollectorPage'},
+  masterStatusOpname:{srcs:['js/pages/master-status-opname.template.js','js/pages/master-status-opname.js'], fn:'renderMasterStatusOpnamePage'},
 };
 const loadedModules=new Set();
 

@@ -50,7 +50,25 @@
       "Pembayaran" (Bank/Tanggal/No Ac/Giro/Jumlah KOSONG +
       Total + Terbilang kosong); ttd Dibuat Oleh / Konsumen /
       Sales/Collector; 2 catatan kaki (cek/giro & retur/
-      refaksi). */
+      refaksi).
+
+   UPDATE 2026-09-18 (permintaan user LEWAT TEKS, bukan screenshot):
+   field yang tadinya berlabel tunggal "Salesman" (`fDtpKolektor`,
+   picker gabungan OFFICE + DATA.salesman) sekarang punya CAPTION
+   "Salesman / Collector" + 2 radio button ("Salesman"/"Collector")
+   di atas input picker-nya, supaya user bisa pilih mau menagih pakai
+   Salesman (DATA.salesman) ATAU master Collector baru (DATA.collector,
+   lihat js/pages/master-collector.*, menu baru di bawah "Salesman").
+   Baris "OFFICE" TETAP ada, sekarang di bawah tipe "Collector" (bukan
+   lagi tercampur otomatis dgn Salesman). Tipe yang dipilih disimpan
+   di `row.kolektorTipe` ('Salesman'|'Collector') — utk baris LAMA yang
+   belum punya field ini (dibuat sebelum update ini), tipe di-infer
+   otomatis dari nilai `kolektor`-nya lewat dtpInferKolektorTipe() di
+   tagihan-piutang.js (kolektor==='OFFICE' atau cocok nama di
+   DATA.collector -> 'Collector', cocok nama di DATA.salesman ->
+   'Salesman', selain itu default 'Salesman'). Lihat tplDtpForm() &
+   tplDtpKolektorPicker() di bawah, dan openDtpKolektorPicker() +
+   dtpInferKolektorTipe() di tagihan-piutang.js. */
 
 function dtpNum2(n){ return Number(n||0).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2}); }
 function dtpJumlahAkhir(r){ return (r.items||[]).reduce((a,it)=> a + Number(it.jumlah||0), 0); }
@@ -171,10 +189,14 @@ function tplDtpForm(mode, row){
             </div>
           </div>
           <div class="form-group">
-            <label>Salesman</label>
+            <label>Salesman / Collector</label>
+            <div class="radio-inline" style="margin-bottom:6px;">
+              <label><input type="radio" name="fDtpKolektorTipe" value="Salesman" ${row.kolektorTipe!=='Collector'?'checked':''} ${isView?'disabled':''}> Salesman</label>
+              <label><input type="radio" name="fDtpKolektorTipe" value="Collector" ${row.kolektorTipe==='Collector'?'checked':''} ${isView?'disabled':''}> Collector</label>
+            </div>
             <div class="input-with-btn">
-              <input type="text" id="fDtpKolektor" value="${row.kolektor||''}" placeholder="Pilih Kolektor" readonly>
-              ${!isView ? `<button type="button" class="icon-btn edit" id="dtpKolektorSearch" title="Cari Kolektor">${icon('search',13)}</button>` : ''}
+              <input type="text" id="fDtpKolektor" value="${row.kolektor||''}" placeholder="Pilih ${row.kolektorTipe==='Collector'?'Collector':'Salesman'}" readonly>
+              ${!isView ? `<button type="button" class="icon-btn edit" id="dtpKolektorSearch" title="Cari ${row.kolektorTipe==='Collector'?'Collector':'Salesman'}">${icon('search',13)}</button>` : ''}
             </div>
           </div>
           <div class="form-group">
@@ -309,10 +331,10 @@ function tplDtpAlasanPickerRows(list){
     <tr><td>${a.kode}</td><td>${a.nama}</td><td><button class="btn-pick" data-pick-alasan="${a.kode}">Pilih</button></td></tr>`).join('');
 }
 
-function tplDtpKolektorPicker(list){
+function tplDtpKolektorPicker(list, title){
   return `
     <div class="modal-box" style="max-width:480px;">
-      <div class="modal-header"><span>Pilih Kolektor</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-header"><span>${title||'Pilih Kolektor'}</span><span class="close" id="modalClose">&times;</span></div>
       <div class="modal-body">
         <div class="table-wrap" style="max-height:340px;overflow:auto;"><table>
           <thead><tr><th>Nama</th><th>Area</th><th></th></tr></thead>

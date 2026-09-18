@@ -21,6 +21,16 @@
    lokal ke sini (bukan reference cross-file) karena lazy-load antar
    modul tidak terjamin urutannya — pola yang sama dipakai Kategori
    Barang/Pembelian BPB untuk alasan yang sama (lihat catatan proyek).
+
+   TAMBAHAN 2026-09-18: field baru "Collector" (multi-select, section
+   Address tepat di bawah Salesman) — lihat komentar lengkap di header
+   master-customer.template.js. `row.collector` (array nama Collector)
+   dimutasi LANGSUNG lewat push/splice di openCstCollectorPicker()/
+   wireCstCollectorRemove() (pola sama persis hapFormRow.levels[].
+   userRoles/userNames di hak-approval.js) — TIDAK dibaca ulang dari
+   DOM di cstSave() karena tidak ada input tersembunyi; `row` yang sama
+   dipakai sepanjang siklus form lewat closure sudah cukup jadi sumber
+   kebenaran.
 ========================================================= */
 let cstShowInactive = false;
 
@@ -66,7 +76,7 @@ function cstNextKode(){
 
 function cstEmptyRow(){
   return {
-    kode:'', nama:'', kota:'', salesman:'', limit:0, status:'Aktif', alamat:'', piutang:0,
+    kode:'', nama:'', kota:'', salesman:'', collector:[], limit:0, status:'Aktif', alamat:'', piutang:0,
     noRef:'', tglRegistrasi:'', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
     isInduk:false, customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
     namaPemilik:'', kontakPerson:'', gender:'', email:'', tglLahir:'', fax:'', agama:'Islam', jabatan:'', telepon:'',
@@ -85,7 +95,7 @@ function cstEmptyRow(){
 
 function openCstForm(mode, idx){
   const row = mode === 'edit'
-    ? { ...DATA.customers[idx], legalitasOutlet:(DATA.customers[idx].legalitasOutlet||[]).map(x=>({...x})), legalitasPemilik:(DATA.customers[idx].legalitasPemilik||[]).map(x=>({...x})) }
+    ? { ...DATA.customers[idx], legalitasOutlet:(DATA.customers[idx].legalitasOutlet||[]).map(x=>({...x})), legalitasPemilik:(DATA.customers[idx].legalitasPemilik||[]).map(x=>({...x})), collector:(DATA.customers[idx].collector||[]).slice() }
     : cstEmptyRow();
 
   content.innerHTML = tplCustomerForm(mode, row);
@@ -102,6 +112,13 @@ function openCstForm(mode, idx){
   };
 
   document.getElementById('btnCstWilayahSearch').onclick = () => openCstWilayahPicker(row);
+
+  if(!row.collector) row.collector = [];
+  document.getElementById('cstCollectorBox').onclick = (e) => {
+    if(e.target.closest('.rm')) return;
+    openCstCollectorPicker(row);
+  };
+  wireCstCollectorRemove(row);
 
   document.getElementById('btnCstTopAdd').onclick = () => openCstSyaratAddModal();
 
@@ -289,6 +306,52 @@ function openCstWilayahPicker(row){
     document.getElementById('fCstProvinsi').value = w.provinsi;
     closeModal();
   });
+}
+
+/* Field "Collector" (multi-select) — pola tag-box/tag-chip persis Hak
+   Approval (lihat komentar header di atas & di master-customer.template.js).
+   renderCstCollectorBox() cuma menulis ulang isi #cstCollectorBox (bukan
+   render ulang seluruh form) supaya field lain yang sedang diisi user
+   tidak ikut hilang, lalu memasang ulang handler tombol hapus (.rm). */
+function renderCstCollectorBox(row){
+  document.getElementById('cstCollectorBox').innerHTML = tplCstCollectorChips(row.collector||[]);
+  wireCstCollectorRemove(row);
+}
+
+function wireCstCollectorRemove(row){
+  document.querySelectorAll('#cstCollectorBox [data-cst-collector-rm]').forEach(rm => rm.onclick = (e) => {
+    e.stopPropagation();
+    row.collector.splice(+rm.dataset.cstCollectorRm, 1);
+    renderCstCollectorBox(row);
+  });
+}
+
+function openCstCollectorPicker(row){
+  closeModal();
+  if(!row.collector) row.collector = [];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplCstCollectorPicker(row.collector);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+
+  const wireRows = () => {
+    overlay.querySelectorAll('[data-cst-collector-pick]').forEach(btn => btn.onclick = () => {
+      const name = btn.dataset.cstCollectorPick;
+      if(!row.collector.includes(name)) row.collector.push(name);
+      closeModal();
+      renderCstCollectorBox(row);
+    });
+  };
+  wireRows();
+  document.getElementById('cstCollectorPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const source = DATA.collector.filter(c => c.aktif !== false && c.nama.toLowerCase().includes(q));
+    document.getElementById('cstCollectorPickerBody').innerHTML = tplCstCollectorPickerRows(source, row.collector);
+    wireRows();
+  };
 }
 
 function openCstSyaratAddModal(){

@@ -720,9 +720,24 @@ const DATA = {
      jatuh tempo) — persis pola yang sudah dipakai modul Sales Quotation
      sejak sebelumnya (lihat row.jatuhTempo/row.belumJatuhTempo di
      sales-quotation.js), BUKAN field statis baru di sini, supaya kedua
-     modul konsisten & tidak ada 2 sumber data utk hal yang sama. */
+     modul konsisten & tidak ada 2 sumber data utk hal yang sama.
+
+     NB LAGI (2026-09-18, modul Master Customer — js/pages/master-customer.*):
+     field baru `collector` (array of string, nama Collector — lihat
+     `DATA.collector` yang ditambahkan sesi sebelumnya utk menu Collector &
+     Daftar Tagih Piutang) ditambahkan ke tiap baris di bawah, atas
+     permintaan eksplisit user: "pada master customer harus ada pilihan
+     beberapa collector, dengan status collector yang aktif saja yang bisa
+     dipilih". BEDA dari `salesman` (1 nilai, `<select>` tunggal), field
+     ini MULTI-SELECT (dipilih lewat tag-box, lihat tplCstCollectorChips/
+     openCstCollectorPicker) — 1 customer bisa punya beberapa Collector
+     sekaligus. Hanya 2 baris (CUST-001/CUST-002) diberi data sample utk
+     mendemokan fitur; baris lain sengaja dibiarkan `collector` undefined
+     (ditangani `row.collector||[]` di semua tempat yang membacanya) —
+     konsisten prinsip "data sample tidak perlu lengkap 100% di semua
+     baris kalau fiturnya sudah cukup terdemokan". */
   customers:[
-    {kode:'CUST-001', nama:'Toko Sumber Rejeki', kota:'Jakarta', salesman:'Budi Santoso', limit:50000000, status:'Aktif', alamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat', piutang:18250000,
+    {kode:'CUST-001', nama:'Toko Sumber Rejeki', kota:'Jakarta', salesman:'Budi Santoso', collector:['Slamet Riyadi'], limit:50000000, status:'Aktif', alamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat', piutang:18250000,
     noRef:'HO.0001', tglRegistrasi:'12/01/2020', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
     customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
     namaPemilik:'Hj. Siti Rejeki', kontakPerson:'Hj. Siti Rejeki', gender:'Wanita', email:'sitirejeki@tokosumberrejeki.co.id', tglLahir:'14/05/1978', fax:'', agama:'Islam', jabatan:'Pemilik', telepon:'021-6541278',
@@ -735,7 +750,7 @@ const DATA = {
     glAkunPiutang:'1120001', glAkunUangMuka:'', uangMuka:0,
     legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'NPWP', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'SKPKP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
     legalitasPemilik:[{syarat:'KTP', keterangan:'Sesuai dokumen terlampir', tglExpired:'', tglProses:'10/01/2024', uploaded:true}, {syarat:'Nama Penanggung Jawab', keterangan:'Hj. Siti Rejeki', tglExpired:'', tglProses:'10/01/2024', uploaded:true}]},
-    {kode:'CUST-002', nama:'UD Makmur Jaya', kota:'Surabaya', salesman:'Andi Wijaya', limit:35000000, status:'Aktif', alamat:'Jl. Raya Darmo No. 45, Surabaya', piutang:9120000,
+    {kode:'CUST-002', nama:'UD Makmur Jaya', kota:'Surabaya', salesman:'Andi Wijaya', collector:['Wahyu Setiawan','Slamet Riyadi'], limit:35000000, status:'Aktif', alamat:'Jl. Raya Darmo No. 45, Surabaya', piutang:9120000,
     noRef:'SBY.0001', tglRegistrasi:'03/06/2019', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
     customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
     namaPemilik:'Bpk. Makmur Wijaya', kontakPerson:'Bpk. Makmur Wijaya', gender:'Pria', email:'makmur@udmakmurjaya.co.id', tglLahir:'02/09/1975', fax:'', agama:'Islam', jabatan:'Pemilik', telepon:'031-7712345',
@@ -1881,6 +1896,38 @@ const DATA = {
     {nama:'Eka Putri', area:'Makassar', target:25000000, realisasi:15420000},
     {nama:'Fajar Nugroho', area:'Semarang', target:20000000, realisasi:9870000},
     {nama:'M. Reza Wijaya', area:'Head Office', target:100000000, realisasi:78650000},
+  ],
+  /* Collector — menu Customer & Penjualan > Master & Setting > Collector
+     (page:'masterCollector'), menu baru DITAMBAHKAN 2026-09-18 atas
+     permintaan user LEWAT TEKS (bukan screenshot MASERP): "Tambahkan
+     menu master collector, dengan posisi menu di bawah menu master
+     salesman, dan sertakan field Checklist Aktif, lalu pada menu
+     transaksi Daftar Tagih Piutang, pada saat memilih salesman, dapat
+     juga memilih collector, jadi dibagian captionnya bisa ditambahkan
+     opsi pemilihan mau salesman atau collector". Karena tidak ada
+     screenshot acuan, struktur `{kode, nama, area, aktif}` DIRANCANG
+     mengikuti pola master CRUD modal sederhana yang sudah established
+     (kode manual+unik ala Badan Usaha/Cost Center) + field `area`
+     (supaya kolom "Area" di picker Salesman/Collector — lihat
+     tagihan-piutang.js — tetap terisi rapi saat sumbernya Collector,
+     sama seperti DATA.salesman yang juga punya field ini) + field
+     `aktif` (boolean, "Checklist Aktif" SESUAI PERMINTAAN USER PERSIS
+     — dipakai baik utk status-pill di kolom list MAUPUN utk MENYARING
+     baris yang muncul di picker Daftar Tagih Piutang: hanya collector
+     `aktif:true` yang tampil di sana, lihat openDtpKolektorPicker()).
+     5 baris sample (COL01-COL05), 1 di antaranya (COL05) SENGAJA
+     `aktif:false` untuk demo pill "Non Aktif" & filter picker. Area
+     dipetakan ke kota yang sama dgn DATA.salesman di atas supaya
+     terasa konsisten sebagai satu wilayah operasional DBM. Lihat
+     js/pages/master-collector.template.js & master-collector.js utk
+     modul master-nya, dan catatan di tagihan-piutang.* utk perubahan
+     picker "Salesman/Collector"-nya. */
+  collector:[
+    {kode:'COL01', nama:'Slamet Riyadi', area:'Jakarta', aktif:true},
+    {kode:'COL02', nama:'Wahyu Setiawan', area:'Surabaya', aktif:true},
+    {kode:'COL03', nama:'Rina Marlina', area:'Bandung', aktif:true},
+    {kode:'COL04', nama:'Yusuf Hamzah', area:'Tangerang', aktif:true},
+    {kode:'COL05', nama:'Dewi Anggraini', area:'Semarang', aktif:false},
   ],
   /* Sales Order — menu Customer & Penjualan > Daftar Transaksi > Sales
      Order (lihat js/pages/sales-order.*). Setiap baris berisi seluruh
@@ -4097,9 +4144,28 @@ const DATA = {
         returPenjualanDocs/noSJ) + status hasil input petugas: 8
         Ditemukan / Sesuai, 2 Blank (Belum Diketemukan), 1 Selisih —
         supaya ketiga laporan (Rincian per Status/Summary By Salesman
-        By Status/Rekapitulasi) langsung berisi contoh bermakna. */
+        By Status/Rekapitulasi) langsung berisi contoh bermakna.
+     4) statusOpname (BARU 2026-09-18, lanjutan): master Status Opname
+        (Customer & Penjualan > Master & Setting > Status Opname,
+        page:'masterStatusOpname') — field {kode, nama, aktif}. Atas
+        permintaan user "Status Opname saat ini ada pemilihan static
+        ingin ada masternya saja, agar bisa ditambah", menggantikan
+        `OPD_STATUS_LIST` yang tadinya array string HARDCODE di
+        opname-dokumen.template.js (lihat opdStatusList()/
+        opdStatusOptions() di sana, dan header master-status-opname.
+        template.js utk detail lengkap). 3 baris pertama (STO01-03)
+        PERSIS 3 nilai lama supaya sample `opnameDokumen` di atas
+        (yang sudah memakai teks-teks itu) tetap konsisten; STO04
+        SENGAJA `aktif:false` untuk demo checklist Aktif & filter
+        picker (tidak dipakai di sample data transaksi manapun). */
   collectorList:['Rudi Salam','Yanto Prakoso','Sri Handayani'],
   inkasoList:['Tim Inkaso HO','Tim Inkaso Jawa Timur','Tim Inkaso Jabar'],
+  statusOpname:[
+    {kode:'STO01', nama:'Ditemukan / Sesuai', aktif:true},
+    {kode:'STO02', nama:'Blank (Belum Diketemukan)', aktif:true},
+    {kode:'STO03', nama:'Selisih / Tidak Sesuai', aktif:true},
+    {kode:'STO04', nama:'Rusak / Tidak Terpakai', aktif:false},
+  ],
   returPenjualanDocs:[
     {no:'26/RJ/HO/08/00001', tgl:'18/08/2026', cabang:'Head Office', customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', dariInvoice:'26/SI/HO/08/00001', nilai:150000, alasan:'Barang rusak dalam pengiriman', status:'Outstanding'},
     {no:'26/RJ/SBY/08/00001', tgl:'20/08/2026', cabang:'Surabaya', customerKode:'CUST-002', customerNama:'UD Makmur Jaya', dariInvoice:'26/SI/SBY/08/00001', nilai:90000, alasan:'Kemasan penyok', status:'Outstanding'},
@@ -5339,11 +5405,14 @@ const DATA = {
      dipetakan ke DBM: 1 sample September 2026 berisi 2 faktur
      SUNGGUHAN milik CUST-006 dari DATA.fakturPenjualanSJ. Jumlah
      akhir = Σ items.jumlah. Alasan Belum Tertagih per faktur menaut
-     ke master DATA.alasanBelumTertagih (picker). */
+     ke master DATA.alasanBelumTertagih (picker). `kolektorTipe`
+     ('Salesman'|'Collector') DITAMBAHKAN 2026-09-18 — lihat UPDATE
+     di header tagihan-piutang.template.js; baris di bawah 'OFFICE'
+     jadi tipe 'Collector'. */
   tagihanPiutang:[
     {no:'26/DC/HO/09/00001', tgl:'01/09/2026', jam:'03.42.05',
       customerNama:'Toko Family Mart Jaya', customerAlamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
-      kolektor:'OFFICE', keterangan:'', closedManually:false,
+      kolektor:'OFFICE', kolektorTipe:'Collector', keterangan:'', closedManually:false,
       items:[
         {tglFaktur:'14/08/2026', jamFaktur:'09.20.00', customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya',
           customerAlamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara', badanUsaha:'PT',

@@ -37,7 +37,57 @@
    terdokumentasi). Pola list+form full page, print via window.open
    mengikuti Report Center. */
 
-const OPD_STATUS_LIST = ['Ditemukan / Sesuai', 'Blank (Belum Diketemukan)', 'Selisih / Tidak Sesuai'];
+/* Status Opname — 2026-09-18: SEBELUMNYA array string hardcode di sini
+   (`OPD_STATUS_LIST`, 3 nilai tetap). Atas permintaan user ("Status
+   Opname saat ini ada pemilihan static ingin ada masternya saja, agar
+   bisa ditambah") diganti jadi master `DATA.statusOpname` (Customer &
+   Penjualan > Master & Setting > Status Opname, page:
+   'masterStatusOpname' — lihat js/pages/master-status-opname.*), dibaca
+   LIVE lewat opdStatusList()/opdStatusOptions() di bawah supaya status
+   baru yang ditambah/dinonaktifkan lewat menu master itu langsung
+   berlaku di seluruh form/laporan modul ini TANPA edit kode lagi.
+   Seluruh tempat yang tadinya membaca OPD_STATUS_LIST[0]/[1]/[2] (fixed
+   3 kolom) ikut digeneralisasi mengikuti JUMLAH status AKTIF apa adanya
+   (lihat tplOpnameDokumenListPage/tplOpdRows/tplOpdRingkasan/
+   tplOpdDocSummary/tplOpdDocRekap). */
+function opdStatusList(){
+  return DATA.statusOpname.filter(s => s.aktif !== false).map(s => s.nama);
+}
+
+/* Opsi <select> Status Opname per baris dokumen (tplOpdItemRows): HANYA
+   status Aktif yang jadi pilihan BARU, tapi kalau baris itu sudah
+   kadung memakai status yang belakangan dinonaktifkan, nilainya tetap
+   dipertahankan (ditambahkan sbg opsi ekstra "(Non Aktif)") — pola
+   fallback yang sama dengan psbSatuanOptions() di persediaan-barang.
+   template.js, supaya nilai tersimpan tidak diam-diam berubah begitu
+   form dibuka. */
+function opdStatusOptions(selected){
+  const active = opdStatusList();
+  let opts = active.map(s => `<option ${selected===s?'selected':''}>${s}</option>`).join('');
+  if(selected && !active.includes(selected)){
+    opts += `<option selected>${selected} (Non Aktif)</option>`;
+  }
+  return opts;
+}
+
+/* Label singkat utk header kolom sempit di list (mis. "Ditemukan /
+   Sesuai" -> "Ditemukan", "Blank (Belum Diketemukan)" -> "Blank") —
+   diambil dari kata/frasa pertama sebelum tanda " /" atau " (", supaya
+   status baru yang ditambah lewat master ikut dapat label singkat
+   otomatis tanpa perlu field "singkatan" terpisah di master. */
+function opdShortLabel(nama){
+  return (nama || '').split(/\s*\/\s*|\s*\(/)[0].trim() || nama;
+}
+
+/* Warna indikator per status (list ringkasan & kolom list) — indeks 0
+   dianggap status "baik/sesuai" (hijau), indeks berikutnya dianggap
+   status "perlu perhatian" dan di-cycle lewat palet ini supaya jumlah
+   status yang ditambah lewat master tidak dibatasi. */
+function opdStatusColor(i){
+  const palette = ['#1e8449', '#c0392b', '#b9770e', '#2e5f8a', '#7d3c98'];
+  return palette[i % palette.length];
+}
+
 const OPD_TIPE_PETUGAS = ['Inkaso', 'Internal Audit'];
 const OPD_FILTER_BASIS = ['Salesman', 'Collector', 'Inkaso'];
 const OPD_CABANG_LIST = ['Semua Cabang','Head Office','Surabaya','Bandung','Tangerang','Medan','Makassar','Semarang','Sidoarjo'];
@@ -88,9 +138,7 @@ function tplOpnameDokumenListPage(){
           <th>Metode</th>
           <th>Cakupan</th>
           <th class="text-right" style="width:64px;">Jml Dok</th>
-          <th class="text-right" style="width:76px;">Ditemukan</th>
-          <th class="text-right" style="width:56px;">Blank</th>
-          <th class="text-right" style="width:56px;">Selisih</th>
+          ${opdStatusList().map(s=>`<th class="text-right" style="width:70px;">${opdShortLabel(s)}</th>`).join('')}
           <th style="width:66px;">Status</th>
           <th style="width:52px;">Lihat</th>
           <th style="width:52px;">Ubah</th>
@@ -103,7 +151,8 @@ function tplOpnameDokumenListPage(){
 }
 
 function tplOpdRows(rows){
-  if(!rows.length) return `<tr><td colspan="13" style="color:var(--text-light);padding:14px;">Belum ada transaksi opname.</td></tr>`;
+  const statusList = opdStatusList();
+  if(!rows.length) return `<tr><td colspan="${10+statusList.length}" style="color:var(--text-light);padding:14px;">Belum ada transaksi opname.</td></tr>`;
   return rows.map((r,i)=>`
     <tr>
       <td><a href="javascript:void(0)" data-view="${i}" style="color:var(--blue);font-weight:600;text-decoration:none;">${r.no}</a></td>
@@ -112,9 +161,7 @@ function tplOpdRows(rows){
       <td>${opdMetodeLabel(r)}</td>
       <td>${opdCakupanLabel(r.cakupan)}</td>
       <td class="text-right">${(r.items||[]).length}</td>
-      <td class="text-right">${opdCountStatus(r.items, OPD_STATUS_LIST[0])}</td>
-      <td class="text-right" style="${opdCountStatus(r.items, OPD_STATUS_LIST[1])?'color:#c0392b;font-weight:700;':''}">${opdCountStatus(r.items, OPD_STATUS_LIST[1])}</td>
-      <td class="text-right" style="${opdCountStatus(r.items, OPD_STATUS_LIST[2])?'color:#c0392b;font-weight:700;':''}">${opdCountStatus(r.items, OPD_STATUS_LIST[2])}</td>
+      ${statusList.map((s,idx)=>`<td class="text-right" style="${idx>0 && opdCountStatus(r.items,s)?'color:#c0392b;font-weight:700;':''}">${opdCountStatus(r.items, s)}</td>`).join('')}
       <td>${r.status==='Selesai' ? `<span class="st-open">Selesai</span>` : `<span style="color:var(--yellow);font-weight:700;">Draft</span>`}</td>
       <td><button class="icon-btn view" data-view="${i}" title="Lihat">${icon('eye',15)}</button></td>
       <td><button class="icon-btn edit" data-edit="${i}" title="Ubah">${icon('edit',15)}</button></td>
@@ -138,7 +185,7 @@ function tplOpdItemRows(items, isView){
       <td class="text-right">${opdNum2(it.nilai)}</td>
       <td style="width:190px;">
         <select data-opd-status="${idx}" ${dis}>
-          ${OPD_STATUS_LIST.map(s=>`<option ${it.statusOpname===s?'selected':''}>${s}</option>`).join('')}
+          ${opdStatusOptions(it.statusOpname)}
         </select>
       </td>
       <td style="width:190px;"><input type="text" data-opd-ket="${idx}" value="${it.ket||''}" placeholder="Keterangan" ${dis}></td>
@@ -260,7 +307,7 @@ function tplOpdForm(mode, row){
             <label>Cetak Rincian Berdasarkan Status</label>
             <select id="fOpdCetakStatus">
               <option value="">Semua Status</option>
-              ${OPD_STATUS_LIST.map(s=>`<option>${s}</option>`).join('')}
+              ${opdStatusList().map(s=>`<option>${s}</option>`).join('')}
             </select>
           </div>
           <button type="button" class="btn-teal" id="btnOpdCetakRincian">${icon('printer',14)} Cetak Rincian per Status</button>
@@ -285,12 +332,11 @@ function tplOpdForm(mode, row){
 function tplOpdRingkasan(items){
   const total = (items || []).length;
   const nilai = (items || []).reduce((s,it)=>s+(+it.nilai||0),0);
+  const statusList = opdStatusList();
   return `
     <span>Total Dokumen: <b>${total}</b></span>
     <span>Total Nilai: <b>${opdNum2(nilai)}</b></span>
-    <span style="color:#1e8449;">Ditemukan / Sesuai: <b>${opdCountStatus(items, OPD_STATUS_LIST[0])}</b></span>
-    <span style="color:#c0392b;">Blank (Belum Diketemukan): <b>${opdCountStatus(items, OPD_STATUS_LIST[1])}</b></span>
-    <span style="color:#b9770e;">Selisih / Tidak Sesuai: <b>${opdCountStatus(items, OPD_STATUS_LIST[2])}</b></span>`;
+    ${statusList.map((s,i)=>`<span style="color:${opdStatusColor(i)};">${s}: <b>${opdCountStatus(items, s)}</b></span>`).join('')}`;
 }
 
 /* ===== Kerangka dokumen cetak bersama (toolbar Cetak/Tutup + header
@@ -365,6 +411,7 @@ function tplOpdDocRincian(row, statusFilter, printedAt){
    (spec 2.A): pivot salesman (baris) x status (kolom), tiap sel
    jumlah dokumen + total nilai. */
 function tplOpdDocSummary(row, printedAt){
+  const statusList = opdStatusList();
   const bySales = {};
   (row.items||[]).forEach(it => {
     const s = it.salesman || '(Tanpa Salesman)';
@@ -375,33 +422,33 @@ function tplOpdDocSummary(row, printedAt){
   });
   const salesNames = Object.keys(bySales).sort();
   const totalPerStatus = {};
-  OPD_STATUS_LIST.forEach(st => totalPerStatus[st] = {jml:0, nilai:0});
+  statusList.forEach(st => totalPerStatus[st] = {jml:0, nilai:0});
   const body = `
     <table>
       <thead><tr>
         <th rowspan="2" style="width:150px;">Salesman</th>
-        ${OPD_STATUS_LIST.map(st=>`<th colspan="2">${st}</th>`).join('')}
+        ${statusList.map(st=>`<th colspan="2">${st}</th>`).join('')}
         <th colspan="2">Total</th>
       </tr><tr>
-        ${OPD_STATUS_LIST.map(()=>`<th style="width:44px;">Jml</th><th style="width:96px;">Nilai</th>`).join('')}
+        ${statusList.map(()=>`<th style="width:44px;">Jml</th><th style="width:96px;">Nilai</th>`).join('')}
         <th style="width:44px;">Jml</th><th style="width:96px;">Nilai</th>
       </tr></thead>
       <tbody>${salesNames.length ? salesNames.map(s => {
         let rowJml = 0, rowNilai = 0;
-        const cells = OPD_STATUS_LIST.map(st => {
+        const cells = statusList.map(st => {
           const c = bySales[s][st] || {jml:0, nilai:0};
           rowJml += c.jml; rowNilai += c.nilai;
           totalPerStatus[st].jml += c.jml; totalPerStatus[st].nilai += c.nilai;
           return `<td style="text-align:center;">${c.jml||''}</td><td style="text-align:right;">${c.jml?opdNum2(c.nilai):''}</td>`;
         }).join('');
         return `<tr><td>${s}</td>${cells}<td style="text-align:center;font-weight:700;">${rowJml}</td><td style="text-align:right;font-weight:700;">${opdNum2(rowNilai)}</td></tr>`;
-      }).join('') : `<tr><td colspan="${2*OPD_STATUS_LIST.length+3}" style="text-align:center;color:#777;padding:12px;">Belum ada dokumen.</td></tr>`}
+      }).join('') : `<tr><td colspan="${2*statusList.length+3}" style="text-align:center;color:#777;padding:12px;">Belum ada dokumen.</td></tr>`}
       </tbody>
       <tfoot><tr>
         <td style="text-align:right;">Grand Total :</td>
-        ${OPD_STATUS_LIST.map(st=>`<td style="text-align:center;">${totalPerStatus[st].jml}</td><td style="text-align:right;">${opdNum2(totalPerStatus[st].nilai)}</td>`).join('')}
-        <td style="text-align:center;">${OPD_STATUS_LIST.reduce((a,st)=>a+totalPerStatus[st].jml,0)}</td>
-        <td style="text-align:right;">${opdNum2(OPD_STATUS_LIST.reduce((a,st)=>a+totalPerStatus[st].nilai,0))}</td>
+        ${statusList.map(st=>`<td style="text-align:center;">${totalPerStatus[st].jml}</td><td style="text-align:right;">${opdNum2(totalPerStatus[st].nilai)}</td>`).join('')}
+        <td style="text-align:center;">${statusList.reduce((a,st)=>a+totalPerStatus[st].jml,0)}</td>
+        <td style="text-align:right;">${opdNum2(statusList.reduce((a,st)=>a+totalPerStatus[st].nilai,0))}</td>
       </tr></tfoot>
     </table>
     <div style="margin-top:20px;font-size:11px;">Petugas: ${row.petugas||''} (${row.tipePetugas||''}) &nbsp;&mdash;&nbsp; Dicetak: ${printedAt}</div>`;
@@ -413,9 +460,10 @@ function tplOpdDocSummary(row, printedAt){
 /* (3) Rekapitulasi Hasil Opname Keseluruhan (spec 2.A): rekap makro
    per jenis dokumen x status. */
 function tplOpdDocRekap(row, printedAt){
+  const statusList = opdStatusList();
   const jenisList = ['Faktur','Retur','Surat Jalan'];
   const rekap = {};
-  jenisList.forEach(j => { rekap[j] = {}; OPD_STATUS_LIST.forEach(st => rekap[j][st] = {jml:0, nilai:0}); });
+  jenisList.forEach(j => { rekap[j] = {}; statusList.forEach(st => rekap[j][st] = {jml:0, nilai:0}); });
   (row.items||[]).forEach(it => {
     if(rekap[it.jenis] && rekap[it.jenis][it.statusOpname]){
       rekap[it.jenis][it.statusOpname].jml += 1;
@@ -426,15 +474,15 @@ function tplOpdDocRekap(row, printedAt){
     <table>
       <thead><tr>
         <th rowspan="2" style="width:120px;">Jenis Dokumen</th>
-        ${OPD_STATUS_LIST.map(st=>`<th colspan="2">${st}</th>`).join('')}
+        ${statusList.map(st=>`<th colspan="2">${st}</th>`).join('')}
         <th colspan="2">Total</th>
       </tr><tr>
-        ${OPD_STATUS_LIST.map(()=>`<th style="width:44px;">Jml</th><th style="width:96px;">Nilai</th>`).join('')}
+        ${statusList.map(()=>`<th style="width:44px;">Jml</th><th style="width:96px;">Nilai</th>`).join('')}
         <th style="width:44px;">Jml</th><th style="width:96px;">Nilai</th>
       </tr></thead>
       <tbody>${jenisList.map(j => {
         let rowJml = 0, rowNilai = 0;
-        const cells = OPD_STATUS_LIST.map(st => {
+        const cells = statusList.map(st => {
           const c = rekap[j][st];
           rowJml += c.jml; rowNilai += c.nilai;
           return `<td style="text-align:center;">${c.jml||''}</td><td style="text-align:right;">${c.jml?opdNum2(c.nilai):''}</td>`;
@@ -444,7 +492,7 @@ function tplOpdDocRekap(row, printedAt){
       </tbody>
       <tfoot><tr>
         <td style="text-align:right;">Grand Total :</td>
-        ${OPD_STATUS_LIST.map(st => {
+        ${statusList.map(st => {
           const jml = jenisList.reduce((a,j)=>a+rekap[j][st].jml,0);
           const nilai = jenisList.reduce((a,j)=>a+rekap[j][st].nilai,0);
           return `<td style="text-align:center;">${jml}</td><td style="text-align:right;">${opdNum2(nilai)}</td>`;

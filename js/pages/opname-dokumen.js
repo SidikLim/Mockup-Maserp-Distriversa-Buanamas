@@ -10,12 +10,19 @@
    Alur sesuai spec 3.A: (1) pilih menu -> (2) atur cakupan dokumen +
    metode (Menyeluruh / Random By Salesman-Collector-Inkaso) ->
    Generate Daftar Dokumen menarik dokumen dari data live ->
-   (3) petugas menginput Status Opname per dokumen (default
-   "Ditemukan / Sesuai", diubah utk yang Blank/Selisih) -> (4) Review
-   & cetak 3 laporan (Rincian per Status / Summary By Salesman By
-   Status / Rekapitulasi). Modul B (Konfirmasi Outlet, spec 3.B):
-   tombol di header list -> pilih outlet -> Direct Print form berisi
-   dokumen Outstanding outlet itu. */
+   (3) petugas menginput Status Opname per dokumen (default = status
+   AKTIF pertama di master Status Opname, diubah utk dokumen
+   bermasalah) -> (4) Review & cetak 3 laporan (Rincian per Status /
+   Summary By Salesman By Status / Rekapitulasi). Modul B (Konfirmasi
+   Outlet, spec 3.B): tombol di header list -> pilih outlet -> Direct
+   Print form berisi dokumen Outstanding outlet itu.
+
+   Status Opname — 2026-09-18: sumber pilihan status per dokumen
+   SEBELUMNYA array string hardcode `OPD_STATUS_LIST` (opname-dokumen.
+   template.js), sekarang dibaca LIVE dari master `DATA.statusOpname`
+   lewat opdStatusList()/opdStatusOptions() (didefinisikan di file
+   template sebelah) — lihat header master-status-opname.template.js
+   utk detail lengkap & alasannya. */
 
 var opdSearchQ = '';
 
@@ -92,8 +99,10 @@ function opdLolosFilter(customerKode, cabangDok, row){
 }
 
 /* Generate Daftar Dokumen (spec 3.A langkah 2-3): tarik dokumen dari
-   data live sesuai cakupan + filter; status awal semua baris
-   "Ditemukan / Sesuai" (petugas tinggal mengubah yang bermasalah). */
+   data live sesuai cakupan + filter; status awal semua baris = status
+   AKTIF PERTAMA di master Status Opname (DATA.statusOpname, urutan
+   sesuai master — sample: "Ditemukan / Sesuai"), petugas tinggal
+   mengubah yang bermasalah. */
 function opdGenerateItems(row){
   const out = [];
   if(row.cakupan.faktur){
@@ -101,7 +110,7 @@ function opdGenerateItems(row){
       if(!opdLolosFilter(inv.customerKode, inv.cabang, row)) return;
       out.push({jenis:'Faktur', no:inv.no, tgl:inv.tgl, customerNama:inv.customerNama,
         salesman:opdSalesmanOf(inv.customerKode), nilai:+inv.jumlah||0,
-        statusOpname:OPD_STATUS_LIST[0], ket:''});
+        statusOpname:opdStatusList()[0] || '', ket:''});
     });
   }
   if(row.cakupan.retur){
@@ -109,7 +118,7 @@ function opdGenerateItems(row){
       if(!opdLolosFilter(rj.customerKode, rj.cabang, row)) return;
       out.push({jenis:'Retur', no:rj.no, tgl:rj.tgl, customerNama:rj.customerNama,
         salesman:opdSalesmanOf(rj.customerKode), nilai:+rj.nilai||0,
-        statusOpname:OPD_STATUS_LIST[0], ket:''});
+        statusOpname:opdStatusList()[0] || '', ket:''});
     });
   }
   if(row.cakupan.suratJalan){
@@ -118,7 +127,7 @@ function opdGenerateItems(row){
       if(!opdLolosFilter(inv.customerKode, inv.cabang, row)) return;
       out.push({jenis:'Surat Jalan', no:inv.noSJ, tgl:inv.tgl, customerNama:inv.customerNama,
         salesman:opdSalesmanOf(inv.customerKode), nilai:+inv.jumlah||0,
-        statusOpname:OPD_STATUS_LIST[0], ket:''});
+        statusOpname:opdStatusList()[0] || '', ket:''});
     });
   }
   return out;

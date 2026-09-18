@@ -37,6 +37,28 @@
    bukan bagian dari kode yang disimpan — konsisten dengan pola serupa
    di Master Supplier (fKodePrefix dekoratif, tidak selalu ikut
    digabung ke kode akhir).
+
+   TAMBAHAN 2026-09-18: field baru "Collector" (section "Address", tepat
+   di bawah "Salesman") atas permintaan eksplisit user — "pada master
+   customer harus ada pilihan beberapa collector, dengan status collector
+   yang aktif saja yang bisa dipilih". Field lama "Salesman" tetap
+   `<select>` tunggal apa adanya (tidak diubah); "Collector" BEDA — dibuat
+   MULTI-SELECT (1 customer bisa punya beberapa Collector sekaligus, bukan
+   1 seperti Salesman) memakai ULANG persis komponen tag-box/tag-chip/.rm
+   yang sudah ada (awalnya dibangun utk Picking List field "Picker", lalu
+   dipakai lagi utk User Roles/User Names di Hak Approval) — bukan bikin
+   komponen baru. Sumber pilihan (`tplCstCollectorPicker`) SELALU difilter
+   `DATA.collector.filter(c=>c.aktif!==false)` — collector yang Non Aktif
+   TIDAK PERNAH muncul sebagai opsi yang bisa dipilih (persis permintaan
+   user), walau tetap tampil apa adanya sbg chip kalau sudah kadung
+   terpilih sebelum status collector itu diubah jadi Non Aktif (tidak ada
+   auto-remove retroaktif, konsisten prinsip "data yang sudah tersimpan
+   tidak dihapus diam-diam" di modul-modul lain). Field baru `row.collector`
+   (array of string, nama collector) ditambahkan ke `cstEmptyRow()` di
+   master-customer.js — TIDAK ADA perubahan pada field kode/nama/kota/
+   salesman/limit/status/alamat/piutang yang sudah ada (lihat NB besar di
+   atas & di js/data.js, aturan proyek: field lama itu tidak boleh
+   diubah/dihapus).
 ========================================================= */
 
 const CST_CABANG_LIST = ['Head Office','Surabaya','Bandung','Tangerang','Medan','Makassar','Semarang','Sidoarjo'];
@@ -328,6 +350,10 @@ function tplCustomerForm(mode, row){
           <div class="form-group"><label>Village / Kelurahan</label><input type="text" id="fCstKelurahan" value="${row.kelurahan||''}"></div>
           <div class="form-group"><label>Kode Pos</label><input type="text" id="fCstKodePos" value="${row.kodePos||''}"></div>
           <div class="form-group"><label>Salesman</label><select id="fCstSalesman">${DATA.salesman.map(s=>`<option ${row.salesman===s.nama?'selected':''}>${s.nama}</option>`).join('')}</select></div>
+          <div class="form-group">
+            <label>Collector</label>
+            <div class="tag-box" id="cstCollectorBox" style="cursor:pointer;">${tplCstCollectorChips(row.collector||[])}</div>
+          </div>
           <div class="form-group"><label>Latitude</label><input type="text" id="fCstLatitude" value="${row.latitude??''}"></div>
           <div class="form-group"><label>Longitude</label><input type="text" id="fCstLongitude" value="${row.longitude??''}"></div>
         </div>
@@ -496,6 +522,48 @@ function tplCstWilayahPicker(list){
       </div>
       <div class="modal-footer"><button class="btn-secondary" id="pickerCancel">Tutup</button></div>
     </div>`;
+}
+
+/* Chip + picker modal utk field "Collector" (multi-select) — reuse pola
+   tag-box/tag-chip/.rm persis Hak Approval (tplHapTagChips/
+   tplHapTagPickerModal/tplHapTagPickerRows), diadaptasi lokal di sini
+   krn lazy-load antar modul tidak terjamin urutannya (pola sama alasan
+   Akun GL picker di atas disalin lokal, bukan reference cross-file).
+   `tplCstCollectorPicker` SELALU memfilter `DATA.collector` ke yang
+   `aktif!==false` saja SEBELUM dirender ke daftar pilihan — collector
+   Non Aktif tidak pernah muncul sbg baris yang bisa "Pilih" (sesuai
+   permintaan user), walau chip yang sudah kadung terpilih sebelumnya
+   tetap tampil apa adanya di tplCstCollectorChips. */
+function tplCstCollectorChips(list){
+  if(!list || !list.length){
+    return `<span style="color:var(--text-light);font-size:12px;">Pilih Collector...</span>`;
+  }
+  return list.map((name,i)=>`<span class="tag-chip">${name}<span class="rm" data-cst-collector-rm="${i}">&times;</span></span>`).join('');
+}
+
+function tplCstCollectorPicker(already){
+  const source = DATA.collector.filter(c => c.aktif !== false);
+  return `
+    <div class="modal-box" style="max-width:420px;">
+      <div class="modal-header"><span>Pilih Collector</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="cstCollectorPickerSearch" placeholder="Cari Collector..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:320px;overflow:auto;">
+          <table><tbody id="cstCollectorPickerBody">${tplCstCollectorPickerRows(source, already)}</tbody></table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplCstCollectorPickerRows(list, already){
+  if(!list.length) return `<tr><td style="color:var(--text-light);">Tidak ada Collector aktif ditemukan</td></tr>`;
+  return list.map(c=>`
+    <tr>
+      <td>${c.nama}</td>
+      <td style="color:var(--text-light);font-size:12px;">${c.area||''}</td>
+      <td style="text-align:right;">${already.includes(c.nama) ? '<span style="font-size:11px;color:var(--text-light);">Sudah dipilih</span>' : `<button class="btn-pick" data-cst-collector-pick="${c.nama}">Pilih</button>`}</td>
+    </tr>`).join('');
 }
 
 function tplCstAkunPicker(list, fieldKey){

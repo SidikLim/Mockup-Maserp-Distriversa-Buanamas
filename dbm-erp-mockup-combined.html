@@ -1318,9 +1318,24 @@ const DATA = {
      jatuh tempo) — persis pola yang sudah dipakai modul Sales Quotation
      sejak sebelumnya (lihat row.jatuhTempo/row.belumJatuhTempo di
      sales-quotation.js), BUKAN field statis baru di sini, supaya kedua
-     modul konsisten & tidak ada 2 sumber data utk hal yang sama. */
+     modul konsisten & tidak ada 2 sumber data utk hal yang sama.
+
+     NB LAGI (2026-09-18, modul Master Customer — js/pages/master-customer.*):
+     field baru `collector` (array of string, nama Collector — lihat
+     `DATA.collector` yang ditambahkan sesi sebelumnya utk menu Collector &
+     Daftar Tagih Piutang) ditambahkan ke tiap baris di bawah, atas
+     permintaan eksplisit user: "pada master customer harus ada pilihan
+     beberapa collector, dengan status collector yang aktif saja yang bisa
+     dipilih". BEDA dari `salesman` (1 nilai, `<select>` tunggal), field
+     ini MULTI-SELECT (dipilih lewat tag-box, lihat tplCstCollectorChips/
+     openCstCollectorPicker) — 1 customer bisa punya beberapa Collector
+     sekaligus. Hanya 2 baris (CUST-001/CUST-002) diberi data sample utk
+     mendemokan fitur; baris lain sengaja dibiarkan `collector` undefined
+     (ditangani `row.collector||[]` di semua tempat yang membacanya) —
+     konsisten prinsip "data sample tidak perlu lengkap 100% di semua
+     baris kalau fiturnya sudah cukup terdemokan". */
   customers:[
-    {kode:'CUST-001', nama:'Toko Sumber Rejeki', kota:'Jakarta', salesman:'Budi Santoso', limit:50000000, status:'Aktif', alamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat', piutang:18250000,
+    {kode:'CUST-001', nama:'Toko Sumber Rejeki', kota:'Jakarta', salesman:'Budi Santoso', collector:['Slamet Riyadi'], limit:50000000, status:'Aktif', alamat:'Jl. Mangga Dua Raya No. 12, Jakarta Pusat', piutang:18250000,
     noRef:'HO.0001', tglRegistrasi:'12/01/2020', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
     customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
     namaPemilik:'Hj. Siti Rejeki', kontakPerson:'Hj. Siti Rejeki', gender:'Wanita', email:'sitirejeki@tokosumberrejeki.co.id', tglLahir:'14/05/1978', fax:'', agama:'Islam', jabatan:'Pemilik', telepon:'021-6541278',
@@ -1333,7 +1348,7 @@ const DATA = {
     glAkunPiutang:'1120001', glAkunUangMuka:'', uangMuka:0,
     legalitasOutlet:[{syarat:'Nomor Izin Berusaha (NIB)', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'NPWP', keterangan:'Sesuai dokumen terlampir', tglExpired:'31/12/2027', tglProses:'10/01/2024', uploaded:true}, {syarat:'SKPKP', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}, {syarat:'Spesimen Cap/ Stempel Customer', keterangan:'', tglExpired:'', tglProses:'', uploaded:false}],
     legalitasPemilik:[{syarat:'KTP', keterangan:'Sesuai dokumen terlampir', tglExpired:'', tglProses:'10/01/2024', uploaded:true}, {syarat:'Nama Penanggung Jawab', keterangan:'Hj. Siti Rejeki', tglExpired:'', tglProses:'10/01/2024', uploaded:true}]},
-    {kode:'CUST-002', nama:'UD Makmur Jaya', kota:'Surabaya', salesman:'Andi Wijaya', limit:35000000, status:'Aktif', alamat:'Jl. Raya Darmo No. 45, Surabaya', piutang:9120000,
+    {kode:'CUST-002', nama:'UD Makmur Jaya', kota:'Surabaya', salesman:'Andi Wijaya', collector:['Wahyu Setiawan','Slamet Riyadi'], limit:35000000, status:'Aktif', alamat:'Jl. Raya Darmo No. 45, Surabaya', piutang:9120000,
     noRef:'SBY.0001', tglRegistrasi:'03/06/2019', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
     customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
     namaPemilik:'Bpk. Makmur Wijaya', kontakPerson:'Bpk. Makmur Wijaya', gender:'Pria', email:'makmur@udmakmurjaya.co.id', tglLahir:'02/09/1975', fax:'', agama:'Islam', jabatan:'Pemilik', telepon:'031-7712345',
@@ -2479,6 +2494,38 @@ const DATA = {
     {nama:'Eka Putri', area:'Makassar', target:25000000, realisasi:15420000},
     {nama:'Fajar Nugroho', area:'Semarang', target:20000000, realisasi:9870000},
     {nama:'M. Reza Wijaya', area:'Head Office', target:100000000, realisasi:78650000},
+  ],
+  /* Collector — menu Customer & Penjualan > Master & Setting > Collector
+     (page:'masterCollector'), menu baru DITAMBAHKAN 2026-09-18 atas
+     permintaan user LEWAT TEKS (bukan screenshot MASERP): "Tambahkan
+     menu master collector, dengan posisi menu di bawah menu master
+     salesman, dan sertakan field Checklist Aktif, lalu pada menu
+     transaksi Daftar Tagih Piutang, pada saat memilih salesman, dapat
+     juga memilih collector, jadi dibagian captionnya bisa ditambahkan
+     opsi pemilihan mau salesman atau collector". Karena tidak ada
+     screenshot acuan, struktur `{kode, nama, area, aktif}` DIRANCANG
+     mengikuti pola master CRUD modal sederhana yang sudah established
+     (kode manual+unik ala Badan Usaha/Cost Center) + field `area`
+     (supaya kolom "Area" di picker Salesman/Collector — lihat
+     tagihan-piutang.js — tetap terisi rapi saat sumbernya Collector,
+     sama seperti DATA.salesman yang juga punya field ini) + field
+     `aktif` (boolean, "Checklist Aktif" SESUAI PERMINTAAN USER PERSIS
+     — dipakai baik utk status-pill di kolom list MAUPUN utk MENYARING
+     baris yang muncul di picker Daftar Tagih Piutang: hanya collector
+     `aktif:true` yang tampil di sana, lihat openDtpKolektorPicker()).
+     5 baris sample (COL01-COL05), 1 di antaranya (COL05) SENGAJA
+     `aktif:false` untuk demo pill "Non Aktif" & filter picker. Area
+     dipetakan ke kota yang sama dgn DATA.salesman di atas supaya
+     terasa konsisten sebagai satu wilayah operasional DBM. Lihat
+     js/pages/master-collector.template.js & master-collector.js utk
+     modul master-nya, dan catatan di tagihan-piutang.* utk perubahan
+     picker "Salesman/Collector"-nya. */
+  collector:[
+    {kode:'COL01', nama:'Slamet Riyadi', area:'Jakarta', aktif:true},
+    {kode:'COL02', nama:'Wahyu Setiawan', area:'Surabaya', aktif:true},
+    {kode:'COL03', nama:'Rina Marlina', area:'Bandung', aktif:true},
+    {kode:'COL04', nama:'Yusuf Hamzah', area:'Tangerang', aktif:true},
+    {kode:'COL05', nama:'Dewi Anggraini', area:'Semarang', aktif:false},
   ],
   /* Sales Order — menu Customer & Penjualan > Daftar Transaksi > Sales
      Order (lihat js/pages/sales-order.*). Setiap baris berisi seluruh
@@ -4695,9 +4742,28 @@ const DATA = {
         returPenjualanDocs/noSJ) + status hasil input petugas: 8
         Ditemukan / Sesuai, 2 Blank (Belum Diketemukan), 1 Selisih —
         supaya ketiga laporan (Rincian per Status/Summary By Salesman
-        By Status/Rekapitulasi) langsung berisi contoh bermakna. */
+        By Status/Rekapitulasi) langsung berisi contoh bermakna.
+     4) statusOpname (BARU 2026-09-18, lanjutan): master Status Opname
+        (Customer & Penjualan > Master & Setting > Status Opname,
+        page:'masterStatusOpname') — field {kode, nama, aktif}. Atas
+        permintaan user "Status Opname saat ini ada pemilihan static
+        ingin ada masternya saja, agar bisa ditambah", menggantikan
+        `OPD_STATUS_LIST` yang tadinya array string HARDCODE di
+        opname-dokumen.template.js (lihat opdStatusList()/
+        opdStatusOptions() di sana, dan header master-status-opname.
+        template.js utk detail lengkap). 3 baris pertama (STO01-03)
+        PERSIS 3 nilai lama supaya sample `opnameDokumen` di atas
+        (yang sudah memakai teks-teks itu) tetap konsisten; STO04
+        SENGAJA `aktif:false` untuk demo checklist Aktif & filter
+        picker (tidak dipakai di sample data transaksi manapun). */
   collectorList:['Rudi Salam','Yanto Prakoso','Sri Handayani'],
   inkasoList:['Tim Inkaso HO','Tim Inkaso Jawa Timur','Tim Inkaso Jabar'],
+  statusOpname:[
+    {kode:'STO01', nama:'Ditemukan / Sesuai', aktif:true},
+    {kode:'STO02', nama:'Blank (Belum Diketemukan)', aktif:true},
+    {kode:'STO03', nama:'Selisih / Tidak Sesuai', aktif:true},
+    {kode:'STO04', nama:'Rusak / Tidak Terpakai', aktif:false},
+  ],
   returPenjualanDocs:[
     {no:'26/RJ/HO/08/00001', tgl:'18/08/2026', cabang:'Head Office', customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki', dariInvoice:'26/SI/HO/08/00001', nilai:150000, alasan:'Barang rusak dalam pengiriman', status:'Outstanding'},
     {no:'26/RJ/SBY/08/00001', tgl:'20/08/2026', cabang:'Surabaya', customerKode:'CUST-002', customerNama:'UD Makmur Jaya', dariInvoice:'26/SI/SBY/08/00001', nilai:90000, alasan:'Kemasan penyok', status:'Outstanding'},
@@ -5937,11 +6003,14 @@ const DATA = {
      dipetakan ke DBM: 1 sample September 2026 berisi 2 faktur
      SUNGGUHAN milik CUST-006 dari DATA.fakturPenjualanSJ. Jumlah
      akhir = Σ items.jumlah. Alasan Belum Tertagih per faktur menaut
-     ke master DATA.alasanBelumTertagih (picker). */
+     ke master DATA.alasanBelumTertagih (picker). `kolektorTipe`
+     ('Salesman'|'Collector') DITAMBAHKAN 2026-09-18 — lihat UPDATE
+     di header tagihan-piutang.template.js; baris di bawah 'OFFICE'
+     jadi tipe 'Collector'. */
   tagihanPiutang:[
     {no:'26/DC/HO/09/00001', tgl:'01/09/2026', jam:'03.42.05',
       customerNama:'Toko Family Mart Jaya', customerAlamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara',
-      kolektor:'OFFICE', keterangan:'', closedManually:false,
+      kolektor:'OFFICE', kolektorTipe:'Collector', keterangan:'', closedManually:false,
       items:[
         {tglFaktur:'14/08/2026', jamFaktur:'09.20.00', customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya',
           customerAlamat:'Jl. Kelapa Gading Boulevard No. 9, Jakarta Utara', badanUsaha:'PT',
@@ -8357,12 +8426,14 @@ const MENU=[
    {label:'Promotion', page:'promotion'},
    {label:'Dominasi', page:'dominasi'},
    {label:'Salesman', page:'salesman'},
+   {label:'Collector', page:'masterCollector'},
    {label:'Sales Office', page:'salesOffice'},
    {label:'Weekday', page:'placeholder', title:'Weekday'},
    {label:'Rumus Komisi Salesman', page:'rumusKomisiSalesman'},
    {label:'Komisi Per Item', page:'placeholder', title:'Komisi Per Item'},
    {label:'Badan Usaha', page:'badanUsaha'},
    {label:'Alasan Retur', page:'alasanRetur'},
+   {label:'Status Opname', page:'masterStatusOpname'},
    {header:'Daftar Transaksi'},
    {label:'Tutup Pending SO', page:'tutupPendingSO'},
    {label:'Uang Muka Customer', page:'uangMukaCustomer'},
@@ -18676,6 +18747,164 @@ function tplMbkInfoModal(title,text){
 }
 
 /* =========================================================
+   TEMPLATE (HTML saja) — Master Collector (Customer & Penjualan >
+   Master & Setting > Collector, page:'masterCollector', ditempatkan
+   di menu.js PERSIS di bawah "Salesman"). Semua fungsi di file ini
+   HANYA menyusun & mengembalikan markup HTML (string), TIDAK ada
+   logic/DOM-binding/data mutation di sini. Logic-nya ada di file
+   sebelah: master-collector.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Dibuat 2026-09-18 atas permintaan user LEWAT TEKS (BUKAN dari
+   screenshot MASERP): "Tambahkan menu master collector, dengan
+   posisi menu di bawah menu master salesman, dan sertakan field
+   Checklist Aktif, lalu pada menu transaksi Daftar Tagih Piutang,
+   pada saat memilih salesman, dapat juga memilih collector, jadi
+   dibagian captionnya bisa ditambahkan opsi pemilihan mau salesman
+   atau collector".
+
+   CATATAN KEPUTUSAN DESAIN (karena tidak ada screenshot acuan):
+   1. Pola CRUD modal sederhana (Kode diketik manual, di-uppercase,
+      wajib & unik; Tambah/Ubah pakai modal, bukan full-page) DISALIN
+      PERSIS dari Badan Usaha/Cost Center — modul master paling mirip
+      di mockup ini yang juga cuma "Kode + Nama" inti.
+   2. Field "Area" ditambahkan (di luar permintaan literal user) karena
+      Collector akan jadi salah satu SUMBER picker "Salesman/Collector"
+      di form Daftar Tagih Piutang (lihat js/pages/tagihan-piutang.*),
+      dan picker itu sudah lama menampilkan kolom Nama+Area (awalnya
+      dari OFFICE + DATA.salesman yang punya field `area`). Supaya
+      kolom Area tetap terisi rapi saat sumbernya Collector, master
+      ini ikut punya field Area (bebas teks, opsional, boleh dikosongi).
+   3. Field "Checklist Aktif" (`row.aktif`, boolean, default TERCENTANG
+      saat Tambah) — SESUAI PERMINTAAN USER PERSIS. Ditampilkan di form
+      sebagai checkbox polos (pola sama seperti checkbox "Aktif" di
+      Master Gudang/"Kuota Aktif" Promotion), dan di kolom list sebagai
+      status-pill Aktif (hijau)/Non Aktif (merah) — pola pill yang sama
+      dipakai Sales Office & fmtCell() generik.
+   4. HANYA collector `aktif===true` yang muncul di picker Daftar Tagih
+      Piutang saat tipe "Collector" dipilih (baris "OFFICE" tetap selalu
+      tampil sebagai baris built-in pertama, tidak tunduk checklist ini)
+      — lihat openDtpKolektorPicker() di tagihan-piutang.js.
+   5 sample data (COL01-COL05) ada di DATA.collector (js/data.js), 1 di
+   antaranya (COL05) SENGAJA `aktif:false` untuk demo pill merah & filter
+   picker.
+========================================================= */
+
+function tplColListPage(){
+  return `
+    <div class="breadcrumb">Home / <b>Collector</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('users',15)} Daftar Collector</h3>
+        <button class="btn-primary" id="btnColAdd">${icon('plus',14)} Tambah</button>
+      </div>
+      <div class="table-toolbar">
+        <select id="colPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="colSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>${tplColSortHeader('Kode Collector','kode')}</th>
+          <th>${tplColSortHeader('Nama Collector','nama')}</th>
+          <th>Area</th>
+          <th style="width:100px;">Status</th>
+          <th style="width:70px;">Ubah</th>
+          <th style="width:70px;">Hapus</th>
+        </tr></thead>
+        <tbody id="colTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="colPager"></div><div id="colTotal"></div></div>
+    </div>`;
+}
+
+function tplColSortHeader(label, field){
+  return `<span class="col-sort-header" data-col-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="colSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplColRows(rows, page, pageSize){
+  if(!rows.length) return `<tr><td colspan="6" style="color:var(--text-light);">Tidak ada data Collector</td></tr>`;
+  const start = (page-1)*pageSize;
+  return rows.slice(start, start+pageSize).map((r) => {
+    const idx = DATA.collector.indexOf(r);
+    const aktif = r.aktif !== false;
+    return `
+    <tr>
+      <td><a href="#" class="row-link" data-edit="${idx}" style="color:var(--blue);font-weight:600;">${r.kode}</a></td>
+      <td>${r.nama || '-'}</td>
+      <td>${r.area || '-'}</td>
+      <td><span class="status-pill ${aktif?'status-paid':'status-overdue'}">${aktif?'Aktif':'Non Aktif'}</span></td>
+      <td><button class="icon-btn edit" data-edit="${idx}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* Pager windowed maks. 7 nomor halaman — pola sama Badan Usaha/Bentuk
+   Sediaan. */
+function tplColPager(page, totalPages){
+  if(totalPages <= 1) return '';
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+  let nums = '';
+  for(let p = start; p <= end; p++){
+    nums += `<button class="${p===page?'active':''}" data-colpage="${p}">${p}</button>`;
+  }
+  return `
+    <button data-colpage="1" ${page<=1?'disabled':''}>First</button>
+    <button data-colpage="${Math.max(1,page-1)}" ${page<=1?'disabled':''}>Previous</button>
+    ${nums}
+    <button data-colpage="${Math.min(totalPages,page+1)}" ${page>=totalPages?'disabled':''}>Next</button>
+    <button data-colpage="${totalPages}" ${page>=totalPages?'disabled':''}>Last</button>`;
+}
+
+function tplColModal(mode, row){
+  const isEdit = mode === 'edit';
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${isEdit?'Ubah Collector':'Tambah Collector'}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Kode Collector</label>
+          <input type="text" id="fColKode" value="${row.kode||''}" maxlength="10" ${isEdit?'readonly style="background:#f2f3f6;color:var(--text-light);"':'placeholder="Contoh: COL06" style="text-transform:uppercase;"'}>
+          <div class="form-error" id="fColKodeErr">Kode Collector wajib diisi</div>
+        </div>
+        <div class="form-group">
+          <label>Nama Collector</label>
+          <input type="text" id="fColNama" value="${row.nama||''}" placeholder="Nama Collector">
+          <div class="form-error" id="fColNamaErr">Nama Collector wajib diisi</div>
+        </div>
+        <div class="form-group">
+          <label>Area</label>
+          <input type="text" id="fColArea" value="${row.area||''}" placeholder="Contoh: Jakarta">
+        </div>
+        <div class="form-group">
+          <label style="display:flex;align-items:center;gap:6px;font-weight:400;">
+            <input type="checkbox" id="fColAktif" ${row.aktif!==false?'checked':''} style="width:auto;"> Aktif
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-primary" id="modalSave">Simpan</button>
+      </div>
+    </div>`;
+}
+
+function tplColDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Collector</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Collector <b>${row.kode}</b> — ${row.nama||'-'}?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
    TEMPLATE (HTML saja) — Master Customer (Customer & Penjualan >
    Master & Setting > Customer, page 'customers'). Semua fungsi di
    file ini HANYA menyusun & mengembalikan markup HTML (string),
@@ -18714,6 +18943,28 @@ function tplMbkInfoModal(title,text){
    bukan bagian dari kode yang disimpan — konsisten dengan pola serupa
    di Master Supplier (fKodePrefix dekoratif, tidak selalu ikut
    digabung ke kode akhir).
+
+   TAMBAHAN 2026-09-18: field baru "Collector" (section "Address", tepat
+   di bawah "Salesman") atas permintaan eksplisit user — "pada master
+   customer harus ada pilihan beberapa collector, dengan status collector
+   yang aktif saja yang bisa dipilih". Field lama "Salesman" tetap
+   `<select>` tunggal apa adanya (tidak diubah); "Collector" BEDA — dibuat
+   MULTI-SELECT (1 customer bisa punya beberapa Collector sekaligus, bukan
+   1 seperti Salesman) memakai ULANG persis komponen tag-box/tag-chip/.rm
+   yang sudah ada (awalnya dibangun utk Picking List field "Picker", lalu
+   dipakai lagi utk User Roles/User Names di Hak Approval) — bukan bikin
+   komponen baru. Sumber pilihan (`tplCstCollectorPicker`) SELALU difilter
+   `DATA.collector.filter(c=>c.aktif!==false)` — collector yang Non Aktif
+   TIDAK PERNAH muncul sebagai opsi yang bisa dipilih (persis permintaan
+   user), walau tetap tampil apa adanya sbg chip kalau sudah kadung
+   terpilih sebelum status collector itu diubah jadi Non Aktif (tidak ada
+   auto-remove retroaktif, konsisten prinsip "data yang sudah tersimpan
+   tidak dihapus diam-diam" di modul-modul lain). Field baru `row.collector`
+   (array of string, nama collector) ditambahkan ke `cstEmptyRow()` di
+   master-customer.js — TIDAK ADA perubahan pada field kode/nama/kota/
+   salesman/limit/status/alamat/piutang yang sudah ada (lihat NB besar di
+   atas & di js/data.js, aturan proyek: field lama itu tidak boleh
+   diubah/dihapus).
 ========================================================= */
 
 const CST_CABANG_LIST = ['Head Office','Surabaya','Bandung','Tangerang','Medan','Makassar','Semarang','Sidoarjo'];
@@ -19005,6 +19256,10 @@ function tplCustomerForm(mode, row){
           <div class="form-group"><label>Village / Kelurahan</label><input type="text" id="fCstKelurahan" value="${row.kelurahan||''}"></div>
           <div class="form-group"><label>Kode Pos</label><input type="text" id="fCstKodePos" value="${row.kodePos||''}"></div>
           <div class="form-group"><label>Salesman</label><select id="fCstSalesman">${DATA.salesman.map(s=>`<option ${row.salesman===s.nama?'selected':''}>${s.nama}</option>`).join('')}</select></div>
+          <div class="form-group">
+            <label>Collector</label>
+            <div class="tag-box" id="cstCollectorBox" style="cursor:pointer;">${tplCstCollectorChips(row.collector||[])}</div>
+          </div>
           <div class="form-group"><label>Latitude</label><input type="text" id="fCstLatitude" value="${row.latitude??''}"></div>
           <div class="form-group"><label>Longitude</label><input type="text" id="fCstLongitude" value="${row.longitude??''}"></div>
         </div>
@@ -19173,6 +19428,48 @@ function tplCstWilayahPicker(list){
       </div>
       <div class="modal-footer"><button class="btn-secondary" id="pickerCancel">Tutup</button></div>
     </div>`;
+}
+
+/* Chip + picker modal utk field "Collector" (multi-select) — reuse pola
+   tag-box/tag-chip/.rm persis Hak Approval (tplHapTagChips/
+   tplHapTagPickerModal/tplHapTagPickerRows), diadaptasi lokal di sini
+   krn lazy-load antar modul tidak terjamin urutannya (pola sama alasan
+   Akun GL picker di atas disalin lokal, bukan reference cross-file).
+   `tplCstCollectorPicker` SELALU memfilter `DATA.collector` ke yang
+   `aktif!==false` saja SEBELUM dirender ke daftar pilihan — collector
+   Non Aktif tidak pernah muncul sbg baris yang bisa "Pilih" (sesuai
+   permintaan user), walau chip yang sudah kadung terpilih sebelumnya
+   tetap tampil apa adanya di tplCstCollectorChips. */
+function tplCstCollectorChips(list){
+  if(!list || !list.length){
+    return `<span style="color:var(--text-light);font-size:12px;">Pilih Collector...</span>`;
+  }
+  return list.map((name,i)=>`<span class="tag-chip">${name}<span class="rm" data-cst-collector-rm="${i}">&times;</span></span>`).join('');
+}
+
+function tplCstCollectorPicker(already){
+  const source = DATA.collector.filter(c => c.aktif !== false);
+  return `
+    <div class="modal-box" style="max-width:420px;">
+      <div class="modal-header"><span>Pilih Collector</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="cstCollectorPickerSearch" placeholder="Cari Collector..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        <div class="table-wrap" style="max-height:320px;overflow:auto;">
+          <table><tbody id="cstCollectorPickerBody">${tplCstCollectorPickerRows(source, already)}</tbody></table>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+}
+
+function tplCstCollectorPickerRows(list, already){
+  if(!list.length) return `<tr><td style="color:var(--text-light);">Tidak ada Collector aktif ditemukan</td></tr>`;
+  return list.map(c=>`
+    <tr>
+      <td>${c.nama}</td>
+      <td style="color:var(--text-light);font-size:12px;">${c.area||''}</td>
+      <td style="text-align:right;">${already.includes(c.nama) ? '<span style="font-size:11px;color:var(--text-light);">Sudah dipilih</span>' : `<button class="btn-pick" data-cst-collector-pick="${c.nama}">Pilih</button>`}</td>
+    </tr>`).join('');
 }
 
 function tplCstAkunPicker(list, fieldKey){
@@ -19517,6 +19814,171 @@ function tplRyDeleteConfirm(row){
     <div class="modal-box">
       <div class="modal-header"><span>Hapus Rayon</span><span class="close" id="modalClose">&times;</span></div>
       <div class="modal-body"><p>Yakin ingin menghapus rayon <b>${row.kode}</b> — ${row.nama}?</p></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-danger" id="modalDelete">Hapus</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
+   TEMPLATE (HTML saja) — Master Status Opname (Customer &
+   Penjualan > Master & Setting > Status Opname, page:
+   'masterStatusOpname', ditempatkan di menu.js PERSIS di bawah
+   "Alasan Retur", sebelum header "Daftar Transaksi"). Semua fungsi
+   di file ini HANYA menyusun & mengembalikan markup HTML (string),
+   TIDAK ada logic/DOM-binding/data mutation di sini. Logic-nya ada
+   di file sebelah: master-status-opname.js
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Dibuat 2026-09-18 atas permintaan user LEWAT TEKS (BUKAN dari
+   screenshot MASERP): "Transaksi Stock Opname Faktur, Retur & Surat
+   jalan. Status Opname saat ini ada pemilihan static ingin ada
+   masternya saja, agar bisa ditambah" — sebelumnya "Status Opname"
+   di modul Opname Faktur, Retur & S.J. (page:'opnameDokumen') adalah
+   array string HARDCODE `OPD_STATUS_LIST` (3 nilai tetap: "Ditemukan
+   / Sesuai", "Blank (Belum Diketemukan)", "Selisih / Tidak Sesuai")
+   yang tidak bisa ditambah tanpa edit kode. Master baru ini
+   menggantikan sumbernya jadi `DATA.statusOpname` (live, bisa
+   ditambah/diubah/dinonaktifkan lewat menu ini) — lihat perubahan
+   detail di opname-dokumen.template.js/.js (fungsi baru
+   `opdStatusList()`/`opdStatusOptions()` menggantikan seluruh
+   pemakaian `OPD_STATUS_LIST` lama).
+
+   CATATAN KEPUTUSAN DESAIN (karena tidak ada screenshot acuan):
+   1. Pola CRUD modal sederhana (Kode diketik manual, di-uppercase,
+      wajib & unik; Tambah/Ubah pakai modal, bukan full-page) DISALIN
+      PERSIS dari Master Collector/Badan Usaha — modul master paling
+      mirip di mockup ini.
+   2. HANYA "Kode" + "Nama Status" + checklist "Aktif" — TIDAK ada
+      field tambahan seperti "Area" di Master Collector, karena
+      Status Opname murni label pilihan, tidak butuh atribut lain.
+   3. Field "Aktif" (`row.aktif`, boolean, default TERCENTANG saat
+      Tambah) — HANYA status Aktif yang muncul sbg pilihan BARU di
+      dropdown "Status Opname" pada form Opname Faktur, Retur & S.J.
+      (pola sama Master Collector: hanya Collector aktif yang bisa
+      dipilih di Daftar Tagih Piutang). Status yang SUDAH terlanjur
+      dipakai di dokumen opname lama tetap ditampilkan apa adanya
+      walau kemudian dinonaktifkan (tidak ada auto-remove retroaktif)
+      — lihat `opdStatusOptions()` di opname-dokumen.template.js,
+      pola fallback yang sama dengan `psbSatuanOptions()`.
+   4. 4 baris data sample (STO01-STO04) di DATA.statusOpname (js/
+      data.js): 3 baris pertama PERSIS 3 nilai lama (supaya sample
+      data DATA.opnameDokumen yang sudah memakai teks-teks itu tetap
+      konsisten), + 1 baris tambahan (STO04 "Rusak / Tidak Terpakai")
+      SENGAJA `aktif:false` untuk mendemokan checklist Aktif & filter
+      picker — TIDAK dipakai di sample data transaksi manapun.
+   5. Kolom ringkasan & 2 laporan cetak pivot-per-status di modul
+      Opname Faktur, Retur & S.J. (list "Ditemukan/Blank/Selisih",
+      Summary By Salesman By Status, Rekapitulasi) SEBELUMNYA
+      hardcode 3 kolom tetap — ikut digeneralisasi mengikuti JUMLAH
+      status AKTIF apa adanya (bukan lagi hardcode 3), supaya status
+      baru yang ditambah lewat master ini otomatis muncul di
+      seluruh laporan tanpa edit kode lagi. Detail lengkap ada di
+      header opname-dokumen.template.js.
+========================================================= */
+
+function tplSopListPage(){
+  return `
+    <div class="breadcrumb">Home / <b>Status Opname</b></div>
+    <div class="card">
+      <div class="card-header dark-header">
+        <h3>${icon('check',15)} Daftar Status Opname</h3>
+        <button class="btn-primary" id="btnSopAdd">${icon('plus',14)} Tambah</button>
+      </div>
+      <div class="table-toolbar">
+        <select id="sopPageSize"><option selected>10</option><option>25</option><option>50</option></select>
+        <input type="text" id="sopSearch" placeholder="Pencarian Global">
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th>${tplSopSortHeader('Kode Status','kode')}</th>
+          <th>${tplSopSortHeader('Nama Status','nama')}</th>
+          <th style="width:100px;">Status</th>
+          <th style="width:70px;">Ubah</th>
+          <th style="width:70px;">Hapus</th>
+        </tr></thead>
+        <tbody id="sopTbody"></tbody>
+      </table></div>
+      <div class="table-footer"><div class="pager" id="sopPager"></div><div id="sopTotal"></div></div>
+    </div>`;
+}
+
+function tplSopSortHeader(label, field){
+  return `<span class="sop-sort-header" data-sop-sort="${field}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;">${label}<span id="sopSortIcon_${field}" style="color:var(--text-light);font-size:11px;">&#8693;</span></span>`;
+}
+
+function tplSopRows(rows, page, pageSize){
+  if(!rows.length) return `<tr><td colspan="5" style="color:var(--text-light);">Tidak ada data Status Opname</td></tr>`;
+  const start = (page-1)*pageSize;
+  return rows.slice(start, start+pageSize).map((r) => {
+    const idx = DATA.statusOpname.indexOf(r);
+    const aktif = r.aktif !== false;
+    return `
+    <tr>
+      <td><a href="#" class="row-link" data-edit="${idx}" style="color:var(--blue);font-weight:600;">${r.kode}</a></td>
+      <td>${r.nama || '-'}</td>
+      <td><span class="status-pill ${aktif?'status-paid':'status-overdue'}">${aktif?'Aktif':'Non Aktif'}</span></td>
+      <td><button class="icon-btn edit" data-edit="${idx}" title="Ubah">${icon('edit',15)}</button></td>
+      <td><button class="icon-btn del" data-del="${idx}" title="Hapus">${icon('trash',15)}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* Pager windowed maks. 7 nomor halaman — pola sama Master Collector/
+   Badan Usaha. */
+function tplSopPager(page, totalPages){
+  if(totalPages <= 1) return '';
+  const windowSize = 7;
+  let start = Math.max(1, page - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  start = Math.max(1, end - windowSize + 1);
+  let nums = '';
+  for(let p = start; p <= end; p++){
+    nums += `<button class="${p===page?'active':''}" data-soppage="${p}">${p}</button>`;
+  }
+  return `
+    <button data-soppage="1" ${page<=1?'disabled':''}>First</button>
+    <button data-soppage="${Math.max(1,page-1)}" ${page<=1?'disabled':''}>Previous</button>
+    ${nums}
+    <button data-soppage="${Math.min(totalPages,page+1)}" ${page>=totalPages?'disabled':''}>Next</button>
+    <button data-soppage="${totalPages}" ${page>=totalPages?'disabled':''}>Last</button>`;
+}
+
+function tplSopModal(mode, row){
+  const isEdit = mode === 'edit';
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>${isEdit?'Ubah Status Opname':'Tambah Status Opname'}</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Kode Status</label>
+          <input type="text" id="fSopKode" value="${row.kode||''}" maxlength="10" ${isEdit?'readonly style="background:#f2f3f6;color:var(--text-light);"':'placeholder="Contoh: STO05" style="text-transform:uppercase;"'}>
+          <div class="form-error" id="fSopKodeErr">Kode Status wajib diisi</div>
+        </div>
+        <div class="form-group">
+          <label>Nama Status</label>
+          <input type="text" id="fSopNama" value="${row.nama||''}" placeholder="Contoh: Ditemukan / Sesuai">
+          <div class="form-error" id="fSopNamaErr">Nama Status wajib diisi</div>
+        </div>
+        <div class="form-group">
+          <label style="display:flex;align-items:center;gap:6px;font-weight:400;">
+            <input type="checkbox" id="fSopAktif" ${row.aktif!==false?'checked':''} style="width:auto;"> Aktif
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Batal</button>
+        <button class="btn-primary" id="modalSave">Simpan</button>
+      </div>
+    </div>`;
+}
+
+function tplSopDeleteConfirm(row){
+  return `
+    <div class="modal-box">
+      <div class="modal-header"><span>Hapus Status Opname</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body"><p>Yakin ingin menghapus Status Opname <b>${row.kode}</b> — ${row.nama||'-'}?</p></div>
       <div class="modal-footer">
         <button class="btn-secondary" id="modalCancel">Batal</button>
         <button class="btn-danger" id="modalDelete">Hapus</button>
@@ -21209,7 +21671,57 @@ function tplMcdInfoModal(title, text){
    terdokumentasi). Pola list+form full page, print via window.open
    mengikuti Report Center. */
 
-const OPD_STATUS_LIST = ['Ditemukan / Sesuai', 'Blank (Belum Diketemukan)', 'Selisih / Tidak Sesuai'];
+/* Status Opname — 2026-09-18: SEBELUMNYA array string hardcode di sini
+   (`OPD_STATUS_LIST`, 3 nilai tetap). Atas permintaan user ("Status
+   Opname saat ini ada pemilihan static ingin ada masternya saja, agar
+   bisa ditambah") diganti jadi master `DATA.statusOpname` (Customer &
+   Penjualan > Master & Setting > Status Opname, page:
+   'masterStatusOpname' — lihat js/pages/master-status-opname.*), dibaca
+   LIVE lewat opdStatusList()/opdStatusOptions() di bawah supaya status
+   baru yang ditambah/dinonaktifkan lewat menu master itu langsung
+   berlaku di seluruh form/laporan modul ini TANPA edit kode lagi.
+   Seluruh tempat yang tadinya membaca OPD_STATUS_LIST[0]/[1]/[2] (fixed
+   3 kolom) ikut digeneralisasi mengikuti JUMLAH status AKTIF apa adanya
+   (lihat tplOpnameDokumenListPage/tplOpdRows/tplOpdRingkasan/
+   tplOpdDocSummary/tplOpdDocRekap). */
+function opdStatusList(){
+  return DATA.statusOpname.filter(s => s.aktif !== false).map(s => s.nama);
+}
+
+/* Opsi <select> Status Opname per baris dokumen (tplOpdItemRows): HANYA
+   status Aktif yang jadi pilihan BARU, tapi kalau baris itu sudah
+   kadung memakai status yang belakangan dinonaktifkan, nilainya tetap
+   dipertahankan (ditambahkan sbg opsi ekstra "(Non Aktif)") — pola
+   fallback yang sama dengan psbSatuanOptions() di persediaan-barang.
+   template.js, supaya nilai tersimpan tidak diam-diam berubah begitu
+   form dibuka. */
+function opdStatusOptions(selected){
+  const active = opdStatusList();
+  let opts = active.map(s => `<option ${selected===s?'selected':''}>${s}</option>`).join('');
+  if(selected && !active.includes(selected)){
+    opts += `<option selected>${selected} (Non Aktif)</option>`;
+  }
+  return opts;
+}
+
+/* Label singkat utk header kolom sempit di list (mis. "Ditemukan /
+   Sesuai" -> "Ditemukan", "Blank (Belum Diketemukan)" -> "Blank") —
+   diambil dari kata/frasa pertama sebelum tanda " /" atau " (", supaya
+   status baru yang ditambah lewat master ikut dapat label singkat
+   otomatis tanpa perlu field "singkatan" terpisah di master. */
+function opdShortLabel(nama){
+  return (nama || '').split(/\s*\/\s*|\s*\(/)[0].trim() || nama;
+}
+
+/* Warna indikator per status (list ringkasan & kolom list) — indeks 0
+   dianggap status "baik/sesuai" (hijau), indeks berikutnya dianggap
+   status "perlu perhatian" dan di-cycle lewat palet ini supaya jumlah
+   status yang ditambah lewat master tidak dibatasi. */
+function opdStatusColor(i){
+  const palette = ['#1e8449', '#c0392b', '#b9770e', '#2e5f8a', '#7d3c98'];
+  return palette[i % palette.length];
+}
+
 const OPD_TIPE_PETUGAS = ['Inkaso', 'Internal Audit'];
 const OPD_FILTER_BASIS = ['Salesman', 'Collector', 'Inkaso'];
 const OPD_CABANG_LIST = ['Semua Cabang','Head Office','Surabaya','Bandung','Tangerang','Medan','Makassar','Semarang','Sidoarjo'];
@@ -21260,9 +21772,7 @@ function tplOpnameDokumenListPage(){
           <th>Metode</th>
           <th>Cakupan</th>
           <th class="text-right" style="width:64px;">Jml Dok</th>
-          <th class="text-right" style="width:76px;">Ditemukan</th>
-          <th class="text-right" style="width:56px;">Blank</th>
-          <th class="text-right" style="width:56px;">Selisih</th>
+          ${opdStatusList().map(s=>`<th class="text-right" style="width:70px;">${opdShortLabel(s)}</th>`).join('')}
           <th style="width:66px;">Status</th>
           <th style="width:52px;">Lihat</th>
           <th style="width:52px;">Ubah</th>
@@ -21275,7 +21785,8 @@ function tplOpnameDokumenListPage(){
 }
 
 function tplOpdRows(rows){
-  if(!rows.length) return `<tr><td colspan="13" style="color:var(--text-light);padding:14px;">Belum ada transaksi opname.</td></tr>`;
+  const statusList = opdStatusList();
+  if(!rows.length) return `<tr><td colspan="${10+statusList.length}" style="color:var(--text-light);padding:14px;">Belum ada transaksi opname.</td></tr>`;
   return rows.map((r,i)=>`
     <tr>
       <td><a href="javascript:void(0)" data-view="${i}" style="color:var(--blue);font-weight:600;text-decoration:none;">${r.no}</a></td>
@@ -21284,9 +21795,7 @@ function tplOpdRows(rows){
       <td>${opdMetodeLabel(r)}</td>
       <td>${opdCakupanLabel(r.cakupan)}</td>
       <td class="text-right">${(r.items||[]).length}</td>
-      <td class="text-right">${opdCountStatus(r.items, OPD_STATUS_LIST[0])}</td>
-      <td class="text-right" style="${opdCountStatus(r.items, OPD_STATUS_LIST[1])?'color:#c0392b;font-weight:700;':''}">${opdCountStatus(r.items, OPD_STATUS_LIST[1])}</td>
-      <td class="text-right" style="${opdCountStatus(r.items, OPD_STATUS_LIST[2])?'color:#c0392b;font-weight:700;':''}">${opdCountStatus(r.items, OPD_STATUS_LIST[2])}</td>
+      ${statusList.map((s,idx)=>`<td class="text-right" style="${idx>0 && opdCountStatus(r.items,s)?'color:#c0392b;font-weight:700;':''}">${opdCountStatus(r.items, s)}</td>`).join('')}
       <td>${r.status==='Selesai' ? `<span class="st-open">Selesai</span>` : `<span style="color:var(--yellow);font-weight:700;">Draft</span>`}</td>
       <td><button class="icon-btn view" data-view="${i}" title="Lihat">${icon('eye',15)}</button></td>
       <td><button class="icon-btn edit" data-edit="${i}" title="Ubah">${icon('edit',15)}</button></td>
@@ -21310,7 +21819,7 @@ function tplOpdItemRows(items, isView){
       <td class="text-right">${opdNum2(it.nilai)}</td>
       <td style="width:190px;">
         <select data-opd-status="${idx}" ${dis}>
-          ${OPD_STATUS_LIST.map(s=>`<option ${it.statusOpname===s?'selected':''}>${s}</option>`).join('')}
+          ${opdStatusOptions(it.statusOpname)}
         </select>
       </td>
       <td style="width:190px;"><input type="text" data-opd-ket="${idx}" value="${it.ket||''}" placeholder="Keterangan" ${dis}></td>
@@ -21432,7 +21941,7 @@ function tplOpdForm(mode, row){
             <label>Cetak Rincian Berdasarkan Status</label>
             <select id="fOpdCetakStatus">
               <option value="">Semua Status</option>
-              ${OPD_STATUS_LIST.map(s=>`<option>${s}</option>`).join('')}
+              ${opdStatusList().map(s=>`<option>${s}</option>`).join('')}
             </select>
           </div>
           <button type="button" class="btn-teal" id="btnOpdCetakRincian">${icon('printer',14)} Cetak Rincian per Status</button>
@@ -21457,12 +21966,11 @@ function tplOpdForm(mode, row){
 function tplOpdRingkasan(items){
   const total = (items || []).length;
   const nilai = (items || []).reduce((s,it)=>s+(+it.nilai||0),0);
+  const statusList = opdStatusList();
   return `
     <span>Total Dokumen: <b>${total}</b></span>
     <span>Total Nilai: <b>${opdNum2(nilai)}</b></span>
-    <span style="color:#1e8449;">Ditemukan / Sesuai: <b>${opdCountStatus(items, OPD_STATUS_LIST[0])}</b></span>
-    <span style="color:#c0392b;">Blank (Belum Diketemukan): <b>${opdCountStatus(items, OPD_STATUS_LIST[1])}</b></span>
-    <span style="color:#b9770e;">Selisih / Tidak Sesuai: <b>${opdCountStatus(items, OPD_STATUS_LIST[2])}</b></span>`;
+    ${statusList.map((s,i)=>`<span style="color:${opdStatusColor(i)};">${s}: <b>${opdCountStatus(items, s)}</b></span>`).join('')}`;
 }
 
 /* ===== Kerangka dokumen cetak bersama (toolbar Cetak/Tutup + header
@@ -21537,6 +22045,7 @@ function tplOpdDocRincian(row, statusFilter, printedAt){
    (spec 2.A): pivot salesman (baris) x status (kolom), tiap sel
    jumlah dokumen + total nilai. */
 function tplOpdDocSummary(row, printedAt){
+  const statusList = opdStatusList();
   const bySales = {};
   (row.items||[]).forEach(it => {
     const s = it.salesman || '(Tanpa Salesman)';
@@ -21547,33 +22056,33 @@ function tplOpdDocSummary(row, printedAt){
   });
   const salesNames = Object.keys(bySales).sort();
   const totalPerStatus = {};
-  OPD_STATUS_LIST.forEach(st => totalPerStatus[st] = {jml:0, nilai:0});
+  statusList.forEach(st => totalPerStatus[st] = {jml:0, nilai:0});
   const body = `
     <table>
       <thead><tr>
         <th rowspan="2" style="width:150px;">Salesman</th>
-        ${OPD_STATUS_LIST.map(st=>`<th colspan="2">${st}</th>`).join('')}
+        ${statusList.map(st=>`<th colspan="2">${st}</th>`).join('')}
         <th colspan="2">Total</th>
       </tr><tr>
-        ${OPD_STATUS_LIST.map(()=>`<th style="width:44px;">Jml</th><th style="width:96px;">Nilai</th>`).join('')}
+        ${statusList.map(()=>`<th style="width:44px;">Jml</th><th style="width:96px;">Nilai</th>`).join('')}
         <th style="width:44px;">Jml</th><th style="width:96px;">Nilai</th>
       </tr></thead>
       <tbody>${salesNames.length ? salesNames.map(s => {
         let rowJml = 0, rowNilai = 0;
-        const cells = OPD_STATUS_LIST.map(st => {
+        const cells = statusList.map(st => {
           const c = bySales[s][st] || {jml:0, nilai:0};
           rowJml += c.jml; rowNilai += c.nilai;
           totalPerStatus[st].jml += c.jml; totalPerStatus[st].nilai += c.nilai;
           return `<td style="text-align:center;">${c.jml||''}</td><td style="text-align:right;">${c.jml?opdNum2(c.nilai):''}</td>`;
         }).join('');
         return `<tr><td>${s}</td>${cells}<td style="text-align:center;font-weight:700;">${rowJml}</td><td style="text-align:right;font-weight:700;">${opdNum2(rowNilai)}</td></tr>`;
-      }).join('') : `<tr><td colspan="${2*OPD_STATUS_LIST.length+3}" style="text-align:center;color:#777;padding:12px;">Belum ada dokumen.</td></tr>`}
+      }).join('') : `<tr><td colspan="${2*statusList.length+3}" style="text-align:center;color:#777;padding:12px;">Belum ada dokumen.</td></tr>`}
       </tbody>
       <tfoot><tr>
         <td style="text-align:right;">Grand Total :</td>
-        ${OPD_STATUS_LIST.map(st=>`<td style="text-align:center;">${totalPerStatus[st].jml}</td><td style="text-align:right;">${opdNum2(totalPerStatus[st].nilai)}</td>`).join('')}
-        <td style="text-align:center;">${OPD_STATUS_LIST.reduce((a,st)=>a+totalPerStatus[st].jml,0)}</td>
-        <td style="text-align:right;">${opdNum2(OPD_STATUS_LIST.reduce((a,st)=>a+totalPerStatus[st].nilai,0))}</td>
+        ${statusList.map(st=>`<td style="text-align:center;">${totalPerStatus[st].jml}</td><td style="text-align:right;">${opdNum2(totalPerStatus[st].nilai)}</td>`).join('')}
+        <td style="text-align:center;">${statusList.reduce((a,st)=>a+totalPerStatus[st].jml,0)}</td>
+        <td style="text-align:right;">${opdNum2(statusList.reduce((a,st)=>a+totalPerStatus[st].nilai,0))}</td>
       </tr></tfoot>
     </table>
     <div style="margin-top:20px;font-size:11px;">Petugas: ${row.petugas||''} (${row.tipePetugas||''}) &nbsp;&mdash;&nbsp; Dicetak: ${printedAt}</div>`;
@@ -21585,9 +22094,10 @@ function tplOpdDocSummary(row, printedAt){
 /* (3) Rekapitulasi Hasil Opname Keseluruhan (spec 2.A): rekap makro
    per jenis dokumen x status. */
 function tplOpdDocRekap(row, printedAt){
+  const statusList = opdStatusList();
   const jenisList = ['Faktur','Retur','Surat Jalan'];
   const rekap = {};
-  jenisList.forEach(j => { rekap[j] = {}; OPD_STATUS_LIST.forEach(st => rekap[j][st] = {jml:0, nilai:0}); });
+  jenisList.forEach(j => { rekap[j] = {}; statusList.forEach(st => rekap[j][st] = {jml:0, nilai:0}); });
   (row.items||[]).forEach(it => {
     if(rekap[it.jenis] && rekap[it.jenis][it.statusOpname]){
       rekap[it.jenis][it.statusOpname].jml += 1;
@@ -21598,15 +22108,15 @@ function tplOpdDocRekap(row, printedAt){
     <table>
       <thead><tr>
         <th rowspan="2" style="width:120px;">Jenis Dokumen</th>
-        ${OPD_STATUS_LIST.map(st=>`<th colspan="2">${st}</th>`).join('')}
+        ${statusList.map(st=>`<th colspan="2">${st}</th>`).join('')}
         <th colspan="2">Total</th>
       </tr><tr>
-        ${OPD_STATUS_LIST.map(()=>`<th style="width:44px;">Jml</th><th style="width:96px;">Nilai</th>`).join('')}
+        ${statusList.map(()=>`<th style="width:44px;">Jml</th><th style="width:96px;">Nilai</th>`).join('')}
         <th style="width:44px;">Jml</th><th style="width:96px;">Nilai</th>
       </tr></thead>
       <tbody>${jenisList.map(j => {
         let rowJml = 0, rowNilai = 0;
-        const cells = OPD_STATUS_LIST.map(st => {
+        const cells = statusList.map(st => {
           const c = rekap[j][st];
           rowJml += c.jml; rowNilai += c.nilai;
           return `<td style="text-align:center;">${c.jml||''}</td><td style="text-align:right;">${c.jml?opdNum2(c.nilai):''}</td>`;
@@ -21616,7 +22126,7 @@ function tplOpdDocRekap(row, printedAt){
       </tbody>
       <tfoot><tr>
         <td style="text-align:right;">Grand Total :</td>
-        ${OPD_STATUS_LIST.map(st => {
+        ${statusList.map(st => {
           const jml = jenisList.reduce((a,j)=>a+rekap[j][st].jml,0);
           const nilai = jenisList.reduce((a,j)=>a+rekap[j][st].nilai,0);
           return `<td style="text-align:center;">${jml}</td><td style="text-align:right;">${opdNum2(nilai)}</td>`;
@@ -36824,7 +37334,25 @@ function tplT3fInfoModal(title,text){
       "Pembayaran" (Bank/Tanggal/No Ac/Giro/Jumlah KOSONG +
       Total + Terbilang kosong); ttd Dibuat Oleh / Konsumen /
       Sales/Collector; 2 catatan kaki (cek/giro & retur/
-      refaksi). */
+      refaksi).
+
+   UPDATE 2026-09-18 (permintaan user LEWAT TEKS, bukan screenshot):
+   field yang tadinya berlabel tunggal "Salesman" (`fDtpKolektor`,
+   picker gabungan OFFICE + DATA.salesman) sekarang punya CAPTION
+   "Salesman / Collector" + 2 radio button ("Salesman"/"Collector")
+   di atas input picker-nya, supaya user bisa pilih mau menagih pakai
+   Salesman (DATA.salesman) ATAU master Collector baru (DATA.collector,
+   lihat js/pages/master-collector.*, menu baru di bawah "Salesman").
+   Baris "OFFICE" TETAP ada, sekarang di bawah tipe "Collector" (bukan
+   lagi tercampur otomatis dgn Salesman). Tipe yang dipilih disimpan
+   di `row.kolektorTipe` ('Salesman'|'Collector') — utk baris LAMA yang
+   belum punya field ini (dibuat sebelum update ini), tipe di-infer
+   otomatis dari nilai `kolektor`-nya lewat dtpInferKolektorTipe() di
+   tagihan-piutang.js (kolektor==='OFFICE' atau cocok nama di
+   DATA.collector -> 'Collector', cocok nama di DATA.salesman ->
+   'Salesman', selain itu default 'Salesman'). Lihat tplDtpForm() &
+   tplDtpKolektorPicker() di bawah, dan openDtpKolektorPicker() +
+   dtpInferKolektorTipe() di tagihan-piutang.js. */
 
 function dtpNum2(n){ return Number(n||0).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2}); }
 function dtpJumlahAkhir(r){ return (r.items||[]).reduce((a,it)=> a + Number(it.jumlah||0), 0); }
@@ -36945,10 +37473,14 @@ function tplDtpForm(mode, row){
             </div>
           </div>
           <div class="form-group">
-            <label>Salesman</label>
+            <label>Salesman / Collector</label>
+            <div class="radio-inline" style="margin-bottom:6px;">
+              <label><input type="radio" name="fDtpKolektorTipe" value="Salesman" ${row.kolektorTipe!=='Collector'?'checked':''} ${isView?'disabled':''}> Salesman</label>
+              <label><input type="radio" name="fDtpKolektorTipe" value="Collector" ${row.kolektorTipe==='Collector'?'checked':''} ${isView?'disabled':''}> Collector</label>
+            </div>
             <div class="input-with-btn">
-              <input type="text" id="fDtpKolektor" value="${row.kolektor||''}" placeholder="Pilih Kolektor" readonly>
-              ${!isView ? `<button type="button" class="icon-btn edit" id="dtpKolektorSearch" title="Cari Kolektor">${icon('search',13)}</button>` : ''}
+              <input type="text" id="fDtpKolektor" value="${row.kolektor||''}" placeholder="Pilih ${row.kolektorTipe==='Collector'?'Collector':'Salesman'}" readonly>
+              ${!isView ? `<button type="button" class="icon-btn edit" id="dtpKolektorSearch" title="Cari ${row.kolektorTipe==='Collector'?'Collector':'Salesman'}">${icon('search',13)}</button>` : ''}
             </div>
           </div>
           <div class="form-group">
@@ -37083,10 +37615,10 @@ function tplDtpAlasanPickerRows(list){
     <tr><td>${a.kode}</td><td>${a.nama}</td><td><button class="btn-pick" data-pick-alasan="${a.kode}">Pilih</button></td></tr>`).join('');
 }
 
-function tplDtpKolektorPicker(list){
+function tplDtpKolektorPicker(list, title){
   return `
     <div class="modal-box" style="max-width:480px;">
-      <div class="modal-header"><span>Pilih Kolektor</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-header"><span>${title||'Pilih Kolektor'}</span><span class="close" id="modalClose">&times;</span></div>
       <div class="modal-body">
         <div class="table-wrap" style="max-height:340px;overflow:auto;"><table>
           <thead><tr><th>Nama</th><th>Area</th><th></th></tr></thead>
@@ -49394,6 +49926,156 @@ function openMbkInfo(title, text){
 }
 
 /* =========================================================
+   LOGIC (JS saja) — Master Collector (Customer & Penjualan >
+   Master & Setting > Collector, page:'masterCollector'). Dimuat
+   otomatis (lazy-load) oleh core.js saat menu ini pertama kali
+   diklik — lihat PAGE_MODULES di js/core.js. Markup HTML-nya ada
+   di file sebelah: master-collector.template.js.
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Pola CRUD + pencarian/pagination/sort SAMA dengan Badan Usaha
+   (badan-usaha.js): kode diketik manual saat Tambah (di-uppercase,
+   wajib, unik — bukan auto-generate), default page-size 10. BEDA:
+   ada 2 field tambahan (Area = bebas teks, Aktif = checkbox) —
+   lihat catatan keputusan desain di header master-collector.template.js
+   utk alasannya (dipakai sbg salah satu sumber picker "Salesman/
+   Collector" di Daftar Tagih Piutang, lihat tagihan-piutang.js).
+========================================================= */
+
+let colState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+
+function renderMasterCollectorPage(){
+  content.innerHTML = tplColListPage();
+  colState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+  document.getElementById('btnColAdd').onclick = () => openColModal('add');
+  document.getElementById('colPageSize').onchange = () => { colState.page = 1; renderColTable(); };
+  document.getElementById('colSearch').oninput = (e) => {
+    colState.search = e.target.value.trim().toLowerCase();
+    colState.page = 1;
+    renderColTable();
+  };
+  document.querySelectorAll('[data-col-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.colSort;
+    if(colState.sortField === field){
+      colState.sortDir = colState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      colState.sortField = field;
+      colState.sortDir = 'asc';
+    }
+    colState.page = 1;
+    renderColTable();
+  });
+  renderColTable();
+}
+
+function colPageSize(){
+  const sel = document.getElementById('colPageSize');
+  return sel ? parseInt(sel.value, 10) : 10;
+}
+
+function colFilteredSortedRows(){
+  const q = colState.search;
+  let rows = !q ? DATA.collector.slice() : DATA.collector.filter(r =>
+    (r.kode||'').toLowerCase().includes(q) || (r.nama||'').toLowerCase().includes(q) || (r.area||'').toLowerCase().includes(q));
+  const field = colState.sortField;
+  const dir = colState.sortDir === 'desc' ? -1 : 1;
+  rows.sort((a,b) => (a[field]||'').localeCompare(b[field]||'', 'id') * dir);
+  return rows;
+}
+
+function renderColTable(){
+  const perPage = colPageSize();
+  const filtered = colFilteredSortedRows();
+  const totalPages = Math.max(1, Math.ceil(filtered.length/perPage));
+  if(colState.page > totalPages) colState.page = totalPages;
+  if(colState.page < 1) colState.page = 1;
+
+  document.getElementById('colTbody').innerHTML = tplColRows(filtered, colState.page, perPage);
+  document.getElementById('colTotal').textContent = `Total Record: ${filtered.length}`;
+  document.getElementById('colPager').innerHTML = tplColPager(colState.page, totalPages);
+
+  ['kode','nama'].forEach(f => {
+    const el = document.getElementById(`colSortIcon_${f}`);
+    if(!el) return;
+    if(colState.sortField === f){
+      el.innerHTML = colState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+
+  const tbody = document.getElementById('colTbody');
+  tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = (e) => { e.preventDefault(); openColModal('edit', +b.dataset.edit); });
+  tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => openColDeleteConfirm(+b.dataset.del));
+
+  const pager = document.getElementById('colPager');
+  pager.querySelectorAll('[data-colpage]').forEach(b => b.onclick = () => { colState.page = +b.dataset.colpage; renderColTable(); });
+}
+
+function openColModal(mode, idx){
+  closeModal();
+  const row = mode === 'edit' ? DATA.collector[idx] : { kode:'', nama:'', area:'', aktif:true };
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplColModal(mode, row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalSave').onclick = () => {
+    const kodeEl = document.getElementById('fColKode');
+    const kode = kodeEl.value.trim().toUpperCase();
+    const nama = document.getElementById('fColNama').value.trim();
+    const area = document.getElementById('fColArea').value.trim();
+    const aktif = document.getElementById('fColAktif').checked;
+    const kodeErr = document.getElementById('fColKodeErr');
+    const namaErr = document.getElementById('fColNamaErr');
+    kodeErr.style.display = 'none';
+    namaErr.style.display = 'none';
+    let ok = true;
+    if(mode === 'add'){
+      if(!kode){
+        kodeErr.textContent = 'Kode Collector wajib diisi';
+        kodeErr.style.display = 'block'; ok = false;
+      } else if(DATA.collector.some(r => (r.kode||'').toUpperCase() === kode)){
+        kodeErr.textContent = `Kode Collector "${kode}" sudah terdaftar`;
+        kodeErr.style.display = 'block'; ok = false;
+      }
+    }
+    if(!nama){ namaErr.style.display = 'block'; ok = false; }
+    if(!ok) return;
+    if(mode === 'add'){
+      DATA.collector.push({ kode, nama, area, aktif });
+    } else {
+      DATA.collector[idx].nama = nama;
+      DATA.collector[idx].area = area;
+      DATA.collector[idx].aktif = aktif;
+    }
+    closeModal();
+    renderColTable();
+  };
+}
+
+function openColDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.collector[idx];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplColDeleteConfirm(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.collector.splice(idx, 1);
+    closeModal();
+    renderColTable();
+  };
+}
+
+/* =========================================================
    LOGIC (JS saja) — Master Customer (Customer & Penjualan > Master
    & Setting > Customer, page 'customers'). Dimuat otomatis (lazy-
    load) oleh core.js saat menu ini pertama kali diklik — lihat
@@ -49416,6 +50098,16 @@ function openMbkInfo(title, text){
    lokal ke sini (bukan reference cross-file) karena lazy-load antar
    modul tidak terjamin urutannya — pola yang sama dipakai Kategori
    Barang/Pembelian BPB untuk alasan yang sama (lihat catatan proyek).
+
+   TAMBAHAN 2026-09-18: field baru "Collector" (multi-select, section
+   Address tepat di bawah Salesman) — lihat komentar lengkap di header
+   master-customer.template.js. `row.collector` (array nama Collector)
+   dimutasi LANGSUNG lewat push/splice di openCstCollectorPicker()/
+   wireCstCollectorRemove() (pola sama persis hapFormRow.levels[].
+   userRoles/userNames di hak-approval.js) — TIDAK dibaca ulang dari
+   DOM di cstSave() karena tidak ada input tersembunyi; `row` yang sama
+   dipakai sepanjang siklus form lewat closure sudah cukup jadi sumber
+   kebenaran.
 ========================================================= */
 let cstShowInactive = false;
 
@@ -49461,7 +50153,7 @@ function cstNextKode(){
 
 function cstEmptyRow(){
   return {
-    kode:'', nama:'', kota:'', salesman:'', limit:0, status:'Aktif', alamat:'', piutang:0,
+    kode:'', nama:'', kota:'', salesman:'', collector:[], limit:0, status:'Aktif', alamat:'', piutang:0,
     noRef:'', tglRegistrasi:'', mataUang:'IDR', kodeFarma:'', namaFarma:'', kodeAlkes:'', namaAlkes:'',
     isInduk:false, customerIndukKode:'', customerIndukNama:'', customerIndukAlamat:'',
     namaPemilik:'', kontakPerson:'', gender:'', email:'', tglLahir:'', fax:'', agama:'Islam', jabatan:'', telepon:'',
@@ -49480,7 +50172,7 @@ function cstEmptyRow(){
 
 function openCstForm(mode, idx){
   const row = mode === 'edit'
-    ? { ...DATA.customers[idx], legalitasOutlet:(DATA.customers[idx].legalitasOutlet||[]).map(x=>({...x})), legalitasPemilik:(DATA.customers[idx].legalitasPemilik||[]).map(x=>({...x})) }
+    ? { ...DATA.customers[idx], legalitasOutlet:(DATA.customers[idx].legalitasOutlet||[]).map(x=>({...x})), legalitasPemilik:(DATA.customers[idx].legalitasPemilik||[]).map(x=>({...x})), collector:(DATA.customers[idx].collector||[]).slice() }
     : cstEmptyRow();
 
   content.innerHTML = tplCustomerForm(mode, row);
@@ -49497,6 +50189,13 @@ function openCstForm(mode, idx){
   };
 
   document.getElementById('btnCstWilayahSearch').onclick = () => openCstWilayahPicker(row);
+
+  if(!row.collector) row.collector = [];
+  document.getElementById('cstCollectorBox').onclick = (e) => {
+    if(e.target.closest('.rm')) return;
+    openCstCollectorPicker(row);
+  };
+  wireCstCollectorRemove(row);
 
   document.getElementById('btnCstTopAdd').onclick = () => openCstSyaratAddModal();
 
@@ -49684,6 +50383,52 @@ function openCstWilayahPicker(row){
     document.getElementById('fCstProvinsi').value = w.provinsi;
     closeModal();
   });
+}
+
+/* Field "Collector" (multi-select) — pola tag-box/tag-chip persis Hak
+   Approval (lihat komentar header di atas & di master-customer.template.js).
+   renderCstCollectorBox() cuma menulis ulang isi #cstCollectorBox (bukan
+   render ulang seluruh form) supaya field lain yang sedang diisi user
+   tidak ikut hilang, lalu memasang ulang handler tombol hapus (.rm). */
+function renderCstCollectorBox(row){
+  document.getElementById('cstCollectorBox').innerHTML = tplCstCollectorChips(row.collector||[]);
+  wireCstCollectorRemove(row);
+}
+
+function wireCstCollectorRemove(row){
+  document.querySelectorAll('#cstCollectorBox [data-cst-collector-rm]').forEach(rm => rm.onclick = (e) => {
+    e.stopPropagation();
+    row.collector.splice(+rm.dataset.cstCollectorRm, 1);
+    renderCstCollectorBox(row);
+  });
+}
+
+function openCstCollectorPicker(row){
+  closeModal();
+  if(!row.collector) row.collector = [];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplCstCollectorPicker(row.collector);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+
+  const wireRows = () => {
+    overlay.querySelectorAll('[data-cst-collector-pick]').forEach(btn => btn.onclick = () => {
+      const name = btn.dataset.cstCollectorPick;
+      if(!row.collector.includes(name)) row.collector.push(name);
+      closeModal();
+      renderCstCollectorBox(row);
+    });
+  };
+  wireRows();
+  document.getElementById('cstCollectorPickerSearch').oninput = (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const source = DATA.collector.filter(c => c.aktif !== false && c.nama.toLowerCase().includes(q));
+    document.getElementById('cstCollectorPickerBody').innerHTML = tplCstCollectorPickerRows(source, row.collector);
+    wireRows();
+  };
 }
 
 function openCstSyaratAddModal(){
@@ -50046,6 +50791,155 @@ function openRyDeleteConfirm(idx){
     DATA.rayon.splice(idx, 1);
     closeModal();
     renderRyTable();
+  };
+}
+
+/* =========================================================
+   LOGIC (JS saja) — Master Status Opname (Customer & Penjualan >
+   Master & Setting > Status Opname, page:'masterStatusOpname').
+   Dimuat otomatis (lazy-load) oleh core.js saat menu ini pertama
+   kali diklik — lihat PAGE_MODULES di js/core.js. Markup HTML-nya
+   ada di file sebelah: master-status-opname.template.js.
+   NB: closeModal() dipakai bersama, didefinisikan di core.js.
+
+   Pola CRUD + pencarian/pagination/sort SAMA dengan Master Collector
+   (master-collector.js)/Badan Usaha: kode diketik manual saat Tambah
+   (di-uppercase, wajib, unik — bukan auto-generate), default
+   page-size 10, checklist Aktif. Lihat catatan keputusan desain di
+   header master-status-opname.template.js utk alasan lengkap
+   dibangunnya master ini (menggantikan OPD_STATUS_LIST hardcode di
+   opname-dokumen.template.js/.js — lihat opdStatusList()/
+   opdStatusOptions() di sana).
+========================================================= */
+
+let sopState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+
+function renderMasterStatusOpnamePage(){
+  content.innerHTML = tplSopListPage();
+  sopState = { page:1, search:'', sortField:'kode', sortDir:'asc' };
+  document.getElementById('btnSopAdd').onclick = () => openSopModal('add');
+  document.getElementById('sopPageSize').onchange = () => { sopState.page = 1; renderSopTable(); };
+  document.getElementById('sopSearch').oninput = (e) => {
+    sopState.search = e.target.value.trim().toLowerCase();
+    sopState.page = 1;
+    renderSopTable();
+  };
+  document.querySelectorAll('[data-sop-sort]').forEach(el => el.onclick = () => {
+    const field = el.dataset.sopSort;
+    if(sopState.sortField === field){
+      sopState.sortDir = sopState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      sopState.sortField = field;
+      sopState.sortDir = 'asc';
+    }
+    sopState.page = 1;
+    renderSopTable();
+  });
+  renderSopTable();
+}
+
+function sopPageSize(){
+  const sel = document.getElementById('sopPageSize');
+  return sel ? parseInt(sel.value, 10) : 10;
+}
+
+function sopFilteredSortedRows(){
+  const q = sopState.search;
+  let rows = !q ? DATA.statusOpname.slice() : DATA.statusOpname.filter(r =>
+    (r.kode||'').toLowerCase().includes(q) || (r.nama||'').toLowerCase().includes(q));
+  const field = sopState.sortField;
+  const dir = sopState.sortDir === 'desc' ? -1 : 1;
+  rows.sort((a,b) => (a[field]||'').localeCompare(b[field]||'', 'id') * dir);
+  return rows;
+}
+
+function renderSopTable(){
+  const perPage = sopPageSize();
+  const filtered = sopFilteredSortedRows();
+  const totalPages = Math.max(1, Math.ceil(filtered.length/perPage));
+  if(sopState.page > totalPages) sopState.page = totalPages;
+  if(sopState.page < 1) sopState.page = 1;
+
+  document.getElementById('sopTbody').innerHTML = tplSopRows(filtered, sopState.page, perPage);
+  document.getElementById('sopTotal').textContent = `Total Record: ${filtered.length}`;
+  document.getElementById('sopPager').innerHTML = tplSopPager(sopState.page, totalPages);
+
+  ['kode','nama'].forEach(f => {
+    const el = document.getElementById(`sopSortIcon_${f}`);
+    if(!el) return;
+    if(sopState.sortField === f){
+      el.innerHTML = sopState.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      el.style.color = 'var(--blue)';
+    } else {
+      el.innerHTML = '&#8693;';
+      el.style.color = 'var(--text-light)';
+    }
+  });
+
+  const tbody = document.getElementById('sopTbody');
+  tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = (e) => { e.preventDefault(); openSopModal('edit', +b.dataset.edit); });
+  tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => openSopDeleteConfirm(+b.dataset.del));
+
+  const pager = document.getElementById('sopPager');
+  pager.querySelectorAll('[data-soppage]').forEach(b => b.onclick = () => { sopState.page = +b.dataset.soppage; renderSopTable(); });
+}
+
+function openSopModal(mode, idx){
+  closeModal();
+  const row = mode === 'edit' ? DATA.statusOpname[idx] : { kode:'', nama:'', aktif:true };
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplSopModal(mode, row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalSave').onclick = () => {
+    const kodeEl = document.getElementById('fSopKode');
+    const kode = kodeEl.value.trim().toUpperCase();
+    const nama = document.getElementById('fSopNama').value.trim();
+    const aktif = document.getElementById('fSopAktif').checked;
+    const kodeErr = document.getElementById('fSopKodeErr');
+    const namaErr = document.getElementById('fSopNamaErr');
+    kodeErr.style.display = 'none';
+    namaErr.style.display = 'none';
+    let ok = true;
+    if(mode === 'add'){
+      if(!kode){
+        kodeErr.textContent = 'Kode Status wajib diisi';
+        kodeErr.style.display = 'block'; ok = false;
+      } else if(DATA.statusOpname.some(r => (r.kode||'').toUpperCase() === kode)){
+        kodeErr.textContent = `Kode Status "${kode}" sudah terdaftar`;
+        kodeErr.style.display = 'block'; ok = false;
+      }
+    }
+    if(!nama){ namaErr.style.display = 'block'; ok = false; }
+    if(!ok) return;
+    if(mode === 'add'){
+      DATA.statusOpname.push({ kode, nama, aktif });
+    } else {
+      DATA.statusOpname[idx].nama = nama;
+      DATA.statusOpname[idx].aktif = aktif;
+    }
+    closeModal();
+    renderSopTable();
+  };
+}
+
+function openSopDeleteConfirm(idx){
+  closeModal();
+  const row = DATA.statusOpname[idx];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = tplSopDeleteConfirm(row);
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalCancel').onclick = closeModal;
+  overlay.onclick = (e) => { if(e.target === overlay) closeModal(); };
+  document.getElementById('modalDelete').onclick = () => {
+    DATA.statusOpname.splice(idx, 1);
+    closeModal();
+    renderSopTable();
   };
 }
 
@@ -51372,12 +52266,19 @@ function mcdInfo(title, text){
    Alur sesuai spec 3.A: (1) pilih menu -> (2) atur cakupan dokumen +
    metode (Menyeluruh / Random By Salesman-Collector-Inkaso) ->
    Generate Daftar Dokumen menarik dokumen dari data live ->
-   (3) petugas menginput Status Opname per dokumen (default
-   "Ditemukan / Sesuai", diubah utk yang Blank/Selisih) -> (4) Review
-   & cetak 3 laporan (Rincian per Status / Summary By Salesman By
-   Status / Rekapitulasi). Modul B (Konfirmasi Outlet, spec 3.B):
-   tombol di header list -> pilih outlet -> Direct Print form berisi
-   dokumen Outstanding outlet itu. */
+   (3) petugas menginput Status Opname per dokumen (default = status
+   AKTIF pertama di master Status Opname, diubah utk dokumen
+   bermasalah) -> (4) Review & cetak 3 laporan (Rincian per Status /
+   Summary By Salesman By Status / Rekapitulasi). Modul B (Konfirmasi
+   Outlet, spec 3.B): tombol di header list -> pilih outlet -> Direct
+   Print form berisi dokumen Outstanding outlet itu.
+
+   Status Opname — 2026-09-18: sumber pilihan status per dokumen
+   SEBELUMNYA array string hardcode `OPD_STATUS_LIST` (opname-dokumen.
+   template.js), sekarang dibaca LIVE dari master `DATA.statusOpname`
+   lewat opdStatusList()/opdStatusOptions() (didefinisikan di file
+   template sebelah) — lihat header master-status-opname.template.js
+   utk detail lengkap & alasannya. */
 
 var opdSearchQ = '';
 
@@ -51454,8 +52355,10 @@ function opdLolosFilter(customerKode, cabangDok, row){
 }
 
 /* Generate Daftar Dokumen (spec 3.A langkah 2-3): tarik dokumen dari
-   data live sesuai cakupan + filter; status awal semua baris
-   "Ditemukan / Sesuai" (petugas tinggal mengubah yang bermasalah). */
+   data live sesuai cakupan + filter; status awal semua baris = status
+   AKTIF PERTAMA di master Status Opname (DATA.statusOpname, urutan
+   sesuai master — sample: "Ditemukan / Sesuai"), petugas tinggal
+   mengubah yang bermasalah. */
 function opdGenerateItems(row){
   const out = [];
   if(row.cakupan.faktur){
@@ -51463,7 +52366,7 @@ function opdGenerateItems(row){
       if(!opdLolosFilter(inv.customerKode, inv.cabang, row)) return;
       out.push({jenis:'Faktur', no:inv.no, tgl:inv.tgl, customerNama:inv.customerNama,
         salesman:opdSalesmanOf(inv.customerKode), nilai:+inv.jumlah||0,
-        statusOpname:OPD_STATUS_LIST[0], ket:''});
+        statusOpname:opdStatusList()[0] || '', ket:''});
     });
   }
   if(row.cakupan.retur){
@@ -51471,7 +52374,7 @@ function opdGenerateItems(row){
       if(!opdLolosFilter(rj.customerKode, rj.cabang, row)) return;
       out.push({jenis:'Retur', no:rj.no, tgl:rj.tgl, customerNama:rj.customerNama,
         salesman:opdSalesmanOf(rj.customerKode), nilai:+rj.nilai||0,
-        statusOpname:OPD_STATUS_LIST[0], ket:''});
+        statusOpname:opdStatusList()[0] || '', ket:''});
     });
   }
   if(row.cakupan.suratJalan){
@@ -51480,7 +52383,7 @@ function opdGenerateItems(row){
       if(!opdLolosFilter(inv.customerKode, inv.cabang, row)) return;
       out.push({jenis:'Surat Jalan', no:inv.noSJ, tgl:inv.tgl, customerNama:inv.customerNama,
         salesman:opdSalesmanOf(inv.customerKode), nilai:+inv.jumlah||0,
-        statusOpname:OPD_STATUS_LIST[0], ket:''});
+        statusOpname:opdStatusList()[0] || '', ket:''});
     });
   }
   return out;
@@ -65671,8 +66574,12 @@ function openT3fCustomerPicker(onPick){
      perubahan baru tersimpan saat tombol Simpan modal), Cetak
      (dropdown: Daftar Tagih Full Page / Kwitansi — preview
      replika PDF), Lihat (form view), Hapus.
-   - Form: No. 26/DC/HO/09/{urut 5 digit} + refresh; Kolektor
-     picker (OFFICE + DATA.salesman); "Tambah Faktur Baru" =
+   - Form: No. 26/DC/HO/09/{urut 5 digit} + refresh; field
+     "Salesman / Collector" = radio pilih tipe + picker Kolektor
+     (tipe "Salesman" -> DATA.salesman; tipe "Collector" -> OFFICE
+     + DATA.collector yang aktif — lihat UPDATE 2026-09-18 di
+     header tagihan-piutang.template.js & openDtpKolektorPicker()/
+     dtpInferKolektorTipe() di bawah); "Tambah Faktur Baru" =
      picker DATA.fakturPenjualanSJ (faktur yang sudah ada di
      daftar disembunyikan) — baris menyimpan snapshot tglFaktur/
      customer/badanUsaha (dari master Customer)/noFaktur/jumlah
@@ -65682,7 +66589,8 @@ function openT3fCustomerPicker(onPick){
      via picker; Jumlah = Σ baris, recalc live. Customer header
      record = customer faktur pertama.
    Data: DATA.tagihanPiutang (1 sample September 2026 —
-   kembaran layar SDL: 2 faktur CUST-006, kolektor OFFICE). */
+   kembaran layar SDL: 2 faktur CUST-006, kolektor OFFICE, tipe
+   'Collector'). */
 
 var dtpState = { search:'', bulan:'09' };
 
@@ -65765,13 +66673,25 @@ function dtpGenerateNo(){
 /* =====================================================================
    FORM add / edit / view
 ===================================================================== */
+/* Infer tipe ('Salesman'|'Collector') dari nilai `kolektor` baris LAMA
+   yang dibuat sebelum field `kolektorTipe` ada (UPDATE 2026-09-18) —
+   supaya baris lama tetap tampil benar tanpa perlu migrasi data. */
+function dtpInferKolektorTipe(nama){
+  if(!nama) return 'Salesman';
+  if(nama === 'OFFICE') return 'Collector';
+  if((DATA.collector||[]).some(c => c.nama === nama)) return 'Collector';
+  if((DATA.salesman||[]).some(s => s.nama === nama)) return 'Salesman';
+  return 'Salesman';
+}
+
 function openDtpForm(mode, idx){
   const src = idx != null ? DATA.tagihanPiutang[idx] : null;
   const row = src ? JSON.parse(JSON.stringify(src)) : {
     no: dtpGenerateNo(), tgl: '01/09/2026', jam: '08.15.00',
-    customerNama: '', customerAlamat: '', kolektor: 'OFFICE', keterangan: '',
+    customerNama: '', customerAlamat: '', kolektor: 'OFFICE', kolektorTipe: 'Collector', keterangan: '',
     closedManually: false, items: [],
   };
+  if(!row.kolektorTipe) row.kolektorTipe = dtpInferKolektorTipe(row.kolektor);
   const isView = mode === 'view';
   content.innerHTML = tplDtpForm(mode, row);
 
@@ -65805,7 +66725,7 @@ function openDtpForm(mode, idx){
   const refreshNoBtn = document.getElementById('dtpRefreshNo');
   if(refreshNoBtn) refreshNoBtn.onclick = () => { row.no = dtpGenerateNo(); document.getElementById('fDtpNo').value = row.no; };
 
-  document.getElementById('dtpKolektorSearch').onclick = () => openDtpKolektorPicker((nama) => {
+  document.getElementById('dtpKolektorSearch').onclick = () => openDtpKolektorPicker(row.kolektorTipe, (nama) => {
     row.kolektor = nama;
     document.getElementById('fDtpKolektor').value = nama;
     row.items.forEach((it,i) => {
@@ -65813,6 +66733,21 @@ function openDtpForm(mode, idx){
       const cell = document.querySelector(`[data-dtp-item-kolektor="${i}"]`);
       if(cell) cell.textContent = nama;
     });
+  });
+
+  /* Ganti tipe Salesman<->Collector: reset pilihan kolektor (nilai lama
+     mungkin tidak valid utk tipe baru) TANPA me-render ulang seluruh
+     form (supaya field lain yang sudah diisi user — Tgl./Keterangan/
+     baris faktur yang sudah ditambah — tidak ikut hilang). */
+  document.querySelectorAll('input[name="fDtpKolektorTipe"]').forEach(r => r.onchange = (e) => {
+    row.kolektorTipe = e.target.value;
+    row.kolektor = '';
+    const isCollector = row.kolektorTipe === 'Collector';
+    const inp = document.getElementById('fDtpKolektor');
+    inp.value = '';
+    inp.placeholder = `Pilih ${isCollector ? 'Collector' : 'Salesman'}`;
+    const btn = document.getElementById('dtpKolektorSearch');
+    if(btn) btn.title = `Cari ${isCollector ? 'Collector' : 'Salesman'}`;
   });
 
   document.getElementById('dtpAddFaktur').onclick = (e) => {
@@ -65948,9 +66883,13 @@ function openDtpAlasanPicker(onPick){
   };
 }
 
-function openDtpKolektorPicker(onPick){
-  const list = [{nama:'OFFICE', area:'Head Office'}].concat(DATA.salesman || []);
-  const overlay = dtpOverlay(tplDtpKolektorPicker(list));
+function openDtpKolektorPicker(tipe, onPick){
+  const isCollector = tipe === 'Collector';
+  const list = isCollector
+    ? [{nama:'OFFICE', area:'Head Office'}].concat((DATA.collector||[]).filter(c => c.aktif !== false).map(c => ({nama:c.nama, area:c.area||''})))
+    : (DATA.salesman || []);
+  const title = isCollector ? 'Pilih Collector' : 'Pilih Salesman';
+  const overlay = dtpOverlay(tplDtpKolektorPicker(list, title));
   overlay.querySelectorAll('[data-pick-kolektor]').forEach(b => b.onclick = () => {
     onPick(b.dataset.pickKolektor);
     closeModal();
@@ -69087,6 +70026,8 @@ const PAGE_MODULES={
   rumusKomisiSalesman:{srcs:['js/pages/rumus-komisi-salesman.template.js','js/pages/rumus-komisi-salesman.js'], fn:'renderRumusKomisiSalesmanPage'},
   alasanRetur:{srcs:['js/pages/alasan-retur.template.js','js/pages/alasan-retur.js'], fn:'renderAlasanReturPage'},
   hakApproval:{srcs:['js/pages/hak-approval.template.js','js/pages/hak-approval.js'], fn:'renderHakApprovalPage'},
+  masterCollector:{srcs:['js/pages/master-collector.template.js','js/pages/master-collector.js'], fn:'renderMasterCollectorPage'},
+  masterStatusOpname:{srcs:['js/pages/master-status-opname.template.js','js/pages/master-status-opname.js'], fn:'renderMasterStatusOpnamePage'},
 };
 const loadedModules=new Set(Object.keys(PAGE_MODULES));
 

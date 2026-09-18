@@ -17,8 +17,12 @@
      perubahan baru tersimpan saat tombol Simpan modal), Cetak
      (dropdown: Daftar Tagih Full Page / Kwitansi — preview
      replika PDF), Lihat (form view), Hapus.
-   - Form: No. 26/DC/HO/09/{urut 5 digit} + refresh; Kolektor
-     picker (OFFICE + DATA.salesman); "Tambah Faktur Baru" =
+   - Form: No. 26/DC/HO/09/{urut 5 digit} + refresh; field
+     "Salesman / Collector" = radio pilih tipe + picker Kolektor
+     (tipe "Salesman" -> DATA.salesman; tipe "Collector" -> OFFICE
+     + DATA.collector yang aktif — lihat UPDATE 2026-09-18 di
+     header tagihan-piutang.template.js & openDtpKolektorPicker()/
+     dtpInferKolektorTipe() di bawah); "Tambah Faktur Baru" =
      picker DATA.fakturPenjualanSJ (faktur yang sudah ada di
      daftar disembunyikan) — baris menyimpan snapshot tglFaktur/
      customer/badanUsaha (dari master Customer)/noFaktur/jumlah
@@ -28,7 +32,8 @@
      via picker; Jumlah = Σ baris, recalc live. Customer header
      record = customer faktur pertama.
    Data: DATA.tagihanPiutang (1 sample September 2026 —
-   kembaran layar SDL: 2 faktur CUST-006, kolektor OFFICE). */
+   kembaran layar SDL: 2 faktur CUST-006, kolektor OFFICE, tipe
+   'Collector'). */
 
 var dtpState = { search:'', bulan:'09' };
 
@@ -111,13 +116,25 @@ function dtpGenerateNo(){
 /* =====================================================================
    FORM add / edit / view
 ===================================================================== */
+/* Infer tipe ('Salesman'|'Collector') dari nilai `kolektor` baris LAMA
+   yang dibuat sebelum field `kolektorTipe` ada (UPDATE 2026-09-18) —
+   supaya baris lama tetap tampil benar tanpa perlu migrasi data. */
+function dtpInferKolektorTipe(nama){
+  if(!nama) return 'Salesman';
+  if(nama === 'OFFICE') return 'Collector';
+  if((DATA.collector||[]).some(c => c.nama === nama)) return 'Collector';
+  if((DATA.salesman||[]).some(s => s.nama === nama)) return 'Salesman';
+  return 'Salesman';
+}
+
 function openDtpForm(mode, idx){
   const src = idx != null ? DATA.tagihanPiutang[idx] : null;
   const row = src ? JSON.parse(JSON.stringify(src)) : {
     no: dtpGenerateNo(), tgl: '01/09/2026', jam: '08.15.00',
-    customerNama: '', customerAlamat: '', kolektor: 'OFFICE', keterangan: '',
+    customerNama: '', customerAlamat: '', kolektor: 'OFFICE', kolektorTipe: 'Collector', keterangan: '',
     closedManually: false, items: [],
   };
+  if(!row.kolektorTipe) row.kolektorTipe = dtpInferKolektorTipe(row.kolektor);
   const isView = mode === 'view';
   content.innerHTML = tplDtpForm(mode, row);
 
@@ -151,7 +168,7 @@ function openDtpForm(mode, idx){
   const refreshNoBtn = document.getElementById('dtpRefreshNo');
   if(refreshNoBtn) refreshNoBtn.onclick = () => { row.no = dtpGenerateNo(); document.getElementById('fDtpNo').value = row.no; };
 
-  document.getElementById('dtpKolektorSearch').onclick = () => openDtpKolektorPicker((nama) => {
+  document.getElementById('dtpKolektorSearch').onclick = () => openDtpKolektorPicker(row.kolektorTipe, (nama) => {
     row.kolektor = nama;
     document.getElementById('fDtpKolektor').value = nama;
     row.items.forEach((it,i) => {
@@ -159,6 +176,21 @@ function openDtpForm(mode, idx){
       const cell = document.querySelector(`[data-dtp-item-kolektor="${i}"]`);
       if(cell) cell.textContent = nama;
     });
+  });
+
+  /* Ganti tipe Salesman<->Collector: reset pilihan kolektor (nilai lama
+     mungkin tidak valid utk tipe baru) TANPA me-render ulang seluruh
+     form (supaya field lain yang sudah diisi user — Tgl./Keterangan/
+     baris faktur yang sudah ditambah — tidak ikut hilang). */
+  document.querySelectorAll('input[name="fDtpKolektorTipe"]').forEach(r => r.onchange = (e) => {
+    row.kolektorTipe = e.target.value;
+    row.kolektor = '';
+    const isCollector = row.kolektorTipe === 'Collector';
+    const inp = document.getElementById('fDtpKolektor');
+    inp.value = '';
+    inp.placeholder = `Pilih ${isCollector ? 'Collector' : 'Salesman'}`;
+    const btn = document.getElementById('dtpKolektorSearch');
+    if(btn) btn.title = `Cari ${isCollector ? 'Collector' : 'Salesman'}`;
   });
 
   document.getElementById('dtpAddFaktur').onclick = (e) => {
@@ -294,9 +326,13 @@ function openDtpAlasanPicker(onPick){
   };
 }
 
-function openDtpKolektorPicker(onPick){
-  const list = [{nama:'OFFICE', area:'Head Office'}].concat(DATA.salesman || []);
-  const overlay = dtpOverlay(tplDtpKolektorPicker(list));
+function openDtpKolektorPicker(tipe, onPick){
+  const isCollector = tipe === 'Collector';
+  const list = isCollector
+    ? [{nama:'OFFICE', area:'Head Office'}].concat((DATA.collector||[]).filter(c => c.aktif !== false).map(c => ({nama:c.nama, area:c.area||''})))
+    : (DATA.salesman || []);
+  const title = isCollector ? 'Pilih Collector' : 'Pilih Salesman';
+  const overlay = dtpOverlay(tplDtpKolektorPicker(list, title));
   overlay.querySelectorAll('[data-pick-kolektor]').forEach(b => b.onclick = () => {
     onPick(b.dataset.pickKolektor);
     closeModal();
