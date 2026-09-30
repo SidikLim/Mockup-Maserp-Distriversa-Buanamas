@@ -1010,6 +1010,89 @@ function openClaimSupplierPicker(onPick, onlySetting){
   };
   bind();
 }
+/* ---------- LAMPIRAN (upload file) — dipakai Claim Customer & Pengajuan Claim ----------
+   `list` = array {nama, ukuran (byte), tgl, user, kategori, url?}. `url`
+   = object URL file yang diunggah di sesi ini (bisa dibuka); lampiran
+   data contoh tidak punya `url` (file fisiknya tidak ada di mockup).
+   `opts` = {kategoriList:[...] (>1 → muncul dropdown kategori sebelum
+   upload), deletable(f) (default: semua boleh dihapus), hint,
+   onChange() (dipanggil setelah upload/hapus)}.
+   Semua elemen memakai atribut data-lamp-* (bukan id) supaya aman bila
+   ada lebih dari satu blok lampiran di halaman. */
+const CLAIM_LAMPIRAN_EXT=['pdf','jpg','jpeg','png','xls','xlsx','doc','docx','zip'];
+const CLAIM_LAMPIRAN_MAX=10*1024*1024;
+function claimFileSize(b){
+  if(b>=1024*1024) return (b/1024/1024).toLocaleString('id-ID',{maximumFractionDigits:1})+' MB';
+  return Math.max(1,Math.round(b/1024)).toLocaleString('id-ID')+' KB';
+}
+/* Validasi ekstensi & ukuran; kembalikan pesan error atau '' bila lolos. */
+function claimCekFile(f){
+  const ext=(f.name.split('.').pop()||'').toLowerCase();
+  if(!CLAIM_LAMPIRAN_EXT.includes(ext)) return `${f.name}: jenis file .${ext} tidak diizinkan`;
+  if(f.size>CLAIM_LAMPIRAN_MAX) return `${f.name}: ukuran ${claimFileSize(f.size)} melebihi 10 MB`;
+  return '';
+}
+function claimFileToLampiran(f, kategori){
+  return {nama:f.name, ukuran:f.size, tgl:claimToday(), user:'sidik', kategori, url:URL.createObjectURL(f)};
+}
+function tplClaimLampiran(list, editable, opts){
+  opts=opts||{}; list=list||[];
+  const kat=opts.kategoriList||['Lampiran'];
+  const canDel=opts.deletable||(()=>true);
+  return `
+    ${editable ? `<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
+      ${kat.length>1 ? `<select data-lamp-kategori title="Kategori lampiran" style="width:auto;min-width:200px;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:12.8px;background:#fff;color:var(--text);">${kat.map(k=>`<option>${k}</option>`).join('')}</select>` : ''}
+      <button type="button" class="btn-secondary" data-lamp-upload>${icon('plus',13)} Upload File</button>
+      <input type="file" data-lamp-input multiple accept="${CLAIM_LAMPIRAN_EXT.map(e=>'.'+e).join(',')}" style="display:none;">
+      <span style="font-size:11.8px;color:var(--text-light);">PDF, JPG, PNG, Excel, Word, ZIP · maks. 10 MB per file · bisa pilih beberapa file sekaligus</span>
+    </div>
+    <div class="form-error" data-lamp-err></div>` : ''}
+    ${list.length ? `<div class="table-wrap"><table>
+      <thead><tr><th style="width:40px;">No.</th><th>Nama File</th><th style="width:170px;">Kategori</th><th class="text-right" style="width:90px;">Ukuran</th><th style="width:150px;">Diunggah</th><th style="width:55px;">Lihat</th>${editable?'<th style="width:55px;">Hapus</th>':''}</tr></thead>
+      <tbody>${list.map((f,i)=>`<tr>
+        <td>${i+1}</td>
+        <td style="white-space:normal;">${icon('file',13)} ${f.nama}</td>
+        <td>${f.kategori}</td>
+        <td class="text-right">${claimFileSize(f.ukuran)}</td>
+        <td style="font-size:12px;">${f.tgl} · ${f.user}</td>
+        <td><button type="button" class="icon-btn view" data-lamp-view="${i}" title="Lihat">${icon('eye',15)}</button></td>
+        ${editable?`<td>${canDel(f)?`<button type="button" class="icon-btn del" data-lamp-del="${i}" title="Hapus">${icon('trash',15)}</button>`:''}</td>`:''}
+      </tr>`).join('')}</tbody>
+    </table></div>`
+    : `<div class="upload-box">Belum ada file diunggah.${editable&&opts.hint?' '+opts.hint:''}</div>`}`;
+}
+/* Bind upload/lihat/hapus di dalam elemen `wrap`; `row.lampiran` diubah langsung. */
+function bindClaimLampiran(wrap, row, editable, opts){
+  row.lampiran=row.lampiran||[];
+  const rerender=()=>{
+    wrap.innerHTML=tplClaimLampiran(row.lampiran, editable, opts); bindClaimLampiran(wrap, row, editable, opts);
+    if(opts&&opts.onChange) opts.onChange();
+  };
+  const input=wrap.querySelector('[data-lamp-input]');
+  const btn=wrap.querySelector('[data-lamp-upload]');
+  if(btn) btn.onclick=()=>input.click();
+  if(input) input.onchange=()=>{
+    const katEl=wrap.querySelector('[data-lamp-kategori]');
+    const kategori=katEl ? katEl.value : ((opts&&opts.kategoriList)||['Lampiran'])[0];
+    const errs=[];
+    [...input.files].forEach(f=>{ const e=claimCekFile(f); if(e) errs.push(e); else row.lampiran.push(claimFileToLampiran(f, kategori)); });
+    rerender();
+    const katNew=wrap.querySelector('[data-lamp-kategori]'); if(katNew) katNew.value=kategori;
+    if(errs.length){ const el=wrap.querySelector('[data-lamp-err]'); el.innerHTML=errs.join('<br>'); el.style.display='block'; }
+  };
+  wrap.querySelectorAll('[data-lamp-del]').forEach(b=>b.onclick=()=>{
+    const f=row.lampiran[+b.dataset.lampDel];
+    if(f.url) URL.revokeObjectURL(f.url);
+    row.lampiran.splice(+b.dataset.lampDel,1);
+    rerender();
+  });
+  wrap.querySelectorAll('[data-lamp-view]').forEach(b=>b.onclick=()=>{
+    const f=row.lampiran[+b.dataset.lampView];
+    if(f.url) window.open(f.url,'_blank');
+    else openClaimInfo('Lampiran contoh', `<b>${f.nama}</b> adalah lampiran data contoh mockup, file fisiknya tidak tersedia. File yang Anda unggah sendiri bisa langsung dibuka.`);
+  });
+}
+
 /* Buka dokumen hasil claim di modulnya. Penjualan Langsung punya filter
    periode (default Juli 2026) → dibuka dengan "Semua Periode" supaya
    tagihan claim yang baru dibuat langsung terlihat. */

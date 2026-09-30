@@ -15,7 +15,18 @@
    tombol aksi sesuai status (approval internal, Buat Nota Kredit,
    Kirim Barang Bonus, Lanjut ke Penyelesaian).
    NB: closeModal(), claimStatusPill(), claimNum2(), dst ada di core.js.
+
+   Lampiran (2026-09-30, permintaan Sidik: "menu claim customernya juga
+   perlu ada file attachment"): tab Lampiran dengan kategori Surat Claim
+   Customer / Bukti Promosi / Rekap & Lainnya. Bisa ditambah/dihapus
+   selama claim belum dijawab principal (Draft, Approval, Diajukan).
+   Semua lampiran claim ikut terkirim sebagai lampiran email Pengajuan
+   Claim Principal. Markup & upload: tplClaimLampiran()/
+   bindClaimLampiran() di core.js.
 ========================================================= */
+const CLM_LAMP_OPTS = { kategoriList:['Surat Claim Customer','Bukti Promosi','Rekap / Lainnya'],
+  hint:'Lampirkan surat claim customer, foto/bukti promosi, atau rekap pendukung.' };
+function clmLampiranEditable(mode, row){ return mode !== 'view' || ['Approval','Diajukan'].includes(row.status); }
 
 function tplClmListPage(status){
   return `
@@ -183,12 +194,14 @@ function tplClmForm(mode, row){
 
         <div class="inv-tabs">
           <button type="button" class="inv-tab-btn active" data-clm-tab="rincian">Rincian</button>
+          <button type="button" class="inv-tab-btn" data-clm-tab="lampiran">Lampiran${(row.lampiran||[]).length ? ` (${row.lampiran.length})` : ''}</button>
           ${mode!=='add' ? `
           <button type="button" class="inv-tab-btn" data-clm-tab="riwayat">Riwayat Status</button>
           <button type="button" class="inv-tab-btn" data-clm-tab="dokumen">Dokumen Terkait</button>
           <button type="button" class="inv-tab-btn" data-clm-tab="jurnal">Rincian Jurnal</button>` : ''}
         </div>
         <div data-clm-panel="rincian">${tplClmRincianTab(row, edit)}</div>
+        <div data-clm-panel="lampiran" style="display:none;"><div id="clmLampiranWrap" style="margin-top:12px;">${tplClaimLampiran(row.lampiran, clmLampiranEditable(mode, row), CLM_LAMP_OPTS)}</div></div>
         ${mode!=='add' ? `
         <div data-clm-panel="riwayat" style="display:none;">${tplClmRiwayat(row)}</div>
         <div data-clm-panel="dokumen" style="display:none;">${tplClmDokumen(row)}</div>

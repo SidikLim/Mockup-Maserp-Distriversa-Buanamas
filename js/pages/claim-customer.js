@@ -61,7 +61,7 @@ function clmEmptyRow(){
   return { no:'', tgl:claimToday(), cabang:'Head Office', customerKode:'', customerNama:'', principalKode:'', principalNama:'',
     jenis:'Biaya Promosi', cara:'Off Faktur', promotionKode:'', periodeAwal:'', periodeAkhir:'', noSurat:'', tglSurat:'', keterangan:'',
     items:[], nilaiClaim:0, nilaiAcc:0, nilaiDipulihkan:0, status:'Draft', approvalInternal:'', noPengajuan:'', alasanTolak:'',
-    notaKredit:null, bonusDikirim:null, pemulihan:[], riwayat:[] };
+    notaKredit:null, bonusDikirim:null, pemulihan:[], riwayat:[], lampiran:[] };
 }
 
 function openClmForm(mode, idx){
@@ -82,6 +82,11 @@ function clmRenderForm(mode, row){
     document.querySelectorAll('[data-clm-panel]').forEach(p => p.style.display = p.dataset.clmPanel === btn.dataset.clmTab ? '' : 'none');
   });
   document.getElementById('clmTutup').onclick = (e) => { e.preventDefault(); renderClaimCustomerPage(); };
+  /* Tab Lampiran: label jumlah file ikut diperbarui setelah upload/hapus. */
+  bindClaimLampiran(document.getElementById('clmLampiranWrap'), row, clmLampiranEditable(mode, row), { ...CLM_LAMP_OPTS, onChange: () => {
+    const n = (row.lampiran||[]).length;
+    document.querySelector('[data-clm-tab="lampiran"]').textContent = 'Lampiran' + (n ? ` (${n})` : '');
+  }});
   document.querySelectorAll('[data-clm-goto]').forEach(b => b.onclick = () => claimGoToDok(b.dataset.clmGoto));
   if(mode === 'view') return bindClmViewActions(row);
 

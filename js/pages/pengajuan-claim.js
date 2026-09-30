@@ -50,7 +50,7 @@ function openPclForm(mode, idx, principalKode){
   closeModal();
   if(mode === 'add'){
     pclDraft = { no:'', tgl:claimToday(), cabang:'Head Office', principalKode:'', principalNama:'', emailTo:'', emailCc:'', keterangan:'',
-      claims:[], status:'Draft', tglKirim:'', tglJawab:'', sumberJawaban:'', pengingat:[] };
+      claims:[], status:'Draft', tglKirim:'', tglJawab:'', sumberJawaban:'', pengingat:[], lampiran:[] };
     if(principalKode) pclApplyPrincipal(principalKode);
     return pclRenderAdd();
   }
@@ -79,6 +79,7 @@ function pclRenderAdd(){
   if(all) all.onchange = () => document.querySelectorAll('[data-pcl-claim]').forEach(cb => cb.checked = all.checked);
   document.getElementById('pclSimpan').onclick = () => pclSaveAdd(false);
   document.getElementById('pclSimpanKirim').onclick = () => pclSaveAdd(true);
+  bindClaimLampiran(document.getElementById('pclLampiranWrap'), pclDraft, true, PCL_LAMP_OPTS);
 }
 
 function pclReadHeader(){
@@ -151,6 +152,7 @@ function bindPclView(row, idx){
   }));
   on('pclLink', () => openPclJawab(row, 'Link Email', reopen));
   on('pclManual', () => openPclJawab(row, 'Manual', reopen));
+  bindClaimLampiran(document.getElementById('pclLampiranWrap'), row, pclLampiranEditable('view', row), PCL_LAMP_OPTS);
 }
 
 function openPclEmail(row, idx){
@@ -192,6 +194,9 @@ function openPclJawab(row, sumber, done){
     if(salah){ err.textContent = `Nilai ACC ${salah.c.no} harus antara 0 dan ${claimNum2(salah.c.nilaiClaim)}`; err.style.display = 'block'; return; }
     const tanpaAlasan = jawab.find(j => j.acc === 0 && !j.alasan);
     if(tanpaAlasan){ err.textContent = `Alasan wajib diisi untuk claim yang ditolak (${tanpaAlasan.c.no})`; err.style.display = 'block'; return; }
+    const bukti = sumber === 'Manual' ? document.getElementById('fPclBukti').files[0] : null;
+    const buktiErr = bukti ? claimCekFile(bukti) : '';
+    if(buktiErr){ err.textContent = buktiErr; err.style.display = 'block'; return; }
     const user = sumber === 'Link Email' ? 'Principal via email' : 'sidik (Catat Balasan manual)';
     jawab.forEach(({ c, acc, alasan }) => {
       c.nilaiAcc = Math.round(acc * 100) / 100;
@@ -213,7 +218,10 @@ function openPclJawab(row, sumber, done){
     row.status = 'Dijawab';
     row.tglJawab = sumber === 'Manual' ? (document.getElementById('fPclTglJawab').value.trim() || claimToday()) : claimToday();
     row.sumberJawaban = sumber;
-    if(sumber === 'Manual') row.buktiBalasan = document.getElementById('fPclBukti').value.trim();
+    if(bukti){
+      row.lampiran = row.lampiran || [];
+      row.lampiran.push(claimFileToLampiran(bukti, 'Bukti Balasan'));
+    }
     closeModal();
     done();
   };

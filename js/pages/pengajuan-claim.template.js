@@ -19,6 +19,20 @@
 ========================================================= */
 const PCL_STATUS_LIST = ['Draft','Diajukan','Dijawab','Dibatalkan'];
 
+/* Lampiran pengajuan (2026-09-30, permintaan Sidik: "tambah agar bisa
+   upload file attachment"). `row.lampiran[]` = {nama, ukuran (byte),
+   tgl, user, kategori:'Pengajuan'|'Bukti Balasan', url?}. `url` =
+   object URL file yang diunggah di sesi ini (bisa dibuka); lampiran
+   data contoh tidak punya `url` (file fisiknya tidak ada di mockup).
+   Lampiran kategori Pengajuan ikut terkirim sebagai lampiran email;
+   bisa ditambah/dihapus selama pengajuan masih Draft/Diajukan. Markup &
+   upload memakai helper bersama tplClaimLampiran()/bindClaimLampiran()
+   di core.js (dipakai juga Claim Customer). Bukti Balasan tidak bisa
+   dihapus. */
+const PCL_LAMP_OPTS = { kategoriList:['Pengajuan'], deletable: f => f.kategori !== 'Bukti Balasan',
+  hint:'Lampirkan surat claim, rekap, atau foto bukti promosi untuk principal.' };
+function pclLampiranEditable(mode, row){ return mode === 'add' || ['Draft','Diajukan'].includes(row.status); }
+
 /* Helper murni: claim di dalam pengajuan & status terlambat. */
 function pclClaims(row){ return (row.claims||[]).map(no => claimFind(no)).filter(Boolean); }
 function pclIsTerlambat(row){
@@ -144,6 +158,8 @@ function tplPclForm(mode, row, eligible){
         </div>
         <div class="form-section">${isAdd ? 'Claim yang siap diajukan (lolos approval internal)' : 'Rincian Claim'}</div>
         ${isAdd ? tplPclEligible(row, eligible) : tplPclClaimTable(row)}
+        <div class="form-section">${icon('file',14)} Lampiran</div>
+        <div id="pclLampiranWrap">${tplClaimLampiran(row.lampiran, pclLampiranEditable(mode, row), PCL_LAMP_OPTS)}</div>
         ${!isAdd ? `<div class="form-section">Riwayat Email</div>${tplPclRiwayatEmail(row)}` : ''}
       </div>
       <div class="card-footer" style="display:flex;gap:10px;justify-content:flex-end;align-items:center;padding:14px 20px;border-top:1px solid var(--border);flex-wrap:wrap;">
@@ -229,7 +245,9 @@ function tplPclEmailPreview(row){
   const claims = pclClaims(row);
   const total = claims.reduce((a,c)=>a+c.nilaiClaim,0);
   const td = 'padding:5px 8px;border:1px solid #d9dde7;font-size:12px;white-space:normal;';
-  const lampiran = [`Pengajuan_${row.no.replace(/\//g,'-')}.pdf`].concat(claims.filter(c=>c.noSurat).map(c=>`Surat_Claim_${c.noSurat.replace(/\//g,'-')}.pdf`));
+  const lampiran = [`Pengajuan_${row.no.replace(/\//g,'-')}.pdf`].concat(claims.filter(c=>c.noSurat && !(c.lampiran||[]).some(f=>f.kategori==='Surat Claim Customer')).map(c=>`Surat_Claim_${c.noSurat.replace(/\//g,'-')}.pdf`))
+    .concat(claims.flatMap(c=>(c.lampiran||[]).map(f=>f.nama)))
+    .concat((row.lampiran||[]).filter(f=>f.kategori==='Pengajuan').map(f=>f.nama));
   return `
     <div class="modal-box" style="max-width:780px;width:96vw;">
       <div class="modal-header"><span>${icon('mail',15)} Pratinjau Email Pengajuan</span><span class="close" id="modalClose">&times;</span></div>
@@ -283,7 +301,7 @@ function tplPclJawabModal(row, sumber){
         </div>` : `
         <div class="form-grid" style="gap:12px;margin-bottom:6px;">
           <div class="form-group"><label>Tanggal Balasan</label><input type="text" id="fPclTglJawab" value="${claimToday()}"></div>
-          <div class="form-group"><label>Bukti Balasan (lampiran)</label><input type="text" id="fPclBukti" placeholder="contoh: Email balasan 14-09-2026.pdf"></div>
+          <div class="form-group"><label>Bukti Balasan (upload file)</label><input type="file" id="fPclBukti" accept="${CLAIM_LAMPIRAN_EXT.map(e=>'.'+e).join(',')}" style="font-size:12.5px;"></div>
         </div>`}
         <div style="display:flex;gap:8px;margin-bottom:8px;">
           <button type="button" class="btn-secondary" id="pclIsiSetujuSemua">${icon('check',13)} Setujui Semua</button>
