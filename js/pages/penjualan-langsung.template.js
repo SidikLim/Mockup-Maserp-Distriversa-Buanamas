@@ -69,6 +69,9 @@ const PJL_SCANNER_LIST = ['Barcode','QR Code'];
 const PJL_SPECIAL_DISC_LIST = ['-Special Disc-','PricingByDate','PricingByVolume','PricingByCustomerGroup'];
 const PJL_UANG_MUKA_LIST = ['Tertua','Pilih uang muka'];
 const PJL_BULAN_LIST = [
+  /* 2026-09-30 — September ditambahkan: tagihan claim ke principal
+     (Penyelesaian Claim jalur Penjualan Langsung) dibuat di bulan ini. */
+  {label:'September 2026', mm:'09', yy:'2026'},
   {label:'Agustus 2026', mm:'08', yy:'2026'},
   {label:'Juli 2026', mm:'07', yy:'2026'},
   {label:'Semua Periode', mm:'', yy:''},

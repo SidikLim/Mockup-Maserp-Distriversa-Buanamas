@@ -101,6 +101,8 @@ function openCstForm(mode, idx){
   content.innerHTML = tplCustomerForm(mode, row);
 
   if(mode === 'add') document.getElementById('fCstKode').value = cstNextKode();
+  /* Customer principal: nama mengikuti Master Supplier (Link Supplier ↔ Customer). */
+  if(row.supplierKode) document.getElementById('fCstNama').readOnly = true;
 
   document.getElementById('btnCstTutorial').onclick = () => openCstInfo('Tutorial', 'Video tutorial pengisian Customer akan tersedia di sini.');
   document.getElementById('lnkStatusARSetting').onclick = (e) => { e.preventDefault(); openCstInfo('Setting Status AR Customer', 'Halaman pengaturan aging Status AR Customer akan tersedia di modul "Status AR Customer".'); };

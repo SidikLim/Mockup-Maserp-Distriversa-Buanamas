@@ -47,6 +47,16 @@ function openMsForm(mode, idx){
   document.getElementById('btnWilayahAdd').onclick=()=>openWilayahAddModal();
   document.getElementById('btnSyaratAdd').onclick=()=>openSyaratAddModal();
   document.getElementById('btnAkunGlSearch').onclick=()=>openMsInfo('Cari Akun GL','Pencarian Akun GL akan menampilkan daftar Chart of Account (COA) Hutang Usaha. (Contoh tampilan mockup)');
+  /* Link Supplier ↔ Customer (Modul Claim) — lihat tplMsCustPrincipal(). */
+  const bindCustPrincipal=()=>{
+    const b=document.getElementById('btnMsBuatCustPrincipal');
+    if(b) b.onclick=()=>{
+      const c=claimEnsureCustomerPrincipal(row.kode);
+      document.getElementById('msCustPrincipalWrap').innerHTML=tplMsCustPrincipal(row, true);
+      openMsInfo('Customer Principal dibuat', `Customer <b>${c.kode} — ${c.nama}</b> dibuat dan terhubung ke supplier ini. Customer ini hanya dipakai untuk penagihan claim (tidak muncul di Sales Quotation / Sales Order).`);
+    };
+  };
+  bindCustPrincipal();
 
   document.getElementById('msSave').onclick=()=>{
     const prefix=document.getElementById('fKodePrefix').value;
@@ -92,9 +102,11 @@ function openMsForm(mode, idx){
       saldoUtang: row.saldoUtang||0,
       pusatBisnis: msPbRows.filter(d=>d.kode),
       akunGlUtang: document.getElementById('fAkunGl').value,
+      customerKode: row.customerKode||'',
     };
     if(mode==='add'){ DATA.suppliers.push(payload); }
     else { DATA.suppliers[idx]=payload; }
+    claimSyncCustomerPrincipal(payload);
     renderMsList();
   };
 }

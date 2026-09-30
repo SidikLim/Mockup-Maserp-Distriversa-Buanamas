@@ -317,7 +317,8 @@ function openSqCustomerPicker(row){
   closeModal();
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
-  overlay.innerHTML = tplSqCustomerPicker(DATA.customers);
+  /* Customer principal (Link Supplier ↔ Customer, Modul Claim) hanya untuk penagihan claim. */
+  overlay.innerHTML = tplSqCustomerPicker(DATA.customers.filter(c => !isCustomerPrincipal(c)));
   document.body.appendChild(overlay);
   document.getElementById('modalClose').onclick = closeModal;
   document.getElementById('modalCancel').onclick = closeModal;

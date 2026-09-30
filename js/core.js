@@ -22,10 +22,17 @@ const sidebarScroll=document.getElementById('sidebarScroll');
    itu sendiri (highlight current/active-parent ikut benar), tanpa
    perlu menduplikasi logic navigasi. */
 let pageToElement={};
+/* `navIndex` = sama seperti pageToElement, tapi key-nya navKey(page,
+   title) (lihat bagian RIWAYAT NAVIGASI di bawah) — beda untuk semua
+   menu `placeholder` yang page-nya sama tapi judulnya beda. Tiap entry
+   {el, head, sub, isParent, title}: dipakai syncSidebar() untuk
+   memulihkan highlight sidebar saat user klik Back/Forward browser. */
+let navIndex={};
 
 function buildSidebar(){
   sidebarScroll.innerHTML='';
   pageToElement={};
+  navIndex={};
   MENU.forEach((top,ti)=>{
     if(top.children){
       const wrap=document.createElement('div');
@@ -51,6 +58,7 @@ function buildSidebar(){
           };
           sub.appendChild(it);
           if(c.page) pageToElement[c.page]=it;
+          if(c.page) navIndex[navKey(c.page, c.title||c.label)]={el:it, head:top.page?head:null, sub, title:c.title||c.label};
         }
       });
       head.onclick=()=>{
@@ -63,6 +71,7 @@ function buildSidebar(){
       wrap.appendChild(head); wrap.appendChild(sub);
       sidebarScroll.appendChild(wrap);
       if(top.page) pageToElement[top.page]=head;
+      if(top.page) navIndex[navKey(top.page, top.label)]={el:head, isParent:true, sub, title:top.label};
     }else{
       const leaf=document.createElement('div');
       leaf.className='menu-top leaf';
@@ -74,6 +83,7 @@ function buildSidebar(){
       };
       sidebarScroll.appendChild(leaf);
       if(top.page) pageToElement[top.page]=leaf;
+      if(top.page) navIndex[navKey(top.page, top.label)]={el:leaf, title:top.label};
     }
   });
 }
@@ -87,8 +97,87 @@ function navigate(page,title,el,isParent){
   }else if(el){
     el.classList.add('current');
   }
+  pushNavHistory();
   renderPage();
 }
+/* =========================================================
+   RIWAYAT NAVIGASI (tombol Back/Forward browser) — 2026-09-30
+
+   Permintaan Sidik: saat mockup dibuka dari index.html lalu pindah-
+   pindah menu, tombol Back browser tidak kembali ke halaman menu
+   sebelumnya (malah keluar dari mockup), karena navigasi cuma
+   mengganti isi #content tanpa mencatat riwayat browser.
+   Solusi: tiap navigate() mencatat 1 entry riwayat lewat HASH URL
+   (index.html#salesOrders, atau #placeholder/<Judul> untuk menu
+   placeholder) — hash dipakai (bukan path) supaya tetap jalan saat
+   dibuka langsung dari file:// tanpa web server. Saat Back/Forward,
+   event `popstate` memulihkan halaman + highlight sidebar-nya TANPA
+   push riwayat baru. Bonus: refresh browser (F5) tetap di halaman
+   yang sama (data sampel tetap kembali ke awal karena memang cuma
+   di memori).
+   Catatan: yang tercatat HANYA perpindahan menu. Form/modal di
+   dalam 1 halaman (mis. form Tambah SO) bukan entry riwayat sendiri
+   — Back dari situ kembali ke MENU sebelumnya.
+========================================================= */
+function navKey(page,title){
+  return page==='placeholder' ? 'placeholder/'+(title||'') : page;
+}
+function navHash(page,title){
+  return page==='placeholder' ? '#placeholder/'+encodeURIComponent(title||'') : '#'+page;
+}
+function parseNavHash(hash){
+  const h=(hash||'').replace(/^#/,'');
+  if(!h) return null;
+  if(h.startsWith('placeholder/')){
+    let t=h.slice('placeholder/'.length);
+    try{ t=decodeURIComponent(t); }catch(e){}
+    return {page:'placeholder', title:t};
+  }
+  const entry=navIndex[h];
+  return {page:h, title:entry?entry.title:null};
+}
+/* Klik menu yang sama dengan halaman sekarang (mis. klik ulang judul
+   grup untuk buka/tutup submenu) → replaceState, bukan push, supaya
+   Back tidak "tertahan" di halaman yang sama berkali-kali. */
+function pushNavHistory(){
+  const state={page:currentPage, title:currentTitle};
+  const hash=navHash(currentPage,currentTitle);
+  const cur=history.state;
+  if(cur && navKey(cur.page,cur.title)===navKey(currentPage,currentTitle)){
+    history.replaceState(state,'',hash);
+  }else{
+    history.pushState(state,'',hash);
+  }
+}
+/* Pulihkan highlight sidebar (current/active-parent/submenu terbuka)
+   untuk page+title tertentu — dipanggil saat Back/Forward & saat load
+   awal dari hash, karena di situ tidak ada klik menu sungguhan. */
+function syncSidebar(page,title){
+  document.querySelectorAll('.submenu-item, .menu-top.leaf').forEach(x=>x.classList.remove('current'));
+  document.querySelectorAll('.menu-top').forEach(m=>m.classList.remove('active-parent','open'));
+  document.querySelectorAll('.submenu').forEach(m=>m.classList.remove('open'));
+  const entry=navIndex[navKey(page,title)];
+  if(!entry) return;
+  if(entry.sub){
+    entry.sub.classList.add('open');
+    const head=entry.sub.previousElementSibling;
+    if(head) head.classList.add('open');
+  }
+  if(entry.isParent) entry.el.classList.add('active-parent');
+  else{
+    entry.el.classList.add('current');
+    if(entry.head) entry.head.classList.add('active-parent');
+  }
+}
+window.addEventListener('popstate',(e)=>{
+  const st=e.state || parseNavHash(location.hash) || {page:'mainDashboard', title:'Dashboard'};
+  document.querySelectorAll('.modal-overlay').forEach(m=>m.remove());
+  if(typeof closeNotifDropdown==='function') closeNotifDropdown();
+  window.__pendingPageAction=null;
+  currentPage=st.page; currentTitle=st.title;
+  syncSidebar(currentPage,currentTitle);
+  renderPage();
+});
 
 /* =========================================================
    LAZY-LOAD MODUL PER MENU
@@ -226,6 +315,13 @@ const PAGE_MODULES={
   hakApproval:{srcs:['js/pages/hak-approval.template.js','js/pages/hak-approval.js'], fn:'renderHakApprovalPage'},
   masterCollector:{srcs:['js/pages/master-collector.template.js','js/pages/master-collector.js'], fn:'renderMasterCollectorPage'},
   masterStatusOpname:{srcs:['js/pages/master-status-opname.template.js','js/pages/master-status-opname.js'], fn:'renderMasterStatusOpnamePage'},
+  /* 2026-09-30 — Modul Claim Customer & Principal (helper bersama: lihat
+     bagian MODUL CLAIM di bawah). */
+  settingClaimPrincipal:{srcs:['js/pages/setting-claim-principal.template.js','js/pages/setting-claim-principal.js'], fn:'renderSettingClaimPrincipalPage'},
+  claimCustomer:{srcs:['js/pages/claim-customer.template.js','js/pages/claim-customer.js'], fn:'renderClaimCustomerPage'},
+  pengajuanClaim:{srcs:['js/pages/pengajuan-claim.template.js','js/pages/pengajuan-claim.js'], fn:'renderPengajuanClaimPage'},
+  penyelesaianClaim:{srcs:['js/pages/penyelesaian-claim.template.js','js/pages/penyelesaian-claim.js'], fn:'renderPenyelesaianClaimPage'},
+  monitoringClaim:{srcs:['js/pages/monitoring-claim.template.js','js/pages/monitoring-claim.js'], fn:'renderMonitoringClaimPage'},
 };
 const loadedModules=new Set();
 
@@ -677,6 +773,267 @@ function goToPage(page,title,run){
 }
 
 /* =========================================================
+   MODUL CLAIM CUSTOMER & PRINCIPAL — helper bersama (2026-09-30)
+
+   Dipakai lintas 5 modul lazy-loaded (Setting Claim Principal, Claim
+   Customer, Pengajuan Claim Principal, Penyelesaian Claim, Monitoring
+   Claim) + Master Supplier/Master Customer/Sales Order/Sales Quotation
+   (Link Supplier ↔ Customer) — makanya ditaruh di core.js (selalu
+   dimuat), alasan sama dgn openPersediaanPicker() di atas. Aturan bisnis
+   lengkapnya ada di komentar DATA.claimCustomer (js/data.js) & dokumen
+   spesifikasi. Status claim & arti tiap status: lihat CLAIM_STATUS_LIST.
+========================================================= */
+const CLAIM_STATUS_LIST=['Draft','Approval','Diajukan','Disetujui','Ditolak','Diproses','Selesai','Dibatalkan'];
+const CLAIM_JALUR_LIST=['Nota Debit AP','Penjualan Langsung','Penerimaan Barang'];
+const CLAIM_JENIS_LIST=['Biaya Promosi','Bonus Barang'];
+const CLAIM_CARA_LIST=['Off Faktur','On Faktur'];
+const CLAIM_CABANG_LIST=[
+  {nama:'Head Office', kode:'HO'}, {nama:'Surabaya', kode:'SBY'}, {nama:'Bandung', kode:'BDG'},
+  {nama:'Medan', kode:'MDN'}, {nama:'Makassar', kode:'MKS'}, {nama:'Semarang', kode:'SMG'}, {nama:'Tangerang', kode:'TGR'},
+];
+function claimCabangKode(nama){ const c=CLAIM_CABANG_LIST.find(x=>x.nama===nama); return c?c.kode:'HO'; }
+function claimNum2(n){ return Number(n||0).toLocaleString('id-ID',{minimumFractionDigits:2, maximumFractionDigits:2}); }
+function claimPad(n,len){ return String(n).padStart(len,'0'); }
+function claimToday(){ const d=new Date(); return `${claimPad(d.getDate(),2)}/${claimPad(d.getMonth()+1,2)}/${d.getFullYear()}`; }
+function claimNow(){ const d=new Date(); return `${claimToday()} ${claimPad(d.getHours(),2)}:${claimPad(d.getMinutes(),2)}`; }
+function claimParseTgl(s){ const p=String(s||'').split(' ')[0].split('/'); return p.length===3 ? new Date(+p[2], +p[1]-1, +p[0]) : null; }
+function claimUmurHari(tgl){
+  const d=claimParseTgl(tgl); if(!d) return 0;
+  const t=new Date(); t.setHours(0,0,0,0);
+  return Math.max(0, Math.round((t-d)/864e5));
+}
+/* Nomor urut berikutnya untuk `prefix` di `list` (field `no`). */
+function claimNextNo(list, prefix, len){
+  const n=list.filter(r=>String(r.no||'').startsWith(prefix)).length+1;
+  return prefix+claimPad(n,len);
+}
+function claimAkunNama(kode){ const a=DATA.akunGL.find(x=>x.kode===kode); return a?a.nama:''; }
+function claimSetting(principalKode){ return (DATA.settingClaimPrincipal||[]).find(s=>s.principalKode===principalKode)||null; }
+function claimFind(no){ return (DATA.claimCustomer||[]).find(c=>c.no===no)||null; }
+function claimSisaPulih(c){ return Math.max(0,(c.nilaiAcc||0)-(c.nilaiDipulihkan||0)); }
+function claimLog(c, status, catatan, user){
+  c.riwayat=c.riwayat||[];
+  c.riwayat.push({waktu:claimNow(), status, user:user||'sidik', catatan:catatan||''});
+}
+/* Pill status ke principal — warna mengikuti arti status (hijau =
+   berhasil, merah = gagal, kuning = menunggu pihak lain, biru = sedang
+   diproses, abu = belum keluar dari internal). */
+function claimStatusPill(status){
+  const map={
+    'Draft':'background:#eef1f7;color:#7b8194;',
+    'Approval':'background:#fff4dc;color:#b7791f;',
+    'Diajukan':'background:#fff4dc;color:#b7791f;',
+    'Disetujui':'background:#e6f0fb;color:#2f6db5;',
+    'Diproses':'background:#e6f0fb;color:#2f6db5;',
+    'Selesai':'background:#e3f8ec;color:#1a9c53;',
+    'Ditolak':'background:#fdeaec;color:#e0405b;',
+    'Dibatalkan':'background:#fdeaec;color:#e0405b;',
+  };
+  return `<span class="status-pill" style="${map[status]||''}">${status}</span>`;
+}
+/* Status ke customer (dihitung, tidak disimpan) — tabel "Status ke
+   customer" di spesifikasi. */
+function claimStatusCustomer(c){
+  if(c.status==='Ditolak' || c.status==='Dibatalkan') return 'Tidak Diberikan';
+  if(c.cara==='On Faktur') return 'Tidak Perlu';
+  if(c.bonusDikirim) return 'Bonus Dikirim';
+  if(c.notaKredit) return c.notaKredit.sisa>0 ? 'Nota Kredit Terbuka' : 'Nota Kredit Terpakai';
+  if(['Disetujui','Diproses','Selesai'].includes(c.status)) return 'Siap Diberikan';
+  return 'Menunggu ACC';
+}
+function claimPengajuanOf(c){ return (DATA.pengajuanClaim||[]).find(p=>p.no===c.noPengajuan)||null; }
+/* Terlambat = sudah Diajukan tapi belum dijawab lewat batas hari respon
+   Setting Claim Principal (default 14 hari). */
+function claimIsTerlambat(c){
+  if(c.status!=='Diajukan') return false;
+  const p=claimPengajuanOf(c); const s=claimSetting(c.principalKode);
+  return !!p && claimUmurHari(p.tglKirim||p.tgl) > (s?s.batasHariRespon:14);
+}
+/* Setelah nilai dipulihkan berubah: Diproses (sebagian) / Selesai. */
+function claimRefreshStatusPulih(c){
+  if(!['Disetujui','Diproses','Selesai'].includes(c.status)) return;
+  if(c.nilaiDipulihkan>=c.nilaiAcc-0.004) c.status='Selesai';
+  else if(c.nilaiDipulihkan>0) c.status='Diproses';
+}
+
+/* ---------- LINK SUPPLIER ↔ CUSTOMER PRINCIPAL ----------
+   Principal tetap supplier (modul AP). Untuk penagihan (Penjualan
+   Langsung wajib pilih customer) tiap principal boleh punya MAKSIMAL 1
+   customer terhubung, kode `P-{kode supplier}`, tipeCustomer
+   'Principal'. Field identitas disinkronkan SATU ARAH supplier →
+   customer setiap Master Supplier disimpan (claimSyncCustomerPrincipal),
+   field keuangan (top/limit/cabang) milik customer sendiri. */
+function isCustomerPrincipal(c){ return !!(c && (c.supplierKode || c.tipeCustomer==='Principal')); }
+function claimCustomerPrincipalOf(supplierKode){ return DATA.customers.find(c=>c.supplierKode===supplierKode)||null; }
+function claimSyncCustomerPrincipal(sup){
+  const c=claimCustomerPrincipalOf(sup.kode); if(!c) return null;
+  Object.assign(c,{
+    nama:sup.nama, alamat:sup.alamat||'', kota:sup.wilayah||'', telepon:sup.telp||'', fax:sup.fax||'',
+    email:sup.email||'', kontakPerson:sup.kontak||'', npwp:sup.npwp||'', namaNpwp:sup.nama, alamatPajak:sup.alamat||'',
+    mataUang:sup.mataUang||'IDR', provinsi:sup.provinsi||'', kabupaten:sup.kabupaten||'', kecamatan:sup.kecamatan||'',
+    kelurahan:sup.kelurahan||'', kodePos:sup.kodePos||'', status: sup.status==='Non Aktif' ? 'Non Aktif' : 'Aktif',
+  });
+  return c;
+}
+function claimEnsureCustomerPrincipal(supplierKode){
+  const sup=DATA.suppliers.find(s=>s.kode===supplierKode); if(!sup) return null;
+  let c=claimCustomerPrincipalOf(supplierKode);
+  if(!c){
+    /* Bentuk objek disalin dari customer pertama (semua field dikosongkan)
+       supaya list/form Master Customer tetap menemukan field yg dipakainya. */
+    const tpl=DATA.customers[0]; c={};
+    Object.keys(tpl).forEach(k=>{ const v=tpl[k]; c[k]=Array.isArray(v)?[]:(typeof v==='number'?0:(typeof v==='boolean'?false:'')); });
+    Object.assign(c,{kode:'P-'+supplierKode, supplierKode, tipeCustomer:'Principal', groupCustomer:'PRINCIPAL', cabang:'Head Office',
+      noRef:'PRC.'+supplierKode, tglRegistrasi:claimToday(), top:sup.syaratBayar||'', limit:0, piutang:0, salesman:'OFFICE', collector:[]});
+    DATA.customers.push(c);
+  }
+  sup.customerKode=c.kode;
+  claimSyncCustomerPrincipal(sup);
+  return c;
+}
+
+/* ---------- PEMBUAT DOKUMEN (Transaksi A.R. / A.P. / Penjualan Langsung) ---------- */
+function claimBuatNotaKredit(c){
+  const kode=claimCabangKode(c.cabang), mm=claimToday().slice(3,5), n=c.nilaiAcc;
+  const no=claimNextNo(DATA.transaksiAR, `26/ARS/${kode}/${mm}/`, 5);
+  const ket=`NOTA KREDIT CLAIM ${c.no} - ${(c.principalNama||'').toUpperCase()}`;
+  DATA.transaksiAR.unshift({no, cabang:c.cabang, tgl:claimToday(), customerKode:c.customerKode, customerNama:c.customerNama,
+    noFaktur:'', jurnalKode:8, noClaim:c.no, keterangan:ket,
+    rincian:[{tipe:'Nota Kredit', tglJthTempo:claimToday(), crc:'IDR', kurs:1, jumlah:-n}],
+    jurnalMode:'otomatis',
+    jurnalAkun:[
+      {kodeAkun:'1120006', namaAkun:claimAkunNama('1120006'), keterangan:ket, debit:n, kredit:0},
+      {kodeAkun:'1120001', namaAkun:claimAkunNama('1120001'), keterangan:ket, debit:0, kredit:n},
+    ], jumlah:-n});
+  c.notaKredit={no, tgl:claimToday(), nilai:n, sisa:n};
+  claimLog(c, c.status, `Nota Kredit terbuka ${no} dibuat untuk ${c.customerNama} senilai ${claimNum2(n)}`);
+  return no;
+}
+function claimBuatNotaDebitAP(c, nilai, noFakturSupplier){
+  const kode=claimCabangKode(c.cabang), t=claimToday();
+  const no=claimNextNo(DATA.transaksiAP, `AP/${kode}/${t.slice(8,10)}${t.slice(3,5)}`, 5);
+  const ket=`Nota Debit Claim ${c.no} - ${c.customerNama}`;
+  DATA.transaksiAP.unshift({no, noFaktur:no, cabang:c.cabang, tgl:t, supplierKode:c.principalKode, supplierNama:c.principalNama,
+    jurnalKode:4, noClaim:c.no, keterangan:ket, noFakturSupplier:noFakturSupplier||'',
+    rincian:[{tipe:'Nota Debet', tglJthTempo:t, crc:'IDR', kurs:1, nominal:-nilai}],
+    jurnalMode:'otomatis',
+    jurnalAkun:[
+      {kodeAkun:'2110001', costCenter:'', namaAkun:claimAkunNama('2110001'), keterangan:ket, debit:nilai, kredit:0},
+      {kodeAkun:'1120006', costCenter:'', namaAkun:claimAkunNama('1120006'), keterangan:ket, debit:0, kredit:nilai},
+    ], jumlah:-nilai});
+  return no;
+}
+/* Pajak tagihan claim ke principal — keputusan: SEMUA principal PPN 11%
+   kode 04 DPP Nilai Lain + PPh 23 2%. */
+function claimPajakTagihan(dpp){
+  const ppn=Math.round(dpp*0.11*100)/100, pph=Math.round(dpp*0.02*100)/100;
+  return {dpp, ppn, pph, jumlahAkhir:Math.round((dpp+ppn-pph)*100)/100};
+}
+function claimBuatPenjualanLangsung(c, nilai){
+  const cust=claimEnsureCustomerPrincipal(c.principalKode);
+  const kode=claimCabangKode(c.cabang), t=claimToday();
+  const no=claimNextNo(DATA.penjualanLangsung, `26/DSI/${kode}/${t.slice(3,5)}/`, 5);
+  const pj=claimPajakTagihan(nilai);
+  /* Salin struktur dokumen contoh pertama (yg juga bertema klaim) lalu
+     timpa field-nya — supaya list/form Penjualan Langsung tetap lengkap. */
+  const row=JSON.parse(JSON.stringify(DATA.penjualanLangsung[DATA.penjualanLangsung.length-1]));
+  Object.assign(row,{no, cabang:c.cabang, customerKode:cust.kode, customerNama:cust.nama,
+    principalKode:c.principalKode, principalNama:c.principalNama, tglFaktur:t, tglJatuhTempo:t,
+    syaratBayar:cust.top||row.syaratBayar, gudang:'Non Stock '+c.cabang, salesman:'OFFICE',
+    alamatPengirimanTipe:'Alamat Customer', alamatPengiriman:cust.alamat||'',
+    items:[{kode:'BB-00036', nama:`Klaim Biaya Promosi ${c.no}`, pphChecked:true, ppnChecked:true, specialDisc:'', batch:'0', qty:1, um:'UNIT',
+      hna:0, hna1:nilai, hna1Inklusif:false, discPrincipal:0, discDistributor:0, totalDisc:0, discBarang:0, jumlah:nilai}],
+    tipePpn:'PPN Eksklusif(+11%)', kodePajak:'04 - DPP Nilai Lain', noFakturPajak:'', tglFakturPajak:t,
+    diskon1:0, diskon2:0, diskon1Amount:0, diskon2Amount:0, dpp:pj.dpp, pajak11:'PPN11', ppn:pj.ppn,
+    pphKode:'PPH 23 (2)', pphPersen:2, pphAmount:pj.pph, ongkosAngkut:0, jumlahAkhir:pj.jumlahAkhir, sisaJumlah:pj.jumlahAkhir,
+    suratJalan:no, keterangan:`Tagihan claim ${c.no} (${c.customerNama}) ke ${c.principalNama}`, tipeTransaksi:'Penjualan Kredit',
+    pembayaran:0, noClaim:c.no, tglInput:claimNow(), userInput:'sidik', tglEdit:'', userEdit:''});
+  DATA.penjualanLangsung.unshift(row);
+  return no;
+}
+
+/* ---------- JURNAL (dihitung dari keadaan claim, tidak disimpan) ----------
+   Tabel "Penyelesaian & jurnal" di spesifikasi. */
+function claimJurnalLines(c){
+  const lines=[]; const L=(sumber,kode,debit,kredit)=>lines.push({sumber, kodeAkun:kode, namaAkun:claimAkunNama(kode), debit, kredit});
+  const akunOnFaktur = c.jenis==='Bonus Barang' ? '5110002' : '4110003';
+  if(c.nilaiAcc>0 && c.cara==='On Faktur'){
+    L('ACC claim on faktur','1120006',c.nilaiAcc,0); L('ACC claim on faktur',akunOnFaktur,0,c.nilaiAcc);
+  }
+  if(c.cara==='On Faktur' && ['Disetujui','Diproses','Selesai','Ditolak'].includes(c.status)){
+    const selisih=(c.nilaiClaim||0)-(c.nilaiAcc||0);
+    if(selisih>0.004){ L('Selisih on faktur → Biaya Promosi DBM','5210012',selisih,0); L('Selisih on faktur → Biaya Promosi DBM',akunOnFaktur,0,selisih); }
+  }
+  if(c.notaKredit){ const n=c.notaKredit.nilai; L(`Nota Kredit ${c.notaKredit.no}`,'1120006',n,0); L(`Nota Kredit ${c.notaKredit.no}`,'1120001',0,n); }
+  if(c.bonusDikirim){ const n=c.bonusDikirim.nilai; L(`Kirim bonus ${c.bonusDikirim.no}`,'1120006',n,0); L(`Kirim bonus ${c.bonusDikirim.no}`,'1130001',0,n); }
+  (c.pemulihan||[]).forEach(p=>{
+    const s=`${p.jalur} ${p.noDok}`;
+    if(p.jalur==='Nota Debit AP'){ L(s,'2110001',p.nilai,0); L(s,'1120006',0,p.nilai); }
+    else if(p.jalur==='Penjualan Langsung'){ const pj=claimPajakTagihan(p.nilai); L(s,'1120001',pj.jumlahAkhir,0); L(s,'1140004',pj.pph,0); L(s,'1120006',0,pj.dpp); L(s,'2120002',0,pj.ppn); }
+    else { L(s,'1130001',p.nilai,0); L(s,'1120006',0,p.nilai); }
+  });
+  return lines;
+}
+/* Picker principal (DATA.suppliers) sederhana dengan pencarian —
+   dipakai Claim Customer & Setting Claim Principal. */
+function openClaimSupplierPicker(onPick, onlySetting){
+  closeModal();
+  const base=onlySetting ? DATA.suppliers.filter(s=>claimSetting(s.kode)) : DATA.suppliers;
+  const overlay=document.createElement('div');
+  overlay.className='modal-overlay';
+  const rowsHtml=list=>list.length ? list.map(s=>`<tr><td>${s.kode}</td><td>${s.nama}</td><td>${s.email||''}</td><td><button class="btn-pick" data-claim-pick-sup="${s.kode}">Pilih</button></td></tr>`).join('')
+    : `<tr><td colspan="4" style="color:var(--text-light);">Tidak ada principal ditemukan</td></tr>`;
+  overlay.innerHTML=`
+    <div class="modal-box" style="max-width:680px;">
+      <div class="modal-header"><span>Pilih Principal</span><span class="close" id="modalClose">&times;</span></div>
+      <div class="modal-body">
+        <input type="text" id="claimSupSearch" placeholder="Cari kode / nama principal..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12.8px;margin-bottom:12px;">
+        ${onlySetting?'<div style="font-size:11.8px;color:var(--text-light);margin:-4px 0 10px;">Hanya principal yang sudah punya Setting Claim Principal.</div>':''}
+        <div class="table-wrap" style="max-height:360px;overflow:auto;"><table>
+          <thead><tr><th>Kode</th><th>Nama Principal</th><th>Email</th><th></th></tr></thead>
+          <tbody id="claimSupBody">${rowsHtml(base)}</tbody>
+        </table></div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" id="modalCancel">Tutup</button></div>
+    </div>`;
+  document.body.appendChild(overlay);
+  const bind=()=>overlay.querySelectorAll('[data-claim-pick-sup]').forEach(b=>b.onclick=()=>{
+    const s=DATA.suppliers.find(x=>x.kode===b.dataset.claimPickSup); closeModal(); onPick(s);
+  });
+  document.getElementById('modalClose').onclick=closeModal;
+  document.getElementById('modalCancel').onclick=closeModal;
+  overlay.onclick=e=>{ if(e.target===overlay) closeModal(); };
+  document.getElementById('claimSupSearch').oninput=e=>{
+    const q=e.target.value.trim().toLowerCase();
+    document.getElementById('claimSupBody').innerHTML=rowsHtml(base.filter(s=>!q||s.kode.toLowerCase().includes(q)||s.nama.toLowerCase().includes(q)));
+    bind();
+  };
+  bind();
+}
+/* Buka dokumen hasil claim di modulnya. Penjualan Langsung punya filter
+   periode (default Juli 2026) → dibuka dengan "Semua Periode" supaya
+   tagihan claim yang baru dibuat langsung terlihat. */
+function claimGoToDok(page){
+  const titles={ pengajuanClaim:'Pengajuan Claim Principal', transaksiAR:'Transaksi A.R.', transaksiAP:'Transaksi A.P.', penjualanLangsung:'Penjualan Langsung' };
+  goToPage(page, titles[page], page==='penjualanLangsung' ? ()=>{
+    if(typeof pjlState!=='undefined' && typeof renderPjlList==='function'){ pjlState.bulan='|'; renderPjlList(); }
+  } : null);
+}
+/* Modal info sederhana bersama modul claim. */
+function openClaimInfo(title, html){
+  closeModal();
+  const overlay=document.createElement('div');
+  overlay.className='modal-overlay';
+  overlay.innerHTML=`<div class="modal-box"><div class="modal-header"><span>${title}</span><span class="close" id="modalClose">&times;</span></div>
+    <div class="modal-body"><p style="line-height:1.55;">${html}</p></div>
+    <div class="modal-footer"><button class="btn-primary" id="modalOk">Mengerti</button></div></div>`;
+  document.body.appendChild(overlay);
+  document.getElementById('modalClose').onclick=closeModal;
+  document.getElementById('modalOk').onclick=closeModal;
+  overlay.onclick=e=>{ if(e.target===overlay) closeModal(); };
+}
+
+/* =========================================================
    INIT
 ========================================================= */
 document.getElementById('hamburgerBtn').innerHTML=icon('menu',20);
@@ -684,9 +1041,20 @@ document.getElementById('hamburgerBtn').onclick=()=>{
   document.getElementById('layout').classList.toggle('collapsed');
 };
 buildSidebar();
+// Contoh Link Supplier ↔ Customer: PT Wilmar Nabati Indonesia (5016)
+// sudah punya customer principal terhubung P-5016 sejak awal demo.
+claimEnsureCustomerPrincipal('5016');
+// Load awal: kalau URL sudah punya hash (mis. setelah refresh), buka
+// halaman itu; kalau tidak, default Dashboard. replaceState (bukan
+// push) supaya entry riwayat pertama = halaman awal ini.
+(function(){
+  const init=parseNavHash(location.hash);
+  if(init){ currentPage=init.page; currentTitle=init.title; }
+  else{ currentTitle='Dashboard'; }
+  history.replaceState({page:currentPage, title:currentTitle},'',navHash(currentPage,currentTitle));
+  syncSidebar(currentPage,currentTitle);
+})();
 renderPage();
-// mark Dashboard as active leaf by default
-document.querySelectorAll('.menu-top.leaf').forEach(l=>{ if(l.textContent.trim()==='Dashboard') l.classList.add('current'); });
 
 const notifBtnEl=document.getElementById('notifBtn');
 notifBtnEl.insertAdjacentHTML('afterbegin', icon('bell',20));

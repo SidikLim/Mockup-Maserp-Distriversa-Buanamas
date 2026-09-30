@@ -211,11 +211,36 @@ function tplSupplierForm(mode, row){
         <button type="button" class="icon-btn edit" id="btnAkunGlSearch" title="Cari Akun GL">${icon('search',14)}</button>
       </div>
 
+      <div class="form-section">${icon('users',15)} Customer Principal (Penagihan Claim)</div>
+      <div id="msCustPrincipalWrap">${tplMsCustPrincipal(row, isEdit)}</div>
+
       <div class="form-page-actions">
         <button class="btn-secondary" id="msCancel">Batalkan</button>
         <button class="btn-primary" id="msSave">Simpan</button>
       </div>
     </div></div>`;
+}
+
+/* 2026-09-30 — Link Supplier ↔ Customer (Modul Claim Customer &
+   Principal): principal tetap supplier, tetapi untuk penagihan claim
+   lewat Penjualan Langsung boleh punya 1 customer terhubung P-{kode}.
+   Data identitas customer itu disinkronkan otomatis dari form ini
+   (claimSyncCustomerPrincipal() di core.js) setiap Simpan. */
+function tplMsCustPrincipal(row, isEdit){
+  const c = row.kode ? claimCustomerPrincipalOf(row.kode) : null;
+  if(c) return `
+    <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:center;background:#f6f8fc;border:1px solid var(--border);border-radius:8px;padding:10px 16px;max-width:760px;">
+      <div><div style="font-size:11px;color:var(--text-light);">Customer terkait</div><div style="font-weight:700;">${c.kode} — ${c.nama}</div></div>
+      <div><div style="font-size:11px;color:var(--text-light);">Saldo Piutang (AR)</div><div style="font-weight:700;">${claimNum2(c.piutang)}</div></div>
+      <div><div style="font-size:11px;color:var(--text-light);">Saldo Hutang (AP)</div><div style="font-weight:700;">${claimNum2(row.saldoUtang)}</div></div>
+      <div style="font-size:11.8px;color:var(--text-light);max-width:300px;">Nama, alamat, NPWP, telepon, email & kontak customer ini mengikuti data supplier setiap disimpan.</div>
+    </div>`;
+  if(!isEdit) return `<p style="font-size:12.5px;color:var(--text-light);">Customer principal bisa dibuat setelah supplier disimpan.</p>`;
+  return `
+    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+      <span style="font-size:12.5px;color:var(--text-light);">Belum ada customer terhubung. Dibuat otomatis saat tagihan claim pertama lewat Penjualan Langsung, atau buat sekarang:</span>
+      <button type="button" class="btn-secondary" id="btnMsBuatCustPrincipal">${icon('plus',13)} Buat Customer Principal (P-${row.kode})</button>
+    </div>`;
 }
 
 function tplMsPbRows(rows){

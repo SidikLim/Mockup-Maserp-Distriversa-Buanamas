@@ -222,6 +222,7 @@ function tplCustomerForm(mode, row){
       </div>
       <div class="card-body">
         <h3 style="text-align:center;color:var(--navy);font-size:15px;font-weight:700;padding-bottom:14px;margin-bottom:18px;">Informasi Customer</h3>
+        ${tplCstSupplierLink(row)}
 
         <div class="form-section" style="margin-top:0;border-top:none;padding-top:0;">Personal Data</div>
         <div class="form-grid">
@@ -487,6 +488,20 @@ function tplCstLegalitasTable(items, prefix){
           </tr>`).join('')}
       </tbody>
     </table></div>`;
+}
+
+/* 2026-09-30 — Link Supplier ↔ Customer (Modul Claim): customer
+   principal (P-{kode supplier}) menampilkan supplier terkaitnya; nama &
+   data identitas dikunci karena mengikuti Master Supplier. */
+function tplCstSupplierLink(row){
+  if(!row.supplierKode) return '';
+  const s = DATA.suppliers.find(x => x.kode === row.supplierKode) || {};
+  return `
+    <div class="alert-warning" style="display:flex;gap:24px;flex-wrap:wrap;align-items:center;">
+      <div>Customer Principal — terhubung ke Supplier <b>${row.supplierKode} ${s.nama||''}</b></div>
+      <div style="font-weight:400;">Saldo Hutang (AP): <b>${claimNum2(s.saldoUtang)}</b> · Saldo Piutang (AR): <b>${claimNum2(row.piutang)}</b></div>
+      <div style="font-weight:400;font-size:12px;">Nama, alamat, NPWP, telepon & email mengikuti Master Supplier. Customer ini hanya untuk penagihan claim.</div>
+    </div>`;
 }
 
 function tplCstIndukPicker(list){

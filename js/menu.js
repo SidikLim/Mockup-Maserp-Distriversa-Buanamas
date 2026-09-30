@@ -49,6 +49,7 @@ const MENU=[
    {label:'Badan Usaha', page:'badanUsaha'},
    {label:'Alasan Retur', page:'alasanRetur'},
    {label:'Status Opname', page:'masterStatusOpname'},
+   {label:'Setting Claim Principal', page:'settingClaimPrincipal'},
    {header:'Daftar Transaksi'},
    {label:'Tutup Pending SO', page:'tutupPendingSO'},
    {label:'Uang Muka Customer', page:'uangMukaCustomer'},
@@ -72,6 +73,10 @@ const MENU=[
    {label:'T3F', page:'t3f'},
    {label:'Daftar Tagih Piutang', page:'tagihanPiutang'},
    {label:'Opname Faktur, Retur & S.J.', page:'opnameDokumen'},
+   {label:'Claim Customer', page:'claimCustomer'},
+   {label:'Pengajuan Claim Principal', page:'pengajuanClaim'},
+   {label:'Penyelesaian Claim', page:'penyelesaianClaim'},
+   {label:'Monitoring Claim', page:'monitoringClaim'},
  ]},
  {label:'Persediaan Barang', icon:'box', page:'inventoryDashboard', children:[
    {header:'Master & Setting'},

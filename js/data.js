@@ -1084,6 +1084,8 @@ const DATA = {
     {kode:1, nama:'Saldo Awal', akunDebit:'3200001', akunKredit:'2110001', akunPPN:''},
     {kode:2, nama:'Saldo Awal Import', akunDebit:'3200001', akunKredit:'2110002', akunPPN:''},
     {kode:3, nama:'Pph 23', akunDebit:'1100012', akunKredit:'2120001', akunPPN:''},
+    /* 2026-09-30 — dipakai jalur pemulihan "Nota Debit AP" Modul Claim. */
+    {kode:4, nama:'NOTA DEBIT CLAIM PRINCIPAL', akunDebit:'2110001', akunKredit:'1120006', akunPPN:''},
   ],
 
   /* Jurnal A.R. — menu Customer & Penjualan > Master & Setting >
@@ -1104,6 +1106,8 @@ const DATA = {
     {kode:5, nama:'PENERIMAAN SSP PPN', arSsp:true, akunDebit:'2120002', akunKredit:'1120001', akunPPN:''},
     {kode:6, nama:'PENERIMAAN SSP PPH 22', arSsp:true, akunDebit:'1140003', akunKredit:'1120004', akunPPN:''},
     {kode:7, nama:'PENERIMAAN SSP KEPADA PIUTANG USAHA', arSsp:true, akunDebit:'1120001', akunKredit:'1120003', akunPPN:''},
+    /* 2026-09-30 — dipakai "Nota Kredit terbuka" customer Modul Claim. */
+    {kode:8, nama:'NOTA KREDIT CLAIM PRINCIPAL', arSsp:false, akunDebit:'1120006', akunKredit:'1120001', akunPPN:''},
   ],
 
   /* Transaksi A.R. — menu Customer & Penjualan > Daftar Transaksi >
@@ -3688,6 +3692,16 @@ const DATA = {
     {kode:'1120004', nama:'Piutang SSP PPH', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'2120003', nama:'PPN Pemungut', kategori:'B', tipe:'K', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     {kode:'1140003', nama:'Uang Muka PPH 22', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    /* 2026-09-30 — 4 akun baru untuk Modul Claim Customer & Principal
+       (kode usulan di dokumen spesifikasi, menyesuaikan COA 7-digit DBM):
+       Piutang Claim Principal (tampungan nilai claim yg sudah di-ACC
+       sampai dipulihkan), Uang Muka PPh 23 (PPh 23 2% yg dipotong
+       principal atas tagihan claim via Penjualan Langsung), Beban Barang
+       Bonus (bonus on faktur) & Biaya Promosi (claim on faktur ditolak). */
+    {kode:'1120006', nama:'Piutang Claim Principal', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'1140004', nama:'Uang Muka PPh 23', kategori:'A', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'5110002', nama:'Beban Barang Bonus', kategori:'E', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
+    {kode:'5210012', nama:'Biaya Promosi', kategori:'F', tipe:'D', jenis:'Detail', saldoAwal:0, debet:0, kredit:0, saldoAkhir:0},
     /* 4 akun BARU 2026-08-28 — dipakai 2 modul master Kas/Bank baru
        "Jurnal Pelunasan Utang/Piutang" (DATA.jurnalKasUtangPiutang) &
        "Currency" (DATA.currencies): Bank BNI/BRI melengkapi Mandiri/BCA
@@ -5914,6 +5928,10 @@ const DATA = {
     {kode:'TC02', nama:'Modern Trade'},
     {kode:'TC03', nama:'Institusi'},
     {kode:'TC04', nama:'Ekspor'},
+    /* 2026-09-30 — tipe khusus customer yang TERHUBUNG ke supplier/
+       principal (Link Supplier ↔ Customer, Modul Claim). Customer bertipe
+       ini tidak muncul di picker Sales Quotation / Sales Order. */
+    {kode:'TC05', nama:'Principal'},
   ],
   /* Daftar Outlet (cabang) — reuse persis nama cabang yang sudah dipakai di
      PO_CABANG_LIST (purchase-order.template.js) & SR_CABANG_LIST
@@ -7781,4 +7799,184 @@ const DATA = {
       ],
     },
   ],
+  /* =====================================================================
+     MODUL CLAIM CUSTOMER & PRINCIPAL — 2026-09-30
+     Dibangun dari dokumen spesifikasi "Spesifikasi Modul Claim Customer
+     & Principal" (disusun & dijawab bersama Sidik 30/09/2026, BUKAN dari
+     screenshot MASERP). Ringkasan keputusan yang membentuk data di bawah:
+       - Jenis claim: 'Biaya Promosi' (default — klaim biaya promosi
+         customer yang ditanggung principal, termasuk diskon program) &
+         'Bonus Barang'. Cara pemberian: 'Off Faktur' / 'On Faktur'.
+       - Status ke principal (CLAIM_STATUS_LIST di core.js): Draft →
+         Approval (approval internal WAJIB berapa pun nilainya, field
+         `approvalInternal` ''|'Menunggu'|'Disetujui') → Diajukan (email
+         terkirim lewat Pengajuan Claim Principal) → Disetujui (penuh/
+         sebagian) | Ditolak → Diproses (sebagian dipulihkan) → Selesai;
+         Dibatalkan = ditolak approver / batal sebelum ada balasan.
+       - Setelah ACC, customer off faktur menerima NOTA KREDIT TERBUKA
+         (Transaksi A.R.) senilai `nilaiAcc` — TIDAK BOLEH sebelum ACC;
+         ACC sebagian / ditolak → claim customer ikut dikurangi.
+       - Claim on faktur yang ditolak / ACC sebagian: selisihnya dibebankan
+         ke 5210012 Biaya Promosi DBM (lihat claimJurnalLines() core.js).
+       - Pemulihan dari principal (`pemulihan[]`): 'Nota Debit AP'
+         (default), 'Penjualan Langsung' (ke customer principal yang
+         TERHUBUNG OTOMATIS ke supplier-nya, kode P-{kode supplier}, PPN
+         04 DPP Nilai Lain + PPh 23 2%), atau 'Penerimaan Barang'.
+     Semua nilai contoh memakai customer/principal/faktur DBM yang sudah
+     ada di file ini supaya saling nyambung (mis. claim ...00002 ditarik
+     dari faktur 26/SI/TGR/08/00142 yang memang punya Disc. Principal 2% &
+     5%: 20×25.000×2% + 80×15.000×5% = 70.000). */
+  settingClaimPrincipal:[
+    {principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia', emailTo:'claim.promosi@wilmarnabati.co.id', emailCc:'ap@wilmarnabati.co.id', jalurDefault:'Nota Debit AP', batasHariRespon:14, aktif:true},
+    {principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara', emailTo:'trade.marketing@sumberpangan.co.id', emailCc:'purchasing@sumberpangan.co.id', jalurDefault:'Nota Debit AP', batasHariRespon:14, aktif:true},
+    {principalKode:'5017', principalNama:'PT Sinar Meadow', emailTo:'finance@sinarmeadow.co.id', emailCc:'', jalurDefault:'Penjualan Langsung', batasHariRespon:21, aktif:true},
+  ],
+  claimCustomer:[
+    {no:'26/CLM/HO/09/00008', tgl:'25/09/2026', cabang:'Head Office', customerKode:'CUST-004', customerNama:'Toko Anugrah',
+      principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara', jenis:'Biaya Promosi', cara:'Off Faktur',
+      promotionKode:'', periodeAwal:'01/09/2026', periodeAkhir:'30/09/2026', noSurat:'TA/MDN/IX/2026/031', tglSurat:'24/09/2026',
+      keterangan:'Biaya pemasangan shelving display September 2026',
+      items:[{noFaktur:'', kode:'', nama:'Shelving display 2 rak (September 2026)', qty:1, satuan:'Paket', hna:2000000, nilai:2000000}],
+      nilaiClaim:2000000, nilaiAcc:0, nilaiDipulihkan:0, status:'Draft', approvalInternal:'', noPengajuan:'', alasanTolak:'',
+      notaKredit:null, bonusDikirim:null, pemulihan:[],
+      riwayat:[{waktu:'25/09/2026 10:12', status:'Draft', user:'sidik', catatan:'Claim dibuat'}]},
+    {no:'26/CLM/HO/09/00007', tgl:'22/09/2026', cabang:'Head Office', customerKode:'CUST-007', customerNama:'CV Maju Terus',
+      principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia', jenis:'Bonus Barang', cara:'Off Faktur',
+      promotionKode:'', periodeAwal:'01/08/2026', periodeAkhir:'31/08/2026', noSurat:'CVMT/SMG/0922', tglSurat:'21/09/2026',
+      keterangan:'Bonus pencapaian target Agustus 2026 (12 Dus Teh Celup Sariwangi)',
+      items:[{noFaktur:'', kode:'BRG-008', nama:'Teh Celup Sariwangi 25s', qty:12, satuan:'Dus', hna:10000, nilai:120000}],
+      nilaiClaim:120000, nilaiAcc:0, nilaiDipulihkan:0, status:'Approval', approvalInternal:'Disetujui', noPengajuan:'', alasanTolak:'',
+      notaKredit:null, bonusDikirim:null, pemulihan:[],
+      riwayat:[
+        {waktu:'22/09/2026 09:30', status:'Draft', user:'sidik', catatan:'Claim dibuat'},
+        {waktu:'22/09/2026 09:35', status:'Approval', user:'sidik', catatan:'Dikirim untuk approval internal'},
+        {waktu:'23/09/2026 14:05', status:'Approval', user:'usman_fas', catatan:'Approval internal disetujui — siap diajukan ke principal'}]},
+    {no:'26/CLM/HO/09/00006', tgl:'20/09/2026', cabang:'Head Office', customerKode:'CUST-002', customerNama:'UD Makmur Jaya',
+      principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia', jenis:'Biaya Promosi', cara:'Off Faktur',
+      promotionKode:'', periodeAwal:'01/09/2026', periodeAkhir:'15/09/2026', noSurat:'UDMJ/SBY/0919', tglSurat:'19/09/2026',
+      keterangan:'Biaya event sampling minyak goreng di Pasar Wonokromo',
+      items:[{noFaktur:'', kode:'', nama:'Event sampling 2 hari (SPG + booth)', qty:1, satuan:'Paket', hna:4000000, nilai:4000000}],
+      nilaiClaim:4000000, nilaiAcc:0, nilaiDipulihkan:0, status:'Approval', approvalInternal:'Menunggu', noPengajuan:'', alasanTolak:'',
+      notaKredit:null, bonusDikirim:null, pemulihan:[],
+      riwayat:[
+        {waktu:'20/09/2026 11:00', status:'Draft', user:'sidik', catatan:'Claim dibuat'},
+        {waktu:'20/09/2026 11:04', status:'Approval', user:'sidik', catatan:'Dikirim untuk approval internal'}]},
+    {no:'26/CLM/HO/09/00005', tgl:'08/09/2026', cabang:'Head Office', customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya',
+      principalKode:'5017', principalNama:'PT Sinar Meadow', jenis:'Biaya Promosi', cara:'Off Faktur',
+      promotionKode:'', periodeAwal:'01/08/2026', periodeAkhir:'31/08/2026', noSurat:'FMJ/JKT/0907', tglSurat:'07/09/2026',
+      keterangan:'Biaya cetak brosur promo margarin Agustus 2026',
+      items:[{noFaktur:'', kode:'', nama:'Cetak brosur A5 5.000 lembar', qty:1, satuan:'Paket', hna:1850000, nilai:1850000}],
+      nilaiClaim:1850000, nilaiAcc:0, nilaiDipulihkan:0, status:'Ditolak', approvalInternal:'Disetujui', noPengajuan:'PCL/HO/2609/0003',
+      alasanTolak:'Materi brosur tidak melalui persetujuan brand principal', notaKredit:null, bonusDikirim:null, pemulihan:[],
+      riwayat:[
+        {waktu:'08/09/2026 09:00', status:'Draft', user:'sidik', catatan:'Claim dibuat'},
+        {waktu:'08/09/2026 09:05', status:'Approval', user:'sidik', catatan:'Dikirim untuk approval internal'},
+        {waktu:'08/09/2026 13:20', status:'Approval', user:'usman_fas', catatan:'Approval internal disetujui'},
+        {waktu:'09/09/2026 08:30', status:'Diajukan', user:'sidik', catatan:'Diajukan lewat PCL/HO/2609/0003 (email ke finance@sinarmeadow.co.id)'},
+        {waktu:'15/09/2026 16:42', status:'Ditolak', user:'Principal via email', catatan:'Ditolak: Materi brosur tidak melalui persetujuan brand principal'}]},
+    {no:'26/CLM/HO/09/00004', tgl:'02/09/2026', cabang:'Head Office', customerKode:'CUST-003', customerNama:'CV Berkah Abadi',
+      principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia', jenis:'Biaya Promosi', cara:'Off Faktur',
+      promotionKode:'', periodeAwal:'01/08/2026', periodeAkhir:'31/08/2026', noSurat:'CVBA/BDG/0901', tglSurat:'01/09/2026',
+      keterangan:'Sewa end-gondola 1 bulan + potongan harga program Agustus',
+      items:[
+        {noFaktur:'', kode:'', nama:'Sewa end-gondola Agustus 2026', qty:1, satuan:'Bulan', hna:2000000, nilai:2000000},
+        {noFaktur:'', kode:'', nama:'Potongan harga program Agustus (sesuai rekap customer)', qty:1, satuan:'Paket', hna:1200000, nilai:1200000}],
+      nilaiClaim:3200000, nilaiAcc:2500000, nilaiDipulihkan:0, status:'Disetujui', approvalInternal:'Disetujui', noPengajuan:'PCL/HO/2609/0001', alasanTolak:'',
+      notaKredit:null, bonusDikirim:null, pemulihan:[],
+      riwayat:[
+        {waktu:'02/09/2026 10:00', status:'Draft', user:'sidik', catatan:'Claim dibuat'},
+        {waktu:'02/09/2026 10:02', status:'Approval', user:'sidik', catatan:'Dikirim untuk approval internal'},
+        {waktu:'02/09/2026 15:10', status:'Approval', user:'usman_fas', catatan:'Approval internal disetujui'},
+        {waktu:'03/09/2026 09:00', status:'Diajukan', user:'sidik', catatan:'Diajukan lewat PCL/HO/2609/0001 (email ke claim.promosi@wilmarnabati.co.id)'},
+        {waktu:'10/09/2026 11:25', status:'Disetujui', user:'Principal via email', catatan:'ACC sebagian 2.500.000,00 dari 3.200.000,00 — claim customer ikut dikurangi'}]},
+    {no:'26/CLM/HO/09/00003', tgl:'10/09/2026', cabang:'Head Office', customerKode:'CUST-001', customerNama:'Toko Sumber Rejeki',
+      principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara', jenis:'Biaya Promosi', cara:'Off Faktur',
+      promotionKode:'26/PM-HO/08/00001', periodeAwal:'01/08/2026', periodeAkhir:'31/08/2026', noSurat:'TSR/JKT/0909', tglSurat:'09/09/2026',
+      keterangan:'Listing fee & display program Agustus 2026',
+      items:[
+        {noFaktur:'', kode:'', nama:'Listing fee 5 SKU baru', qty:5, satuan:'SKU', hna:1000000, nilai:5000000},
+        {noFaktur:'', kode:'', nama:'Display floor stand Agustus', qty:1, satuan:'Paket', hna:2500000, nilai:2500000}],
+      nilaiClaim:7500000, nilaiAcc:0, nilaiDipulihkan:0, status:'Diajukan', approvalInternal:'Disetujui', noPengajuan:'PCL/HO/2609/0004', alasanTolak:'',
+      notaKredit:null, bonusDikirim:null, pemulihan:[],
+      riwayat:[
+        {waktu:'10/09/2026 08:45', status:'Draft', user:'sidik', catatan:'Claim dibuat'},
+        {waktu:'10/09/2026 08:50', status:'Approval', user:'sidik', catatan:'Dikirim untuk approval internal'},
+        {waktu:'11/09/2026 10:00', status:'Approval', user:'rezha_fas', catatan:'Approval internal disetujui'},
+        {waktu:'12/09/2026 09:15', status:'Diajukan', user:'sidik', catatan:'Diajukan lewat PCL/HO/2609/0004 (email ke trade.marketing@sumberpangan.co.id)'}]},
+    {no:'26/CLM/HO/09/00002', tgl:'04/09/2026', cabang:'Head Office', customerKode:'CUST-006', customerNama:'Toko Family Mart Jaya',
+      principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara', jenis:'Biaya Promosi', cara:'On Faktur',
+      promotionKode:'26/PM-HO/08/00001', periodeAwal:'01/08/2026', periodeAkhir:'31/08/2026', noSurat:'', tglSurat:'',
+      keterangan:'Disc. Principal on faktur Agustus 2026 (ditarik dari faktur)',
+      items:[
+        {noFaktur:'26/SI/TGR/08/00142', kode:'BRG-001', nama:'Minyak Goreng Sunco 2L (Disc. Principal 2%)', qty:20, satuan:'Dus', hna:25000, nilai:10000},
+        {noFaktur:'26/SI/TGR/08/00142', kode:'BRG-002', nama:'Gula Pasir Gulaku 1kg (Disc. Principal 5%)', qty:80, satuan:'Karung', hna:15000, nilai:60000}],
+      nilaiClaim:70000, nilaiAcc:60000, nilaiDipulihkan:0, status:'Disetujui', approvalInternal:'Disetujui', noPengajuan:'PCL/HO/2609/0002', alasanTolak:'',
+      notaKredit:null, bonusDikirim:null, pemulihan:[],
+      riwayat:[
+        {waktu:'04/09/2026 13:00', status:'Draft', user:'sidik', catatan:'Claim dibuat — ditarik dari faktur 26/SI/TGR/08/00142'},
+        {waktu:'04/09/2026 13:02', status:'Approval', user:'sidik', catatan:'Dikirim untuk approval internal'},
+        {waktu:'04/09/2026 16:00', status:'Approval', user:'usman_fas', catatan:'Approval internal disetujui'},
+        {waktu:'08/09/2026 10:00', status:'Diajukan', user:'sidik', catatan:'Diajukan lewat PCL/HO/2609/0002 (email ke trade.marketing@sumberpangan.co.id)'},
+        {waktu:'14/09/2026 09:40', status:'Disetujui', user:'sidik (Catat Balasan manual)', catatan:'ACC sebagian 60.000,00 dari 70.000,00 — selisih 10.000,00 claim on faktur dibebankan ke Biaya Promosi DBM'}]},
+    {no:'26/CLM/HO/09/00001', tgl:'01/09/2026', cabang:'Head Office', customerKode:'CUST-002', customerNama:'UD Makmur Jaya',
+      principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia', jenis:'Biaya Promosi', cara:'Off Faktur',
+      promotionKode:'', periodeAwal:'01/08/2026', periodeAkhir:'31/08/2026', noSurat:'UDMJ/SBY/0831', tglSurat:'31/08/2026',
+      keterangan:'Biaya display & price tag promo minyak goreng Agustus 2026',
+      items:[{noFaktur:'', kode:'', nama:'Display & price tag promo Agustus 2026 (12 outlet)', qty:1, satuan:'Paket', hna:5000000, nilai:5000000}],
+      nilaiClaim:5000000, nilaiAcc:5000000, nilaiDipulihkan:5000000, status:'Selesai', approvalInternal:'Disetujui', noPengajuan:'PCL/HO/2609/0001', alasanTolak:'',
+      notaKredit:{no:'26/ARS/HO/09/00001', tgl:'11/09/2026', nilai:5000000, sisa:0},
+      bonusDikirim:null,
+      pemulihan:[{noPenyelesaian:'PNY/HO/2609/0001', tgl:'18/09/2026', jalur:'Nota Debit AP', nilai:5000000, noDok:'AP/HO/260900001'}],
+      riwayat:[
+        {waktu:'01/09/2026 09:00', status:'Draft', user:'sidik', catatan:'Claim dibuat'},
+        {waktu:'01/09/2026 09:03', status:'Approval', user:'sidik', catatan:'Dikirim untuk approval internal'},
+        {waktu:'01/09/2026 14:30', status:'Approval', user:'usman_fas', catatan:'Approval internal disetujui'},
+        {waktu:'03/09/2026 09:00', status:'Diajukan', user:'sidik', catatan:'Diajukan lewat PCL/HO/2609/0001 (email ke claim.promosi@wilmarnabati.co.id)'},
+        {waktu:'10/09/2026 11:25', status:'Disetujui', user:'Principal via email', catatan:'ACC penuh 5.000.000,00'},
+        {waktu:'11/09/2026 10:00', status:'Disetujui', user:'sidik', catatan:'Nota Kredit terbuka 26/ARS/HO/09/00001 dibuat untuk UD Makmur Jaya'},
+        {waktu:'18/09/2026 15:00', status:'Selesai', user:'sidik', catatan:'Dipulihkan lewat Nota Debit AP AP/HO/260900001 senilai 5.000.000,00'}]},
+  ],
+  pengajuanClaim:[
+    {no:'PCL/HO/2609/0004', tgl:'12/09/2026', cabang:'Head Office', principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara',
+      emailTo:'trade.marketing@sumberpangan.co.id', emailCc:'purchasing@sumberpangan.co.id', keterangan:'Pengajuan claim biaya promosi Agustus 2026 — Toko Sumber Rejeki',
+      claims:['26/CLM/HO/09/00003'], status:'Diajukan', tglKirim:'12/09/2026', tglJawab:'', sumberJawaban:'', pengingat:[]},
+    {no:'PCL/HO/2609/0003', tgl:'09/09/2026', cabang:'Head Office', principalKode:'5017', principalNama:'PT Sinar Meadow',
+      emailTo:'finance@sinarmeadow.co.id', emailCc:'', keterangan:'Pengajuan claim brosur promo Agustus 2026',
+      claims:['26/CLM/HO/09/00005'], status:'Dijawab', tglKirim:'09/09/2026', tglJawab:'15/09/2026', sumberJawaban:'Link Email', pengingat:[]},
+    {no:'PCL/HO/2609/0002', tgl:'08/09/2026', cabang:'Head Office', principalKode:'5015', principalNama:'PT Sumber Pangan Nusantara',
+      emailTo:'trade.marketing@sumberpangan.co.id', emailCc:'purchasing@sumberpangan.co.id', keterangan:'Pengajuan claim Disc. Principal on faktur Agustus 2026',
+      claims:['26/CLM/HO/09/00002'], status:'Dijawab', tglKirim:'08/09/2026', tglJawab:'14/09/2026', sumberJawaban:'Manual', pengingat:[]},
+    {no:'PCL/HO/2609/0001', tgl:'03/09/2026', cabang:'Head Office', principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia',
+      emailTo:'claim.promosi@wilmarnabati.co.id', emailCc:'ap@wilmarnabati.co.id', keterangan:'Pengajuan claim biaya promosi Agustus 2026',
+      claims:['26/CLM/HO/09/00001','26/CLM/HO/09/00004'], status:'Dijawab', tglKirim:'03/09/2026', tglJawab:'10/09/2026', sumberJawaban:'Link Email', pengingat:[]},
+  ],
+  penyelesaianClaim:[
+    {no:'PNY/HO/2609/0001', tgl:'18/09/2026', cabang:'Head Office', noClaim:'26/CLM/HO/09/00001', principalKode:'5016', principalNama:'PT Wilmar Nabati Indonesia',
+      jalur:'Nota Debit AP', nilai:5000000, noDok:'AP/HO/260900001', noFakturSupplier:'INV/WNI/2026/0813', gudang:'', keterangan:'Potong hutang atas claim display Agustus 2026'},
+  ],
 };
+
+/* Dokumen hasil Modul Claim untuk claim contoh 26/CLM/HO/09/00001
+   (Selesai): Nota Kredit terbuka ke UD Makmur Jaya & Nota Debit AP ke
+   PT Wilmar Nabati Indonesia. Ditambahkan di depan array (terbaru di
+   atas) — pola sama dokumen baru yg dibuat modul lain lewat unshift(). */
+DATA.transaksiAR.unshift({no:'26/ARS/HO/09/00001', cabang:'Head Office', tgl:'11/09/2026',
+  customerKode:'CUST-002', customerNama:'UD Makmur Jaya', noFaktur:'', jurnalKode:8, noClaim:'26/CLM/HO/09/00001',
+  keterangan:'NOTA KREDIT CLAIM 26/CLM/HO/09/00001 - PT WILMAR NABATI INDONESIA',
+  rincian:[{tipe:'Nota Kredit', tglJthTempo:'11/09/2026', crc:'IDR', kurs:1, jumlah:-5000000}],
+  jurnalMode:'otomatis',
+  jurnalAkun:[
+    {kodeAkun:'1120006', namaAkun:'Piutang Claim Principal', keterangan:'NOTA KREDIT CLAIM 26/CLM/HO/09/00001', debit:5000000, kredit:0},
+    {kodeAkun:'1120001', namaAkun:'Piutang Usaha', keterangan:'NOTA KREDIT CLAIM 26/CLM/HO/09/00001', debit:0, kredit:5000000},
+  ],
+  jumlah:-5000000});
+DATA.transaksiAP.unshift({no:'AP/HO/260900001', noFaktur:'AP/HO/260900001', cabang:'Head Office', tgl:'18/09/2026',
+  supplierKode:'5016', supplierNama:'PT Wilmar Nabati Indonesia', jurnalKode:4, noClaim:'26/CLM/HO/09/00001',
+  keterangan:'Nota Debit Claim 26/CLM/HO/09/00001 - UD Makmur Jaya', noFakturSupplier:'INV/WNI/2026/0813',
+  rincian:[{tipe:'Nota Debet', tglJthTempo:'18/09/2026', crc:'IDR', kurs:1, nominal:-5000000}],
+  jurnalMode:'otomatis',
+  jurnalAkun:[
+    {kodeAkun:'2110001', costCenter:'', namaAkun:'Hutang Usaha', keterangan:'Nota Debit Claim 26/CLM/HO/09/00001', debit:5000000, kredit:0},
+    {kodeAkun:'1120006', costCenter:'', namaAkun:'Piutang Claim Principal', keterangan:'Nota Debit Claim 26/CLM/HO/09/00001', debit:0, kredit:5000000},
+  ],
+  jumlah:-5000000});

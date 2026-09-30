@@ -418,7 +418,8 @@ function openSoCustomerPicker(row){
   closeModal();
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
-  overlay.innerHTML = tplSoCustomerPicker(DATA.customers);
+  /* Customer principal (Link Supplier ↔ Customer, Modul Claim) hanya untuk penagihan claim. */
+  overlay.innerHTML = tplSoCustomerPicker(DATA.customers.filter(c => !isCustomerPrincipal(c)));
   document.body.appendChild(overlay);
   document.getElementById('modalClose').onclick = closeModal;
   document.getElementById('modalCancel').onclick = closeModal;
